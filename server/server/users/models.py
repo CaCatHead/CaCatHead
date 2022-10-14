@@ -12,8 +12,7 @@ from server.core.models import BaseModel
 
 class UserManager(BaseUserManager):
 
-    def _create_user(self, username, email, password,
-                     is_staff, is_superuser, **extra_fields):
+    def _create_user(self, username, email, password, is_staff, is_superuser, **extra_fields):
         """
         Creates and saves a User with the given username, email and password.
         """
@@ -21,9 +20,12 @@ class UserManager(BaseUserManager):
         if not username:
             raise ValueError('The given username must be set')
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email,
-                          is_staff=is_staff, is_active=True,
-                          is_superuser=is_superuser, last_login=now,
+        user = self.model(username=username,
+                          email=email,
+                          is_staff=is_staff,
+                          is_active=True,
+                          is_superuser=is_superuser,
+                          last_login=now,
                           **extra_fields)
         user.set_password(password)
         user.student_id = username
@@ -66,37 +68,44 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
-    username = models.CharField(max_length=30, unique=True,
+    username = models.CharField(max_length=30,
+                                unique=True,
                                 validators=[
-                                    validators.RegexValidator(re.compile(
-                                        r'^[\w.@+-]+$'), 'Enter a valid username.', 'invalid')
-                                ], verbose_name=_("用户名"))
+                                    validators.RegexValidator(re.compile(r'^[\w.@+-]+$'), 'Enter a valid username.',
+                                                              'invalid')],
+                                verbose_name=_("用户名"))
 
     nickname = models.CharField(
         max_length=50, blank=True, default='', verbose_name=_("昵称"))
 
     email = models.EmailField(blank=True, verbose_name=_("电子邮件"))
 
-    is_active = models.BooleanField(default=True, verbose_name=_("是否可用"),
+    is_active = models.BooleanField(default=True,
+                                    verbose_name=_("是否可用"),
                                     help_text='Designates whether this user should be treated as '
-                                    'active. Unselect this instead of deleting accounts.')
+                                              'active. Unselect this instead of deleting accounts.')
 
     is_teacher = models.BooleanField(default=False, verbose_name=_("是否教师"))
 
     is_staff = models.BooleanField(default=False, verbose_name=_("管理员"))
 
-    student_id = models.CharField(max_length=30, validators=[
-        validators.RegexValidator(re.compile(
-            r'^\d+$'), 'Enter a valid student id')
-    ], null=True, blank=True, default=None, verbose_name=_("学号"))
+    student_id = models.CharField(
+        max_length=30,
+        validators=[validators.RegexValidator(re.compile(r'^\d+$'), 'Enter a valid student id')],
+        null=True,
+        blank=True,
+        default=None,
+        verbose_name=_("学号")
+    )
 
     student_name = models.CharField(
         max_length=40, blank=True, verbose_name=_("学生姓名"))
 
-    class_id = models.CharField(max_length=30, validators=[
-        validators.RegexValidator(re.compile(
-            r'^\d+$'), 'Enter a valid class id')
-    ], blank=True, verbose_name=_("班级编号"))
+    class_id = models.CharField(
+        max_length=30,
+        validators=[validators.RegexValidator(re.compile(r'^\d+$'), 'Enter a valid class id')],
+        blank=True,
+        verbose_name=_("班级编号"))
 
     student_college = models.CharField(
         max_length=40, blank=True, verbose_name=_("所在学院"))
@@ -117,7 +126,7 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         #     hashlib.md5(self.email.lower()).hexdigest() + "?"
         # url += urllib.parse.urlencode({'s': str(size)})
         # Use the default avatar
-        return 'http://www.gravatar.com/avatar'
+        return 'https://www.gravatar.com/avatar'
 
     def gravatar_url_40(self):
         return self.gravatar_url(size=40)

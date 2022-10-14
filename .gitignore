@@ -8,6 +8,9 @@ node_modules
 .env
 dist
 
+# IDE
+.idea
+
 # python
 
 # Byte-compiled / optimized / DLL files

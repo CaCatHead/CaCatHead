@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "antfu.vite",
+    "antfu.unocss",
+    "vue.volar",
+    "humao.rest-client"
+  ]
+}
