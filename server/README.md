@@ -7,8 +7,9 @@ CaCatHead server sub-project is based on [Django](https://www.djangoproject.com/
 Start the api web server.
 
 ```bash
-$ pipenv install
-$ pipenv run python manage.py runserver
+$ pipenv install                         # install deps
+$ export DEBUG='true'                    # enable debug mode
+$ pipenv run python manage.py runserver  # start dev server
 ```
 
 Open `client/user.http` to try the api endpoints.
