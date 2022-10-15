@@ -46,7 +46,11 @@ INSTALLED_APPS = [
     # Authentication Module for django rest auth
     # See: https://github.com/James1345/django-rest-knox
     'knox',
+    # Custom apps
+    'CaCatHead.users.apps.UsersConfig'
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 # Django REST framework config
 REST_FRAMEWORK = {
