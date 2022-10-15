@@ -13,6 +13,7 @@ import os
 
 from dotenv import load_dotenv
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,19 +40,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Django REST framework is a powerful and flexible toolkit for building Web APIs.
+    # See: https://www.django-rest-framework.org/
     'rest_framework',
-    # custom
-    # 'users'
+    # Authentication Module for django rest auth
+    # See: https://github.com/James1345/django-rest-knox
+    'knox',
 ]
 
-# User configure
-# AUTH_USER_MODEL = 'users.User'
-# AUTHENTICATION_BACKENDS = (
-#     # 'django.contrib.auth.backends.ModelBackend',
-#     'rbac.backends.RbacUserBackend',
-# )
-# ANONYMOUS_USER_ID = -1
-# LOGIN_URL = '/Login/'
+# Django REST framework config
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'knox.auth.TokenAuthentication',
+    )
+}
+
+# django-rest-knox config
+REST_KNOX = {
+    'TOKEN_TTL': timedelta(days=30),
+    'AUTO_REFRESH': True
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -91,6 +99,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# Caches
+# https://docs.djangoproject.com/zh-hans/4.1/topics/cache/
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': '127.0.0.1:11211',
     }
 }
 

@@ -1,1 +1,21 @@
+### Hello world
 GET http://127.0.0.1:8000/hello/
+
+### Login
+POST http://127.0.0.1:8000/auth/login
+Content-Type: application/json
+
+{
+  "username": "root",
+  "password": "12345678"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+### Logout
+POST http://127.0.0.1:8000/auth/logout
+Authorization: Token {{auth_token}}
+
+### Profile
+GET http://127.0.0.1:8000/user/profile
+Authorization: Token {{auth_token}}
