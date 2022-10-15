@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from server.users import models
+from CaCatHead.users import models
 
 # from rbac import rbacRole
 # from rbac.models import RbacRole

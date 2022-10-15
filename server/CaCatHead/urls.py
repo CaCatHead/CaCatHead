@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from server.users import views as users
+from CaCatHead.users import views as users
 
 urlpatterns = [
     path('admin/', admin.site.urls),

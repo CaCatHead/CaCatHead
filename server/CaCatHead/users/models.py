@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, BaseUserManager
 
-from server.core.models import BaseModel
+from CaCatHead.core.models import BaseModel
 
 
 class UserManager(BaseUserManager):
