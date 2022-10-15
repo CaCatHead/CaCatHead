@@ -29,6 +29,7 @@ def current_user_profile(request):
 
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 def user_register(_request):
     """
     Register a new user
