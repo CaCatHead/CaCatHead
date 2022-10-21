@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "cross-env DEBUG=true pipenv run python manage.py runserver"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
