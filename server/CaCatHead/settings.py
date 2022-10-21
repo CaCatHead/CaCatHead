@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'CaCatHead.users.apps.UsersConfig'
 ]
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 # Django REST framework config
 REST_FRAMEWORK = {

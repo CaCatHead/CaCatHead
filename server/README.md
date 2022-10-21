@@ -14,4 +14,4 @@ $ pipenv run python manage.py runserver  # start dev server
 
 Open `client/user.http` to try the api endpoints.
 
-> We recommend you use the Visual Studio Code extension [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+> We recommend you use the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the api.
