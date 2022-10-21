@@ -53,5 +53,6 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
+        working-directory: server
         run: |
           pipenv install --deploy --dev
