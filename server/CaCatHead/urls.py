@@ -26,14 +26,14 @@ urlpatterns = [
     # admin usage
     path('admin/', admin.site.urls),
     # test ping
-    path('hello/', users_views.hello_world),
+    path('api/hello/', users_views.hello_world),
     # user auth
-    path('auth/register', users_views.user_register),
-    path('auth/login', users_views.UserLoginView.as_view()),
-    path('auth/logout', knox_views.LogoutView.as_view()),
-    path('auth/logoutall', knox_views.LogoutAllView.as_view()),
+    path('api/auth/register', users_views.user_register),
+    path('api/auth/login', users_views.UserLoginView.as_view()),
+    path('api/auth/logout', knox_views.LogoutView.as_view()),
+    path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
     # user profile
-    path('user/profile', users_views.current_user_profile)
+    path('api/user/profile', users_views.current_user_profile)
 ]
 
 # if settings.DEBUG:

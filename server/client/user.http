@@ -1,8 +1,8 @@
 ### Hello world
-GET http://127.0.0.1:8000/hello/
+GET http://127.0.0.1:8000/api/hello/
 
 ### Login
-POST http://127.0.0.1:8000/auth/login
+POST http://127.0.0.1:8000/api/auth/login
 Content-Type: application/json
 
 {
@@ -13,9 +13,9 @@ Content-Type: application/json
 > {% client.global.set("auth_token", response.body.token); %}
 
 ### Logout
-POST http://127.0.0.1:8000/auth/logout
+POST http://127.0.0.1:8000/api/auth/logout
 Authorization: Token {{auth_token}}
 
 ### Profile
-GET http://127.0.0.1:8000/user/profile
+GET http://127.0.0.1:8000/api/user/profile
 Authorization: Token {{auth_token}}
