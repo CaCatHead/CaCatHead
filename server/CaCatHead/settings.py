@@ -32,7 +32,6 @@ DEBUG = True if len(os.getenv('DEBUG', '')) > 0 else False
 ALLOWED_HOSTS = []
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,10 +46,8 @@ INSTALLED_APPS = [
     # See: https://github.com/James1345/django-rest-knox
     'knox',
     # Custom apps
-    'CaCatHead.users.apps.UsersConfig'
+    'CaCatHead.user.apps.UsersConfig'
 ]
-
-# AUTH_USER_MODEL = 'users.User'
 
 # Django REST framework config
 REST_FRAMEWORK = {

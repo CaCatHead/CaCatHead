@@ -20,7 +20,7 @@ from django.contrib import admin
 from rest_framework.schemas import get_schema_view
 from knox import views as knox_views
 
-from CaCatHead.users import views as users_views
+from CaCatHead.user import views as users_views
 
 urlpatterns = [
     # admin usage

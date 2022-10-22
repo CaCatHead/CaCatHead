@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from CaCatHead.users import models
+from CaCatHead.user import models
 
 
 class UserInfoInline(admin.StackedInline):
