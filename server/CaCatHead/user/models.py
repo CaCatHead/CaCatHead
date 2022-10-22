@@ -1,10 +1,10 @@
 import re
 
+from django.contrib.auth.models import User, BaseUserManager
+from django.core import validators
 from django.db import models
 from django.utils import timezone
-from django.core import validators
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User, BaseUserManager
 
 from CaCatHead.core.models import BaseModel
 
@@ -112,3 +112,23 @@ class StudentInfo(BaseModel):
 
     student_major_field = models.CharField(
         max_length=40, blank=True, verbose_name=_("专业方向"))
+
+
+def register_student_user(username: str, email: str, password: str):
+    """
+    Create and save a student User
+    """
+    email = User.objects.normalize_email(email)
+    user = User(username=username,
+                email=email,
+                is_staff=False,
+                is_active=True,
+                is_superuser=False,
+                )
+    user.set_password(password)
+    user.save()
+    user_info = UserInfo(user=user, nickname=username, is_teacher=False)
+    user_info.save()
+    student_info = StudentInfo(user=user, student_name=username)
+    student_info.save()
+    return user
