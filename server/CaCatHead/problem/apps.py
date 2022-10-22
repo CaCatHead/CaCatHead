@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class UserConfig(AppConfig):
+class ProblemConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'CaCatHead.user'
+    name = 'CaCatHead.problem'
