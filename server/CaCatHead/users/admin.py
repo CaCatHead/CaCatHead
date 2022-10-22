@@ -1,25 +1,24 @@
 from django.contrib import admin
-
-# Register your models here.
-
-from CaCatHead.users import models
-
-from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
+from CaCatHead.users import models
 
-# Define an inline admin descriptor for Employee model
-# which acts a bit like a singleton
-class StudentInline(admin.StackedInline):
-    model = models.User
+
+class UserInfoInline(admin.StackedInline):
+    model = models.UserInfo
+    verbose_name_plural = '用户信息组'
     can_delete = False
-    verbose_name_plural = 'student'
 
 
-# Define a new User admin
+class StudentInfoInline(admin.StackedInline):
+    model = models.StudentInfo
+    verbose_name_plural = '学生信息组'
+    can_delete = False
+
+
 class UserAdmin(BaseUserAdmin):
-    inlines = [StudentInline]
+    inlines = [UserInfoInline, StudentInfoInline]
 
 
 # Re-register UserAdmin

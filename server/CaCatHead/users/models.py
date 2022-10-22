@@ -66,13 +66,25 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(BaseModel):
+class UserInfo(BaseModel):
+    class Meta:
+        verbose_name = _("用户信息")
+        verbose_name_plural = _("用户组")
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     nickname = models.CharField(
         max_length=50, blank=True, default='', verbose_name=_("昵称"))
 
     is_teacher = models.BooleanField(default=False, verbose_name=_("是否教师"))
+
+
+class StudentInfo(BaseModel):
+    class Meta:
+        verbose_name = _('学生信息')
+        verbose_name_plural = _("学生组")
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     student_id = models.CharField(
         max_length=30,
@@ -100,84 +112,3 @@ class User(BaseModel):
 
     student_major_field = models.CharField(
         max_length=40, blank=True, verbose_name=_("专业方向"))
-
-    # def gravatar_url(self, size=460):
-    #     # url = "http://gravatar.com/avatar/" + \
-    #     #     hashlib.md5(self.email.lower()).hexdigest() + "?"
-    #     # url += urllib.parse.urlencode({'s': str(size)})
-    #     # Use the default avatar
-    #     return 'https://www.gravatar.com/avatar'
-    #
-    # def gravatar_url_40(self):
-    #     return self.gravatar_url(size=40)
-    #
-    # def gravatar_url_460(self):
-    #     return self.gravatar_url(size=460)
-    #
-    # def __unicode__(self):
-    #     return self.username
-    #
-    # class Meta:
-    #     ordering = ['student_id']
-    #     verbose_name = _("用户")
-    #     verbose_name_plural = _("用户组")
-    #
-    # __rbac_backend = None
-    # __userPerms = None
-    #
-    # def get_full_name(self):
-    #     return self.username
-    #
-    # def get_short_name(self):
-    #     return self.username
-
-    # def get_all_roles(self):
-    #     from rbac.models import RbacRole
-    #     return RbacRole.objects.filter(rbacuserassignment__user=self)
-
-    # def get_all_permissions(self, obj=None):
-    #     if not self.__rbac_backend:
-    #         from rbac.backends import RbacUserBackend
-    #         self.__rbac_backend = RbacUserBackend()
-    #     return self.__rbac_backend.get_all_permissions(self, obj)
-
-    # def has_perm(self, perm, obj=None):
-    #     if self.is_superuser or self.is_staff:
-    #         return True
-    #     if not self.__rbac_backend:
-    #         from rbac.backends import RbacUserBackend
-    #         self.__rbac_backend = RbacUserBackend()
-    #     return self.__rbac_backend.has_perm(self, perm, obj)
-
-    # def has_role_perm(self, role, perm, obj=None):
-    #     if self.is_superuser or self.is_staff:
-    #         return True
-    #     if not self.__rbac_backend:
-    #         from rbac.backends import RbacUserBackend
-    #         self.__rbac_backend = RbacUserBackend()
-    #     return self.__rbac_backend.has_role_perm(self, role, perm, obj)
-
-    # def has_role(self, role, obj=None):
-    #     if self.is_superuser or self.is_staff:
-    #         return True
-    #     if not self.__rbac_backend:
-    #         from rbac.backends import RbacUserBackend
-    #         self.__rbac_backend = RbacUserBackend()
-    #     return self.__rbac_backend.has_role(self, role)
-
-    # def has_perms(self, perm_list, obj=None):
-    #     if self.is_superuser or self.is_staff:
-    #         return True
-    #     for perm in perm_list:
-    #         if not self.has_perm(perm, obj):
-    #             return False
-    #     return True
-    #
-    # @classmethod
-    # def get_users_student_name(cls, username_list):
-    #     username_student_name = User.objects.filter(
-    #         username__in=username_list).values_list("username", "student_name")
-    #     student_name_list = {}
-    #     for user in username_student_name:
-    #         student_name_list[user[0]] = user[1]
-    #     return student_name_list
