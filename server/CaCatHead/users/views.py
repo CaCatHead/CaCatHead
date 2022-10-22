@@ -1,12 +1,11 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, authentication_classes
-from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated
-
-from knox.auth import TokenAuthentication
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import IsAuthenticated
 from knox.views import LoginView as KnoxLoginView
 
 
@@ -16,20 +15,16 @@ def hello_world(_request):
 
 
 @api_view()
-@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def current_user_profile(request):
     """
     Get current user profile
     """
     user = request.user
-    if user.is_authenticated:
-        return Response({"status": "ok", "user": {"username": user.username, "email": user.email}})
-    else:
-        raise NotAuthenticated()
+    return Response({"status": "ok", "user": {"username": user.username, "email": user.email}})
 
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 def user_register(_request):
     """
     Register a new user
