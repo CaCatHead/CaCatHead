@@ -56,3 +56,7 @@ jobs:
         working-directory: server
         run: |
           pipenv install --deploy --dev
+
+      - name: Test
+        run: |
+          pipenv run python manage.py test
