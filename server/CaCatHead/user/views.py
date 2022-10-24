@@ -8,9 +8,9 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from knox.views import LoginView as KnoxLoginView
 
-from CaCatHead.core.decorators import func_validate_request, class_validate_request
-from CaCatHead.user.models import register_student_user
+from CaCatHead.user.service import register_student_user
 from CaCatHead.user.serializer import LoginPayloadSerializer, RegisterPayloadSerializers
+from CaCatHead.core.decorators import func_validate_request, class_validate_request
 
 
 @api_view()
