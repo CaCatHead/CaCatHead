@@ -7,12 +7,15 @@ class UserAuthTests(TestCase):
 
     def test_hello_world(self):
         resp = self.client.get('/api/hello/')
+        assert resp.status_code == 200
         assert resp.data['message'] == 'Hello, world!'
 
     def test_login(self):
-        resp = self.client.post('/api/auth/login', {"username": "root",
-                                                    "password": "12345678"})
-
+        resp = self.client.post('/api/auth/login',
+                                json={"username": "root",
+                                      "password": "12345678"},
+                                headers={'Content-Type': 'application/json'})
+        assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
 
