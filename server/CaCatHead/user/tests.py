@@ -1,10 +1,7 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 
 
-class UserAuthTests(TestCase):
-    client = APIClient()
-
+class UserAuthTests(APITestCase):
     def test_hello_world(self):
         resp = self.client.get('/api/hello/')
         assert resp.status_code == 200
@@ -12,9 +9,8 @@ class UserAuthTests(TestCase):
 
     def test_login(self):
         resp = self.client.post('/api/auth/login',
-                                json={"username": "root",
-                                      "password": "12345678"},
-                                headers={'Content-Type': 'application/json'})
+                                {"username": "root", "password": "12345678"},
+                                format='json')
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
