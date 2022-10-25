@@ -19,7 +19,14 @@ class UserAuthTests(APITestCase):
                                 {"username": "root", "password": "12345678"},
                                 format='json')
         assert resp.status_code == 200
+
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
-
-        # TODO: send GET request to /api/user/profile to check TOKEN is valid
+        # temp = "Token " + resp.data['token']
+        # print(temp)
+        self.client.credentials(HTTP_AUTHORIZATION=temp)
+        resp2 = self.client.get('/api/user/profile')
+        assert resp2.status_code == 200
+        # print(resp2.data)
+        assert len(resp2.data['username']) > 0
+        assert len(resp2.data['email']) > 0
