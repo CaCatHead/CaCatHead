@@ -3,3 +3,14 @@ GET http://127.0.0.1:8000/api/posts
 
 ### Get post
 GET http://127.0.0.1:8000/api/post/1
+
+### Create post
+POST http://127.0.0.1:8000/api/post
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "测试公告标题",
+  "content": "测试公告内容",
+  "isPublic": false
+}
