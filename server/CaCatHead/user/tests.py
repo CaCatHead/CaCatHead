@@ -153,9 +153,9 @@ class UserAuthTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        Object = User.objects.get(username='world')
-        username = Object.username
-        email = Object.email
+        user = User.objects.get(username='world')
+        username = user.username
+        email = user.email
         assert username == 'world'
         assert email == 'world@example.com'
         # 登录
