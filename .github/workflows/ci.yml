@@ -6,7 +6,9 @@ on:
       - main
       - next
       - dev/*
-  pull_request:
+
+  # Pass repo secrets
+  pull_request_target:
     branches:
       - main
 
