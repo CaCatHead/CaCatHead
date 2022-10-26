@@ -61,7 +61,7 @@ jobs:
         working-directory: server
         run: |
           pipenv run python manage.py test
-          coverage run manage.py test
+          pipenv run coverage run manage.py test
       
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
