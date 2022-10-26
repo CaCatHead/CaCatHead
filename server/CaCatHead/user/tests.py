@@ -29,7 +29,7 @@ class UserAuthTests(APITestCase):
         assert resp2.status_code == 200
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
 
-    def test_tokenError_authentication_fail(self):
+    def test_token_error_authentication_fail(self):
         init_superuser()
         resp = self.client.post('/api/auth/login',
                                 {"username": "root", "password": "12345678"},
@@ -75,13 +75,16 @@ class UserAuthTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        Object = User.objects.get(username='world')
-        username = Object.username
-        email = Object.email
+        user = User.objects.get(username='world')
+        username = user.username
+        email = user.email
         assert username == 'world'
         assert email == 'world@example.com'
 
-    def test_logout_token_fail(self):  # 登录获取 token，退出，该 token 不可用
+    def test_logout_token_fail(self):
+        """
+        登录获取 token，退出，该 token 不可用
+        """
         init_superuser()
         resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"},
                                 format='json')
@@ -96,7 +99,10 @@ class UserAuthTests(APITestCase):
         assert resp3.status_code == 401
         assert resp3.data['detail'] == "认证令牌无效。"
 
-    def test_multilogin_logout(self):  # 多次登录 登录了就带token 第二次登录返回已登录
+    def test_multilogin_logout(self):
+        """
+        多次登录 登录了就带token 第二次登录返回已登录
+        """
         init_superuser()
         resp = self.client.post('/api/auth/login',
                                 {"username": "root", "password": "12345678"},
@@ -117,28 +123,37 @@ class UserAuthTests(APITestCase):
         assert resp4.status_code == 401
         assert resp4.data['detail'] == "认证令牌无效。"
 
-    def test_multilogin_multitoken_multilogout(self):  # 多次登录 不带token 每个独立
+    def test_multilogin_multitoken_multilogout(self):
+        """
+        多次登录 不带token 每个独立
+        """
         init_superuser()
-        authorization = []
-        for i in range(11):
+        authorizations = []
+        # 多次登录
+        for _ in range(0, 10):
             resp = self.client.post('/api/auth/login',
                                     {"username": "root", "password": "12345678"},
                                     format='json')
             assert resp.status_code == 200
             assert len(resp.data['expiry']) > 0
             assert len(resp.data['token']) > 0
-            authorization.append("Token " + resp.data['token'])
-        for i in range(0, 10):
-            self.client.credentials(HTTP_AUTHORIZATION=authorization[i])
+            authorizations.append("Token " + resp.data['token'])
+        # 每个token查看信息
+        for authorization in authorizations:
+            self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
             assert resp2.status_code == 200
             self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
-        for i in range(0, 10):
-            self.client.credentials(HTTP_AUTHORIZATION=authorization[i])
+        # 退出
+        for authorization in authorizations:
+            self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp3 = self.client.post('/api/auth/logout')
             assert resp3.status_code == 204
 
-    def test_flow(self):  # 测试整个流程 注册-登录-查看-退出
+    def test_flow(self):
+        """
+        测试整个流程 注册-登录-查看-退出
+        """
         # 注册
         resp = self.client.post('/api/auth/register', {
             "username": "world",
@@ -164,7 +179,7 @@ class UserAuthTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        #退出
+        # 退出
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': username, 'email': email}})
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
