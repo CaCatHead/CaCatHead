@@ -29,7 +29,7 @@ class UserAuthTests(APITestCase):
         assert resp2.status_code == 200
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
 
-    def test_tokenError_authentication_failed(self):
+    def test_tokenError_authentication_fail(self):
         init_superuser()
         resp = self.client.post('/api/auth/login',
                                 {"username": "root", "password": "12345678"},
@@ -58,9 +58,9 @@ class UserAuthTests(APITestCase):
                                 {"username": "gdx", "password": "gdxtxdy"},
                                 format='json')
         assert resp.status_code == 401
-        self.assertEqual(resp.data['detail'], "不正确的身份认证信息。")
+        assert resp.data['detail']=="不正确的身份认证信息。"
 
-    def test_sqlError(self):
+    def test_sql_inject_fail(self):
         init_superuser()
         resp = self.client.post('/api/auth/login',
                                 {"username": "root; DELETE FROM User", "password": "12345678"},
@@ -75,9 +75,26 @@ class UserAuthTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        username = User.objects.get(username='world').username
-        email = User.objects.get(username='world').email
+        Object = User.objects.get(username='world')
+        username = Object.username
+        email = Object.email
         assert username == 'world'
         assert email == 'world@example.com'
+
+    def test_logout_token_fail(self): #登录获取 token，退出，该 token 不可用
+        init_superuser()
+        resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"},
+                                format='json')
+        assert resp.status_code == 200
+        assert len(resp.data['expiry']) > 0
+        assert len(resp.data['token']) > 0
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.post('/api/auth/logout')
+        assert resp2.status_code == 204
+        resp3 = self.client.post('/api/user/profile')
+        assert resp3.status_code == 401
+        assert resp3.data['detail'] =="认证令牌无效。"
+
 
 
