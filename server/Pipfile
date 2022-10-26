@@ -6,16 +6,17 @@ name = "pypi"
 [packages]
 django = "==4.1.2"
 djangorestframework = "==3.14.0"
-tzdata = "==2022.5"
+django-rest-knox = "==4.2.0"
+pymemcache = "==3.5.2"
 python-dotenv = "==0.21.0"
 pyyaml = "==6.0"
+tzdata = "==2022.5"
 uritemplate = "==4.1.1"
-pymemcache = "==3.5.2"
-django-rest-knox = "==4.2.0"
 
 [dev-packages]
-pylint = "*"
 autopep8 = "*"
+coverage = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.10"
