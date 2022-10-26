@@ -6,7 +6,9 @@ on:
       - main
       - next
       - dev/*
-  pull_request:
+
+  # Pass repo secrets
+  pull_request_target:
     branches:
       - main
 
@@ -74,4 +76,5 @@ jobs:
         with:
           file: ./server/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
           fail_ci_if_error: true
