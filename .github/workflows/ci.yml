@@ -60,9 +60,10 @@ jobs:
       - name: Test
         working-directory: server
         run: |
-          pipenv run python manage.py migrate
-          export DJANGO_SUPERUSER_USERNAME=root
-          export DJANGO_SUPERUSER_EMAIL=root@example.com
-          export DJANGO_SUPERUSER_PASSWORD=12345678
-          pipenv run python manage.py createsuperuser --noinput
           pipenv run python manage.py test
+          coverage run manage.py test
+      
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./server
