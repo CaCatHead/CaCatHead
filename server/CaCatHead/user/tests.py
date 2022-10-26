@@ -58,7 +58,7 @@ class UserAuthTests(APITestCase):
                                 {"username": "gdx", "password": "gdxtxdy"},
                                 format='json')
         assert resp.status_code == 401
-        assert resp.data['detail']=="不正确的身份认证信息。"
+        assert resp.data['detail'] == "不正确的身份认证信息。"
 
     def test_sql_inject_fail(self):
         init_superuser()
@@ -81,7 +81,7 @@ class UserAuthTests(APITestCase):
         assert username == 'world'
         assert email == 'world@example.com'
 
-    def test_logout_token_fail(self): #登录获取 token，退出，该 token 不可用
+    def test_logout_token_fail(self):  # 登录获取 token，退出，该 token 不可用
         init_superuser()
         resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"},
                                 format='json')
@@ -94,7 +94,47 @@ class UserAuthTests(APITestCase):
         assert resp2.status_code == 204
         resp3 = self.client.post('/api/user/profile')
         assert resp3.status_code == 401
-        assert resp3.data['detail'] =="认证令牌无效。"
+        assert resp3.data['detail'] == "认证令牌无效。"
 
+    def test_multilogin_logout(self):  # 多次登录 登录了就带token 第二次登录返回已登录
+        init_superuser()
+        resp = self.client.post('/api/auth/login',
+                                {"username": "root", "password": "12345678"},
+                                format='json')
+        assert resp.status_code == 200
+        assert len(resp.data['expiry']) > 0
+        assert len(resp.data['token']) > 0
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.post('/api/auth/login',
+                                 {"username": "root", "password": "12345678"},
+                                 format='json')
+        assert resp2.status_code == 401
+        assert resp2.data['detail'] == '你已经登陆过了'
+        resp3 = self.client.post('/api/auth/logout')
+        assert resp3.status_code == 204
+        resp4 = self.client.post('/api/user/profile')
+        assert resp4.status_code == 401
+        assert resp4.data['detail'] == "认证令牌无效。"
 
+    def test_multilogin_multitoken_multilogout(self):# 多次登录 不带token 每个独立
+        init_superuser()
+        authorization = []
+        for i in range(11):
+            resp = self.client.post('/api/auth/login',
+                                    {"username": "root", "password": "12345678"},
+                                    format='json')
+            assert resp.status_code == 200
+            assert len(resp.data['expiry']) > 0
+            assert len(resp.data['token']) > 0
+            authorization.append("Token " + resp.data['token'])
+        for i in range(0, 10):
+            self.client.credentials(HTTP_AUTHORIZATION=authorization[i])
+            resp2 = self.client.get('/api/user/profile')
+            assert resp2.status_code == 200
+            self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
+        for i in range(0, 10):
+            self.client.credentials(HTTP_AUTHORIZATION=authorization[i])
+            resp3 = self.client.post('/api/auth/logout')
+            assert resp3.status_code == 204
 
