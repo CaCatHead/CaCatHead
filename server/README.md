@@ -8,7 +8,6 @@ Start the api web server.
 
 ```bash
 $ pipenv install                                # install deps
-$ export DEBUG='true'                           # enable debug mode
 $ pipenv run python manage.py migrate           # migrate database
 $ pipenv run python manage.py createsuperuser   # create super user
 $ pipenv run python manage.py runserver         # start dev server
