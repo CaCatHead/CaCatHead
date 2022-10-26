@@ -1,3 +1,5 @@
+import random
+
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 
@@ -14,7 +16,6 @@ class UserAuthTests(APITestCase):
 
     def test_login(self):
         init_superuser()
-
         resp = self.client.post('/api/auth/login',
                                 {"username": "root", "password": "12345678"},
                                 format='json')
@@ -34,3 +35,19 @@ class UserAuthTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         self.assertEqual(resp2.status_code, 401)
+
+    def test_tokenError_authentication_failed(self):
+        init_superuser()
+        resp = self.client.post('/api/auth/login',
+                                {"username": "root", "password": "12345678"},
+                                format='json')
+        assert resp.status_code == 200
+        assert len(resp.data['expiry']) > 0
+        assert len(resp.data['token']) > 0
+        # 随便搞一个token访问/api/user/profile 返回401
+        authorization = resp.data['token']
+        authorization = "Token " + authorization[::-1]
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.get('/api/user/profile')
+        self.assertEqual(resp2.status_code, 401)
+
