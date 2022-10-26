@@ -28,13 +28,6 @@ class UserAuthTests(APITestCase):
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
-        # 随机搞一个token访问/api/user/profile 返回401
-        authorization = resp.data['token']
-        reversed(authorization)
-        authorization = "Token " + authorization + "c"
-        self.client.credentials(HTTP_AUTHORIZATION=authorization)
-        resp2 = self.client.get('/api/user/profile')
-        self.assertEqual(resp2.status_code, 401)
 
     def test_tokenError_authentication_failed(self):
         init_superuser()
@@ -50,4 +43,41 @@ class UserAuthTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         self.assertEqual(resp2.status_code, 401)
+
+    def test_password_error(self):
+        init_superuser()
+        resp = self.client.post('/api/auth/login',
+                                {"username": "root", "password": "gdxtxdy"},
+                                format='json')
+        assert resp.status_code == 401
+        self.assertEqual(resp.data['detail'], "不正确的身份认证信息。")
+
+    def test_username_error(self):
+        init_superuser()
+        resp = self.client.post('/api/auth/login',
+                                {"username": "gdx", "password": "gdxtxdy"},
+                                format='json')
+        assert resp.status_code == 401
+        self.assertEqual(resp.data['detail'], "不正确的身份认证信息。")
+
+    def test_sqlError(self):
+        init_superuser()
+        resp = self.client.post('/api/auth/login',
+                                {"username": "root; DELETE FROM User", "password": "12345678"},
+                                format='json')
+
+    # TODO: SQL injection failure
+    def test_register(self):
+        resp = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "world@example.com",
+            "password": "12345678"
+        })
+        assert resp.status_code == 200
+        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        username = User.objects.get(username='world').username
+        email = User.objects.get(username='world').email
+        assert username == 'world'
+        assert email == 'world@example.com'
+
 
