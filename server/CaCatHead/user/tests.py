@@ -117,7 +117,7 @@ class UserAuthTests(APITestCase):
         assert resp4.status_code == 401
         assert resp4.data['detail'] == "认证令牌无效。"
 
-    def test_multilogin_multitoken_multilogout(self):# 多次登录 不带token 每个独立
+    def test_multilogin_multitoken_multilogout(self):  # 多次登录 不带token 每个独立
         init_superuser()
         authorization = []
         for i in range(11):
@@ -138,3 +138,33 @@ class UserAuthTests(APITestCase):
             resp3 = self.client.post('/api/auth/logout')
             assert resp3.status_code == 204
 
+    def test_flow(self):  # 测试整个流程 注册-登录-查看-退出
+        # 注册
+        resp = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "world@example.com",
+            "password": "12345678"
+        })
+        assert resp.status_code == 200
+        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        Object = User.objects.get(username='world')
+        username = Object.username
+        email = Object.email
+        assert username == 'world'
+        assert email == 'world@example.com'
+        # 登录
+        resp = self.client.post('/api/auth/login',
+                                {"username": username, "password": "12345678"},
+                                format='json')
+        assert resp.status_code == 200
+        assert len(resp.data['expiry']) > 0
+        assert len(resp.data['token']) > 0
+        # 查看信息
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.get('/api/user/profile')
+        assert resp2.status_code == 200
+        #退出
+        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': username, 'email': email}})
+        resp3 = self.client.post('/api/auth/logout')
+        assert resp3.status_code == 204
