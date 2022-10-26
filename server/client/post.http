@@ -1,0 +1,5 @@
+### List post
+GET http://127.0.0.1:8000/api/posts
+
+### Get post
+GET http://127.0.0.1:8000/api/post/1

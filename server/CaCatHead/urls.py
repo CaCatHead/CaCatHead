@@ -14,26 +14,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from django.conf import settings
 from django.contrib import admin
 
-from rest_framework.schemas import get_schema_view
 from knox import views as knox_views
 
-from CaCatHead.user import views as users_views
+from CaCatHead.user import views as user_views
+from CaCatHead.post import views as post_views
 
 urlpatterns = [
     # admin usage
     path('admin/', admin.site.urls),
     # test ping
-    path('api/hello/', users_views.hello_world),
+    path('api/hello/', user_views.hello_world),
     # user auth
-    path('api/auth/register', users_views.user_register),
-    path('api/auth/login', users_views.UserLoginView.as_view()),
+    path('api/auth/register', user_views.user_register),
+    path('api/auth/login', user_views.UserLoginView.as_view()),
     path('api/auth/logout', knox_views.LogoutView.as_view()),
     path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
     # user profile
-    path('api/user/profile', users_views.current_user_profile)
+    path('api/user/profile', user_views.current_user_profile),
+    # post
+    path('api/posts', post_views.list_post),
+    path('api/post/<int:post_id>', post_views.get_post)
 ]
 
 # if settings.DEBUG:

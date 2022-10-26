@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'knox',
     # Custom apps
     'CaCatHead.user.apps.UserConfig',
-    'CaCatHead.problem.apps.ProblemConfig'
+    'CaCatHead.problem.apps.ProblemConfig',
+    'CaCatHead.post.apps.PostConfig'
 ]
 
 # Django REST framework config
