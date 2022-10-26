@@ -66,4 +66,7 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          root_dir: ./server
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./server
+          fail_ci_if_error: true
+          verbose: true
