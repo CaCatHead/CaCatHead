@@ -65,13 +65,13 @@ jobs:
       - name: Generate coverage
         working-directory: server
         run: |
-          pip install coverage
-          coverage run manage.py test
+          pipenv run coverage run manage.py test
+          pipenv run coverage report
+          pipenv run coverage xml
       
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          working-directory: ./server
+          file: ./server/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          verbose: true

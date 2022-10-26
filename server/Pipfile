@@ -15,6 +15,7 @@ uritemplate = "==4.1.1"
 
 [dev-packages]
 autopep8 = "*"
+coverage = "*"
 pylint = "*"
 
 [requires]
