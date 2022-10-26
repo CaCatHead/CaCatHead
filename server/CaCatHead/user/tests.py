@@ -19,14 +19,18 @@ class UserAuthTests(APITestCase):
                                 {"username": "root", "password": "12345678"},
                                 format='json')
         assert resp.status_code == 200
-
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
-        # temp = "Token " + resp.data['token']
-        # print(temp)
-        self.client.credentials(HTTP_AUTHORIZATION=temp)
+        # 测试Token访问/api/user/profile 返回200
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        # print(resp2.data)
-        assert len(resp2.data['username']) > 0
-        assert len(resp2.data['email']) > 0
+        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
+        # 随机搞一个token访问/api/user/profile 返回401
+        authorization = resp.data['token']
+        reversed(authorization)
+        authorization = "Token " + authorization + "c"
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.get('/api/user/profile')
+        self.assertEqual(resp2.status_code, 401)
