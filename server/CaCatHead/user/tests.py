@@ -2,10 +2,14 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 
 
+def init_superuser(username='root', password='12345678', email='root@example.com'):
+    User.objects.create_superuser(username=username, email=email, password=password)
+
+
 class UserAuthTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        User.objects.create_superuser(username='root', password='12345678', email='root@example.com')
+        init_superuser()
 
     def test_hello_world(self):
         resp = self.client.get('/api/hello/')
@@ -19,7 +23,6 @@ class UserAuthTests(APITestCase):
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
-        print(resp.data)
         # 测试Token访问/api/user/profile 返回200
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
@@ -174,3 +177,12 @@ class UserAuthTests(APITestCase):
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': username, 'email': email}})
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
+
+    def test_login_validate_error(self):
+        resp = self.client.post('/api/auth/login', {
+            "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }, format='json')
+        assert resp.status_code == 400
+        assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
+        assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
