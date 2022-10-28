@@ -1,6 +1,7 @@
 from django.db import models
-from CaCatHead.core.models import BaseModel
 from django.utils.translation import gettext_lazy as _
+
+from CaCatHead.core.models import BaseModel
 
 
 class ProblemModel(BaseModel):
@@ -52,8 +53,8 @@ class ProblemModel(BaseModel):
     testdata_count = models.IntegerField(default=0, verbose_name=_(u"用例数目"))
     testdata_score = models.TextField(blank=True, null=True, verbose_name=_(u"用例分数"))
     # create_user = models.CharField(max_length=45, default='admin', null=True, verbose_name=_(u"创建者"))
-    is_public = models.BooleanField(default=True, verbose_name=_(u"是否公开"), help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.')
-
+    is_public = models.BooleanField(default=True, verbose_name=_(u"是否公开"),
+                                    help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.')
 
     # @classmethod
     # def get_all_create_user_nicename(cls):

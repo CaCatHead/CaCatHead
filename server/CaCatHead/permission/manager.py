@@ -1,7 +1,6 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import User, Group
 from django.db import models
 from django.db.models import Subquery, Q
-from knox.models import User
 
 from CaCatHead.permission.models import UserPermission, GroupPermission
 
@@ -23,6 +22,9 @@ class PermissionManager(models.Manager):
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
         return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+
+    def _q_user_group(self, user: User, permissions: [str]):
+        group_subquery = Group.objects.filter(user=user)
 
     def _q_group_private(self, group: Group, permissions: [str], **kwargs):
         permission_subquery = GroupPermission.objects.filter(group=group, content_type=self.model_name())

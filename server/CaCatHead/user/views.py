@@ -1,16 +1,15 @@
 from django.contrib.auth import authenticate, login
-
+from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
-from knox.views import LoginView as KnoxLoginView
+from rest_framework.request import Request
+from rest_framework.response import Response
 
-from CaCatHead.user.service import register_student_user
-from CaCatHead.user.serializer import LoginPayloadSerializer, RegisterPayloadSerializers
 from CaCatHead.core.decorators import func_validate_request, class_validate_request
+from CaCatHead.user.serializer import LoginPayloadSerializer, RegisterPayloadSerializers
+from CaCatHead.user.service import register_student_user
 
 
 @api_view()
@@ -37,7 +36,7 @@ def user_register(request):
     username = request.data['username']
     email = request.data['email']
     password = request.data['password']
-    user = register_student_user(username=username,email=email,password=password)
+    user = register_student_user(username=username, email=email, password=password)
     return Response({"status": "ok", "user": {"username": user.username, "email": user.email}})
 
 

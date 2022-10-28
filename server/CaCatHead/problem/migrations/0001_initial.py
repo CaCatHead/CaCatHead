@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -33,7 +32,9 @@ class Migration(migrations.Migration):
                 ('level', models.IntegerField(default=3, verbose_name='题目难度')),
                 ('testdata_count', models.IntegerField(default=0, verbose_name='用例数目')),
                 ('testdata_score', models.TextField(blank=True, null=True, verbose_name='用例分数')),
-                ('is_public', models.BooleanField(default=True, help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.', verbose_name='是否公开')),
+                ('is_public', models.BooleanField(default=True,
+                                                  help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.',
+                                                  verbose_name='是否公开')),
             ],
             options={
                 'verbose_name': '题目信息',
