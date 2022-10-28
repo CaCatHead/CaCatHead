@@ -26,7 +26,14 @@ class Post(BaseModel):
     class Meta:
         db_table = 'post'
 
-        ordering = ['sort_time']
+        ordering = ('sort_time', )
+
+        verbose_name = _("公告")
+
+        verbose_name_plural = _("公告")
+
+    def __str__(self):
+        return f'{self.id}. {self.title}'
 
 
 class PostContent(models.Model):
@@ -37,3 +44,10 @@ class PostContent(models.Model):
 
     class Meta:
         db_table = 'post_content'
+
+        verbose_name = _("公告内容")
+
+        verbose_name_plural = _("公告内容")
+
+    def __str__(self):
+        return f'公告 {self.post_id} 的内容'
