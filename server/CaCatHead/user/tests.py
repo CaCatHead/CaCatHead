@@ -118,9 +118,9 @@ class UserAuthTests(APITestCase):
         assert resp4.status_code == 401
         assert resp4.data['detail'] == "认证令牌无效。"
 
-    def test_multilogin_multitoken_multilogout(self):
+    def test_multilogin_logoutall(self):
         """
-        多次登录 不带token 每个独立
+        多次登录 不带token 每个独立 全部退出
         """
         authorizations = []
         # 多次登录
@@ -139,10 +139,15 @@ class UserAuthTests(APITestCase):
             assert resp2.status_code == 200
             self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
         # 退出
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp3 = self.client.post('/api/auth/logoutall')
+        assert resp3.status_code == 204
+        # 认证token无效
         for authorization in authorizations:
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
-            resp3 = self.client.post('/api/auth/logout')
-            assert resp3.status_code == 204
+            resp2 = self.client.get('/api/user/profile')
+            assert resp2.status_code == 401
+            assert resp2.data['detail'] == "认证令牌无效。"
 
     def test_flow(self):
         """
