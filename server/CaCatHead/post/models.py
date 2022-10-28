@@ -26,7 +26,7 @@ class Post(BaseModel):
     class Meta:
         db_table = 'post'
 
-        ordering = ('sort_time', )
+        ordering = ('sort_time',)
 
         verbose_name = _("公告")
 
