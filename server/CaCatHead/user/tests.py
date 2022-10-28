@@ -1,13 +1,8 @@
-import sqlite3
-
 import django.db.utils
-from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from .models import UserInfo, StudentInfo
+from rest_framework.test import APITestCase
 
-
-def init_superuser(username='root', password='12345678', email='root@example.com'):
-    User.objects.create_superuser(username=username, email=email, password=password)
+from CaCatHead.core.tests import init_superuser
 
 
 class UserAuthTests(APITestCase):
@@ -22,12 +17,11 @@ class UserAuthTests(APITestCase):
 
     def test_login(self):
         resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"},
-                                format='json')
+                                {"username": "root", "password": "12345678"})
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
-        # 测试Token访问/api/user/profile 返回200
+        # 测试 Token 访问 /api/user/profile 返回 200
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
@@ -36,12 +30,11 @@ class UserAuthTests(APITestCase):
 
     def test_token_error_authentication_fail(self):
         resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"},
-                                format='json')
+                                {"username": "root", "password": "12345678"})
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
-        # 随便搞一个token访问/api/user/profile 返回401
+        # 随便搞一个 token 访问 /api/user/profile 返回 401
         authorization = resp.data['token']
         authorization = "Token " + authorization[::-1]
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
@@ -50,70 +43,36 @@ class UserAuthTests(APITestCase):
 
     def test_password_error(self):
         resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "gdxtxdy"},
-                                format='json')
+                                {"username": "root", "password": "gdxtxdy"})
         assert resp.status_code == 401
         self.assertEqual(resp.data['detail'], "不正确的身份认证信息。")
 
     def test_username_error(self):
         resp = self.client.post('/api/auth/login',
-                                {"username": "gdx", "password": "gdxtxdy"},
-                                format='json')
+                                {"username": "gdx", "password": "gdxtxdy"})
         assert resp.status_code == 401
         assert resp.data['detail'] == "不正确的身份认证信息。"
 
     def test_sql_inject_fail(self):
+        """
+        TODO: SQL injection failure
+        """
         resp = self.client.post('/api/auth/login',
-                                {"username": "root; DELETE FROM User", "password": "12345678"},
-                                format='json')
-
-    # TODO: SQL injection failure
-    def test_register(self):
-        resp = self.client.post('/api/auth/register', {
-            "username": "world",
-            "email": "world@example.com",
-            "password": "12345678"
-        })
-        assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        user = User.objects.get(username='world')
-        username = user.username
-        email = user.email
-        assert username == 'world'
-        assert email == 'world@example.com'
-
-    def test_logout_token_fail(self):
-        """
-        登录获取 token，退出，该 token 不可用
-        """
-        resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"},
-                                format='json')
-        assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
-        authorization = "Token " + resp.data['token']
-        self.client.credentials(HTTP_AUTHORIZATION=authorization)
-        resp2 = self.client.post('/api/auth/logout')
-        assert resp2.status_code == 204
-        resp3 = self.client.post('/api/user/profile')
-        assert resp3.status_code == 401
-        assert resp3.data['detail'] == "认证令牌无效。"
+                                {"username": "root; DELETE FROM User", "password": "12345678"})
 
     def test_multilogin_logout(self):
         """
         多次登录 登录了就带token 第二次登录返回已登录
         """
         resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"},
-                                format='json')
+                                {"username": "root", "password": "12345678"})
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.post('/api/auth/login',
-                                 {"username": "root", "password": "12345678"},
-                                 format='json')
+                                 {"username": "root", "password": "12345678"})
         assert resp2.status_code == 401
         assert resp2.data['detail'] == '你已经登陆过了'
         resp3 = self.client.post('/api/auth/logout')
@@ -122,7 +81,7 @@ class UserAuthTests(APITestCase):
         assert resp4.status_code == 401
         assert resp4.data['detail'] == "认证令牌无效。"
 
-    def test_multilogin_logoutall(self):
+    def test_multi_login_logoutall(self):
         """
         多次登录 不带token 每个独立 全部退出
         """
@@ -130,13 +89,12 @@ class UserAuthTests(APITestCase):
         # 多次登录
         for _ in range(0, 10):
             resp = self.client.post('/api/auth/login',
-                                    {"username": "root", "password": "12345678"},
-                                    format='json')
+                                    {"username": "root", "password": "12345678"})
             assert resp.status_code == 200
             assert len(resp.data['expiry']) > 0
             assert len(resp.data['token']) > 0
             authorizations.append("Token " + resp.data['token'])
-        # 每个token查看信息
+        # 每个 token 查看信息
         for authorization in authorizations:
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
@@ -172,8 +130,7 @@ class UserAuthTests(APITestCase):
         assert email == 'world@example.com'
         # 登录
         resp = self.client.post('/api/auth/login',
-                                {"username": username, "password": "12345678"},
-                                format='json')
+                                {"username": username, "password": "12345678"})
         assert resp.status_code == 200
         assert len(resp.data['expiry']) > 0
         assert len(resp.data['token']) > 0
@@ -191,19 +148,55 @@ class UserAuthTests(APITestCase):
         resp = self.client.post('/api/auth/login', {
             "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        }, format='json')
+        })
         assert resp.status_code == 400
         assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
+
+    def test_logout_token_fail(self):
+        """
+        登录获取 token，退出，该 token 不可用
+        """
+        resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"})
+        assert resp.status_code == 200
+        assert len(resp.data['expiry']) > 0
+        assert len(resp.data['token']) > 0
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        resp2 = self.client.post('/api/auth/logout')
+        assert resp2.status_code == 204
+        resp3 = self.client.post('/api/user/profile')
+        assert resp3.status_code == 401
+        assert resp3.data['detail'] == "认证令牌无效。"
+
+
+class UserRegisterTests(APITestCase):
+    def test_register(self):
+        """
+        正常注册
+        """
+        resp = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "world@example.com",
+            "password": "12345678"
+        })
+        assert resp.status_code == 200
+        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        user = User.objects.get(username='world')
+        username = user.username
+        email = user.email
+        assert username == 'world'
+        assert email == 'world@example.com'
 
     def test_register_validate_error(self):
         resp = self.client.post('/api/auth/register', {
             "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-        }, format='json')
+        })
         assert resp.status_code == 400
         assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
+
     def test_register_error_same_username(self):
         """
         同一个用户名多次注册
@@ -229,7 +222,7 @@ class UserAuthTests(APITestCase):
                 "password": "12345678"
             })
 
-    def test_register_error_same_email(self):
+    def test_register_ok_same_email(self):
         """
         同一个邮箱多次注册
         """
@@ -247,9 +240,8 @@ class UserAuthTests(APITestCase):
         assert username == 'world'
         assert email == 'world@example.com'
         # 二次注册
-        with self.assertRaises(django.db.utils.IntegrityError):
-            resp = self.client.post('/api/auth/register', {
-                "username": "gdx",
-                "email": "root@example.com",
-                "password": "12345678"
-            })
+        self.client.post('/api/auth/register', {
+            "username": "gdx",
+            "email": "root@example.com",
+            "password": "12345678"
+        })
