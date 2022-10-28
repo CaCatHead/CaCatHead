@@ -1,5 +1,9 @@
+import sqlite3
+
+import django.db.utils
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
+from .models import UserInfo, StudentInfo
 
 
 def init_superuser(username='root', password='12345678', email='root@example.com'):
@@ -191,3 +195,53 @@ class UserAuthTests(APITestCase):
         assert resp.status_code == 400
         assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
+
+    def test_register_error_same_username(self):
+        """
+        同一个用户名多次注册
+        """
+        # 注册
+        resp = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "world@example.com",
+            "password": "12345678"
+        })
+        assert resp.status_code == 200
+        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        user = User.objects.get(username='world')
+        username = user.username
+        email = user.email
+        assert username == 'world'
+        assert email == 'world@example.com'
+        # 二次注册
+        with self.assertRaises(django.db.utils.IntegrityError):
+            resp = self.client.post('/api/auth/register', {
+                "username": "world",
+                "email": "gdx@example.com",
+                "password": "12345678"
+            })
+
+    def test_register_error_same_email(self):
+        """
+        同一个邮箱多次注册
+        """
+        # 注册
+        resp = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "world@example.com",
+            "password": "12345678"
+        })
+        assert resp.status_code == 200
+        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        user = User.objects.get(username='world')
+        username = user.username
+        email = user.email
+        assert username == 'world'
+        assert email == 'world@example.com'
+        # 二次注册
+        with self.assertRaises(django.db.utils.IntegrityError):
+            resp = self.client.post('/api/auth/register', {
+                "username": "gdx",
+                "email": "root@example.com",
+                "password": "12345678"
+            })
