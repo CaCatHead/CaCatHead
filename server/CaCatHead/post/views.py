@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 from CaCatHead.post.serializers import PostSerializer, PostContentSerializer
 
@@ -12,7 +13,7 @@ def list_post(request: Request):
     """
     列出用户可见的所有公告
     """
-    posts = Post.objects.filter_user(user=request.user)
+    posts = Post.objects.filter_user(user=request.user, permission=PostPermissions.Read)
     return Response({'status': 'ok', 'posts': PostSerializer(posts, many=True).get_or_raise()})
 
 
@@ -30,7 +31,7 @@ def get_post_content(request: Request, post_id):
     """
     查看公告内容
     """
-    post = Post.objects.filter_user(user=request.user, id=post_id).first()
+    post = Post.objects.filter_user(user=request.user, id=post_id, permission=PostPermissions.Read).first()
     return Response({'status': 'ok', 'post': PostContentSerializer(post).get_or_raise()})
 
 
