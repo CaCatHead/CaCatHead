@@ -60,7 +60,7 @@ class UserAuthTests(APITestCase):
         resp = self.client.post('/api/auth/login',
                                 {"username": "root; DELETE FROM User", "password": "12345678"})
 
-    def test_multilogin_logout(self):
+    def test_multi_login_logout(self):
         """
         多次登录, 登录了带 token, 第二次登录返回已登录
         """
