@@ -196,6 +196,14 @@ class UserAuthTests(APITestCase):
         assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
 
+    def test_register_validate_error(self):
+        resp = self.client.post('/api/auth/register', {
+            "username": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }, format='json')
+        assert resp.status_code == 400
+        assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
+        assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
     def test_register_error_same_username(self):
         """
         同一个用户名多次注册
