@@ -62,7 +62,7 @@ class UserAuthTests(APITestCase):
 
     def test_multilogin_logout(self):
         """
-        多次登录 登录了就带token 第二次登录返回已登录
+        多次登录, 登录了带 token, 第二次登录返回已登录
         """
         resp = self.client.post('/api/auth/login',
                                 {"username": "root", "password": "12345678"})
@@ -104,7 +104,7 @@ class UserAuthTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorizations[0])
         resp3 = self.client.post('/api/auth/logoutall')
         assert resp3.status_code == 204
-        # 认证token无效
+        # 认证 token 无效
         for authorization in authorizations:
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
@@ -233,7 +233,6 @@ class UserRegisterTests(APITestCase):
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
-        # with self.assertRaises(django.db.utils.IntegrityError):
         self.client.post('/api/auth/register', {
             "username": "gdx",
             "email": "world@example.com",
