@@ -101,7 +101,7 @@ class UserAuthTests(APITestCase):
             assert resp2.status_code == 200
             self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
         # 退出
-        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+        self.client.credentials(HTTP_AUTHORIZATION=authorizations[0])
         resp3 = self.client.post('/api/auth/logoutall')
         assert resp3.status_code == 204
         # 认证token无效
