@@ -15,8 +15,11 @@ def list_post(request: Request):
 
 @api_view()
 def get_post(request: Request, post_id):
-    posts = Post.objects.filter_user(user=request.user, id=post_id).first()
-    return Response({'status': 'ok', 'post': PostContentSerializer(posts).data})
+    post = Post.objects.filter_user(user=request.user, id=post_id).first()
+    if post is not None:
+        return Response({'status': 'ok', 'post': PostContentSerializer(post).data})
+    else:
+        return Response({'status': 'error', 'detail': f'未找到编号为 {post_id} 的公告'})
 
 
 @api_view(['POST'])
