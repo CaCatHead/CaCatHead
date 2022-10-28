@@ -4,7 +4,6 @@ def class_validate_request(serializer_class):
     """
     def decorator(func):
         def wrapped_view(self, request, *args, **kwargs):
-            print(self)
             serializer = serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
             return func(self, request, *args, **kwargs)
