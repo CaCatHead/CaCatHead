@@ -10,16 +10,13 @@ from CaCatHead.post.serializers import PostSerializer, PostContentSerializer
 @api_view()
 def list_post(request: Request):
     posts = Post.objects.filter_user(user=request.user)
-    return Response({'status': 'ok', 'posts': PostSerializer(posts, many=True).data})
+    return Response({'status': 'ok', 'posts': PostSerializer(posts, many=True).get_or_raise()})
 
 
 @api_view()
 def get_post(request: Request, post_id):
     post = Post.objects.filter_user(user=request.user, id=post_id).first()
-    if post is not None:
-        return Response({'status': 'ok', 'post': PostContentSerializer(post).data})
-    else:
-        return Response({'status': 'error', 'detail': f'未找到编号为 {post_id} 的公告'})
+    return Response({'status': 'ok', 'post': PostContentSerializer(post).get_or_raise()})
 
 
 @api_view(['POST'])
