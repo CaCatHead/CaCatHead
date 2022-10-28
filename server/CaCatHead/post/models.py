@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
+from CaCatHead.permission.manager import PermissionManager
 
 
 class Post(BaseModel):
@@ -19,6 +20,8 @@ class Post(BaseModel):
     sort_time = models.DateTimeField(auto_now_add=True, verbose_name=_(u"排序时间"))
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
+
+    objects = PermissionManager()
 
     class Meta:
         db_table = 'post'
