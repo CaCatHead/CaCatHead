@@ -1,13 +1,12 @@
 import re
 
-from django.contrib.auth.models import User, Group, BaseUserManager
+from django.contrib.auth.models import User, Group
 from django.core import validators
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from CaCatHead.core.models import BaseModel
 from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
+from CaCatHead.core.models import BaseModel
 
 NJUST_ICPC_GROUP = Group(name=NJUST_ICPC_GROUP_NAME)
 
