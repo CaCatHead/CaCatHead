@@ -15,6 +15,6 @@ $ pipenv run python manage.py createsuperuser   # create super user
 $ pipenv run python manage.py runserver         # start dev server
 ```
 
-Open `client/user.http` to try the api endpoints.
+Open `Client/user.http` to try the api endpoints.
 
 > We recommend you use the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the api.
