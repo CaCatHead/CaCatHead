@@ -35,7 +35,8 @@ urlpatterns = [
     path('api/user/profile', user_views.current_user_profile),
     # post
     path('api/posts', post_views.list_post),
-    path('api/post/<int:post_id>', post_views.get_post),
+    path('api/posts/public', post_views.list_public_post),
+    path('api/post/<int:post_id>', post_views.get_post_content),
     path('api/post', post_views.create_post)
 ]
 
