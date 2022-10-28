@@ -16,12 +16,14 @@ class Post(BaseModel):
 
     publisher = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"发布者"))
 
-    sortTime = models.DateTimeField(auto_now_add=True, verbose_name=_(u"排序时间"))
+    sort_time = models.DateTimeField(auto_now_add=True, verbose_name=_(u"排序时间"))
 
-    isPublic = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
+    is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
     class Meta:
-        ordering = ['sortTime']
+        db_table = 'post'
+
+        ordering = ['sort_time']
 
 
 class PostContent(models.Model):
@@ -29,3 +31,6 @@ class PostContent(models.Model):
                                 verbose_name=_(u"公告"))
 
     content = models.TextField(blank=True, null=True, verbose_name=_(u"公告内容"))
+
+    class Meta:
+        db_table = 'post_content'
