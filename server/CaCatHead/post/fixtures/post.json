@@ -1,0 +1,42 @@
+[
+  {
+    "model": "post.post",
+    "pk": 1,
+    "fields": {
+      "created": "2022-10-26T18:20:03.089Z",
+      "updated": "2022-10-26T18:20:03.089Z",
+      "title": "系统公告",
+      "publisher": 1,
+      "sort_time": "2022-10-26T18:20:03.089Z",
+      "is_public": true
+    }
+  },
+  {
+    "model": "post.postcontent",
+    "pk": 1,
+    "fields": {
+      "post": 1,
+      "content": "你好！"
+    }
+  },
+  {
+    "model": "post.post",
+    "pk": 2,
+    "fields": {
+      "created": "2022-10-26T18:20:03.089Z",
+      "updated": "2022-10-26T18:20:03.089Z",
+      "title": "公告测试",
+      "publisher": 1,
+      "sort_time": "2022-10-26T18:20:03.089Z",
+      "is_public": false
+    }
+  },
+  {
+    "model": "post.postcontent",
+    "pk": 2,
+    "fields": {
+      "post": 2,
+      "content": "猫猫头测试中。"
+    }
+  }
+]
