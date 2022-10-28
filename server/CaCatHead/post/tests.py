@@ -35,3 +35,7 @@ class PostManagerTests(APITestCase):
         assert private_post.id == 2
         assert private_post.title == '公告测试'
         assert not private_post.is_public
+
+
+class PostViewTests(APITestCase):
+    pass
