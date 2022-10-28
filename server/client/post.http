@@ -1,8 +1,14 @@
 ### List post
 GET http://127.0.0.1:8000/api/posts
+Authorization: Token {{auth_token}}
 
-### Get post
+### Get public post
 GET http://127.0.0.1:8000/api/post/1
+Authorization: Token {{auth_token}}
+
+### Get private post
+GET http://127.0.0.1:8000/api/post/2
+Authorization: Token {{auth_token}}
 
 ### Create post
 POST http://127.0.0.1:8000/api/post

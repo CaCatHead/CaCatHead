@@ -9,13 +9,13 @@ from CaCatHead.post.serializers import PostSerializer, PostContentSerializer
 
 @api_view()
 def list_post(request: Request):
-    posts = Post.objects.filter_public()
+    posts = Post.objects.filter_user(user=request.user)
     return Response({'status': 'ok', 'posts': PostSerializer(posts, many=True).data})
 
 
 @api_view()
 def get_post(request: Request, post_id):
-    posts = Post.objects.filter(is_public=True, id=post_id).first()
+    posts = Post.objects.filter_user(user=request.user, id=post_id).first()
     return Response({'status': 'ok', 'post': PostContentSerializer(posts).data})
 
 
