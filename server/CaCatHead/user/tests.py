@@ -171,6 +171,11 @@ class UserAuthTests(APITestCase):
 
 
 class UserRegisterTests(APITestCase):
+    def assertUserRegistered(self, username='world', email='world@example.com'):
+        user = User.objects.get(username=username)
+        assert user.username == username
+        assert user.email == email
+
     def test_register(self):
         """
         正常注册
@@ -182,11 +187,7 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        user = User.objects.get(username='world')
-        username = user.username
-        email = user.email
-        assert username == 'world'
-        assert email == 'world@example.com'
+        self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
         resp = self.client.post('/api/auth/register', {
@@ -209,11 +210,7 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        user = User.objects.get(username='world')
-        username = user.username
-        email = user.email
-        assert username == 'world'
-        assert email == 'world@example.com'
+        self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         with self.assertRaises(django.db.utils.IntegrityError):
             resp = self.client.post('/api/auth/register', {
@@ -234,14 +231,13 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
-        user = User.objects.get(username='world')
-        username = user.username
-        email = user.email
-        assert username == 'world'
-        assert email == 'world@example.com'
+        self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
+        # with self.assertRaises(django.db.utils.IntegrityError):
         self.client.post('/api/auth/register', {
             "username": "gdx",
-            "email": "root@example.com",
+            "email": "world@example.com",
             "password": "12345678"
         })
+        self.assertUserRegistered('world', 'world@example.com')
+        self.assertUserRegistered('gdx', 'world@example.com')
