@@ -125,9 +125,15 @@ class ProblemRepository(models.Model):
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
-    problems = models.ManyToManyField(Problem)
+    problems = models.ManyToManyField(Problem, verbose_name=_(u"题目列表"))
 
     objects = PermissionManager()
+
+    def __str__(self):
+        if self.name.endswith('题库'):
+            return self.name
+        else:
+            return f'{self.name}题库'
 
     class Meta:
         db_table = 'problem_repository'
@@ -136,4 +142,4 @@ class ProblemRepository(models.Model):
         verbose_name_plural = _(u"题目仓库列表")
 
 
-MAIN_PROBLEM_REPOSITORY_NAME = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY_NAME)
+MAIN_PROBLEM_REPOSITORY = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY_NAME)

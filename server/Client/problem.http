@@ -1,0 +1,7 @@
+### GET repo list
+GET http://127.0.0.1:8000/api/repos
+Authorization: Token {{auth_token}}
+
+### GET own problems
+GET http://127.0.0.1:8000/api/problems/own
+Authorization: Token {{auth_token}}

@@ -10,6 +10,8 @@ class ProblemRepositoryAdmin(admin.ModelAdmin):
 
     search_fields = ('id', 'name')
 
+    ordering = ('id', 'name')
+
 
 class ProblemAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'owner', 'is_public')
