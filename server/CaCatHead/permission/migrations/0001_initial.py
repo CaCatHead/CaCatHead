@@ -18,9 +18,7 @@ class Migration(migrations.Migration):
             name='UserPermission',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content_type',
-                 models.CharField(choices=[('post', 'post'), ('problem', 'problem'), ('contest', 'contest')],
-                                  max_length=32, verbose_name='资源类型')),
+                ('content_type', models.CharField(max_length=32, verbose_name='资源类型')),
                 ('content_id', models.BigIntegerField(verbose_name='资源 id')),
                 ('codename', models.CharField(max_length=32, verbose_name='权限内容')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
@@ -34,9 +32,7 @@ class Migration(migrations.Migration):
             name='GroupPermission',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content_type',
-                 models.CharField(choices=[('post', 'post'), ('problem', 'problem'), ('contest', 'contest')],
-                                  max_length=32, verbose_name='资源类型')),
+                ('content_type', models.CharField(max_length=32, verbose_name='资源类型')),
                 ('content_id', models.BigIntegerField(verbose_name='资源 id')),
                 ('codename', models.CharField(max_length=32, verbose_name='权限内容')),
                 ('group',

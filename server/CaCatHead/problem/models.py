@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.models import BaseModel
+from CaCatHead.permission.manager import PermissionManager
 
 PROBLEM_TYPES = {
     'classic': 'classic',
@@ -125,6 +126,8 @@ class ProblemRepository(models.Model):
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
     problems = models.ManyToManyField(Problem)
+
+    objects = PermissionManager()
 
     class Meta:
         db_table = 'problem_repository'
