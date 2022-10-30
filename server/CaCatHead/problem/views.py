@@ -1,11 +1,13 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound
+from rest_framework.request import Request
 
 from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request
 from CaCatHead.permission.constants import ProblemRepositoryPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem, MAIN_PROBLEM_REPOSITORY
-from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload
-from CaCatHead.problem.services import make_problem
+from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
+    EditProblemPayload, FullProblemSerializer
+from CaCatHead.problem.services import make_problem, edit_problem
 from CaCatHead.utils import make_response
 
 
@@ -13,7 +15,7 @@ from CaCatHead.utils import make_response
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
 @func_validate_request(CreateProblemPayload)
-def create_problem(request):
+def create_problem(request: Request):
     """
     创建题目
     """
@@ -25,32 +27,40 @@ def create_problem(request):
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
-def upload_problem(request):
+def upload_problem(request: Request):
     """
     上传题目
     """
     return make_response()
 
 
-@api_view()
+@api_view(['POST'])
 @permission_classes([HasPolygonPermission])
-def edit_problem(request):
+@func_validate_request(EditProblemPayload)
+def edit_created_problem(request: Request, problem_id: int):
     """
     编辑题目
     """
-    return make_response()
+    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                     id=problem_id,
+                                     owner=request.user).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        problem = edit_problem(problem=problem, payload=request.data)
+        return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
 @api_view()
 @permission_classes([HasPolygonPermission])
-def get_created_problems(request, problem_id: int):
+def get_created_problems(request: Request, problem_id: int):
     """
     查看自己创建的题目
     """
     problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                      id=problem_id,
                                      owner=request.user).first()
-    return make_response(problem=ProblemSerializer(problem).get_or_raise())
+    return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
 @api_view()

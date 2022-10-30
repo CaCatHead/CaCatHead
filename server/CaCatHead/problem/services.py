@@ -5,9 +5,6 @@ from CaCatHead.problem.models import Problem, MAIN_PROBLEM_REPOSITORY, ProblemIn
 
 
 def make_problem(title: str, user: User, display_id=None):
-    print(user)
-    print(display_id)
-
     # init problem content
     problem_content = ProblemContent(title=title)
     problem_content.save()
@@ -37,6 +34,20 @@ def make_problem(title: str, user: User, display_id=None):
     return problem
 
 
-def edit_problem(pid: int):
-    problem = Problem.objects.get(id=pid)
+def edit_problem(problem: Problem, payload: dict):
+    if 'title' in payload:
+        problem.title = payload['title']
+        problem.problem_info.problem_content.title = payload['title']
+    if 'display_id' in payload:
+        # TODO: check unique display_id
+        problem.display_id = payload['display_id']
+    if 'time_limit' in payload:
+        problem.time_limit = payload['time_limit']
+        problem.problem_info.problem_judge.time_limit = payload['time_limit']
+    if 'memory_limit' in payload:
+        problem.time_limit = payload['memory_limit']
+        problem.problem_info.problem_judge.memory_limit = payload['memory_limit']
+    problem.save()
+    problem.problem_info.problem_content.save()
+    problem.problem_info.problem_judge.save()
     return problem

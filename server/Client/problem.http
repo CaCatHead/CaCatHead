@@ -18,3 +18,12 @@ Content-Type: application/json
 ### Get created problem
 GET http://127.0.0.1:8000/api/problem/1
 Authorization: Token {{auth_token}}
+
+### Edit created problem
+POST http://127.0.0.1:8000/api/problem/1/edit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "A - B"
+}

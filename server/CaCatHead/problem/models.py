@@ -59,9 +59,15 @@ class ProblemJudge(models.Model):
 
 
 class ProblemInfo(models.Model):
-    problem_content = models.ForeignKey(ProblemContent, on_delete=models.CASCADE, verbose_name=_(u"题目描述内容"))
+    problem_content = models.ForeignKey(ProblemContent,
+                                        on_delete=models.CASCADE,
+                                        related_name='problem_content',
+                                        verbose_name=_(u"题目描述内容"))
 
-    problem_judge = models.ForeignKey(ProblemJudge, on_delete=models.RESTRICT, verbose_name=_(u"评测信息"))
+    problem_judge = models.ForeignKey(ProblemJudge,
+                                      on_delete=models.RESTRICT,
+                                      related_name='problem_judge',
+                                      verbose_name=_(u"评测信息"))
 
     def __str__(self):
         return f'ProblemInfo #{self.id}'
@@ -103,7 +109,8 @@ class Problem(BaseModel):
 
     memory_limit = models.IntegerField(default=262144, verbose_name=_(u"内存限制"))
 
-    problem_info = models.ForeignKey(ProblemInfo, on_delete=models.RESTRICT, verbose_name=_(u"题目信息"))
+    problem_info = models.ForeignKey(ProblemInfo, on_delete=models.RESTRICT, related_name='problem_info',
+                                     verbose_name=_(u"题目信息"))
 
     extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
 
