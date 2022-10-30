@@ -41,6 +41,7 @@ urlpatterns = [
     # problem
     path('api/problem/upload', problem_views.upload_problem),  # 上传题目
     path('api/problem/create', problem_views.create_problem),  # 手动创建题目
+    path('api/problem/<int:problem_id>', problem_views.get_created_problems),  # 手动创建题目
     path('api/problem/<int:problem_id>/edit', problem_views.edit_problem),  # 编辑题目
     path('api/problems/own', problem_views.list_created_problems),  # 用户上传的题目列表
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库

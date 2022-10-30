@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('display_id', models.IntegerField(default=1000, verbose_name='题目显示编号')),
+                ('display_id', models.IntegerField(default=0, verbose_name='题目显示编号')),
                 ('title', models.CharField(max_length=512, verbose_name='标题')),
                 ('time_limit', models.IntegerField(default=1000, verbose_name='时间限制')),
                 ('memory_limit', models.IntegerField(default=262144, verbose_name='内存限制')),

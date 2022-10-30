@@ -1,28 +1,33 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound
 
-from CaCatHead.core.decorators import HasPolygonPermission
+from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request
 from CaCatHead.permission.constants import ProblemRepositoryPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem, MAIN_PROBLEM_REPOSITORY
-from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer
+from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload
+from CaCatHead.problem.services import make_problem
 from CaCatHead.utils import make_response
 
 
 # Polygon
-@api_view()
+@api_view(['POST'])
 @permission_classes([HasPolygonPermission])
+@func_validate_request(CreateProblemPayload)
 def create_problem(request):
     """
     创建题目
     """
-    return make_response()
+    title = request.data['title']
+    display_id = request.data.get('display_id', None)
+    problem = make_problem(title=title, user=request.user, display_id=display_id)
+    return make_response(problem=ProblemSerializer(problem).data)
 
 
-@api_view()
+@api_view(['POST'])
 @permission_classes([HasPolygonPermission])
 def upload_problem(request):
     """
-    创建题目
+    上传题目
     """
     return make_response()
 
@@ -34,6 +39,18 @@ def edit_problem(request):
     编辑题目
     """
     return make_response()
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
+def get_created_problems(request, problem_id: int):
+    """
+    查看自己创建的题目
+    """
+    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                     id=problem_id,
+                                     owner=request.user).first()
+    return make_response(problem=ProblemSerializer(problem).get_or_raise())
 
 
 @api_view()

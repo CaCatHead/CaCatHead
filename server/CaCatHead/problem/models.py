@@ -92,7 +92,7 @@ class Problem(BaseModel):
         create_user: 创建题目的账户
         is_public: 是否公开
     """
-    display_id = models.IntegerField(default=1000, verbose_name=_(u"题目显示编号"))
+    display_id = models.IntegerField(default=0, verbose_name=_(u"题目显示编号"))
 
     title = models.CharField(max_length=512, verbose_name=_(u"标题"))
 
@@ -142,4 +142,4 @@ class ProblemRepository(models.Model):
         verbose_name_plural = _(u"题目仓库列表")
 
 
-MAIN_PROBLEM_REPOSITORY = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY_NAME)
+MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)

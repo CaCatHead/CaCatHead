@@ -1,7 +1,20 @@
-### GET repo list
+### List all repos
 GET http://127.0.0.1:8000/api/repos
 Authorization: Token {{auth_token}}
 
-### GET own problems
+### List own problems
 GET http://127.0.0.1:8000/api/problems/own
+Authorization: Token {{auth_token}}
+
+### Create a new problem
+POST http://127.0.0.1:8000/api/problem/create
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "A + B"
+}
+
+### Get created problem
+GET http://127.0.0.1:8000/api/problem/1
 Authorization: Token {{auth_token}}
