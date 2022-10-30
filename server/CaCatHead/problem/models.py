@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.models import BaseModel
 from CaCatHead.permission.manager import PermissionManager
 
@@ -153,6 +152,3 @@ class ProblemRepository(models.Model):
         app_label = 'problem'
         verbose_name = _(u"题目仓库")
         verbose_name_plural = _(u"题目仓库列表")
-
-
-MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)

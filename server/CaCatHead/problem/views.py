@@ -4,10 +4,10 @@ from rest_framework.request import Request
 
 from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request
 from CaCatHead.permission.constants import ProblemRepositoryPermissions
-from CaCatHead.problem.models import ProblemRepository, Problem, MAIN_PROBLEM_REPOSITORY
+from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer
-from CaCatHead.problem.services import make_problem, edit_problem
+from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY
 from CaCatHead.utils import make_response
 
 

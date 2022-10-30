@@ -1,7 +1,11 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from CaCatHead.problem.models import Problem, MAIN_PROBLEM_REPOSITORY, ProblemInfo, ProblemContent, ProblemJudge
+from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
+from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
+    ProblemRepository
+
+MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
 
 
 def make_problem(title: str, user: User, display_id=None):
