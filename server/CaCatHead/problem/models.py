@@ -63,6 +63,9 @@ class ProblemInfo(models.Model):
 
     problem_judge = models.ForeignKey(ProblemJudge, on_delete=models.RESTRICT, verbose_name=_(u"评测信息"))
 
+    def __str__(self):
+        return f'ProblemInfo #{self.id}'
+
     class Meta:
         db_table = 'problem_info'
         verbose_name = _(u"题目信息")
@@ -112,6 +115,9 @@ class Problem(BaseModel):
     # accepted_number = models.IntegerField(default=0, verbose_name=_(u"通过人数"))
     # submit_number = models.IntegerField(default=0, verbose_name=_(u"提交次数"))
     # level = models.IntegerField(default=3, verbose_name=_(u"题目难度"))
+
+    def __str__(self):
+        return f'Problem {self.id}. {self.title}'
 
     class Meta:
         db_table = 'problem'
