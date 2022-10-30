@@ -21,6 +21,9 @@ from CaCatHead.post import views as post_views
 from CaCatHead.problem import views as problem_views
 from CaCatHead.user import views as user_views
 
+admin.site.site_header = "CaCatHead 管理后台"
+admin.site.site_title = 'CaCatHead 管理后台'
+
 urlpatterns = [
     # admin usage
     path('admin/', admin.site.urls),
