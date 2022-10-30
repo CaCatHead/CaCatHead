@@ -16,7 +16,7 @@ class PostManagerTests(APITestCase):
         call_command('loaddata', 'CaCatHead/post/fixtures/post.json', app_label='CaCatHead.post')
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
-        Post.objects.grant_user_permission(user, PostPermissions.Write, 2)
+        Post.objects.grant_user_permission(user, PostPermissions.Edit, 2)
 
     def test_posts(self):
         posts = Post.objects.all()
