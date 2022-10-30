@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
-
+from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 
 PROBLEM_TYPES = {
     'classic': 'classic',
@@ -46,7 +46,7 @@ class ProblemJudge(models.Model):
 
     testdata_count = models.IntegerField(default=0, verbose_name=_(u"用例数目"))
 
-    testdata_score = models.JSONField(default=[], verbose_name=_(u"用例分数"))
+    testdata_score = models.JSONField(default=list, verbose_name=_(u"用例分数"))
 
     extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
 
@@ -113,7 +113,7 @@ class Problem(BaseModel):
                                     help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.')
 
     class Meta:
-        db_table = 'problems'
+        db_table = 'problem'
         app_label = 'problem'
         verbose_name = _(u"题目信息")
         verbose_name_plural = _(u"题目列表")
@@ -121,8 +121,6 @@ class Problem(BaseModel):
 
 class ProblemRepository(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u"题目仓库名称"))
-
-    owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"创建者"))
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
@@ -133,3 +131,6 @@ class ProblemRepository(models.Model):
         app_label = 'problem'
         verbose_name = _(u"题目仓库")
         verbose_name_plural = _(u"题目仓库列表")
+
+
+MAIN_PROBLEM_REPOSITORY_NAME = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY_NAME)

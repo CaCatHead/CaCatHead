@@ -30,7 +30,7 @@ class Post(BaseModel):
 
         verbose_name = _("公告")
 
-        verbose_name_plural = _("公告")
+        verbose_name_plural = _("公告列表")
 
     def __str__(self):
         return f'{self.id}. {self.title}'
