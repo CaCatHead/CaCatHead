@@ -5,12 +5,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
-from rest_framework.response import Response
 
-from CaCatHead.utils import make_response
 from CaCatHead.core.decorators import func_validate_request, class_validate_request
 from CaCatHead.user.serializer import LoginPayloadSerializer, RegisterPayloadSerializers
 from CaCatHead.user.service import register_student_user
+from CaCatHead.utils import make_response
 
 
 @api_view()
