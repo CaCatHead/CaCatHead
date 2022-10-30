@@ -47,7 +47,23 @@ def edit_problem(problem: Problem, payload: dict):
     if 'memory_limit' in payload:
         problem.time_limit = payload['memory_limit']
         problem.problem_info.problem_judge.memory_limit = payload['memory_limit']
+    if 'description' in payload:
+        problem.problem_info.problem_content.description = payload['description']
+    if 'input' in payload:
+        problem.problem_info.problem_content.input = payload['input']
+    if 'output' in payload:
+        problem.problem_info.problem_content.output = payload['output']
+    if 'sample' in payload:
+        problem.problem_info.problem_content.sample = payload['sample']
+    if 'hint' in payload:
+        problem.problem_info.problem_content.hint = payload['hint']
+    if 'source' in payload:
+        problem.problem_info.problem_content.source = payload['source']
+    if 'extra_content' in payload:
+        problem.problem_info.problem_content.extra_content = payload['extra_content']
+
     problem.save()
     problem.problem_info.problem_content.save()
     problem.problem_info.problem_judge.save()
+
     return problem

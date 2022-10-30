@@ -25,5 +25,6 @@ Authorization: Token {{auth_token}}
 Content-Type: application/json
 
 {
-  "title": "A - B"
+  "title": "A - B",
+  "description": "Calculate A + B."
 }
