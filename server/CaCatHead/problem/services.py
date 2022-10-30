@@ -5,7 +5,10 @@ from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REP
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
 
-MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
+try:
+    MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
+except Exception:
+    MAIN_PROBLEM_REPOSITORY = None
 
 
 def make_problem(title: str, user: User, display_id=None):

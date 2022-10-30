@@ -108,12 +108,14 @@ class Problem(BaseModel):
 
     memory_limit = models.IntegerField(default=262144, verbose_name=_(u"内存限制"))
 
-    problem_info = models.ForeignKey(ProblemInfo, on_delete=models.RESTRICT, related_name='problem_info',
+    problem_info = models.ForeignKey(ProblemInfo,
+                                     on_delete=models.RESTRICT,
+                                     related_name='problem_info',
                                      verbose_name=_(u"题目信息"))
 
     extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
 
-    owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"创建者"))
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='problem_owner', verbose_name=_(u"创建者"))
 
     is_public = models.BooleanField(default=True, verbose_name=_(u"是否公开"),
                                     help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.')
@@ -138,6 +140,8 @@ class ProblemRepository(models.Model):
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
     problems = models.ManyToManyField(Problem, verbose_name=_(u"题目列表"))
+
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='repo_owner', verbose_name=_(u"创建者"))
 
     objects = PermissionManager()
 

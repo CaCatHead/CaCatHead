@@ -2,18 +2,15 @@ from django.contrib.auth.models import User
 from django.core.management import call_command
 from rest_framework.test import APITestCase
 
-from CaCatHead.core.tests import init_superuser
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 
 
 class PostManagerTests(APITestCase):
-    # fixtures = ('post.json', )
+    fixtures = ('post.json', )
 
     @classmethod
     def setUpTestData(cls):
-        init_superuser()
-        call_command('loaddata', 'CaCatHead/post/fixtures/post.json', app_label='CaCatHead.post')
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
         Post.objects.grant_user_permission(user, PostPermissions.Edit, 2)
