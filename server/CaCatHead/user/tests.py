@@ -11,8 +11,9 @@ class UserAuthTests(APITestCase):
         init_superuser()
 
     def test_hello_world(self):
-        resp = self.client.get('/api/hello/')
+        resp = self.client.get('/api/ping')
         assert resp.status_code == 200
+        assert resp.data['status'] == 'ok'
         assert resp.data['message'] == 'Hello, world!'
 
     def test_login(self):

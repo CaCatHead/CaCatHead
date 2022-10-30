@@ -25,7 +25,7 @@ urlpatterns = [
     # admin usage
     path('admin/', admin.site.urls),
     # test ping
-    path('api/hello/', user_views.hello_world),
+    path('api/ping', user_views.ping),
     # user auth
     path('api/auth/register', user_views.user_register),
     path('api/auth/login', user_views.UserLoginView.as_view()),
