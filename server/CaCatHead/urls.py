@@ -36,7 +36,19 @@ urlpatterns = [
     path('api/posts', post_views.list_post),
     path('api/posts/public', post_views.list_public_post),
     path('api/post/<int:post_id>', post_views.get_post_content),
-    path('api/post', post_views.create_post)
+    path('api/post', post_views.create_post),
+    # problem
+    # path('api/problem/upload'), # 上传题目
+    # path('api/problem/create'), # 手动创建题目
+    # path('api/problem/<int:problem_id>/edit'), # 编辑题目
+    # path('api/problems/own'), # 用户上传的题目列表
+    # path('api/repos'), # 列出所有公开的题库
+    # path('api/repo/<int:repo_id>/problems'), # 查看题库中的题目列表
+    # path('api/repo/<int:repo_id>/problems/add'), # 添加题目
+    # path('api/repo/<int:repo_id>/problem/<int:problem_id>'), # 查看题目内容
+    # path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit'), # 提交代码
+    # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'), # 编辑题目
+    # path('api/repo/<int:repo_id>/status'), # 查看提交列表
 ]
 
 # if settings.DEBUG:

@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from CaCatHead.core.models import BaseModel
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
+from CaCatHead.core.models import BaseModel
 
 PROBLEM_TYPES = {
     'classic': 'classic',
@@ -91,9 +91,7 @@ class Problem(BaseModel):
         create_user: 创建题目的账户
         is_public: 是否公开
     """
-    # repo = models.CharField(max_length=20, default='cppexam', blank=False, verbose_name=_(u"题目类型"))
-
-    label = models.CharField(max_length=45, unique=True, null=True, verbose_name=_(u"题目编号"))
+    display_id = models.IntegerField(default=1000, verbose_name=_(u"题目显示编号"))
 
     title = models.CharField(max_length=512, verbose_name=_(u"标题"))
 
@@ -101,16 +99,18 @@ class Problem(BaseModel):
 
     memory_limit = models.IntegerField(default=262144, verbose_name=_(u"内存限制"))
 
-    # accepted_number = models.IntegerField(default=0, verbose_name=_(u"通过人数"))
-    # submit_number = models.IntegerField(default=0, verbose_name=_(u"提交次数"))
-    # level = models.IntegerField(default=3, verbose_name=_(u"题目难度"))
-
     problem_info = models.ForeignKey(ProblemInfo, on_delete=models.RESTRICT, verbose_name=_(u"题目信息"))
+
+    extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
 
     owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"创建者"))
 
     is_public = models.BooleanField(default=True, verbose_name=_(u"是否公开"),
                                     help_text='该项被选择后，题目将会被所有人看到，如果不选择则题目只能被超级用户和管理员看到.')
+
+    # accepted_number = models.IntegerField(default=0, verbose_name=_(u"通过人数"))
+    # submit_number = models.IntegerField(default=0, verbose_name=_(u"提交次数"))
+    # level = models.IntegerField(default=3, verbose_name=_(u"题目难度"))
 
     class Meta:
         db_table = 'problem'

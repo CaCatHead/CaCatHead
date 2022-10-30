@@ -19,6 +19,5 @@ class ProblemAdmin(admin.ModelAdmin):
     search_fields = ('id', 'title')
 
 
-
 admin.site.register(Problem, ProblemAdmin)
 admin.site.register(ProblemRepository, ProblemRepositoryAdmin)
