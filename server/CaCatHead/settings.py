@@ -32,6 +32,12 @@ DEBUG = False if DEBUG_ENV == 'false' else True
 
 TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
 
+# Config rabbit mq connection
+RMQ_HOST = os.getenv('RMQ_HOST')
+RMQ_PORT = os.getenv('RMQ_PORT')
+RMQ_USER = os.getenv('RMQ_USER')
+RMQ_PASS = os.getenv('RMQ_PASS')
+
 ALLOWED_HOSTS = []
 
 # Application definition
