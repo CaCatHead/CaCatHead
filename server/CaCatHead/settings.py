@@ -30,6 +30,8 @@ SECRET_KEY = 'django-insecure-jve48vpw^1-z+1lc8#u^f@6gai%r)k-m-47^qw$^@nct1u)*^_
 DEBUG_ENV = os.getenv('DEBUG', 'true').lower()
 DEBUG = False if DEBUG_ENV == 'false' else True
 
+TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
+
 ALLOWED_HOSTS = []
 
 # Application definition

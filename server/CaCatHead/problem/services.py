@@ -1,9 +1,11 @@
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
+from CaCatHead.problem.upload import upload_problem_zip
 
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
@@ -73,4 +75,10 @@ def edit_problem(problem: Problem, payload: dict):
     problem.problem_info.problem_content.save()
     problem.problem_info.problem_judge.save()
 
+    return problem
+
+
+def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
+    problem = make_problem('unknown', user=user)
+    upload_problem_zip(problem.id, zip_content)
     return problem

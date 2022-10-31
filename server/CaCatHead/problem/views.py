@@ -1,5 +1,6 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 
 from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request
@@ -7,7 +8,7 @@ from CaCatHead.permission.constants import ProblemRepositoryPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer
-from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY
+from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
 from CaCatHead.utils import make_response
 
 
@@ -27,11 +28,14 @@ def create_problem(request: Request):
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
+@parser_classes([FileUploadParser])
 def upload_problem(request: Request):
     """
     上传题目
     """
-    return make_response()
+    zip_file = request.data['file']
+    problem = make_problem_by_uploading(zip_file, user=request.user)
+    return make_response(problem=ProblemSerializer(problem).data)
 
 
 @api_view(['POST'])

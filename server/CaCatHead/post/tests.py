@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.core.management import call_command
 from rest_framework.test import APITestCase
 
 from CaCatHead.permission.constants import PostPermissions
@@ -7,7 +6,7 @@ from CaCatHead.post.models import Post
 
 
 class PostManagerTests(APITestCase):
-    fixtures = ('post.json', )
+    fixtures = ('post.json',)
 
     @classmethod
     def setUpTestData(cls):

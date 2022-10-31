@@ -15,6 +15,14 @@ Content-Type: application/json
   "title": "A + B"
 }
 
+### Upload a new problem
+POST http://localhost:8000/api/problem/upload
+Authorization: Token {{auth_token}}
+Content-Type: application/zip
+Content-Disposition: form-data; filename="aplusb.zip"
+
+< ./assets/aplusb.zip
+
 ### Get created problem
 GET http://127.0.0.1:8000/api/problem/1
 Authorization: Token {{auth_token}}
