@@ -13,7 +13,7 @@ def list_post(request: Request):
     """
     列出用户可见的所有公告
     """
-    posts = Post.objects.filter_user(user=request.user, permission=PostPermissions.Read)
+    posts = Post.objects.filter_user_public(user=request.user, permission=PostPermissions.Read)
     return make_response(posts=PostSerializer(posts, many=True).data)
 
 
@@ -31,7 +31,7 @@ def get_post_content(request: Request, post_id):
     """
     查看公告内容
     """
-    post = Post.objects.filter_user(user=request.user, id=post_id, permission=PostPermissions.Read).first()
+    post = Post.objects.filter_user_public(user=request.user, id=post_id, permission=PostPermissions.Read).first()
     return make_response(post=PostContentSerializer(post).get_or_raise())
 
 

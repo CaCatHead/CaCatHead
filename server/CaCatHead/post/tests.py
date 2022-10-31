@@ -13,7 +13,7 @@ class PostManagerTests(APITestCase):
     def setUpTestData(cls):
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
-        Post.objects.grant_user_permission(user, PostPermissions.Edit, 2)
+        Post.objects.grant_user_permission(user, PostPermissions.Read, 2)
 
     def test_posts(self):
         posts = Post.objects.all()
@@ -21,9 +21,9 @@ class PostManagerTests(APITestCase):
         assert posts[0].title == '系统公告'
         assert posts[1].title == '公告测试'
 
-    def test_query_user_private_posts(self):
+    def test_query_user_posts(self):
         user = User.objects.filter(username='world').first()
-        posts = Post.objects.filter_user(user=user)
+        posts = Post.objects.filter_user_public(user=user, permission=PostPermissions.Read)
         assert len(posts) == 2
         public_post, private_post = posts
         assert public_post.id == 1

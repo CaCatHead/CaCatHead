@@ -79,8 +79,8 @@ def list_repos(request):
     """
     列出所有题库
     """
-    repos = ProblemRepository.objects.filter_user(user=request.user,
-                                                  permission=ProblemRepositoryPermissions.ListProblems)
+    repos = ProblemRepository.objects.filter_user_public(user=request.user,
+                                                         permission=ProblemRepositoryPermissions.ListProblems)
     return make_response(repos=ProblemRepositorySerializer(repos, many=True).data)
 
 
@@ -89,8 +89,8 @@ def list_repo_problems(request, repo_id: int):
     """
     列出题库中的所有题目
     """
-    repo = ProblemRepository.objects.filter_user(user=request.user, id=repo_id,
-                                                 permission=ProblemRepositoryPermissions.ListProblems).first()
+    repo = ProblemRepository.objects.filter_user_public(user=request.user, id=repo_id,
+                                                        permission=ProblemRepositoryPermissions.ListProblems).first()
     if repo is None:
         raise NotFound(detail='题库未找到')
     else:
