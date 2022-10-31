@@ -28,7 +28,7 @@ class PermissionManager(models.Manager):
         permission_subquery = UserPermission.objects.filter(user=user, content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
     def _q_user_group_private(self, user: User, permissions: [str], **kwargs):
         """
@@ -39,7 +39,7 @@ class PermissionManager(models.Manager):
                                                              content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
     def _q_group_private(self, group: Group, permissions: [str], **kwargs):
         """
@@ -48,30 +48,13 @@ class PermissionManager(models.Manager):
         permission_subquery = GroupPermission.objects.filter(group=group, content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
-    def filter_user(self, **kwargs):
+    def filter_user_public(self, user: User, permission: str, **kwargs):
         """
-        使用用户和用户所属的组, 过滤满足权限的数据库实体
+        过滤公开的和用户拥有某权限的数据库实体
+        注意：该方法通常只用于读相关的操作，用于写操作会导致任意用户更改公开内容
         """
-        assert 'user' in kwargs
-        user = kwargs['user']
-
-        # 列出所需的权限
-        permissions = []
-        if 'permission' in kwargs:
-            permissions.append(kwargs['permission'])
-            kwargs.pop('permission', None)
-        if 'permissions' in kwargs:
-            for p in kwargs['permissions']:
-                permissions.append(p)
-            kwargs.pop('permissions', None)
-
-        # 清空 filter 无关的参数
-        kwargs.pop('user', None)
-        kwargs.pop('group', None)
-        kwargs.pop('groups', None)
-
         if user is None or not user.is_authenticated:
             # 未认证用户只能看到公开内容
             return self.filter_public(**kwargs)
@@ -80,9 +63,31 @@ class PermissionManager(models.Manager):
             return self.get_queryset().filter(**kwargs)
         else:
             # 其他用户, 查询用户拥有的权限
-            query_user = self._q_user_private(user, permissions, **kwargs)
-            query_user_group = self._q_user_group_private(user, permissions, **kwargs)
+            query_user = self._q_user_private(user, [permission], is_public=False)
+            query_user_group = self._q_user_group_private(user, [permission], is_public=False)
             return self.get_queryset().filter(Q(**kwargs), Q(is_public=True) | query_user | query_user_group)
+
+    def filter_user_permission(self, user: User, permission=None, permissions=None, **kwargs):
+        """
+        使用用户和用户所属的组, 过滤满足权限的数据库实体
+        """
+        # 列出所需的权限
+        if permissions is None:
+            permissions = []
+        if permission is not None:
+            permissions.append(permission)
+
+        if user is None or not user.is_authenticated:
+            # 未认证用户什么都看不见
+            return self.none()
+        elif user.is_active and (user.is_superuser or user.is_staff):
+            # 超级用户或管理员用户可以看见一切, 直接返回
+            return self.get_queryset().filter(**kwargs)
+        else:
+            # 其他用户, 查询用户拥有的权限
+            query_user = self._q_user_private(user, permissions)
+            query_user_group = self._q_user_group_private(user, permissions)
+            return self.get_queryset().filter(Q(**kwargs), query_user | query_user_group)
 
     def grant_user_permission(self, user: User, permission: str, content_id):
         """

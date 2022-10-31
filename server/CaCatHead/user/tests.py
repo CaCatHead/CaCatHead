@@ -2,17 +2,12 @@ import django.db.utils
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 
-from CaCatHead.core.tests import init_superuser
-
 
 class UserAuthTests(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        init_superuser()
-
     def test_hello_world(self):
-        resp = self.client.get('/api/hello/')
+        resp = self.client.get('/api/ping')
         assert resp.status_code == 200
+        assert resp.data['status'] == 'ok'
         assert resp.data['message'] == 'Hello, world!'
 
     def test_login(self):
