@@ -21,6 +21,7 @@ class EditProblemPayload(serializers.Serializer):
     hint = serializers.CharField(allow_blank=True, required=False)
     source = serializers.CharField(allow_blank=True, required=False)
     extra_content = serializers.JSONField(required=False)
+    extra_judge = serializers.JSONField(required=False)
 
 
 class ProblemRepositorySerializer(serializers.ModelSerializer):
@@ -55,7 +56,7 @@ class ProblemContentSerializer(serializers.ModelSerializer):
 class ProblemJudgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemJudge
-        fields = ['time_limit', 'memory_limit', 'score', 'testdata_count', 'testdata_score', 'extra_info']
+        fields = ['time_limit', 'memory_limit', 'score', 'testcase_count', 'testcase_detail', 'extra_info']
 
 
 class ProblemInfoSerializer(serializers.ModelSerializer):

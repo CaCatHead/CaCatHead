@@ -20,13 +20,13 @@ class ProblemContent(BaseModel):
 
     output = models.TextField(blank=True, null=True, verbose_name=_(u"输出描述"))
 
-    sample = models.JSONField(blank=True, null=True, verbose_name=_(u"样例"))
+    sample = models.JSONField(default=list, verbose_name=_(u"样例"))
 
     hint = models.TextField(blank=True, null=True, verbose_name=_(u"解答提示"))
 
     source = models.TextField(blank=True, null=True, verbose_name=_(u"题目来源"))
 
-    extra_content = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
+    extra_content = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
     class Meta:
         db_table = 'problem_content'
@@ -44,11 +44,11 @@ class ProblemJudge(models.Model):
 
     score = models.IntegerField(default=0, verbose_name=_(u"题目总分"))
 
-    testdata_count = models.IntegerField(default=0, verbose_name=_(u"用例数目"))
+    testcase_count = models.IntegerField(default=0, verbose_name=_(u"测试用例总数"))
 
-    testdata_score = models.JSONField(default=list, verbose_name=_(u"用例分数"))
+    testcase_detail = models.JSONField(default=list, verbose_name=_(u"测试用例配置"))
 
-    extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
+    extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
     class Meta:
         db_table = 'problem_judge'
@@ -113,7 +113,7 @@ class Problem(BaseModel):
                                      related_name='problem_info',
                                      verbose_name=_(u"题目信息"))
 
-    extra_info = models.JSONField(blank=True, null=True, verbose_name=_(u"其他信息"))
+    extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
     owner = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='problem_owner', verbose_name=_(u"创建者"))
 
