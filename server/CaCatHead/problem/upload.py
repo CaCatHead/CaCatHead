@@ -49,13 +49,17 @@ def unzip_problem(problem_root: Path, file_name: str, zip_content):
     shutil.rmtree(zip_tmp)
     shutil.rmtree(problem_temp)
 
+    return root is not None
+
 
 def upload_problem_zip(pid: int, file: InMemoryUploadedFile):
     problem_root = settings.TESTCASE_ROOT / str(pid)
     problem_root.mkdir(parents=True, exist_ok=True)
     zip_file_name = 'p' + str(pid) + '_' + str(timezone.now().timestamp()) + '.zip'
     try:
-        unzip_problem(problem_root, zip_file_name, file)
-        return json.load(open(problem_root / 'config.json'))
-    except Exception as ex:
-        print(ex)
+        if unzip_problem(problem_root, zip_file_name, file):
+            return json.load(open(problem_root / 'config.json'))
+        else:
+            return None
+    except Exception:
+        return None

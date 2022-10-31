@@ -82,18 +82,20 @@ def edit_problem(problem: Problem, payload: dict):
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
     config_json = upload_problem_zip(problem.id, zip_content)
-    problem_config = config_json['problem']
-    serializer = EditProblemPayload(data=problem_config)
-    if serializer.is_valid():
-        return edit_problem(problem, problem_config)
-    else:
-        print('delete')
-        print(serializer.errors)
-        problem_info = problem.problem_info
-        problem_content = problem_info.problem_content
-        problem_judge = problem.problem_info.problem_judge
-        problem.delete()
-        problem_info.delete()
-        problem_content.delete()
-        problem_judge.delete()
-        return None
+
+    if config_json is not None:
+        problem_config = config_json['problem']
+        serializer = EditProblemPayload(data=problem_config)
+        if serializer.is_valid():
+            return edit_problem(problem, problem_config)
+
+    # 上传的题目不合法, 删除该题目
+    problem_info = problem.problem_info
+    problem_content = problem_info.problem_content
+    problem_judge = problem.problem_info.problem_judge
+    problem.delete()
+    problem_info.delete()
+    problem_content.delete()
+    problem_judge.delete()
+
+    return None
