@@ -10,17 +10,17 @@ class CreateProblemPayload(serializers.Serializer):
 
 
 class EditProblemPayload(serializers.Serializer):
-    title = serializers.CharField(max_length=512, required=False)
+    title = serializers.CharField(max_length=512, allow_blank=True, required=False)
     display_id = serializers.IntegerField(required=False)
     time_limit = serializers.IntegerField(required=False)
     memory_limit = serializers.IntegerField(required=False)
-    description = serializers.CharField(required=False)
-    input = serializers.CharField(required=False)
-    output = serializers.CharField(required=False)
-    sample = serializers.CharField(required=False)
-    hint = serializers.CharField(required=False)
-    source = serializers.CharField(required=False)
-    extra_content = serializers.CharField(required=False)
+    description = serializers.CharField(allow_blank=True, required=False)
+    input = serializers.CharField(allow_blank=True, required=False)
+    output = serializers.CharField(allow_blank=True, required=False)
+    sample = serializers.JSONField(required=False)
+    hint = serializers.CharField(allow_blank=True, required=False)
+    source = serializers.CharField(allow_blank=True, required=False)
+    extra_content = serializers.JSONField(required=False)
 
 
 class ProblemRepositorySerializer(serializers.ModelSerializer):

@@ -20,7 +20,7 @@ class ProblemContent(BaseModel):
 
     output = models.TextField(blank=True, null=True, verbose_name=_(u"输出描述"))
 
-    sample = models.TextField(blank=True, null=True, verbose_name=_(u"样例"))
+    sample = models.JSONField(blank=True, null=True, verbose_name=_(u"样例"))
 
     hint = models.TextField(blank=True, null=True, verbose_name=_(u"解答提示"))
 

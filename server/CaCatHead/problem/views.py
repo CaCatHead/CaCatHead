@@ -35,7 +35,7 @@ def upload_problem(request: Request):
     """
     zip_file = request.data['file']
     problem = make_problem_by_uploading(zip_file, user=request.user)
-    return make_response(problem=ProblemSerializer(problem).data)
+    return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
 @api_view(['POST'])

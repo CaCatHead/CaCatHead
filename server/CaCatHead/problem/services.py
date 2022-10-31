@@ -5,6 +5,7 @@ from django.db import models
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
+from CaCatHead.problem.serializers import EditProblemPayload
 from CaCatHead.problem.upload import upload_problem_zip
 
 try:
@@ -80,5 +81,19 @@ def edit_problem(problem: Problem, payload: dict):
 
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
-    upload_problem_zip(problem.id, zip_content)
-    return problem
+    config_json = upload_problem_zip(problem.id, zip_content)
+    problem_config = config_json['problem']
+    serializer = EditProblemPayload(data=problem_config)
+    if serializer.is_valid():
+        return edit_problem(problem, problem_config)
+    else:
+        print('delete')
+        print(serializer.errors)
+        problem_info = problem.problem_info
+        problem_content = problem_info.problem_content
+        problem_judge = problem.problem_info.problem_judge
+        problem.delete()
+        problem_info.delete()
+        problem_content.delete()
+        problem_judge.delete()
+        return None
