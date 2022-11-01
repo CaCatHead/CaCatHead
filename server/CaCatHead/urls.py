@@ -41,12 +41,14 @@ urlpatterns = [
     path('api/posts/public', post_views.list_public_post),
     path('api/post/<int:post_id>', post_views.get_post_content),
     path('api/post', post_views.create_post),
-    # problem
+    # polygon
     path('api/problem/upload', problem_views.upload_problem),  # 上传题目
     path('api/problem/create', problem_views.create_problem),  # 手动创建题目
     path('api/problem/<int:problem_id>', problem_views.get_created_problems),  # 手动创建题目
     path('api/problem/<int:problem_id>/edit', problem_views.edit_created_problem),  # 编辑题目
+    path('api/problem/<int:problem_id>/submit', problem_views.submit_created_problem),  # 提交题目代码
     path('api/problems/own', problem_views.list_created_problems),  # 用户上传的题目列表
+    # problem
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
     path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
     # path('api/repo/<int:repo_id>/problems/add'),  # 添加题目

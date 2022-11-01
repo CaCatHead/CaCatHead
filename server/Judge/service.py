@@ -3,6 +3,7 @@ import logging
 
 from django.conf import settings
 
+from Judge.submission import Submission
 
 logger = logging.getLogger('Judge.service')
 
@@ -19,6 +20,8 @@ class JudgeService:
 
     def consume(self, ch, method, properties, body):
         logger.info('Receive a new judge task')
+        sub = Submission(body)
+        sub.run()
         self.channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):

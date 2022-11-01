@@ -9,10 +9,11 @@ from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer
 from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
+from CaCatHead.problem.submit import submit_problem_code
 from CaCatHead.utils import make_response
 
 
-# Polygon
+# ----- Polygon -----
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
 @func_validate_request(CreateProblemPayload)
@@ -55,6 +56,22 @@ def edit_created_problem(request: Request, problem_id: int):
         return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+def submit_created_problem(request: Request, problem_id: int):
+    """
+    提交创建的题目代码
+    """
+    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                     id=problem_id,
+                                     owner=request.user).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        submit_problem_code(user=request.user, repo=MAIN_PROBLEM_REPOSITORY, problem=problem, payload=request.data)
+        return make_response()
+
+
 @api_view()
 @permission_classes([HasPolygonPermission])
 def get_created_problems(request: Request, problem_id: int):
@@ -77,7 +94,7 @@ def list_created_problems(request):
     return make_response(problems=ProblemSerializer(problems, many=True).data)
 
 
-# 题库
+# ----- 题库 -----
 @api_view()
 def list_repos(request):
     """
