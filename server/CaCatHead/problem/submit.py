@@ -7,6 +7,8 @@ import ujson as json
 
 from django.conf import settings
 
+from CaCatHead.submission.models import Submission
+
 
 def send_message(message):
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=settings.RMQ_HOST, port=settings.RMQ_PORT))
@@ -23,13 +25,24 @@ def send_message(message):
 
 
 def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, payload: dict):
+    code = payload['code']
+    language = payload['language']  # TODO: check language here
+    submission = Submission(
+        repository=repo,
+        problem=problem,
+        author=user,
+        code=code,
+        language=language,
+    )
+    submission.save()
     message = {
-        'status_id': 0,
-        'code': payload['code'],
-        'lang': payload['language'],
+        'submission_id': submission.id,
+        'code': code,
+        'language': language,
         'problem_id': 1,
         'time_limit': problem.time_limit,
         'memory_limit': problem.memory_limit,
         'testcase_detail': problem.problem_info.problem_judge.testcase_detail
     }
     send_message(message)
+    return submission

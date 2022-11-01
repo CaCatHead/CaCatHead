@@ -8,7 +8,10 @@ import tempfile
 from pathlib import Path
 
 from django.conf import settings
+from django.utils import timezone
 
+from CaCatHead.core.constants import Verdict
+from CaCatHead.submission.models import Submission
 
 logger = logging.getLogger('Judge.service')
 
@@ -21,49 +24,59 @@ class NoLanguageException(Exception):
     pass
 
 
-class Submission:
+class SubmissionTask:
     def __init__(self, message: bytes):
         data = json.loads(message)
         logger.info(data)
 
-        self.status_id = data['status_id']
+        self.submission = Submission.objects.get(id=data['submission_id'])
         self.code = data["code"]
-        self.language = data["lang"]
+        self.language = data["language"]
         self.problem_id = str(data["problem_id"])
         self.time_limit = str(data["time_limit"])
         self.memory_limit = str(data["memory_limit"])
         self.testcase_detail = data["testcase_detail"]
-        # self.case_count = int(data["casecount"])
-        # self.case_score = data["casescore"]
-        # self.pro_solved_rec_id = int(data["prosolvedrecid"])
 
-        self.lang = 0
         self.compiler_output = None
-        self.result = {"result": []}
-        self.is_compile_error = False
+        self.verdict = Verdict.Waiting
+        self.score = 0
+        self.results = []
 
         self.tmp_dir = Path(tempfile.mkdtemp())
         os.chmod(self.tmp_dir, 0o775)
         self.code_file = self.tmp_dir / ("Main." + self.language)
 
-        # logging.info("data id is: %s" % self.status_id)
+    def update_submission(self, judged=None, verdict=None, score=None, detail=None):
+        if judged is not None:
+            self.submission.judged = judged
+        if verdict is not None:
+            self.submission.verdict = verdict
+        if score is not None:
+            self.submission.score = score
+        if detail is not None:
+            self.submission.detail = detail
+        self.submission.save()
 
     def run(self):
         logger.info(f'Run submission at {self.tmp_dir}')
+        self.verdict = Verdict.Compiling
+        self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling)
 
         try:
             self.dump_code()
 
-            self.compile_code_exec()
+            self.compile_code()
 
-            if not self.is_compile_error:
+            if self.verdict != Verdict.CompileError:
+                self.verdict = Verdict.Running
+                self.update_submission(verdict=Verdict.Running)
                 self.judge()
 
-            self._save_result()
+            self.save_result()
         except NoTestDataException:
-            self.result = 'NoTestDataError'
+            self.verdict = Verdict.TestCaseError
         except NoLanguageException:
-            self.result = 'NoLanguageError'
+            self.verdict = Verdict.JudgeError
         finally:
             self.clean_temp()
 
@@ -73,18 +86,15 @@ class Submission:
         code_file.write(self.code)
         code_file.close()
 
-    def compile_code_exec(self):
+    def compile_code(self):
         logger.info(f'Start compiling code {self.code_file}')
         if self.language == 'cpp':
-            self.lang = '2'
             commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
                         "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE"]
         elif self.language == 'c':
-            self.lang = '1'
             commands = ["gcc", self.code_file, "-o", "Main", "-static", "-w",
                         "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
         elif self.language == 'java':
-            self.lang = '3'
             commands = ["javac", self.code_file, "-d", "."]
         else:
             raise NoLanguageException
@@ -95,10 +105,10 @@ class Submission:
             subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
             self.prepare_exec_file(cwd)
         except subprocess.CalledProcessError as e:
-            self.is_compile_error = True
+            self.verdict = Verdict.CompileError
             self.compiler_output = e.output
         except OSError as e:
-            self.is_compile_error = True
+            self.verdict = Verdict.CompileError
             logger.error(e)
         finally:
             shutil.rmtree(cwd)
@@ -121,7 +131,9 @@ class Submission:
         for testcase in self.testcase_detail:
             self.prepare_testcase_file(in_file=testcase['in'], ans_file=testcase['ans'])
             self.run_sandbox()
-            self.read_result()
+            detail = self.read_result()
+            if detail['verdict'] == Verdict.Accepted:
+                self.score += testcase['score']
         logger.info("Finish Judge")
 
     def prepare_testcase_file(self, in_file: str, ans_file: str):
@@ -137,31 +149,60 @@ class Submission:
 
     def run_sandbox(self):
         logger.info("Run catj")
-        commands = ["catj", "-t", self.time_limit,
-                    "-m", self.memory_limit, "-d", self.tmp_dir, "-l", self.lang]
+        commands = ["catj", "-t", self.time_limit, "-m", self.memory_limit, "-d", self.tmp_dir, "-l", self.language]
         subprocess.call(commands)
 
     def read_result(self):
         logger.info("Read one case result")
         result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
-        status = result_file.readline().strip()
-        run_time = result_file.readline().strip()
-        run_memory = result_file.readline().strip()
+        verdict = Verdict.parse(result_file.readline().strip())
+        run_time = int(result_file.readline().strip())
+        run_memory = int(result_file.readline().strip())
         others = result_file.readline().strip()
-        one_case_result = dict((["status", status], ["runtime", run_time], ["runmemory", run_memory], ["message", others]))
-        self.result["result"].append(one_case_result)
+        detail = {
+            'verdict': verdict,
+            'time': run_time,
+            'memory': run_memory,
+            'message': others
+        }
+        self.results.append(detail)
+        return detail
 
-    def _save_result(self):
-        logger.info("Save result, result is %s" % self.result)
-        # self.save_result_callback(
-        #     status_id = self.status_id,
-        #     detail = self.result,
-        #     case_score = self.case_score,
-        #     compiler_output = self.compiler_output,
-        #     is_compile_error = self.is_compile_error,
-        #     pro_solved_rec_id = self.pro_solved_rec_id
-        # )
+    def save_result(self):
+        logger.info("Save result, result is %s" % self.results)
+        detail = {
+            'verdict': Verdict.Accepted,
+            'score': self.score,
+            'compile': {
+                'stdout': '',
+                'stderr': ''
+            },
+            'results': self.results
+        }
+
+        if self.verdict == Verdict.CompileError:
+            detail['verdict'] = Verdict.CompileError
+            detail['compile']['stdout'] = self.compiler_output
+        elif self.verdict in [Verdict.TestCaseError, Verdict.SystemError, Verdict.JudgeError]:
+            detail['verdict'] = self.verdict
+        else:
+            other_verdicts = set()
+            for result in self.results:
+                cur_verdict = result['verdict']
+                if cur_verdict != Verdict.Accepted:
+                    other_verdicts.add(cur_verdict)
+            if len(other_verdicts) == 0:
+                # 所有测试用例返回 Accepted
+                detail['verdict'] = Verdict.Accepted
+            elif len(other_verdicts) == 1:
+                # 所有测试用例返回 Accepted 或其他结果, 最终结果为此结果
+                detail['verdict'] = other_verdicts.pop()
+            else:
+                # 返回了多种结果
+                detail['verdict'] = Verdict.PartiallyCorrect
+
+        self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
 
     def clean_temp(self):
-        logger.info("Clean submission running directory")
+        logger.info(f'Clean submission running directory {self.tmp_dir}')
         shutil.rmtree(self.tmp_dir)

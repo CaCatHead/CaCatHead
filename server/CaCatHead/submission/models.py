@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemRepository, Problem
 
 
@@ -43,7 +44,7 @@ class Submission(models.Model):
 
     judged = models.DateTimeField(blank=True, null=True, verbose_name=_(u"评测时间"))
 
-    verdict = models.CharField(max_length=32, verbose_name=_(u"提交状态和判题结果"))
+    verdict = models.CharField(default=Verdict.Waiting, max_length=32, verbose_name=_(u"提交状态和判题结果"))
 
     score = models.IntegerField(default=0, verbose_name=_(u"总分"))
 
@@ -52,3 +53,5 @@ class Submission(models.Model):
 
     class Meta:
         db_table = 'submission'
+        verbose_name = _(u"提交信息")
+        verbose_name_plural = _(u"提交信息列表")
