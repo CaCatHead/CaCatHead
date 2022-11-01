@@ -1,3 +1,4 @@
+from django.db.models import Subquery
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FileUploadParser
@@ -110,8 +111,11 @@ def get_created_problem_submission(request: Request, submission_id: int):
     """
     获取提交
     """
+    view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                           user=request.user,
+                                                           permission=ProblemPermissions.ReadSubmission)
     submission = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
-                                           owner=request.user,
+                                           problem__in=Subquery(view_subquery.values('id')),
                                            id=submission_id).first()
     if submission is None:
         raise NotFound('提交未找到')
@@ -125,8 +129,11 @@ def list_created_problem_submissions(request: Request):
     """
     获取提交
     """
+    view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                           user=request.user,
+                                                           permission=ProblemPermissions.ReadSubmission)
     submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
-                                            owner=request.user)
+                                            problem__in=Subquery(view_subquery.values('id')))
     return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
 
 
