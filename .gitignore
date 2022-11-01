@@ -1,6 +1,7 @@
 # config
 pass.txt
 .cacathead
+.cert
 
 # nuxt
 node_modules
