@@ -61,6 +61,25 @@ urlpatterns = [
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
     # path('api/repo/<int:repo_id>/submissions'),  # 获取所有提交状态
     # path('api/repo/<int:repo_id>/submission/<int:submission_id>'),  # 获取提交状态详情
+    # contest
+    # path('api/contests'),  # 列出所有比赛
+    # path('api/contest'),  # 创建比赛
+    # path('api/contest/<int:contest_id>/register'),  # 参加比赛
+    # path('api/contest/<int:contest_id>/content'),  # 查看比赛详情, 包括题目内容
+    # path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit'),  # 提交代码
+    # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
+    # path('api/contest/<int:contest_id>/submission/<int:submission_id>'),  # 获取比赛提交状态详情
+    # path('api/contest/<int:contest_id>/standings'),  # 查看比赛排行榜
+    # path('api/contest/<int:contest_id>/edit'),  # 编辑比赛信息
+    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
+    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
+    # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
+    # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
+    # team
+    # path('api/teams'),  # 列出自己参加的团队
+    # path('api/team'),  # 创建团队
+    # path('api/team/<int:team_id>'),  # 查看团队
+    # path('api/team/<int:team_id>/edit'),  # 编辑团队信息
 ]
 
 # if settings.DEBUG:
