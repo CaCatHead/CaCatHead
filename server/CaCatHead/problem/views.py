@@ -10,6 +10,8 @@ from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSe
     EditProblemPayload, FullProblemSerializer
 from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
 from CaCatHead.problem.submit import submit_problem_code
+from CaCatHead.submission.models import Submission
+from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
 from CaCatHead.utils import make_response
 
 
@@ -56,22 +58,6 @@ def edit_created_problem(request: Request, problem_id: int):
         return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
-@api_view(['POST'])
-@permission_classes([HasPolygonPermission])
-def submit_created_problem(request: Request, problem_id: int):
-    """
-    提交创建的题目代码
-    """
-    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
-                                     id=problem_id,
-                                     owner=request.user).first()
-    if problem is None:
-        raise NotFound('题目未找到')
-    else:
-        submit_problem_code(user=request.user, repo=MAIN_PROBLEM_REPOSITORY, problem=problem, payload=request.data)
-        return make_response()
-
-
 @api_view()
 @permission_classes([HasPolygonPermission])
 def get_created_problems(request: Request, problem_id: int):
@@ -92,6 +78,51 @@ def list_created_problems(request):
     """
     problems = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY, owner=request.user)
     return make_response(problems=ProblemSerializer(problems, many=True).data)
+
+
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+def submit_created_problem(request: Request, problem_id: int):
+    """
+    提交创建的题目代码
+    """
+    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                     id=problem_id,
+                                     owner=request.user).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        submission = submit_problem_code(user=request.user,
+                                         repo=MAIN_PROBLEM_REPOSITORY,
+                                         problem=problem,
+                                         payload=request.data)
+        return make_response(submission=FullSubmissionSerializer(submission).data)
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
+def get_created_problem_submission(request: Request, submission_id: int):
+    """
+    获取提交
+    """
+    submission = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
+                                           author=request.user,
+                                           id=submission_id).first()
+    if submission is None:
+        raise NotFound('提交未找到')
+    else:
+        return make_response(submission=FullSubmissionSerializer(submission).data)
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
+def list_created_problem_submissions(request: Request):
+    """
+    获取提交
+    """
+    submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
+                                            author=request.user)
+    return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
 
 
 # ----- 题库 -----

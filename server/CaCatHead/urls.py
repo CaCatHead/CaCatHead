@@ -42,12 +42,14 @@ urlpatterns = [
     path('api/post/<int:post_id>', post_views.get_post_content),
     path('api/post', post_views.create_post),
     # polygon
-    path('api/problem/upload', problem_views.upload_problem),  # 上传题目
-    path('api/problem/create', problem_views.create_problem),  # 手动创建题目
-    path('api/problem/<int:problem_id>', problem_views.get_created_problems),  # 手动创建题目
-    path('api/problem/<int:problem_id>/edit', problem_views.edit_created_problem),  # 编辑题目
-    path('api/problem/<int:problem_id>/submit', problem_views.submit_created_problem),  # 提交题目代码
-    path('api/problems/own', problem_views.list_created_problems),  # 用户上传的题目列表
+    path('api/polygon/upload', problem_views.upload_problem),  # 上传题目
+    path('api/polygon/create', problem_views.create_problem),  # 手动创建题目
+    path('api/polygon/<int:problem_id>', problem_views.get_created_problems),  # 手动创建题目
+    path('api/polygon/<int:problem_id>/edit', problem_views.edit_created_problem),  # 编辑题目
+    path('api/polygon/<int:problem_id>/submit', problem_views.submit_created_problem),  # 提交题目代码
+    path('api/polygon/own', problem_views.list_created_problems),  # 用户上传的题目列表
+    path('api/polygon/submissions', problem_views.list_created_problem_submissions),  # 获取所有提交状态
+    path('api/polygon/submission/<int:submission_id>', problem_views.get_created_problem_submission),  # 获取提交状态详情
     # problem
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
     path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
