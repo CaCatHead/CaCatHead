@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'CaCatHead.user.apps.UserConfig',
     'CaCatHead.permission.apps.PermissionConfig',
     'CaCatHead.problem.apps.ProblemConfig',
-    'CaCatHead.post.apps.PostConfig'
+    'CaCatHead.post.apps.PostConfig',
+    'CaCatHead.submission.apps.SubmissionConfig'
 ]
 
 # Django REST framework config
