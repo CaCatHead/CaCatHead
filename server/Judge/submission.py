@@ -1,8 +1,8 @@
-import os
 import io
 import json
-import shutil
 import logging
+import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -11,6 +11,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.core.constants import Verdict
+from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.submission.models import Submission
 
 logger = logging.getLogger('Judge.service')
@@ -33,6 +34,7 @@ class SubmissionTask:
         self.code = data["code"]
         self.language = data["language"]
         self.problem_id = str(data["problem_id"])
+        self.problem_type = data['problem_type']
         self.time_limit = str(data["time_limit"])
         self.memory_limit = str(data["memory_limit"])
         self.testcase_detail = data["testcase_detail"]
@@ -127,14 +129,35 @@ class SubmissionTask:
         os.chmod(exec_file_dst, 0o775)
 
     def judge(self):
-        logger.info("Start Judge")
+        logger.info("Start judging ...")
+
+        verdict = Verdict.Accepted
         for testcase in self.testcase_detail:
             self.prepare_testcase_file(in_file=testcase['in'], ans_file=testcase['ans'])
             self.run_sandbox()
             detail = self.read_result()
+
             if detail['verdict'] == Verdict.Accepted:
                 self.score += testcase['score']
-        logger.info("Finish Judge")
+            else:
+                if self.problem_type == ProblemTypes.AC:
+                    # XCPC 模式, 遇到非正确结果直接退出
+                    verdict = detail['verdict']
+                    break
+                else:
+                    # OI 模式, 遇到非正确结果继续判题
+                    if verdict == detail['verdict']:
+                        # OI 模式, 若错误结果一致, 则保持结果不变
+                        pass
+                    elif verdict == Verdict.Accepted:
+                        # OI 模式, 第一次遇到错误结果, 记录此结果
+                        verdict = detail['verdict']
+                    else:
+                        # OI 模式, 遇到了多种错误结果
+                        verdict = Verdict.PartiallyCorrect
+
+        self.verdict = verdict
+        logger.info(f'Finish judging, verdict is {self.verdict}')
 
     def prepare_testcase_file(self, in_file: str, ans_file: str):
         logger.info(f'Prepare testcase (in = {in_file}, ans = {ans_file})')
@@ -186,20 +209,7 @@ class SubmissionTask:
         elif self.verdict in [Verdict.TestCaseError, Verdict.SystemError, Verdict.JudgeError]:
             detail['verdict'] = self.verdict
         else:
-            other_verdicts = set()
-            for result in self.results:
-                cur_verdict = result['verdict']
-                if cur_verdict != Verdict.Accepted:
-                    other_verdicts.add(cur_verdict)
-            if len(other_verdicts) == 0:
-                # 所有测试用例返回 Accepted
-                detail['verdict'] = Verdict.Accepted
-            elif len(other_verdicts) == 1:
-                # 所有测试用例返回 Accepted 或其他结果, 最终结果为此结果
-                detail['verdict'] = other_verdicts.pop()
-            else:
-                # 返回了多种结果
-                detail['verdict'] = Verdict.PartiallyCorrect
+            detail['verdict'] = self.verdict
 
         self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
 

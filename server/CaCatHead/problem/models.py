@@ -1,3 +1,5 @@
+from enum import Enum, unique
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -5,10 +7,20 @@ from django.utils.translation import gettext_lazy as _
 from CaCatHead.core.models import BaseModel
 from CaCatHead.permission.manager import PermissionManager
 
-PROBLEM_TYPES = {
-    'classic': 'classic',
-    'interactive': 'interactive'
-}
+
+@unique
+class ProblemTypes(str, Enum):
+    # OI 赛制, 计算得分
+    Score = 'classic_score'
+    # XCPC 赛制, 返回是否正确
+    AC = 'classic_ac'
+    # 交互题
+    Interactive = 'interactive'
+    # 自定义判题逻辑
+    Custom = 'custom'
+
+
+ProblemTypeChoices = [(member.name, member.value) for member in ProblemTypes]
 
 
 class ProblemContent(BaseModel):
@@ -36,7 +48,10 @@ class ProblemContent(BaseModel):
 
 
 class ProblemJudge(models.Model):
-    problem_type = models.CharField(max_length=32, choices=PROBLEM_TYPES.items(), verbose_name=_(u"题目类型"))
+    problem_type = models.CharField(default=ProblemTypes.AC,
+                                    max_length=32,
+                                    choices=ProblemTypeChoices,
+                                    verbose_name=_(u"题目类型"))
 
     time_limit = models.IntegerField(default=1000, verbose_name=_(u"时间限制"))
 
@@ -103,6 +118,11 @@ class Problem(BaseModel):
     display_id = models.IntegerField(default=0, verbose_name=_(u"题目显示编号"))
 
     title = models.CharField(max_length=512, verbose_name=_(u"标题"))
+
+    problem_type = models.CharField(default=ProblemTypes.AC,
+                                    max_length=32,
+                                    choices=ProblemTypeChoices,
+                                    verbose_name=_(u"题目类型"))
 
     time_limit = models.IntegerField(default=1000, verbose_name=_(u"时间限制"))
 

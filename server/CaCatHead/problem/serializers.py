@@ -56,7 +56,8 @@ class ProblemContentSerializer(serializers.ModelSerializer):
 class ProblemJudgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemJudge
-        fields = ['time_limit', 'memory_limit', 'score', 'testcase_count', 'testcase_detail', 'extra_info']
+        fields = ['problem_type', 'time_limit', 'memory_limit', 'score', 'testcase_count', 'testcase_detail',
+                  'extra_info']
 
 
 class ProblemInfoSerializer(serializers.ModelSerializer):
@@ -73,4 +74,4 @@ class FullProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        fields = ['id', 'display_id', 'title', 'time_limit', 'memory_limit', 'problem_info']
+        fields = ['id', 'display_id', 'title', 'problem_type', 'time_limit', 'memory_limit', 'problem_info']

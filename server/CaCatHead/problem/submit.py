@@ -1,12 +1,9 @@
+import pika
+import ujson as json
+from django.conf import settings
 from django.contrib.auth.models import User
 
 from CaCatHead.problem.models import ProblemRepository, Problem
-
-import pika
-import ujson as json
-
-from django.conf import settings
-
 from CaCatHead.submission.models import Submission
 
 
@@ -40,9 +37,11 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         'code': code,
         'language': language,
         'problem_id': 1,
+        'problem_type': problem.problem_type,
         'time_limit': problem.time_limit,
         'memory_limit': problem.memory_limit,
-        'testcase_detail': problem.problem_info.problem_judge.testcase_detail
+        'testcase_detail': problem.problem_info.problem_judge.testcase_detail,
+        'extra_info': problem.problem_info.problem_judge.extra_info
     }
     send_message(message)
     return submission

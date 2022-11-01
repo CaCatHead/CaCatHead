@@ -1,6 +1,6 @@
-import pika
 import logging
 
+import pika
 from django.conf import settings
 
 from Judge.submission import SubmissionTask
