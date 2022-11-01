@@ -10,17 +10,18 @@ class CreateProblemPayload(serializers.Serializer):
 
 
 class EditProblemPayload(serializers.Serializer):
-    title = serializers.CharField(max_length=512, required=False)
+    title = serializers.CharField(max_length=512, allow_blank=True, required=False)
     display_id = serializers.IntegerField(required=False)
     time_limit = serializers.IntegerField(required=False)
     memory_limit = serializers.IntegerField(required=False)
-    description = serializers.CharField(required=False)
-    input = serializers.CharField(required=False)
-    output = serializers.CharField(required=False)
-    sample = serializers.CharField(required=False)
-    hint = serializers.CharField(required=False)
-    source = serializers.CharField(required=False)
-    extra_content = serializers.CharField(required=False)
+    description = serializers.CharField(allow_blank=True, required=False)
+    input = serializers.CharField(allow_blank=True, required=False)
+    output = serializers.CharField(allow_blank=True, required=False)
+    sample = serializers.JSONField(required=False)
+    hint = serializers.CharField(allow_blank=True, required=False)
+    source = serializers.CharField(allow_blank=True, required=False)
+    extra_content = serializers.JSONField(required=False)
+    extra_judge = serializers.JSONField(required=False)
 
 
 class ProblemRepositorySerializer(serializers.ModelSerializer):
@@ -55,7 +56,8 @@ class ProblemContentSerializer(serializers.ModelSerializer):
 class ProblemJudgeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemJudge
-        fields = ['time_limit', 'memory_limit', 'score', 'testdata_count', 'testdata_score', 'extra_info']
+        fields = ['problem_type', 'time_limit', 'memory_limit', 'score', 'testcase_count', 'testcase_detail',
+                  'extra_info']
 
 
 class ProblemInfoSerializer(serializers.ModelSerializer):
@@ -72,4 +74,4 @@ class FullProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        fields = ['id', 'display_id', 'title', 'time_limit', 'memory_limit', 'problem_info']
+        fields = ['id', 'display_id', 'title', 'problem_type', 'time_limit', 'memory_limit', 'problem_info']

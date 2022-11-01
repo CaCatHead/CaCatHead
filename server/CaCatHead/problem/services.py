@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
+from CaCatHead.problem.serializers import EditProblemPayload
+from CaCatHead.problem.upload import upload_problem_zip
 
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
@@ -68,9 +71,44 @@ def edit_problem(problem: Problem, payload: dict):
         problem.problem_info.problem_content.source = payload['source']
     if 'extra_content' in payload:
         problem.problem_info.problem_content.extra_content = payload['extra_content']
+    if 'extra_judge' in payload:
+        problem.problem_info.problem_judge.extra_info = payload['extra_judge']
 
     problem.save()
     problem.problem_info.problem_content.save()
     problem.problem_info.problem_judge.save()
 
     return problem
+
+
+def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
+    problem = make_problem('unknown', user=user)
+    config_json = upload_problem_zip(problem.id, zip_content)
+
+    if config_json is not None:
+        if 'problem' in config_json:
+            problem_config = config_json['problem']
+            serializer = EditProblemPayload(data=problem_config)
+            if serializer.is_valid():
+                edit_problem(problem, problem_config)
+        if 'testcases' in config_json:
+            # TODO: check testcases format valid
+            testcases_config = config_json['testcases']
+            problem_judge = problem.problem_info.problem_judge
+            problem_judge.testcase_count = len(testcases_config)
+            problem_judge.testcase_detail = testcases_config
+            for testcase in testcases_config:
+                problem_judge.score += testcase['score']
+            problem_judge.save()
+        return problem
+
+    # 上传的题目不合法, 删除该题目
+    problem_info = problem.problem_info
+    problem_content = problem_info.problem_content
+    problem_judge = problem.problem_info.problem_judge
+    problem.delete()
+    problem_info.delete()
+    problem_content.delete()
+    problem_judge.delete()
+
+    return None

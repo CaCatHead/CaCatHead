@@ -1,0 +1,28 @@
+{
+  "problem": {
+    "title": "A + B",
+    "time_limit": 1000,
+    "memory_limit": 262144,
+    "description": "Calculate A + B.",
+    "input": "Two numbers.",
+    "output": "Answer.",
+    "sample": [
+      { "input": "1 1", "answer": "2" }
+    ],
+    "hint": "",
+    "source": "",
+    "extra_content": {}
+  },
+  "testcases": [
+    {
+      "in": "1.in",
+      "ans": "1.ans",
+      "score": 50
+    },
+    {
+      "in": "2.in",
+      "ans": "2.ans",
+      "score": 50
+    }
+  ]
+}

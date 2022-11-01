@@ -30,7 +30,15 @@ SECRET_KEY = 'django-insecure-jve48vpw^1-z+1lc8#u^f@6gai%r)k-m-47^qw$^@nct1u)*^_
 DEBUG_ENV = os.getenv('DEBUG', 'true').lower()
 DEBUG = False if DEBUG_ENV == 'false' else True
 
-ALLOWED_HOSTS = []
+TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
+
+# Config rabbit mq connection
+RMQ_HOST = os.getenv('RMQ_HOST')
+RMQ_PORT = os.getenv('RMQ_PORT')
+RMQ_USER = os.getenv('RMQ_USER')
+RMQ_PASS = os.getenv('RMQ_PASS')
+
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -50,7 +58,8 @@ INSTALLED_APPS = [
     'CaCatHead.user.apps.UserConfig',
     'CaCatHead.permission.apps.PermissionConfig',
     'CaCatHead.problem.apps.ProblemConfig',
-    'CaCatHead.post.apps.PostConfig'
+    'CaCatHead.post.apps.PostConfig',
+    'CaCatHead.submission.apps.SubmissionConfig'
 ]
 
 # Django REST framework config
@@ -106,6 +115,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+if not DEBUG:
+    # 生产环境使用 mysql 数据库
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'cacathead'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASS', ''),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', '3306'),
+    }
 
 # Caches
 # https://docs.djangoproject.com/zh-hans/4.1/topics/cache/
@@ -152,7 +171,43 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / 'static'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime}  {levelname} {process:d} --- {module} ({thread:d}): {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'Judge.service': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        }
+    }
+}
