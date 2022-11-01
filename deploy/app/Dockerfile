@@ -1,3 +1,5 @@
+# This should be run at the project top level
+
 FROM node:18 AS builder
 
 ADD . /root/CaCatHead

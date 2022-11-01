@@ -21,7 +21,7 @@ services:
   app:
     build:
       context: ./
-      dockerfile: ./app/Dockerfile
+      dockerfile: ./deploy/app/Dockerfile
     container_name: cacathead_app
     restart: always
     depends_on:
@@ -32,7 +32,9 @@ services:
       - '3333:3333'
 
   server:
-    build: ./server
+    build:
+      context: ./
+      dockerfile: ./deploy/server/Dockerfile
     container_name: cacathead_server
     depends_on:
       - mysql
@@ -48,7 +50,7 @@ services:
     networks:
       - cat_net
     volumes:
-      - ./.cacathead/testcase:/root/testcase
+      - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/static:/root/CaCatHead/static
     secrets:
       - db_pass
@@ -56,7 +58,9 @@ services:
       - ./deploy/.env
 
   judge:
-    build: ./server
+    build:
+      context: ./
+      dockerfile: ./deploy/server/Dockerfile
     container_name: cacathead_judge
     depends_on:
       - mysql
@@ -70,7 +74,7 @@ services:
     networks:
       - cat_net
     volumes:
-      - ./.cacathead/testcase:/root/testcase
+      - ./.cacathead/testcases:/root/testcases
     secrets:
       - db_pass
     env_file:
