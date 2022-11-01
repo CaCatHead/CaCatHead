@@ -17,7 +17,7 @@ RUN /root/.local/bin/pipenv sync
 
 RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)"
 
-ADD ./server/CatJudge /usr/src/CatJudge/
+ADD ./CatJudge /usr/src/CatJudge/
 
 RUN cd /usr/src/CatJudge \
   && cp ./testlib/testlib.h /usr/local/include/testlib.h \

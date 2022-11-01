@@ -19,6 +19,9 @@ $ echo 'xxxyyy' > pass.txt
 Locally deploy:
 
 ```bash
+# Clone submodule CatJudge
+$ git submodule update --init --recursive
+# Deploy docker
 $ docker compose up
 ```
 
