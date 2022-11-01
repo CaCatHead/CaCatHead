@@ -28,8 +28,8 @@ services:
       - server
     networks:
       - cat_net
-    ports:
-      - '3333:3333'
+    # ports:
+    #   - '3333:3333'
 
   server:
     build:
@@ -45,8 +45,8 @@ services:
     entrypoint: ./docker-entrypoint.sh
     command:
       - server
-    ports:
-      - '8000:8000'
+    # ports:
+    #   - '8000:8000'
     networks:
       - cat_net
     volumes:
@@ -75,6 +75,7 @@ services:
       - cat_net
     volumes:
       - ./.cacathead/testcases:/root/testcases
+      - ./.cacathead/logs/catj:/root/catj/logs
     secrets:
       - db_pass
     env_file:
