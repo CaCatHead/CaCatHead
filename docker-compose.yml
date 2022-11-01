@@ -1,21 +1,35 @@
 version: '3.9'
 
 services:
-  # nginx:
-  #   build: ./deploy/nginx
-  #   container_name: cacathead_nginx
-  #   restart: always
-  #   depends_on:
-  #     - server
-  #   networks:
-  #     - cat_net
-  #   volumes:
-  #     - ./server/cat:/var/www/oj.cpany.dev
-  #     - ./.cert:/root/cert
-  #     - ./.logs/nginx:/var/log/nginx
-  #   ports:
-  #     - 80:80
-  #     - 443:443
+  nginx:
+    build: ./deploy/nginx
+    container_name: cacathead_nginx
+    restart: always
+    depends_on:
+      - server
+      - app
+    networks:
+      - cat_net
+    volumes:
+      - ./.cacathead/logs/nginx:/var/log/nginx
+      - ./.cacathead/static:/var/www/cacathead/static
+    #   - ./.cert:/root/cert
+    ports:
+      - 80:80
+      - 443:443
+
+  app:
+    build:
+      context: ./
+      dockerfile: ./app/Dockerfile
+    container_name: cacathead_app
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - cat_net
+    ports:
+      - '3333:3333'
 
   server:
     build: ./server
@@ -34,7 +48,8 @@ services:
     networks:
       - cat_net
     volumes:
-      - ./.testcase:/root/testcase
+      - ./.cacathead/testcase:/root/testcase
+      - ./.cacathead/static:/root/CaCatHead/static
     secrets:
       - db_pass
     env_file:
@@ -55,7 +70,7 @@ services:
     networks:
       - cat_net
     volumes:
-      - ./.testcase:/root/testcase
+      - ./.cacathead/testcase:/root/testcase
     secrets:
       - db_pass
     env_file:

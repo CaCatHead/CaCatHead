@@ -11,6 +11,7 @@ sleep 10
 export DB_PASS=$(cat $DB_PASS_FILE)
 
 /usr/src/.venv/bin/python ./manage.py migrate
+/usr/src/.venv/bin/python ./manage.py collectstatic --no-input
 
 if [ "$1" = "server" ] ; then
   /usr/src/.venv/bin/uvicorn CaCatHead.asgi:application --workers 4 --host 0.0.0.0 --port 8000

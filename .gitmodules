@@ -1,0 +1,3 @@
+[submodule "server/CatJudge"]
+	path = server/CatJudge
+	url = https://github.com/XLoJ/CatJudge.git

@@ -2,6 +2,7 @@
   "name": "@cacathead/monorepo",
   "private": true,
   "scripts": {
+    "build:app": "pnpm -C app run build",
     "dev:app": "pnpm -C app run dev",
     "dev:server": "pnpm -C server run dev"
   },
