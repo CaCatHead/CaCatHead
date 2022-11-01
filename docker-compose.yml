@@ -1,0 +1,105 @@
+version: '3.9'
+
+services:
+  # nginx:
+  #   build: ./deploy/nginx
+  #   container_name: cacathead_nginx
+  #   restart: always
+  #   depends_on:
+  #     - server
+  #   networks:
+  #     - cat_net
+  #   volumes:
+  #     - ./server/cat:/var/www/oj.cpany.dev
+  #     - ./.cert:/root/cert
+  #     - ./.logs/nginx:/var/log/nginx
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+
+  server:
+    build: ./server
+    container_name: cacathead_server
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    privileged: true
+    restart: on-failure
+    entrypoint: ./docker-entrypoint.sh
+    command:
+      - server
+    ports:
+      - '8000:8000'
+    networks:
+      - cat_net
+    volumes:
+      - ./.testcase:/root/testcase
+    secrets:
+      - db_pass
+    env_file:
+      - ./deploy/.env
+
+  judge:
+    build: ./server
+    container_name: cacathead_judge
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    privileged: true
+    restart: on-failure
+    entrypoint: ./docker-entrypoint.sh
+    command:
+      - judge
+    networks:
+      - cat_net
+    volumes:
+      - ./.testcase:/root/testcase
+    secrets:
+      - db_pass
+    env_file:
+      - ./deploy/.env
+
+  mysql:
+    image: mysql:8.0.30
+    container_name: cacathead_mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - cat_net
+    # ports:
+    #   - '3306:3306'
+    volumes:
+      - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - /var/lib/mysql:/var/lib/mysql
+    secrets:
+      - db_pass
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_pass
+
+  redis:
+    image: redis:7.0.5-alpine
+    container_name: cacathead_redis
+    restart: always
+    networks:
+      - cat_net
+    # volumes:
+    #   - /data:/data
+
+  rabbitmq:
+    image: rabbitmq:3.11.0
+    container_name: cacathead_rabbitmq
+    restart: always
+    # ports:
+    #   - '5672:5672'
+    #   - '15672:15672'
+    networks:
+      - cat_net
+
+networks:
+  cat_net:
+
+secrets:
+  db_pass:
+    file: ./pass.txt
