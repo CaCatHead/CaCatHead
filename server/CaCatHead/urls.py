@@ -47,17 +47,20 @@ urlpatterns = [
     path('api/polygon/<int:problem_id>', problem_views.get_created_problems),  # 手动创建题目
     path('api/polygon/<int:problem_id>/edit', problem_views.edit_created_problem),  # 编辑题目
     path('api/polygon/<int:problem_id>/submit', problem_views.submit_created_problem),  # 提交题目代码
+    # path('api/polygon/<int:problem_id>/permission'),  # 将创建的题目向他人授权
     path('api/polygon/own', problem_views.list_created_problems),  # 用户上传的题目列表
     path('api/polygon/submissions', problem_views.list_created_problem_submissions),  # 获取所有提交状态
     path('api/polygon/submission/<int:submission_id>', problem_views.get_created_problem_submission),  # 获取提交状态详情
     # problem
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
     path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
-    # path('api/repo/<int:repo_id>/problems/add'),  # 添加题目
+    # path('api/repo/<int:repo_id>/permission'),  # 将题库向他人授权
+    # path('api/repo/<int:repo_id>/problems/edit'),  # 编辑题库中的题目列表
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>'),  # 查看题目内容
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit'),  # 提交代码
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
-    # path('api/repo/<int:repo_id>/status'),  # 查看提交列表
+    # path('api/repo/<int:repo_id>/submissions'),  # 获取所有提交状态
+    # path('api/repo/<int:repo_id>/submission/<int:submission_id>'),  # 获取提交状态详情
 ]
 
 # if settings.DEBUG:
