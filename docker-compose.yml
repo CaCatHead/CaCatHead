@@ -13,7 +13,7 @@ services:
     volumes:
       - ./.cacathead/logs/nginx:/var/log/nginx
       - ./.cacathead/static:/var/www/cacathead/static
-    #   - ./.cert:/root/cert
+      - ./.cert:/root/cert
     ports:
       - 80:80
       - 443:443
