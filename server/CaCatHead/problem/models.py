@@ -144,6 +144,8 @@ class Problem(BaseModel):
     # submit_number = models.IntegerField(default=0, verbose_name=_(u"提交次数"))
     # level = models.IntegerField(default=3, verbose_name=_(u"题目难度"))
 
+    objects = PermissionManager()
+
     def __str__(self):
         return f'Problem {self.id}. {self.title}'
 

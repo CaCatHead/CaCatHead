@@ -27,7 +27,7 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
     submission = Submission(
         repository=repo,
         problem=problem,
-        author=user,
+        owner=user,
         code=code,
         language=language,
     )

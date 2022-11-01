@@ -62,5 +62,5 @@ GET http://127.0.0.1:8000/api/polygon/submissions
 Authorization: Token {{auth_token}}
 
 ### Get submission
-GET http://127.0.0.1:8000/api/polygon/submission/7
+GET http://127.0.0.1:8000/api/polygon/submission/1
 Authorization: Token {{auth_token}}
