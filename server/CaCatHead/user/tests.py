@@ -209,12 +209,12 @@ class UserRegisterTests(APITestCase):
                          {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
-        with self.assertRaises(django.db.utils.IntegrityError):
-            resp = self.client.post('/api/auth/register', {
-                "username": "world",
-                "email": "gdx@example.com",
-                "password": "12345678"
-            })
+        resp2 = self.client.post('/api/auth/register', {
+            "username": "world",
+            "email": "gdx@example.com",
+            "password": "12345678"
+        })
+        assert resp2.data['detail'] == '用户名 world 已经被注册'
 
     def test_register_ok_same_email(self):
         """

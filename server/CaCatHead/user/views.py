@@ -8,7 +8,7 @@ from rest_framework.request import Request
 
 from CaCatHead.core.decorators import func_validate_request, class_validate_request
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer
-from CaCatHead.user.service import register_student_user
+from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response
 
 
