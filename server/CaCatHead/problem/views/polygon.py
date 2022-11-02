@@ -145,7 +145,6 @@ class PolygonPermission(APIView):
     """
     编辑题目权限
     """
-
     permission_classes = [HasPolygonPermission]
 
     @staticmethod
