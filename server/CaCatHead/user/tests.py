@@ -1,6 +1,17 @@
 import django.db.utils
+from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
+
+ROOT_USER = settings.CACATHEAD_ROOT_USER
+ROOT_PASS = settings.CACATHEAD_ROOT_PASS
+DEFAULT_EMAIL = 'root@example.com'
+
+ROOT_PROFILE = {'id': 1, 'username': 'root', 'nickname': 'root', 'email': 'root@example.com'}
+
+
+def login_token_valid(resp):
+    return len(resp.data['expiry']) > 0 and len(resp.data['token']) > 0
 
 
 class UserAuthTests(APITestCase):
@@ -11,24 +22,20 @@ class UserAuthTests(APITestCase):
         assert resp.data['message'] == 'Hello, world!'
 
     def test_login(self):
-        resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"})
+        resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
         assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
+        assert login_token_valid(resp)
         # 测试 Token 访问 /api/user/profile 返回 200
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
+        self.assertEqual(resp2.data, {'status': 'ok', 'user': ROOT_PROFILE})
 
     def test_token_error_authentication_fail(self):
-        resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"})
+        resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
         assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
+        assert login_token_valid(resp)
         # 随便搞一个 token 访问 /api/user/profile 返回 401
         authorization = resp.data['token']
         authorization = "Token " + authorization[::-1]
@@ -37,14 +44,12 @@ class UserAuthTests(APITestCase):
         self.assertEqual(resp2.status_code, 401)
 
     def test_password_error(self):
-        resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "gdxtxdy"})
+        resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": "gdxtxdy"})
         assert resp.status_code == 401
         self.assertEqual(resp.data['detail'], "不正确的身份认证信息。")
 
     def test_username_error(self):
-        resp = self.client.post('/api/auth/login',
-                                {"username": "gdx", "password": "gdxtxdy"})
+        resp = self.client.post('/api/auth/login', {"username": "gdx", "password": "gdxtxdy"})
         assert resp.status_code == 401
         assert resp.data['detail'] == "不正确的身份认证信息。"
 
@@ -59,15 +64,13 @@ class UserAuthTests(APITestCase):
         """
         多次登录, 登录了带 token, 第二次登录返回已登录
         """
-        resp = self.client.post('/api/auth/login',
-                                {"username": "root", "password": "12345678"})
+        resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
         assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
+        assert login_token_valid(resp)
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.post('/api/auth/login',
-                                 {"username": "root", "password": "12345678"})
+                                 {"username": ROOT_USER, "password": ROOT_PASS})
         assert resp2.status_code == 401
         assert resp2.data['detail'] == '你已经登陆过了'
         resp3 = self.client.post('/api/auth/logout')
@@ -83,18 +86,16 @@ class UserAuthTests(APITestCase):
         authorizations = []
         # 多次登录
         for _ in range(0, 10):
-            resp = self.client.post('/api/auth/login',
-                                    {"username": "root", "password": "12345678"})
+            resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
             assert resp.status_code == 200
-            assert len(resp.data['expiry']) > 0
-            assert len(resp.data['token']) > 0
+            assert login_token_valid(resp)
             authorizations.append("Token " + resp.data['token'])
         # 每个 token 查看信息
         for authorization in authorizations:
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
             assert resp2.status_code == 200
-            self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': 'root', 'email': 'root@example.com'}})
+            self.assertEqual(resp2.data, {'status': 'ok', 'user': ROOT_PROFILE})
         # 退出
         self.client.credentials(HTTP_AUTHORIZATION=authorizations[0])
         resp3 = self.client.post('/api/auth/logoutall')
@@ -117,7 +118,8 @@ class UserAuthTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        self.assertEqual(resp.data['user'],
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         user = User.objects.get(username='world')
         username = user.username
         email = user.email
@@ -127,15 +129,15 @@ class UserAuthTests(APITestCase):
         resp = self.client.post('/api/auth/login',
                                 {"username": username, "password": "12345678"})
         assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
+        assert login_token_valid(resp)
         # 查看信息
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
+        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'id': 2, 'username': 'world', 'nickname': 'world',
+                                                               'email': 'world@example.com'}})
         # 退出
-        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'username': username, 'email': email}})
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
 
@@ -152,10 +154,9 @@ class UserAuthTests(APITestCase):
         """
         登录获取 token，退出，该 token 不可用
         """
-        resp = self.client.post('/api/auth/login', {"username": "root", "password": "12345678"})
+        resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
         assert resp.status_code == 200
-        assert len(resp.data['expiry']) > 0
-        assert len(resp.data['token']) > 0
+        assert login_token_valid(resp)
         authorization = "Token " + resp.data['token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.post('/api/auth/logout')
@@ -181,7 +182,7 @@ class UserRegisterTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        self.assertEqual(resp.data['user'], {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
@@ -204,7 +205,8 @@ class UserRegisterTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        self.assertEqual(resp.data['user'],
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         with self.assertRaises(django.db.utils.IntegrityError):
@@ -225,7 +227,8 @@ class UserRegisterTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'username': 'world', 'email': 'world@example.com'})
+        self.assertEqual(resp.data['user'],
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         self.client.post('/api/auth/register', {

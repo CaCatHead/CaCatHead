@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### Upload a new problem
-POST http://localhost:8000/api/polygon/upload
+POST http://127.0.0.1:8000/api/polygon/upload
 Authorization: Token {{auth_token}}
 Content-Type: application/zip
 Content-Disposition: form-data; filename="aplusb.zip"

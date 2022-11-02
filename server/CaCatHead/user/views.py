@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
 from CaCatHead.core.decorators import func_validate_request, class_validate_request
-from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializers
+from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer
 from CaCatHead.user.service import register_student_user
 from CaCatHead.utils import make_response
 
@@ -24,11 +24,11 @@ def current_user_profile(request):
     Get current user profile
     """
     user = request.user
-    return make_response(user={"username": user.username, "email": user.email})
+    return make_response(user=FullUserSerializer(user).data)
 
 
 @api_view(['POST'])
-@func_validate_request(RegisterPayloadSerializers)
+@func_validate_request(RegisterPayloadSerializer)
 def user_register(request):
     """
     Register a new user
@@ -37,7 +37,7 @@ def user_register(request):
     email = request.data['email']
     password = request.data['password']
     user = register_student_user(username=username, email=email, password=password)
-    return make_response(user={"username": user.username, "email": user.email})
+    return make_response(user=FullUserSerializer(user).data)
 
 
 class UserLoginView(KnoxLoginView):
