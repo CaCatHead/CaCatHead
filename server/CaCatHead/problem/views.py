@@ -142,6 +142,10 @@ def list_polygon_submissions(request: Request):
 
 
 class PolygonPermission(APIView):
+    """
+    编辑题目权限
+    """
+
     permission_classes = [HasPolygonPermission]
 
     @staticmethod
@@ -212,7 +216,8 @@ def list_repo_problems(request, repo_id: int):
     """
     列出题库中的所有题目
     """
-    repo = ProblemRepository.objects.filter_user_public(user=request.user, id=repo_id,
+    repo = ProblemRepository.objects.filter_user_public(user=request.user,
+                                                        id=repo_id,
                                                         permission=ProblemRepositoryPermissions.ListProblems).first()
     if repo is None:
         raise NotFound(detail='题库未找到')
