@@ -2,7 +2,7 @@ from enum import Enum, unique
 
 
 @unique
-class PostPermissions(Enum):
+class PostPermissions(str, Enum):
     """
     公告系统使用的权限字符串常量
     """
@@ -11,7 +11,7 @@ class PostPermissions(Enum):
 
 
 @unique
-class ProblemRepositoryPermissions(Enum):
+class ProblemRepositoryPermissions(str, Enum):
     """
     题库系统使用的权限字符串常量
     """
@@ -25,7 +25,7 @@ class ProblemRepositoryPermissions(Enum):
 
 
 @unique
-class ProblemPermissions(Enum):
+class ProblemPermissions(str, Enum):
     """
     题目系统使用的权限字符串常量
     """

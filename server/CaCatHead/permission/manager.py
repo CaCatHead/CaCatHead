@@ -90,7 +90,7 @@ class PermissionManager(models.Manager):
             query_user_group = self._q_user_group_private(user, permissions)
             return self.get_queryset().filter(Q(**kwargs), Q(owner=user) | query_user | query_user_group)
 
-    def grant_user_permission(self, user: User, permission: str, content_id):
+    def grant_user_permission(self, user: User, permission: str, content_id: int):
         """
         赋予用户权限
         """
@@ -99,7 +99,21 @@ class PermissionManager(models.Manager):
         user_permission.save()
         return user_permission
 
-    def grant_group_permission(self, group: Group, permission: str, content_id):
+    def revoke_user_permission(self, user: User, permission: str, content_id: int):
+        """
+        取消用户权限
+        """
+        user_permissions = UserPermission.objects.filter(user=user,
+                                                         content_type=self.model_name(),
+                                                         content_id=content_id,
+                                                         codename=permission)
+        if user_permissions.count() == 0:
+            return False
+        else:
+            user_permissions.delete()
+            return True
+
+    def grant_group_permission(self, group: Group, permission: str, content_id: int):
         """
         赋予组权限
         """
@@ -107,3 +121,17 @@ class PermissionManager(models.Manager):
                                            codename=permission)
         group_permission.save()
         return group_permission
+
+    def revoke_group_permission(self, group: Group, permission: str, content_id: int):
+        """
+        取消组权限
+        """
+        group_permissions = GroupPermission.objects.filter(group=group,
+                                                           content_type=self.model_name(),
+                                                           content_id=content_id,
+                                                           codename=permission)
+        if group_permissions.count() == 0:
+            return False
+        else:
+            group_permissions.delete()
+            return True

@@ -64,3 +64,23 @@ Authorization: Token {{auth_token}}
 ### Get submission
 GET http://127.0.0.1:8000/api/polygon/submission/1
 Authorization: Token {{auth_token}}
+
+### Grant permissions
+POST http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "grant": "read_problem"
+}
+
+### Revoke permissions
+POST http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "revoke": "read_problem"
+}

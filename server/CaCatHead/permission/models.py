@@ -20,6 +20,11 @@ class UserPermission(models.Model):
 
     class Meta:
         db_table = 'user_permission'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'content_type', 'content_id', 'codename'],
+                name='unique user_permission')
+        ]
 
 
 class GroupPermission(models.Model):
@@ -39,3 +44,8 @@ class GroupPermission(models.Model):
 
     class Meta:
         db_table = 'group_permission'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['group', 'content_type', 'content_id', 'codename'],
+                name='unique group_permission')
+        ]

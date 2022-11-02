@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FileUploadParser
@@ -8,12 +10,12 @@ from CaCatHead.core.decorators import HasPolygonPermission, func_validate_reques
 from CaCatHead.permission.constants import ProblemRepositoryPermissions, ProblemPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer
+    EditProblemPayload, FullProblemSerializer, EditProblemPermissionPayload
 from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
 from CaCatHead.problem.submit import submit_problem_code
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
-from CaCatHead.utils import make_response
+from CaCatHead.utils import make_response, make_error_response
 
 
 # ----- Polygon -----
@@ -45,7 +47,7 @@ def upload_problem(request: Request):
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
 @func_validate_request(EditProblemPayload)
-def edit_created_problem(request: Request, problem_id: int):
+def edit_polygon_problem(request: Request, problem_id: int):
     """
     编辑自己创建的题目, 或者被授予编辑权限的题目
     """
@@ -62,7 +64,7 @@ def edit_created_problem(request: Request, problem_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
-def get_created_problems(request: Request, problem_id: int):
+def get_polygon_problem(request: Request, problem_id: int):
     """
     查看自己创建的题目, 公开的题目, 或者被授予阅读权限的题目
     """
@@ -75,7 +77,7 @@ def get_created_problems(request: Request, problem_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
-def list_created_problems(request):
+def list_polygon_problems(request):
     """
     列出自己可见的题目
     """
@@ -87,7 +89,7 @@ def list_created_problems(request):
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
-def submit_created_problem(request: Request, problem_id: int):
+def submit_polygon_problem(request: Request, problem_id: int):
     """
     向自己创建的题目，或者被授予提交权限的题目，提交代码
     """
@@ -107,7 +109,7 @@ def submit_created_problem(request: Request, problem_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
-def get_created_problem_submission(request: Request, submission_id: int):
+def get_polygon_submission(request: Request, submission_id: int):
     """
     获取提交
     """
@@ -125,9 +127,9 @@ def get_created_problem_submission(request: Request, submission_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
-def list_created_problem_submissions(request: Request):
+def list_polygon_submissions(request: Request):
     """
-    获取提交
+    获取提交列表
     """
     view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                            user=request.user,
@@ -135,6 +137,47 @@ def list_created_problem_submissions(request: Request):
     submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
                                             problem__in=Subquery(view_subquery.values('id')))
     return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
+
+
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+@func_validate_request(EditProblemPermissionPayload)
+def grant_polygon_permission(request, problem_id: int):
+    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                     id=problem_id,
+                                     owner=request.user).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    elif 'user_id' in request.data:
+        user = User.objects.get(id=request.data['user_id'])
+        grant = False
+        revoke = False
+        if 'grant' in request.data:
+            Problem.objects.grant_user_permission(user=user,
+                                                  permission=request.data['grant'],
+                                                  content_id=problem.id)
+            grant = True
+        if 'revoke' in request.data:
+            revoke = Problem.objects.revoke_user_permission(user=user,
+                                                            permission=request.data['revoke'],
+                                                            content_id=problem.id)
+        return make_response(user_id=user.id, grant=grant, revoke=revoke)
+    elif 'group_id' in request.data:
+        group = Group.objects.get(id=request.data['group_id'])
+        grant = False
+        revoke = False
+        if 'grant' in request.data:
+            Problem.objects.grant_group_permission(group=group,
+                                                   permission=request.data['grant'],
+                                                   content_id=problem.id)
+            grant = True
+        if 'revoke' in request.data:
+            revoke = Problem.objects.revoke_group_permission(group=group,
+                                                             permission=request.data['revoke'],
+                                                             content_id=problem.id)
+        return make_response(group_id=group.id, grant=grant, revoke=revoke)
+    else:
+        return make_error_response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # ----- 题库 -----
