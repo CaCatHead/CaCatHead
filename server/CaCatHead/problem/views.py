@@ -5,9 +5,11 @@ from rest_framework.decorators import api_view, permission_classes, parser_class
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
+from rest_framework.views import APIView
 
-from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request
+from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request, class_validate_request
 from CaCatHead.permission.constants import ProblemRepositoryPermissions, ProblemPermissions
+from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditProblemPermissionPayload
@@ -139,45 +141,59 @@ def list_polygon_submissions(request: Request):
     return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
 
 
-@api_view(['POST'])
-@permission_classes([HasPolygonPermission])
-@func_validate_request(EditProblemPermissionPayload)
-def grant_polygon_permission(request, problem_id: int):
-    problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
-                                     id=problem_id,
-                                     owner=request.user).first()
-    if problem is None:
-        raise NotFound('题目未找到')
-    elif 'user_id' in request.data:
-        user = User.objects.get(id=request.data['user_id'])
-        grant = False
-        revoke = False
-        if 'grant' in request.data:
-            Problem.objects.grant_user_permission(user=user,
-                                                  permission=request.data['grant'],
-                                                  content_id=problem.id)
-            grant = True
-        if 'revoke' in request.data:
-            revoke = Problem.objects.revoke_user_permission(user=user,
-                                                            permission=request.data['revoke'],
-                                                            content_id=problem.id)
-        return make_response(user_id=user.id, grant=grant, revoke=revoke)
-    elif 'group_id' in request.data:
-        group = Group.objects.get(id=request.data['group_id'])
-        grant = False
-        revoke = False
-        if 'grant' in request.data:
-            Problem.objects.grant_group_permission(group=group,
-                                                   permission=request.data['grant'],
-                                                   content_id=problem.id)
-            grant = True
-        if 'revoke' in request.data:
-            revoke = Problem.objects.revoke_group_permission(group=group,
-                                                             permission=request.data['revoke'],
-                                                             content_id=problem.id)
-        return make_response(group_id=group.id, grant=grant, revoke=revoke)
-    else:
-        return make_error_response(status=status.HTTP_400_BAD_REQUEST)
+class PolygonPermission(APIView):
+    permission_classes = [HasPolygonPermission]
+
+    @staticmethod
+    def get_problem_or_raise(request: Request, problem_id: int):
+        problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                         id=problem_id,
+                                         owner=request.user).first()
+        if problem is None:
+            raise NotFound('题目未找到')
+        else:
+            return problem
+
+    def get(self, request: Request, problem_id: int):
+        problem = self.get_problem_or_raise(request, problem_id)
+        user_permissions = Problem.objects.list_user_permissions(problem.id)
+        group_permissions = Problem.objects.list_group_permissions(problem.id)
+        return make_response(user_permissions=UserPermissionSerializer(user_permissions, many=True).data,
+                             group_permissions=GroupPermissionSerializer(group_permissions, many=True).data)
+
+    @class_validate_request(EditProblemPermissionPayload)
+    def post(self, request: Request, problem_id: int):
+        problem = self.get_problem_or_raise(request, problem_id)
+        if 'user_id' in request.data:
+            user = User.objects.get(id=request.data['user_id'])
+            grant = False
+            revoke = False
+            if 'grant' in request.data:
+                Problem.objects.grant_user_permission(user=user,
+                                                      permission=request.data['grant'],
+                                                      content_id=problem.id)
+                grant = True
+            if 'revoke' in request.data:
+                revoke = Problem.objects.revoke_user_permission(user=user,
+                                                                permission=request.data['revoke'],
+                                                                content_id=problem.id)
+            return make_response(user_id=user.id, grant=grant, revoke=revoke)
+        elif 'group_id' in request.data:
+            group = Group.objects.get(id=request.data['group_id'])
+            grant = False
+            revoke = False
+            if 'grant' in request.data:
+                Problem.objects.grant_group_permission(group=group,
+                                                       permission=request.data['grant'],
+                                                       content_id=problem.id)
+                grant = True
+            if 'revoke' in request.data:
+                revoke = Problem.objects.revoke_group_permission(group=group,
+                                                                 permission=request.data['revoke'],
+                                                                 content_id=problem.id)
+            return make_response(group_id=group.id, grant=grant, revoke=revoke)
+        else:
+            return make_error_response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # ----- 题库 -----

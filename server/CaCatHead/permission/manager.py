@@ -90,6 +90,12 @@ class PermissionManager(models.Manager):
             query_user_group = self._q_user_group_private(user, permissions)
             return self.get_queryset().filter(Q(**kwargs), Q(owner=user) | query_user | query_user_group)
 
+    def list_user_permissions(self, content_id: int):
+        return UserPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
+    def list_group_permissions(self, content_id: int):
+        return GroupPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
     def grant_user_permission(self, user: User, permission: str, content_id: int):
         """
         赋予用户权限

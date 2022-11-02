@@ -65,6 +65,10 @@ Authorization: Token {{auth_token}}
 GET http://127.0.0.1:8000/api/polygon/submission/1
 Authorization: Token {{auth_token}}
 
+### Get permissions
+GET http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+
 ### Grant permissions
 POST http://127.0.0.1:8000/api/polygon/1/permission
 Authorization: Token {{auth_token}}
