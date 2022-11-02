@@ -1,4 +1,3 @@
-import django.db.utils
 from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
@@ -182,7 +181,8 @@ class UserRegisterTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
+        self.assertEqual(resp.data['user'],
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
         self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
