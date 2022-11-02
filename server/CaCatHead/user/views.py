@@ -21,7 +21,7 @@ def ping(_request):
 @permission_classes([IsAuthenticated])
 def current_user_profile(request):
     """
-    Get current user profile
+    获取当前用户信息
     """
     user = request.user
     return make_response(user=FullUserSerializer(user).data)
@@ -31,7 +31,7 @@ def current_user_profile(request):
 @func_validate_request(RegisterPayloadSerializer)
 def user_register(request):
     """
-    Register a new user
+    注册新用户
     """
     username = request.data['username']
     email = request.data['email']
@@ -41,6 +41,10 @@ def user_register(request):
 
 
 class UserLoginView(KnoxLoginView):
+    """
+    用户登录
+    """
+
     permission_classes = (permissions.AllowAny,)
 
     @class_validate_request(LoginPayloadSerializer)
