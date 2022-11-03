@@ -31,10 +31,10 @@ class Submission(models.Model):
                                 related_name='problem',
                                 verbose_name=_(u"所属题目"))
 
-    author = models.ForeignKey(User,
-                               on_delete=models.CASCADE,
-                               related_name='user',
-                               verbose_name=_(u"创建者"))
+    owner = models.ForeignKey(User,
+                              on_delete=models.CASCADE,
+                              related_name='user',
+                              verbose_name=_(u"创建者"))
 
     code = models.TextField(blank=True, verbose_name=_(u"代码"))
 

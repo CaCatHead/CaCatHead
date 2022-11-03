@@ -22,5 +22,5 @@ Content-Type: application/json
 {
   "title": "测试公告标题",
   "content": "测试公告内容",
-  "isPublic": false
+  "is_public": false
 }

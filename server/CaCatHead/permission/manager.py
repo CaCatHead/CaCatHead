@@ -8,7 +8,7 @@ from CaCatHead.permission.models import UserPermission, GroupPermission
 class PermissionManager(models.Manager):
     """
     对象级别权限控制
-    注意：使用该类的表需要有一个布尔字段 is_public
+    注意: 使用该类的表需要有一个布尔字段 is_public 和指向用户的外键 owner
     """
 
     def model_name(self):
@@ -65,7 +65,8 @@ class PermissionManager(models.Manager):
             # 其他用户, 查询用户拥有的权限
             query_user = self._q_user_private(user, [permission], is_public=False)
             query_user_group = self._q_user_group_private(user, [permission], is_public=False)
-            return self.get_queryset().filter(Q(**kwargs), Q(is_public=True) | query_user | query_user_group)
+            return self.get_queryset().filter(Q(**kwargs),
+                                              Q(is_public=True) | Q(owner=user) | query_user | query_user_group)
 
     def filter_user_permission(self, user: User, permission=None, permissions=None, **kwargs):
         """
@@ -87,9 +88,15 @@ class PermissionManager(models.Manager):
             # 其他用户, 查询用户拥有的权限
             query_user = self._q_user_private(user, permissions)
             query_user_group = self._q_user_group_private(user, permissions)
-            return self.get_queryset().filter(Q(**kwargs), query_user | query_user_group)
+            return self.get_queryset().filter(Q(**kwargs), Q(owner=user) | query_user | query_user_group)
 
-    def grant_user_permission(self, user: User, permission: str, content_id):
+    def list_user_permissions(self, content_id: int):
+        return UserPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
+    def list_group_permissions(self, content_id: int):
+        return GroupPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
+    def grant_user_permission(self, user: User, permission: str, content_id: int):
         """
         赋予用户权限
         """
@@ -98,7 +105,21 @@ class PermissionManager(models.Manager):
         user_permission.save()
         return user_permission
 
-    def grant_group_permission(self, group: Group, permission: str, content_id):
+    def revoke_user_permission(self, user: User, permission: str, content_id: int):
+        """
+        取消用户权限
+        """
+        user_permissions = UserPermission.objects.filter(user=user,
+                                                         content_type=self.model_name(),
+                                                         content_id=content_id,
+                                                         codename=permission)
+        if user_permissions.count() == 0:
+            return False
+        else:
+            user_permissions.delete()
+            return True
+
+    def grant_group_permission(self, group: Group, permission: str, content_id: int):
         """
         赋予组权限
         """
@@ -106,3 +127,17 @@ class PermissionManager(models.Manager):
                                            codename=permission)
         group_permission.save()
         return group_permission
+
+    def revoke_group_permission(self, group: Group, permission: str, content_id: int):
+        """
+        取消组权限
+        """
+        group_permissions = GroupPermission.objects.filter(group=group,
+                                                           content_type=self.model_name(),
+                                                           content_id=content_id,
+                                                           codename=permission)
+        if group_permissions.count() == 0:
+            return False
+        else:
+            group_permissions.delete()
+            return True

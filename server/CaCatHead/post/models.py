@@ -15,7 +15,7 @@ class Post(BaseModel):
     """
     title = models.CharField(max_length=256, verbose_name=_(u"标题"))
 
-    publisher = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"发布者"))
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"发布者"))
 
     sort_time = models.DateTimeField(auto_now_add=True, verbose_name=_(u"排序时间"))
 

@@ -83,6 +83,11 @@ class ProblemInfo(models.Model):
                                       related_name='problem_judge',
                                       verbose_name=_(u"评测信息"))
 
+    owner = models.ForeignKey(User,
+                              on_delete=models.RESTRICT,
+                              related_name='problem_info_owner',
+                              verbose_name=_(u"创建者"))
+
     def __str__(self):
         return f'ProblemInfo #{self.id}'
 
@@ -115,6 +120,11 @@ class Problem(BaseModel):
         create_user: 创建题目的账户
         is_public: 是否公开
     """
+    repository = models.ForeignKey('ProblemRepository',
+                                   on_delete=models.CASCADE,
+                                   related_name='problem_repository',
+                                   verbose_name=_(u"所属题库"))
+
     display_id = models.IntegerField(default=0, verbose_name=_(u"题目显示编号"))
 
     title = models.CharField(max_length=512, verbose_name=_(u"标题"))
@@ -144,13 +154,20 @@ class Problem(BaseModel):
     # submit_number = models.IntegerField(default=0, verbose_name=_(u"提交次数"))
     # level = models.IntegerField(default=3, verbose_name=_(u"题目难度"))
 
+    objects = PermissionManager()
+
     def __str__(self):
         return f'Problem {self.id}. {self.title}'
 
     class Meta:
         db_table = 'problem'
-        app_label = 'problem'
+
+        indexes = [
+            models.Index(fields=['repository', 'display_id'], name='repo_display_id_index')
+        ]
+
         verbose_name = _(u"题目信息")
+
         verbose_name_plural = _(u"题目列表")
 
 
@@ -173,6 +190,7 @@ class ProblemRepository(models.Model):
 
     class Meta:
         db_table = 'problem_repository'
-        app_label = 'problem'
+
         verbose_name = _(u"题目仓库")
+
         verbose_name_plural = _(u"题目仓库列表")

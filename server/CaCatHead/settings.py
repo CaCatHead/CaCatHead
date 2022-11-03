@@ -30,6 +30,11 @@ SECRET_KEY = 'django-insecure-jve48vpw^1-z+1lc8#u^f@6gai%r)k-m-47^qw$^@nct1u)*^_
 DEBUG_ENV = os.getenv('DEBUG', 'true').lower()
 DEBUG = False if DEBUG_ENV == 'false' else True
 
+# Root username and password
+CACATHEAD_ROOT_USER = os.getenv('CACATHEAD_ROOT_USER', 'root')
+CACATHEAD_ROOT_PASS = os.getenv('CACATHEAD_ROOT_PASS', '12345678')
+
+# Testcase root dir
 TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
 
 # Config rabbit mq connection
@@ -198,10 +203,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
     },
     'loggers': {
         'Judge.service': {
