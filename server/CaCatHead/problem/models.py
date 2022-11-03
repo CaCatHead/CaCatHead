@@ -83,6 +83,11 @@ class ProblemInfo(models.Model):
                                       related_name='problem_judge',
                                       verbose_name=_(u"评测信息"))
 
+    owner = models.ForeignKey(User,
+                              on_delete=models.RESTRICT,
+                              related_name='problem_info_owner',
+                              verbose_name=_(u"创建者"))
+
     def __str__(self):
         return f'ProblemInfo #{self.id}'
 

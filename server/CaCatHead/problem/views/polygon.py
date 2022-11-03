@@ -1,3 +1,5 @@
+from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
+from CaCatHead.problem.views.submit import submit_problem_code
 from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
 from rest_framework import status
@@ -12,9 +14,7 @@ from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditProblemPermissionPayload
-from CaCatHead.problem.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
-from CaCatHead.problem.submit import submit_problem_code
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
 from CaCatHead.utils import make_response, make_error_response
@@ -164,7 +164,7 @@ class PolygonPermission(APIView):
         return make_response(user_permissions=UserPermissionSerializer(user_permissions, many=True).data,
                              group_permissions=GroupPermissionSerializer(group_permissions, many=True).data)
 
-    @class_validate_request(EditProblemPermissionPayload)
+    @class_validate_request(EditPermissionPayload)
     def post(self, request: Request, problem_id: int):
         problem = self.get_problem_or_raise(request, problem_id)
         if 'user_id' in request.data:

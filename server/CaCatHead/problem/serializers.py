@@ -24,7 +24,7 @@ class EditProblemPayload(serializers.Serializer):
     extra_judge = serializers.JSONField(required=False)
 
 
-class EditProblemPermissionPayload(serializers.Serializer):
+class EditPermissionPayload(serializers.Serializer):
     user_id = serializers.IntegerField(required=False)
     group_id = serializers.IntegerField(required=False)
     grant = serializers.CharField(max_length=32, required=False)

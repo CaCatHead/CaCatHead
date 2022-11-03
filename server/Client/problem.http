@@ -1,0 +1,11 @@
+### Add problem
+POST http://127.0.0.1:8000/api/repo/2/add/1
+Authorization: Token {{auth_token}}
+
+### List problems
+GET http://127.0.0.1:8000/api/repo/2/problems
+Authorization: Token {{auth_token}}
+
+### Get problem
+GET http://127.0.0.1:8000/api/repo/2/problem/1000
+Authorization: Token {{auth_token}}

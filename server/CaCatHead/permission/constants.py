@@ -32,3 +32,4 @@ class ProblemPermissions(str, Enum):
     ReadSubmission = 'read_submission'
     Submit = 'submit'
     Edit = 'edit'
+    Copy = 'copy'  # 将该题目从主题库复制到其他题库
