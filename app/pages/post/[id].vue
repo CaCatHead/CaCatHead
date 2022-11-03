@@ -17,6 +17,11 @@ const { data: post } = await useFetchAPI<{ post: Post }>(
       <Title>{{ post.post.title }}</Title>
     </Head>
     <h2 text-2xl font-bold>{{ post.post.title }}</h2>
-    <div mt4>{{ post.post.content }}</div>
+    <p mt2 text-sm font-light>
+      <span>用户 </span>
+      <user-link :user="post.post.owner" />
+      <span> 发表于 {{ formatDateTime(post.post.created) }}</span>
+    </p>
+    <div mt4 pl4 py2 border="l-4 base">{{ post.post.content }}</div>
   </div>
 </template>

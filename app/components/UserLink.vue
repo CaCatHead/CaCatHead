@@ -3,5 +3,11 @@ defineProps<{ user: { id: number; username: string; nickname: string } }>();
 </script>
 
 <template>
-  <NuxtLink to="/">{{ user.nickname }}</NuxtLink>
+  <nuxt-link to="/" class="user-link">{{ user.nickname }}</nuxt-link>
 </template>
+
+<style>
+.user-link:hover {
+  @apply text-sky-700;
+}
+</style>
