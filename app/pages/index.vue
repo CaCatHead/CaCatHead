@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import type { Post } from '@/composables/types';
+
 useHead({
   title: '主页',
 });
 
-const { data } = await useFetchAPI<{ posts: any[] }>('/api/posts/public');
+const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
 </script>
 
 <template>
   <div>
     <div v-for="post in data.posts" mb8>
-      <h2 text-2xl>
+      <h2 text-2xl font-bold>
         <NuxtLink :to="`/post/${post.id}`">{{ post.title }}</NuxtLink>
       </h2>
       <p mt2 text-sm font-light>

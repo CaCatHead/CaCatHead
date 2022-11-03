@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import type { Post } from '@/composables/types';
+
 const route = useRoute();
-const { data } = await useFetchAPI<{ post: any }>(
+// const { data: post } = await useFetch<{ post: Post }>(
+//   `/api/post/${route.params.id}`,
+//   { baseURL: useRuntimeConfig().API_BASE }
+// );
+const { data: post } = await useFetchAPI<{ post: Post }>(
   `/api/post/${route.params.id}`
 );
 </script>
@@ -8,7 +14,9 @@ const { data } = await useFetchAPI<{ post: any }>(
 <template>
   <div>
     <Head>
-      <Title>{{ data.post?.title ?? '公告' }}</Title>
+      <Title>{{ post.post.title }}</Title>
     </Head>
+    <h2 text-2xl font-bold>{{ post.post.title }}</h2>
+    <div mt4>{{ post.post.content }}</div>
   </div>
 </template>
