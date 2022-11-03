@@ -60,8 +60,8 @@ urlpatterns = [
     path('api/repo/<int:repo_id>/problem/<int:problem_id>', problem_views.get_repo_problem_content),  # 查看题目内容
     path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit', problem_views.submit_repo_problem_code),  # 提交代码
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
-    # path('api/repo/<int:repo_id>/submissions'),  # 获取所有提交状态
-    # path('api/repo/<int:repo_id>/submission/<int:submission_id>'),  # 获取提交状态详情
+    path('api/repo/<int:repo_id>/submissions', problem_views.list_repo_submissions),  # 获取所有提交状态
+    path('api/repo/<int:repo_id>/submission/<int:submission_id>', problem_views.get_repo_submission),  # 获取提交状态详情
     # contest
     # path('api/contests'),  # 列出所有比赛
     # path('api/contest'),  # 创建比赛
