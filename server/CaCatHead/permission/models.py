@@ -20,10 +20,8 @@ class UserPermission(models.Model):
 
     class Meta:
         db_table = 'user_permission'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'content_type', 'content_id', 'codename'],
-                name='unique user_permission')
+        indexes = [
+            models.Index(fields=['user', 'content_type', 'content_id', 'codename'], name='user_permission_index')
         ]
 
 
@@ -44,8 +42,6 @@ class GroupPermission(models.Model):
 
     class Meta:
         db_table = 'group_permission'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['group', 'content_type', 'content_id', 'codename'],
-                name='unique group_permission')
+        indexes = [
+            models.Index(fields=['group', 'content_type', 'content_id', 'codename'], name='group_permission_index')
         ]

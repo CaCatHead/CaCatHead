@@ -120,6 +120,11 @@ class Problem(BaseModel):
         create_user: 创建题目的账户
         is_public: 是否公开
     """
+    repository = models.ForeignKey('ProblemRepository',
+                                   on_delete=models.CASCADE,
+                                   related_name='problem_repository',
+                                   verbose_name=_(u"所属题库"))
+
     display_id = models.IntegerField(default=0, verbose_name=_(u"题目显示编号"))
 
     title = models.CharField(max_length=512, verbose_name=_(u"标题"))
@@ -156,8 +161,13 @@ class Problem(BaseModel):
 
     class Meta:
         db_table = 'problem'
-        app_label = 'problem'
+
+        indexes = [
+            models.Index(fields=['repository', 'display_id'], name='repo_display_id_index')
+        ]
+
         verbose_name = _(u"题目信息")
+
         verbose_name_plural = _(u"题目列表")
 
 
@@ -180,6 +190,7 @@ class ProblemRepository(models.Model):
 
     class Meta:
         db_table = 'problem_repository'
-        app_label = 'problem'
+
         verbose_name = _(u"题目仓库")
+
         verbose_name_plural = _(u"题目仓库列表")

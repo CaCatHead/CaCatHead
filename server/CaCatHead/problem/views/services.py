@@ -1,18 +1,19 @@
-from CaCatHead.problem.views.upload import upload_problem_zip
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from rest_framework import status
+from rest_framework.exceptions import APIException
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
 from CaCatHead.problem.serializers import EditProblemPayload
+from CaCatHead.problem.views.upload import upload_problem_zip
 
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
 except Exception:
     MAIN_PROBLEM_REPOSITORY = None
-
 
 DEFAULT_DISPLAY_ID = 1000
 
@@ -37,14 +38,21 @@ def make_problem(title: str, user: User, display_id=None):
         else:
             display_id += 1
 
-    problem = Problem(display_id=display_id,
-                      title=title,
-                      problem_info=problem_info,
-                      owner=user,
-                      is_public=False)
-    problem.save()
-    MAIN_PROBLEM_REPOSITORY.problems.add(problem)
-    return problem
+    try:
+        problem = Problem(repository=MAIN_PROBLEM_REPOSITORY,
+                          display_id=display_id,
+                          title=title,
+                          problem_info=problem_info,
+                          owner=user,
+                          is_public=False)
+        problem.save()
+        MAIN_PROBLEM_REPOSITORY.problems.add(problem)
+        return problem
+    except Exception:
+        problem_info.delete()
+        problem_content.delete()
+        problem_judge.delete()
+        raise APIException(detail='创建题目失败', code=status.HTTP_400_BAD_REQUEST)
 
 
 def edit_problem(problem: Problem, payload: dict):
@@ -124,7 +132,8 @@ def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):
     else:
         display_id += 1
 
-    new_problem = Problem(display_id=display_id,
+    new_problem = Problem(repository=repo,
+                          display_id=display_id,
                           title=problem.title,
                           problem_type=problem.problem_type,
                           time_limit=problem.time_limit,

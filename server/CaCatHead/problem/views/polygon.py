@@ -1,5 +1,3 @@
-from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, make_problem_by_uploading
-from CaCatHead.problem.views.submit import submit_problem_code
 from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
 from rest_framework import status
@@ -15,6 +13,9 @@ from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPerm
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditPermissionPayload
+from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
+    make_problem_by_uploading
+from CaCatHead.problem.views.submit import submit_problem_code
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
 from CaCatHead.utils import make_response, make_error_response

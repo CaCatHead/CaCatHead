@@ -1,5 +1,3 @@
-from CaCatHead.problem.views.services import MAIN_PROBLEM_REPOSITORY
-from CaCatHead.problem.views.submit import submit_problem_code
 from django.contrib.auth.models import User, Group
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -13,8 +11,10 @@ from CaCatHead.permission.constants import ProblemRepositoryPermissions, Problem
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, FullProblemSerializer, \
-    EditPermissionPayload
+    EditPermissionPayload, ProblemContentSerializer
+from CaCatHead.problem.views.services import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.problem.views.services import copy_repo_problem
+from CaCatHead.problem.views.submit import submit_problem_code
 from CaCatHead.submission.serializers import FullSubmissionSerializer
 from CaCatHead.user.serializers import UserSerializer
 from CaCatHead.utils import make_response, make_error_response
@@ -48,18 +48,18 @@ def check_repo(request: Request, repo_id: int, permission: str):
         return repo
 
 
-def check_repo_problem(request: Request, repo_id: int, problem_id: int, repo_permission: str, problem_permission: str):
+def check_repo_problem(request: Request, repo_id: int, problem_display_id: int, repo_permission: str, problem_permission: str):
     repo = check_repo(request, repo_id, repo_permission)
     if problem_permission in [ProblemPermissions.ReadProblem, ProblemPermissions.Submit]:
         problem = Problem.objects.filter_user_public(user=request.user,
                                                      problemrepository=repo,
-                                                     id=problem_id,
-                                                     permission=problem_permission)
+                                                     display_id=problem_display_id,
+                                                     permission=problem_permission).first()
     else:
         problem = Problem.objects.filter_user_permission(user=request.user,
                                                          problemrepository=repo,
-                                                         id=problem_id,
-                                                         permission=problem_permission)
+                                                         display_id=problem_display_id,
+                                                         permission=problem_permission).first()
     if problem is None:
         raise NotFound(detail='题目未找到')
     else:
@@ -86,7 +86,7 @@ def get_repo_problem_content(request: Request, repo_id: int, problem_id: int):
     repo, problem = check_repo_problem(request, repo_id, problem_id,
                                        ProblemRepositoryPermissions.ListProblems,
                                        ProblemPermissions.ReadProblem)
-    return make_response(problem=FullProblemSerializer(problem).get_or_raise())
+    return make_response(problem=ProblemContentSerializer(problem).get_or_raise())
 
 
 class RepoPermission(APIView):
@@ -166,7 +166,7 @@ def add_repo_problem(request: Request, repo_id: int, problem_id: int):
 @permission_classes([IsAuthenticated])
 def delete_repo_problem(request: Request, repo_id: int, problem_id: int):
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.DeleteProblem)
-    problem = Problem.objects.filter(problemrepository=repo, id=problem_id).first()
+    problem = Problem.objects.filter(problemrepository=repo, display_id=problem_id).first()
     if problem is None:
         return make_error_response(status=status.HTTP_400_BAD_REQUEST)
     else:
