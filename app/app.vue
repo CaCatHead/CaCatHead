@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import '@unocss/reset/tailwind.css';
 import './assets/main.css';
+import 'anu-vue/dist/style.css';
 </script>
 
 <template>

@@ -1,3 +1,3 @@
 <script setup lang="ts"></script>
 
-<template>题库</template>
+<template><div>题库</div></template>

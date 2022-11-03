@@ -1,3 +1,5 @@
 <script setup lang="ts"></script>
 
-<template>比赛</template>
+<template>
+  <div>比赛</div>
+</template>

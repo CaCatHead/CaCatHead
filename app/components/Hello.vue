@@ -1,8 +1,7 @@
 <script setup lang="ts">
-const data = ref();
-$fetch('/api/ping').then(r => (data.value = r));
+const { data } = await useFetch('/api/ping');
 </script>
 
 <template>
-  <div style="text-align: center">{{ JSON.stringify(data) }}</div>
+  <div text-center>{{ data }}</div>
 </template>
