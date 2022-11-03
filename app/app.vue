@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import './assets/main.css';
-import 'anu-vue/dist/style.css';
 </script>
 
 <template>

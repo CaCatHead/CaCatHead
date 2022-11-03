@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import { ABtn } from 'anu-vue';
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div pl="$main-padding" pr="$main-padding">
@@ -12,9 +10,7 @@ import { ABtn } from 'anu-vue';
         </NuxtLink>
         <div flex-auto></div>
         <div>
-          <NuxtLink to="/login">
-            <ABtn variant="text" color="info">登录</ABtn>
-          </NuxtLink>
+          <NuxtLink to="/login">登录</NuxtLink>
         </div>
       </div>
     </div>
