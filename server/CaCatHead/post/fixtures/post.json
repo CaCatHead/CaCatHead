@@ -6,7 +6,7 @@
       "created": "2022-10-26T18:20:03.089Z",
       "updated": "2022-10-26T18:20:03.089Z",
       "title": "系统公告",
-      "publisher": 1,
+      "owner": 1,
       "sort_time": "2022-10-26T18:20:03.089Z",
       "is_public": true
     }
@@ -26,7 +26,7 @@
       "created": "2022-10-26T18:20:03.089Z",
       "updated": "2022-10-26T18:20:03.089Z",
       "title": "公告测试",
-      "publisher": 1,
+      "owner": 1,
       "sort_time": "2022-10-26T18:20:03.089Z",
       "is_public": false
     }

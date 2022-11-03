@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const data = ref();
-$fetch('/api/hello').then(r => (data.value = r));
+$fetch('/api/ping').then(r => (data.value = r));
 </script>
 
 <template>

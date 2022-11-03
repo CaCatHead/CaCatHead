@@ -18,13 +18,17 @@ from django.urls import path
 from knox import views as knox_views
 
 from CaCatHead.post import views as post_views
+from CaCatHead.problem import views as problem_views
 from CaCatHead.user import views as user_views
+
+admin.site.site_header = "CaCatHead 管理后台"
+admin.site.site_title = 'CaCatHead 管理后台'
 
 urlpatterns = [
     # admin usage
     path('admin/', admin.site.urls),
     # test ping
-    path('api/hello/', user_views.hello_world),
+    path('api/ping', user_views.ping),
     # user auth
     path('api/auth/register', user_views.user_register),
     path('api/auth/login', user_views.UserLoginView.as_view()),
@@ -36,7 +40,47 @@ urlpatterns = [
     path('api/posts', post_views.list_post),
     path('api/posts/public', post_views.list_public_post),
     path('api/post/<int:post_id>', post_views.get_post_content),
-    path('api/post', post_views.create_post)
+    path('api/post', post_views.create_post),
+    # polygon
+    path('api/polygon/upload', problem_views.upload_problem),  # 上传题目
+    path('api/polygon/create', problem_views.create_problem),  # 手动创建题目
+    path('api/polygon/<int:problem_id>', problem_views.get_polygon_problem),  # 手动创建题目
+    path('api/polygon/<int:problem_id>/edit', problem_views.edit_polygon_problem),  # 编辑题目
+    path('api/polygon/<int:problem_id>/submit', problem_views.submit_polygon_problem),  # 提交题目代码
+    path('api/polygon/<int:problem_id>/permission', problem_views.PolygonPermission.as_view()),  # 将创建的题目向他人授权
+    path('api/polygon/own', problem_views.list_polygon_problems),  # 用户上传的题目列表
+    path('api/polygon/submissions', problem_views.list_polygon_submissions),  # 获取所有提交状态
+    path('api/polygon/submission/<int:submission_id>', problem_views.get_polygon_submission),  # 获取提交状态详情
+    # problem
+    path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
+    path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
+    path('api/repo/<int:repo_id>/permission', problem_views.RepoPermission.as_view()),  # 将题库向他人授权
+    path('api/repo/<int:repo_id>/add/<int:problem_id>', problem_views.add_repo_problem),  # 编辑题库中的题目列表
+    path('api/repo/<int:repo_id>/delete/<int:problem_id>', problem_views.delete_repo_problem),  # 编辑题库中的题目列表
+    path('api/repo/<int:repo_id>/problem/<int:problem_id>', problem_views.get_repo_problem_content),  # 查看题目内容
+    path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit', problem_views.submit_repo_problem_code),  # 提交代码
+    # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
+    path('api/repo/<int:repo_id>/submissions', problem_views.list_repo_submissions),  # 获取所有提交状态
+    path('api/repo/<int:repo_id>/submission/<int:submission_id>', problem_views.get_repo_submission),  # 获取提交状态详情
+    # contest
+    # path('api/contests'),  # 列出所有比赛
+    # path('api/contest'),  # 创建比赛
+    # path('api/contest/<int:contest_id>/register'),  # 参加比赛
+    # path('api/contest/<int:contest_id>/content'),  # 查看比赛详情, 包括题目内容
+    # path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit'),  # 提交代码
+    # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
+    # path('api/contest/<int:contest_id>/submission/<int:submission_id>'),  # 获取比赛提交状态详情
+    # path('api/contest/<int:contest_id>/standings'),  # 查看比赛排行榜
+    # path('api/contest/<int:contest_id>/edit'),  # 编辑比赛信息
+    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
+    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
+    # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
+    # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
+    # team
+    # path('api/teams'),  # 列出自己参加的团队
+    # path('api/team'),  # 创建团队
+    # path('api/team/<int:team_id>'),  # 查看团队
+    # path('api/team/<int:team_id>/edit'),  # 编辑团队信息
 ]
 
 # if settings.DEBUG:

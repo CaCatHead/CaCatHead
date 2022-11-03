@@ -8,7 +8,7 @@ from CaCatHead.permission.models import UserPermission, GroupPermission
 class PermissionManager(models.Manager):
     """
     对象级别权限控制
-    注意：使用该类的表需要有一个布尔字段 is_public
+    注意: 使用该类的表需要有一个布尔字段 is_public 和指向用户的外键 owner
     """
 
     def model_name(self):
@@ -28,7 +28,7 @@ class PermissionManager(models.Manager):
         permission_subquery = UserPermission.objects.filter(user=user, content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
     def _q_user_group_private(self, user: User, permissions: [str], **kwargs):
         """
@@ -39,7 +39,7 @@ class PermissionManager(models.Manager):
                                                              content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
     def _q_group_private(self, group: Group, permissions: [str], **kwargs):
         """
@@ -48,30 +48,13 @@ class PermissionManager(models.Manager):
         permission_subquery = GroupPermission.objects.filter(group=group, content_type=self.model_name())
         if len(permissions) > 0:
             permission_subquery = permission_subquery.filter(codename__in=permissions)
-        return Q(is_public=False, id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
+        return Q(id__in=Subquery(permission_subquery.values('content_id')), **kwargs)
 
-    def filter_user(self, **kwargs):
+    def filter_user_public(self, user: User, permission: str, **kwargs):
         """
-        使用用户和用户所属的组, 过滤满足权限的数据库实体
+        过滤公开的和用户拥有某权限的数据库实体
+        注意：该方法通常只用于读相关的操作，用于写操作会导致任意用户更改公开内容
         """
-        assert 'user' in kwargs
-        user = kwargs['user']
-
-        # 列出所需的权限
-        permissions = []
-        if 'permission' in kwargs:
-            permissions.append(kwargs['permission'])
-            kwargs.pop('permission', None)
-        if 'permissions' in kwargs:
-            for p in kwargs['permissions']:
-                permissions.append(p)
-            kwargs.pop('permissions', None)
-
-        # 清空 filter 无关的参数
-        kwargs.pop('user', None)
-        kwargs.pop('group', None)
-        kwargs.pop('groups', None)
-
         if user is None or not user.is_authenticated:
             # 未认证用户只能看到公开内容
             return self.filter_public(**kwargs)
@@ -80,11 +63,40 @@ class PermissionManager(models.Manager):
             return self.get_queryset().filter(**kwargs)
         else:
             # 其他用户, 查询用户拥有的权限
-            query_user = self._q_user_private(user, permissions, **kwargs)
-            query_user_group = self._q_user_group_private(user, permissions, **kwargs)
-            return self.get_queryset().filter(Q(**kwargs), Q(is_public=True) | query_user | query_user_group)
+            query_user = self._q_user_private(user, [permission], is_public=False)
+            query_user_group = self._q_user_group_private(user, [permission], is_public=False)
+            return self.get_queryset().filter(Q(**kwargs),
+                                              Q(is_public=True) | Q(owner=user) | query_user | query_user_group)
 
-    def grant_user_permission(self, user: User, permission: str, content_id):
+    def filter_user_permission(self, user: User, permission=None, permissions=None, **kwargs):
+        """
+        使用用户和用户所属的组, 过滤满足权限的数据库实体
+        """
+        # 列出所需的权限
+        if permissions is None:
+            permissions = []
+        if permission is not None:
+            permissions.append(permission)
+
+        if user is None or not user.is_authenticated:
+            # 未认证用户什么都看不见
+            return self.none()
+        elif user.is_active and (user.is_superuser or user.is_staff):
+            # 超级用户或管理员用户可以看见一切, 直接返回
+            return self.get_queryset().filter(**kwargs)
+        else:
+            # 其他用户, 查询用户拥有的权限
+            query_user = self._q_user_private(user, permissions)
+            query_user_group = self._q_user_group_private(user, permissions)
+            return self.get_queryset().filter(Q(**kwargs), Q(owner=user) | query_user | query_user_group)
+
+    def list_user_permissions(self, content_id: int):
+        return UserPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
+    def list_group_permissions(self, content_id: int):
+        return GroupPermission.objects.filter(content_type=self.model_name(), content_id=content_id)
+
+    def grant_user_permission(self, user: User, permission: str, content_id: int):
         """
         赋予用户权限
         """
@@ -93,7 +105,21 @@ class PermissionManager(models.Manager):
         user_permission.save()
         return user_permission
 
-    def grant_group_permission(self, group: Group, permission: str, content_id):
+    def revoke_user_permission(self, user: User, permission: str, content_id: int):
+        """
+        取消用户权限
+        """
+        user_permissions = UserPermission.objects.filter(user=user,
+                                                         content_type=self.model_name(),
+                                                         content_id=content_id,
+                                                         codename=permission)
+        if user_permissions.count() == 0:
+            return False
+        else:
+            user_permissions.delete()
+            return True
+
+    def grant_group_permission(self, group: Group, permission: str, content_id: int):
         """
         赋予组权限
         """
@@ -101,3 +127,17 @@ class PermissionManager(models.Manager):
                                            codename=permission)
         group_permission.save()
         return group_permission
+
+    def revoke_group_permission(self, group: Group, permission: str, content_id: int):
+        """
+        取消组权限
+        """
+        group_permissions = GroupPermission.objects.filter(group=group,
+                                                           content_type=self.model_name(),
+                                                           content_id=content_id,
+                                                           codename=permission)
+        if group_permissions.count() == 0:
+            return False
+        else:
+            group_permissions.delete()
+            return True

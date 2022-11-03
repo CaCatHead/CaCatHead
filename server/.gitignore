@@ -1,0 +1,4 @@
+.env
+.testcase
+catj-*.log
+static

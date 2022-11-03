@@ -1,0 +1,90 @@
+### List all repos
+GET http://127.0.0.1:8000/api/repos
+Authorization: Token {{auth_token}}
+
+### List own problems
+GET http://127.0.0.1:8000/api/polygon/own
+Authorization: Token {{auth_token}}
+
+### Create a new problem
+POST http://127.0.0.1:8000/api/polygon/create
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "A + B"
+}
+
+### Upload a new problem
+POST http://127.0.0.1:8000/api/polygon/upload
+Authorization: Token {{auth_token}}
+Content-Type: application/zip
+Content-Disposition: form-data; filename="aplusb.zip"
+
+< ./assets/aplusb.zip
+
+### Get created problem
+GET http://127.0.0.1:8000/api/polygon/1
+Authorization: Token {{auth_token}}
+
+### Edit created problem
+POST http://127.0.0.1:8000/api/polygon/1/edit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "A - B",
+  "description": "Calculate A + B."
+}
+
+### Submit created problem ac code
+POST http://127.0.0.1:8000/api/polygon/1/submit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "language": "cpp",
+  "code": "#include <iostream>\n\nusing namespace std;\n\nint main() {\n  int a = 1, b = 1;\n  cin >> a >> b;\n  cout << a + b << '\\n';\n  return 0;\n}"
+}
+
+### Submit created problem wrong code
+POST http://127.0.0.1:8000/api/polygon/1/submit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "language": "cpp",
+  "code": "#include <iostream>\n\nusing namespace std;\n\nint main() {\n  int a = 1, b = 1;\n  cin >> a >> b;\n  cout << a - b << '\\n';\n  return 0;\n}"
+}
+
+### List submissions
+GET http://127.0.0.1:8000/api/polygon/submissions
+Authorization: Token {{auth_token}}
+
+### Get submission
+GET http://127.0.0.1:8000/api/polygon/submission/1
+Authorization: Token {{auth_token}}
+
+### Get permissions
+GET http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+
+### Grant permissions
+POST http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "grant": "read_problem"
+}
+
+### Revoke permissions
+POST http://127.0.0.1:8000/api/polygon/1/permission
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "user_id": 2,
+  "revoke": "read_problem"
+}

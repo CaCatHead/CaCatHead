@@ -5,18 +5,7 @@ import re
 import django.core.validators
 import django.db.models.deletion
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.db import migrations, models
-
-from CaCatHead.core.constants import NJUST_ICPC_GROUP
-
-
-def init_team_group(_apps, _schema_editor):
-    """
-    初始化集训队成员 Group
-    """
-    team_group = Group(name=NJUST_ICPC_GROUP)
-    team_group.save()
 
 
 class Migration(migrations.Migration):
@@ -27,7 +16,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(init_team_group),
         migrations.CreateModel(
             name='UserInfo',
             fields=[

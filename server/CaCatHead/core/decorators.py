@@ -1,3 +1,8 @@
+from rest_framework.permissions import BasePermission
+
+from CaCatHead.core.constants import Permissions
+
+
 def class_validate_request(serializer_class):
     """
     Validate request data, receive a subclass of serializers.Serializer
@@ -28,3 +33,14 @@ def func_validate_request(serializer_class):
         return wrapped_view
 
     return decorator
+
+
+class HasPolygonPermission(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if user.is_authenticated:
+            if user.is_staff or user.is_superuser:
+                return True
+            return user.has_perm(Permissions.POLYGON)
+        else:
+            return False
