@@ -1,5 +1,8 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div>你好</div>
+  <div>
+    <Hello></Hello>
+    <p>你好</p>
+  </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data } = await useFetch('/api/ping');
+const { data } = await useFetchAPI('/api/ping');
 </script>
 
 <template>

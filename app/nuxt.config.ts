@@ -18,7 +18,10 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', href: '/favicon.png' }],
     },
   },
-  modules: ['@unocss/nuxt', '@pinia/nuxt'],
+  runtimeConfig: {
+    API_BASE,
+  },
+  modules: ['nuxt-proxy', '@unocss/nuxt', '@pinia/nuxt'],
   proxy: {
     options: {
       target: API_BASE,
