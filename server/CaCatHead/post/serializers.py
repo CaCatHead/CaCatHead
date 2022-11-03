@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 from CaCatHead.post.models import Post
+from CaCatHead.user.serializers import UserSerializer
 
 
 class BasePostSerializer(serializers.ModelSerializer):
@@ -16,14 +17,18 @@ class BasePostSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(BasePostSerializer):
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Post
-        fields = ['id', 'created', 'updated', 'sort_time', 'title', 'is_public']
+        fields = ['id', 'owner', 'created', 'updated', 'sort_time', 'title', 'is_public']
 
 
 class PostContentSerializer(BasePostSerializer):
     content = serializers.SlugRelatedField(read_only=True, slug_field='content')
 
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Post
-        fields = ['id', 'content', 'created', 'updated', 'sort_time', 'title', 'is_public']
+        fields = ['id', 'owner', 'content', 'created', 'updated', 'sort_time', 'title', 'is_public']
