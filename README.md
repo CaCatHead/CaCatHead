@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/30072175/199655609-e58c7e16-1cad-491e-be98-4033dba188f9.png" alt="CaCatHead" height="150">
+</p>
+
 # CaCatHead
 
 [![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml)
