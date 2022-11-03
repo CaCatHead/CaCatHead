@@ -1,6 +1,17 @@
+<script setup lang="ts">
+import '@unocss/reset/tailwind.css';
+import './assets/main.css';
+</script>
+
 <template>
-  <Hello />
-  <div>
-    <NuxtWelcome />
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
+
+<style>
+:root {
+  --main-padding: 4rem;
+  /* --main-max-width: 5xl; */
+}
+</style>
