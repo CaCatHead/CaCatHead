@@ -17,7 +17,12 @@ const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
       <p mt2 text-sm font-light>
         <span>用户 </span>
         <user-link :user="post.owner" />
-        <span> 发表于 {{ formatDateTime(post.created) }}</span>
+        <span>
+          发表于<time-interval
+            :left="post.created"
+            :right="new Date()"
+          ></time-interval
+        ></span>
       </p>
       <p mt4 pl4 py2 border="l-4 base">{{ post.content }}</p>
       <div mt4 px4 py2 border="1 base" rounded flex gap2 text-sm font-light>
