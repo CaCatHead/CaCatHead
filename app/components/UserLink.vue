@@ -8,6 +8,6 @@ defineProps<{ user: { id: number; username: string; nickname: string } }>();
 
 <style>
 .user-link:hover {
-  @apply text-sky-700;
+  --at-apply: text-sky-700;
 }
 </style>

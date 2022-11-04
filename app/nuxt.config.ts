@@ -33,6 +33,10 @@ export default defineNuxtConfig({
     // See https://github.com/nuxt/framework/issues/8306
     // Make it works with nginx
     writeEarlyHints: false,
+    // See https://github.com/unocss/unocss/issues/1806
+    // See https://github.com/unocss/unocss/issues/1545
+    // Make it works with unocss
+    inlineSSRStyles: false,
   },
   modules: [
     'nuxt-proxy',

@@ -142,21 +142,21 @@ const activeTab = computed(() => {
 
 <style>
 .default-nav-item {
-  @apply px1 py1 flex items-center;
-  @apply border-b border-b-3 border-transparent;
-  @apply text-base-500;
+  --at-apply: px1 py1 flex items-center;
+  --at-apply: border-b border-b-3 border-transparent;
+  --at-apply: text-base-500;
 }
 
 .default-nav-item > a {
-  @apply p1;
+  --at-apply: p1;
 }
 
 .default-nav-item:hover {
-  @apply text-base-700;
+  --at-apply: text-base-700;
 }
 
 .is-active {
-  @apply border-b border-b-3 border-sky-500;
-  @apply font-bold text-base-900;
+  --at-apply: border-b border-b-3 border-sky-500;
+  --at-apply: font-bold text-base-900;
 }
 </style>

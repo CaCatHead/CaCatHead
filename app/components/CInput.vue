@@ -42,7 +42,7 @@ const color = props.color ?? 'primary';
 .c-input {
   --c-border-color: hsl(var(--c-color));
 
-  @apply border-1 border-base rounded py2 px4;
-  @apply outline-none;
+  --at-apply: border-1 border-base rounded py2 px4;
+  --at-apply: outline-none;
 }
 </style>
