@@ -25,7 +25,7 @@ const activeTab = computed(() => {
 
 <template>
   <div flex justify-center px="$main-padding-y">
-    <div min-h-screen pt4 w="$main-max-width" max-w="$main-max-width" relative>
+    <div min-h-screen pt4 w="$main-max-width" max-w="$main-max-width">
       <div h="64px">
         <div h-full flex items-center>
           <NuxtLink to="/" h-full flex items-center select-none cursor-pointer>
@@ -34,8 +34,10 @@ const activeTab = computed(() => {
           </NuxtLink>
           <div flex-auto></div>
           <div>
-            <div v-if="user" flex items-center justify-center>
-              <div>{{ user.nickname }}</div>
+            <div v-if="authUser.isLogin" flex items-center justify-center>
+              <c-button color="info" variant="text">{{
+                user.nickname
+              }}</c-button>
             </div>
             <div v-else>
               <c-button color="info" variant="fill">
@@ -55,7 +57,7 @@ const activeTab = computed(() => {
         flex
         gap4
         items-center
-        border="~ 2 base"
+        shadow-box
         rounded
         p="x4"
         select-none
@@ -85,7 +87,7 @@ const activeTab = computed(() => {
         <slot></slot>
       </div>
 
-      <footer absolute bottom-0 block pb8 w-full text-center text-base-500>
+      <footer block pb8 w-full text-center text-base-500>
         <div border="b-2 base" mb8></div>
         <div>
           <span>

@@ -1,3 +1,11 @@
+export interface User {
+  id: number;
+
+  username: string;
+
+  nickname: string;
+}
+
 export interface Post {
   id: number;
 
@@ -5,11 +13,7 @@ export interface Post {
 
   content: string;
 
-  owner: {
-    id: number;
-    username: string;
-    nickname: string;
-  };
+  owner: User;
 
   created: string;
 

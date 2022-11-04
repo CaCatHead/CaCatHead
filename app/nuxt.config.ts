@@ -83,6 +83,9 @@ export default defineNuxtConfig({
         'main-800': '#262626',
         'main-900': '#171717',
       },
+      boxShadow: {
+        box: '0 2px 3px rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 10%)',
+      },
     },
   },
 });

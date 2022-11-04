@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+import type { User } from './types';
+
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
 
@@ -21,7 +23,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
 // Store auth user
 export const useAuthUser = defineStore('AuthUser', () => {
   const cookie = useToken();
-  const user = ref();
+  const user = ref<User | undefined>();
 
   const setToken = (token: string, _expiry: string) => {
     cookie.value = 'Token ' + token;
@@ -31,10 +33,10 @@ export const useAuthUser = defineStore('AuthUser', () => {
     return user.value !== undefined && user.value !== null;
   });
 
-  const fetchUser = async () => {
+  const fetchUser = async (): Promise<User | undefined> => {
     if (cookie.value) {
       try {
-        const { data } = await useFetchAPI<{ user: any }>(`/api/user/profile`);
+        const { data } = await useFetchAPI<{ user: User }>(`/api/user/profile`);
         user.value = data.value.user;
         return data.value.user;
       } catch {
