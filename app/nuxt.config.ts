@@ -58,7 +58,7 @@ export default defineNuxtConfig({
     ],
     transformers: [transformerDirectives(), transformerVariantGroup()],
     shortcuts: {
-      'border-base': 'border-gray/20 dark:border-gray/20',
+      'border-base': 'border-gray/40 dark:border-gray/40',
       'text-base-50': 'text-neutral-50 dark:text-light-50',
       'text-base-100': 'text-neutral-100 dark:text-light-100',
       'text-base-200': 'text-neutral-200 dark:text-light-200',

@@ -4,6 +4,9 @@ const route = useRoute();
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
+const authUser = useAuthUser();
+const user = await authUser.fetchUser();
+
 const activeTab = computed(() => {
   const p = route.fullPath;
   if (p.startsWith('/contest')) {
@@ -30,13 +33,18 @@ const activeTab = computed(() => {
             <span ml4 text-2xl font-bold>CaCatHead</span>
           </NuxtLink>
           <div flex-auto></div>
-          <div flex items-center justify-center>
-            <c-button color="info" variant="fill">
-              <NuxtLink block to="/login">登录</NuxtLink>
-            </c-button>
-            <c-button ml4 color="success" variant="outline" lt-md:hidden>
-              <NuxtLink block to="/register">注册</NuxtLink>
-            </c-button>
+          <div>
+            <div v-if="user" flex items-center justify-center>
+              <div>{{ user.nickname }}</div>
+            </div>
+            <div v-else>
+              <c-button color="info" variant="fill">
+                <NuxtLink block to="/login">登录</NuxtLink>
+              </c-button>
+              <c-button ml4 color="success" variant="outline" lt-md:hidden>
+                <NuxtLink block to="/register">注册</NuxtLink>
+              </c-button>
+            </div>
           </div>
         </div>
       </div>
@@ -73,7 +81,7 @@ const activeTab = computed(() => {
         </div>
       </nav>
 
-      <div mt12 mb12 px2>
+      <div mt12 mb12>
         <slot></slot>
       </div>
 

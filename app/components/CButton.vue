@@ -25,12 +25,6 @@ const color = props.color ?? 'primary';
 
   @apply rounded-2;
 
-  --c-primary: 265, 97.7%, 66.3%;
-  --c-success: 94.5, 100%, 39.6%;
-  --c-info: 200.1, 100%, 54.3%;
-  --c-warning: 42.4, 100%, 50%;
-  --c-danger: 358.3, 100%, 64.9%;
-
   --c-bg: hsla(var(--c-color), var(--un-bg-opacity));
   background-color: var(--c-bg);
 }
@@ -57,21 +51,5 @@ const color = props.color ?? 'primary';
 }
 .c-button.c-outline:hover {
   @apply bg-op-20;
-}
-
-.primary {
-  --c-color: var(--c-primary);
-}
-.success {
-  --c-color: var(--c-success);
-}
-.info {
-  --c-color: var(--c-info);
-}
-.warning {
-  --c-color: var(--c-warning);
-}
-.danger {
-  --c-color: var(--c-danger);
 }
 </style>
