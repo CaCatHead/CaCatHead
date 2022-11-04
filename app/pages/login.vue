@@ -21,8 +21,7 @@ const login = async () => {
     );
     const token = resp.token;
     const expiry = resp.expiry;
-    authUser.setToken(token, expiry);
-
+    await authUser.setToken(token, expiry);
     await navigateTo('/');
   } catch (error) {
     // show error message

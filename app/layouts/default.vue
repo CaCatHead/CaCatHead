@@ -5,7 +5,12 @@ const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 const authUser = useAuthUser();
-const user = await authUser.fetchUser();
+await authUser.fetchUser();
+const user = computed(() => authUser.user);
+
+const logout = async () => {
+  await authUser.logout();
+};
 
 const activeTab = computed(() => {
   const p = route.fullPath;
@@ -40,6 +45,14 @@ const activeTab = computed(() => {
               <c-button color="info" variant="text">{{
                 user.nickname
               }}</c-button>
+              <c-button
+                color="danger"
+                variant="outline"
+                ml4
+                text-sm
+                @click="logout"
+                >退出</c-button
+              >
             </div>
             <div v-else>
               <c-button color="info" variant="fill">
@@ -84,7 +97,7 @@ const activeTab = computed(() => {
           <NuxtLink to="/help">帮助</NuxtLink>
         </div>
         <div
-          v-if="user.username === 'root'"
+          v-if="user && user.username === 'root'"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>

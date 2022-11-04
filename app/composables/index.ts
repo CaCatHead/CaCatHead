@@ -25,10 +25,6 @@ export const useAuthUser = defineStore('AuthUser', () => {
   const cookie = useToken();
   const user = ref<User | undefined>();
 
-  const setToken = (token: string, _expiry: string) => {
-    cookie.value = 'Token ' + token;
-  };
-
   const isLogin = computed(() => {
     return user.value !== undefined && user.value !== null;
   });
@@ -36,7 +32,13 @@ export const useAuthUser = defineStore('AuthUser', () => {
   const fetchUser = async (): Promise<User | undefined> => {
     if (cookie.value) {
       try {
-        const { data } = await useFetchAPI<{ user: User }>(`/api/user/profile`);
+        const { data } = await useFetch<{ user: User }>(`/api/user/profile`, {
+          key: `profile_${cookie.value}`,
+          headers: {
+            Authorization: cookie.value,
+          },
+          baseURL: useRuntimeConfig().API_BASE,
+        });
         user.value = data.value.user;
         return data.value.user;
       } catch {
@@ -47,11 +49,26 @@ export const useAuthUser = defineStore('AuthUser', () => {
     }
   };
 
+  const setToken = async (token: string, _expiry: string) => {
+    cookie.value = 'Token ' + token;
+    await fetchUser();
+  };
+
+  const logout = async () => {
+    await useFetchAPI('/api/auth/logout', {
+      method: 'POST',
+      key: `logout_${cookie.value}`,
+    });
+    cookie.value = undefined;
+    user.value = undefined;
+  };
+
   return {
     user,
     token: cookie,
     setToken,
     isLogin,
     fetchUser,
+    logout,
   };
 });
