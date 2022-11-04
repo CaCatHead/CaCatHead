@@ -17,6 +17,8 @@ const activeTab = computed(() => {
     return 'help';
   } else if (p === '/') {
     return 'home';
+  } else if (p.startsWith('/polygon')) {
+    return 'polygon';
   } else {
     return '';
   }
@@ -80,6 +82,12 @@ const activeTab = computed(() => {
         </div>
         <div :class="['default-nav-item', activeTab === 'help' && 'is-active']">
           <NuxtLink to="/help">帮助</NuxtLink>
+        </div>
+        <div
+          v-if="user.username === 'root'"
+          :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
+        >
+          <NuxtLink to="/polygon">Polygon</NuxtLink>
         </div>
       </nav>
 
