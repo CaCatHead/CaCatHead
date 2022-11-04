@@ -10,6 +10,10 @@ RUN npm i --registry https://registry.npm.taobao.org -g pnpm
 
 RUN pnpm install --registry https://registry.npm.taobao.org
 
+ENV API_BASE http://server:8000
+
+ENV NUXT_PROXY_OPTIONS_TARGET http://server:8000
+
 RUN pnpm build:app
 
 FROM node:18 AS runtime

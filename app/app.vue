@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import './assets/main.css';
-
 useHead({
   titleTemplate(title) {
     return title && title !== 'CaCatHead'

@@ -43,7 +43,7 @@ RMQ_PORT = os.getenv('RMQ_PORT')
 RMQ_USER = os.getenv('RMQ_USER')
 RMQ_PASS = os.getenv('RMQ_PASS')
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -209,6 +209,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
-        }
-    }
+        },
+    },
 }

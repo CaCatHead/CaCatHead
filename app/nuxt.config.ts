@@ -8,7 +8,7 @@ import {
 } from 'unocss';
 
 // This is the django server
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -18,8 +18,21 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', href: '/favicon.png' }],
     },
   },
+  css: ['@/assets/main.css'],
   runtimeConfig: {
     API_BASE,
+    proxy: {
+      options: {
+        target: API_BASE,
+        changeOrigin: true,
+        pathFilter: ['/api/'],
+      },
+    },
+  },
+  experimental: {
+    // See https://github.com/nuxt/framework/issues/8306
+    // Make it works with nginx
+    writeEarlyHints: false,
   },
   modules: [
     'nuxt-proxy',
@@ -28,13 +41,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
   ],
-  proxy: {
-    options: {
-      target: API_BASE,
-      changeOrigin: true,
-      pathFilter: ['/api/'],
-    },
-  },
   unocss: {
     preflight: true,
     presets: [
