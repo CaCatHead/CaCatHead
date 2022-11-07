@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound
@@ -28,7 +29,8 @@ def list_repos(request):
     列出所有题库
     """
     repos = ProblemRepository.objects.filter_user_public(user=request.user,
-                                                         permission=ProblemRepositoryPermissions.ListProblems)
+                                                         permission=ProblemRepositoryPermissions.ListProblems).filter(
+        ~Q(id=MAIN_PROBLEM_REPOSITORY.id))
     return make_response(repos=ProblemRepositorySerializer(repos, many=True).data)
 
 
@@ -49,7 +51,8 @@ def check_repo(request: Request, repo_id: int, permission: str):
         return repo
 
 
-def check_repo_problem(request: Request, repo_id: int, problem_display_id: int, repo_permission: str, problem_permission: str):
+def check_repo_problem(request: Request, repo_id: int, problem_display_id: int, repo_permission: str,
+                       problem_permission: str):
     repo = check_repo(request, repo_id, repo_permission)
     if problem_permission in [ProblemPermissions.ReadProblem, ProblemPermissions.Submit]:
         problem = Problem.objects.filter_user_public(user=request.user,

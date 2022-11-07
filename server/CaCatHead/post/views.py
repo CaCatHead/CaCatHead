@@ -18,12 +18,12 @@ def list_post(request: Request):
 
 
 @api_view()
-def list_public_post():
+def list_public_post(request: Request):
     """
     列出公开的公告
     """
     posts = Post.objects.filter_public()
-    return make_response(posts=PostSerializer(posts, many=True).data)
+    return make_response(posts=PostContentSerializer(posts, many=True).data)
 
 
 @api_view()
