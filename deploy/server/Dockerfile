@@ -61,10 +61,14 @@ ADD ./server /root/CaCatHead
 
 ADD ./deploy/server/docker-entrypoint.sh /root/CaCatHead
 
+# See https://github.com/ufoscout/docker-compose-wait
+ADD ./deploy/server/wait /root/CaCatHead
+
 WORKDIR /root/CaCatHead
 
 RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)" \
   && /usr/src/.venv/bin/python ./manage.py collectstatic --no-input \
-  && chmod +x ./docker-entrypoint.sh
+  && chmod +x ./docker-entrypoint.sh \
+  && chmod +x ./wait
 
 EXPOSE 80
