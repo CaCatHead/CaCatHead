@@ -1,12 +1,18 @@
 <script setup lang="ts">
-const props = defineProps<{
-  variant?: 'fill' | 'outline' | 'light' | 'text';
-  color?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    variant?: 'fill' | 'outline' | 'light' | 'text';
+    color?: string;
+  }>(),
+  {
+    variant: 'fill',
+    color: 'primary',
+  }
+);
 
-const variant = 'c-' + (props.variant ?? 'fill');
+const variant = 'c-' + props.variant;
 
-const color = props.color ?? 'primary';
+const color = props.color;
 </script>
 
 <template>

@@ -16,9 +16,6 @@ useHead({
 
 <style>
 :root {
-  --main-padding-y: 1rem;
-  --main-max-width: 64rem;
-
   --c-primary: 265, 97.7%, 66.3%;
   --c-success: 94.5, 100%, 39.6%;
   --c-info: 200.1, 100%, 54.3%;

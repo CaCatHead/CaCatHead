@@ -146,6 +146,11 @@ const activeTab = computed(() => {
 </template>
 
 <style>
+:root {
+  --main-padding-y: 4rem;
+  --main-max-width: 64rem;
+}
+
 .default-nav-item {
   --at-apply: px1 py1 flex items-center;
   --at-apply: border-b border-b-3 border-transparent;
