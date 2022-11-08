@@ -30,6 +30,9 @@ const { data: problems } = await useFetchAPI<{ problems: any[] }>(
         <template #title="{ row }">
           <nuxt-link
             :to="`/repository/${route.params.repo}/problem/${row.display_id}/`"
+            text-sky-700
+            text-op-80
+            hover:text-op-100
             >{{ row.title }}</nuxt-link
           >
         </template>
