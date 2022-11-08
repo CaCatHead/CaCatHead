@@ -98,14 +98,16 @@ const activeTab = computed(() => {
         >
           <NuxtLink to="/repository/">题库</NuxtLink>
         </div>
-        <div :class="['default-nav-item', activeTab === 'help' && 'is-active']">
-          <NuxtLink to="/help">帮助</NuxtLink>
-        </div>
+
         <div
           v-if="user && user.username === 'root'"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>
+        </div>
+
+        <div :class="['default-nav-item', activeTab === 'help' && 'is-active']">
+          <NuxtLink to="/help">帮助</NuxtLink>
         </div>
       </nav>
 
