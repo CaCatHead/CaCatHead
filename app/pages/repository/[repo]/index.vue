@@ -4,8 +4,8 @@ useHead({
 });
 
 const route = useRoute();
-const { data: repos } = useFetchAPI<{ repos: any[] }>('/api/repos');
-const { data: problems } = useFetchAPI<{ problems: any[] }>(
+const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
+const { data: problems } = await useFetchAPI<{ problems: any[] }>(
   `/api/repo/${route.params.repo}/problems`
 );
 </script>

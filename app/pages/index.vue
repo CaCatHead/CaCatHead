@@ -11,27 +11,7 @@ const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
 <template>
   <div flex gap8 lt-md:flex-col-reverse>
     <div w="5/8" lt-md:w-full>
-      <div v-for="post in data.posts" mb12>
-        <h2 text-2xl font-bold>
-          <NuxtLink :to="`/post/${post.id}`">{{ post.title }}</NuxtLink>
-        </h2>
-        <p mt2 text-sm font-light>
-          <span>用户 </span>
-          <user-link :user="post.owner" />
-          <span>
-            发表于<time-interval
-              :left="post.created"
-              :right="new Date()"
-            ></time-interval
-          ></span>
-        </p>
-        <p mt4 pl4 py2 border="l-4 base">{{ post.content }}</p>
-        <div mt4 px4 py2 border="1 base" rounded flex gap2 text-sm font-light>
-          <div flex-auto></div>
-          <div>用户 <user-link :user="post.owner" /></div>
-          <span>发表于 {{ formatDateTime(post.created) }}</span>
-        </div>
-      </div>
+      <PostList :posts="data.posts"></PostList>
     </div>
     <div w="3/8" lt-md:w-full>
       <div shadow-box rounded>

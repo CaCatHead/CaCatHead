@@ -16,6 +16,8 @@ const activeTab = computed(() => {
   const p = route.fullPath;
   if (p.startsWith('/contest')) {
     return 'contest';
+  } else if (p.startsWith('/post')) {
+    return 'post';
   } else if (p.startsWith('/repository')) {
     return 'repository';
   } else if (p.startsWith('/help')) {
@@ -79,6 +81,9 @@ const activeTab = computed(() => {
       >
         <div :class="['default-nav-item', activeTab === 'home' && 'is-active']">
           <NuxtLink to="/">主页</NuxtLink>
+        </div>
+        <div :class="['default-nav-item', activeTab === 'post' && 'is-active']">
+          <NuxtLink to="/post/">博客</NuxtLink>
         </div>
         <div
           :class="['default-nav-item', activeTab === 'contest' && 'is-active']"

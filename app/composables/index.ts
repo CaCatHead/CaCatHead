@@ -13,7 +13,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
     : { ...options?.headers };
 
   return useFetch(url, {
-    key: url,
+    key: token.value + '$' + url,
     ...options,
     headers,
     baseURL: useRuntimeConfig().API_BASE,
