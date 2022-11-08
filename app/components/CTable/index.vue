@@ -29,9 +29,9 @@ provide(CTABLE, {
           </td>
         </tr>
       </tbody>
-      <tfooter>
+      <tfoot>
         <slot name="footer"></slot>
-      </tfooter>
+      </tfoot>
     </table>
   </div>
 </template>
