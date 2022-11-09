@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase
 
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
+from CaCatHead.user.tests import ROOT_USER
 
 
 class PostManagerTests(APITestCase):
@@ -34,4 +35,56 @@ class PostManagerTests(APITestCase):
 
 
 class PostViewTests(APITestCase):
-    pass
+    fixtures = ('post.json',)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.root = User.objects.get(username=ROOT_USER)
+
+        admin = User.objects.create_user(username='admin', email='admin@example.com', password='12345678')
+        admin.is_staff = True
+        admin.save()
+        cls.admin = admin
+
+        user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
+        user.save()
+        cls.user = user
+
+    def user_login(self, user: User):
+        # 用户登陆
+        resp = self.client.post('/api/auth/login', {"username": user.username, "password": '12345678'})
+        assert resp.status_code == 200
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+
+    def visitor_view_post(self, post_id: int):
+        # 游客直接请求公告
+        return self.client.get(f'/api/post/{post_id}')
+
+    def visitor_list_posts(self):
+        # 游客列出公告列表
+        return self.client.get(f'/api/posts')
+
+    def visitor_list_public_posts(self):
+        # 游客列出公开公告列表
+        return self.client.get(f'/api/posts/public')
+
+    def user_view_post(self, user: User, post_id: int):
+        # 用户请求公告
+        self.user_login(user)
+        return self.client.get(f'/api/post/{post_id}')
+
+    def user_list_posts(self, user: User):
+        # 用户列出公告列表
+        self.user_login(user)
+        return self.client.get(f'/api/posts')
+
+    def user_list_public_posts(self, user: User):
+        # 用户列出公开公告列表
+        self.user_login(user)
+        return self.client.get(f'/api/posts/public')
+
+    def test_superuser_view_public_post(self):
+        resp = self.user_view_post(self.root, 1)
+        assert resp.status_code == 200
+        # assert resp body, this may be wrapped with another method

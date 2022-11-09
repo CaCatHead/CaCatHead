@@ -44,6 +44,7 @@ class Migration(migrations.Migration):
                 'verbose_name': '公告内容',
                 'verbose_name_plural': '公告内容',
                 'db_table': 'post_content',
+                'default_permissions': (),
             },
         ),
     ]

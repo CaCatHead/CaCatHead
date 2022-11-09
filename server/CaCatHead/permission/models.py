@@ -20,9 +20,12 @@ class UserPermission(models.Model):
 
     class Meta:
         db_table = 'user_permission'
+
         indexes = [
             models.Index(fields=['user', 'content_type', 'content_id', 'codename'], name='user_permission_index')
         ]
+
+        default_permissions = ()
 
 
 class GroupPermission(models.Model):
@@ -42,6 +45,9 @@ class GroupPermission(models.Model):
 
     class Meta:
         db_table = 'group_permission'
+
         indexes = [
             models.Index(fields=['group', 'content_type', 'content_id', 'codename'], name='group_permission_index')
         ]
+
+        default_permissions = ()

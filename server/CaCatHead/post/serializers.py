@@ -32,3 +32,13 @@ class PostContentSerializer(BasePostSerializer):
     class Meta:
         model = Post
         fields = ['id', 'owner', 'content', 'created', 'updated', 'sort_time', 'title', 'is_public']
+
+
+class CreatePostPayloadSerializer(serializers.Serializer):
+    title = serializers.CharField(max_length=256)
+
+    content = serializers.CharField()
+
+    sort_time = serializers.DateTimeField(required=False)
+
+    is_public = serializers.BooleanField(required=False, default=False)

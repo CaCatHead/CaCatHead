@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
+from django.contrib.contenttypes.models import ContentType
 
+from CaCatHead.post.models import Post
+from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.user import models
 
 
@@ -19,6 +22,36 @@ class StudentInfoInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = [UserInfoInline, StudentInfoInline]
+
+    actions = ('grant_create_post', 'revoke_create_post', 'grant_polygon', 'revoke_polygon')
+
+    @admin.action(description='授予创建公告权限')
+    def grant_create_post(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(Post)
+        add_post_perm = Permission.objects.get(codename='add_post', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.add(add_post_perm)
+
+    @admin.action(description='收回创建公告权限')
+    def revoke_create_post(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(Post)
+        add_post_perm = Permission.objects.get(codename='add_post', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.remove(add_post_perm)
+
+    @admin.action(description='授予 Polygon 权限')
+    def grant_polygon(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(ProblemRepository)
+        polygon_perm = Permission.objects.get(codename='polygon', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.add(polygon_perm)
+
+    @admin.action(description='收回 Polygon 权限')
+    def revoke_polygon(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(ProblemRepository)
+        polygon_perm = Permission.objects.get(codename='polygon', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.remove(polygon_perm)
 
 
 # Re-register UserAdmin

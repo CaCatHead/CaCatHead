@@ -98,6 +98,7 @@ class Migration(migrations.Migration):
                 'verbose_name': '题目仓库',
                 'verbose_name_plural': '题目仓库列表',
                 'db_table': 'problem_repository',
+                'permissions': (('polygon', 'Can use Polygon'),)
             },
         ),
         migrations.CreateModel(
