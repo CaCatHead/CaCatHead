@@ -3,6 +3,7 @@ from rest_framework.test import APITestCase
 
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
+from CaCatHead.user.tests import ROOT_USER
 
 
 class PostManagerTests(APITestCase):
@@ -34,4 +35,31 @@ class PostManagerTests(APITestCase):
 
 
 class PostViewTests(APITestCase):
-    pass
+    fixtures = ('post.json',)
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.root = User.objects.get(username=ROOT_USER)
+
+        admin = User.objects.create_user(username='admin', email='admin@example.com', password='12345678')
+        admin.is_staff = True
+        admin.save()
+        cls.admin = admin
+
+        user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
+        user.save()
+        cls.user = user
+
+    def base_view_post(self, user: User, post_id: int):
+        # 用户登陆
+        resp = self.client.post('/api/auth/login', {"username": user.username, "password": '12345678'})
+        assert resp.status_code == 200
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+
+        return self.client.get(f'/api/post/{post_id}')
+
+    def test_superuser_view_public_post(self):
+        resp = self.base_view_post(self.root, 1)
+        assert resp.status_code == 200
+        # assert resp body, this may be wrapped with another method
