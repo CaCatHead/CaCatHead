@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 from CaCatHead.problem.models import ProblemRepository, Problem, ProblemInfo, ProblemContent, ProblemJudge
+from CaCatHead.user.serializers import UserSerializer
 
 
 class CreateProblemPayload(serializers.Serializer):
@@ -54,6 +55,14 @@ class ProblemSerializer(BaseProblemSerializer):
         fields = ['display_id', 'title', 'problem_type', 'is_public']
 
 
+class PolygonProblemSerializer(BaseProblemSerializer):
+    owner = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Problem
+        fields = ['id', 'display_id', 'title', 'problem_type', 'is_public', 'owner']
+
+
 class _ProblemContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemContent
@@ -79,10 +88,12 @@ class FullProblemInfoSerializer(serializers.ModelSerializer):
 class FullProblemSerializer(BaseProblemSerializer):
     problem_info = FullProblemInfoSerializer(read_only=True)
 
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Problem
         fields = ['id', 'display_id', 'title', 'problem_type', 'time_limit', 'memory_limit', 'is_public',
-                  'problem_info']
+                  'problem_info', 'owner']
 
 
 class ProblemInfoContentSerializer(serializers.ModelSerializer):

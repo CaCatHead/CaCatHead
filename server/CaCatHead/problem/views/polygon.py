@@ -12,7 +12,7 @@ from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
@@ -87,7 +87,7 @@ def list_polygon_problems(request):
     problems = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                   user=request.user,
                                                   permission=ProblemPermissions.ReadProblem)
-    return make_response(problems=ProblemSerializer(problems, many=True).data)
+    return make_response(problems=PolygonProblemSerializer(problems, many=True).data)
 
 
 @api_view(['POST'])

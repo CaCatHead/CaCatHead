@@ -15,7 +15,7 @@ provide(CTABLE, {
 </script>
 
 <template>
-  <div>
+  <div w-full>
     <table class="table w-full table-auto rounded">
       <thead select-none font-600>
         <tr>
@@ -33,5 +33,9 @@ provide(CTABLE, {
         <slot name="footer"></slot>
       </tfoot>
     </table>
+
+    <div v-if="data.length === 0">
+      <slot name="empty"></slot>
+    </div>
   </div>
 </template>

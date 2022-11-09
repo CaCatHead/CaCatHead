@@ -3,22 +3,27 @@ const props = withDefaults(
   defineProps<{
     variant?: 'fill' | 'outline' | 'light' | 'text';
     color?: string;
+    tag?: string;
   }>(),
   {
     variant: 'fill',
     color: 'primary',
+    tag: 'button',
   }
 );
 
-const variant = 'c-' + props.variant;
+const { color, variant: _variant, tag } = toRefs(props);
 
-const color = props.color;
+const variant = computed(() => 'c-' + _variant.value);
 </script>
 
 <template>
-  <button :class="['c-button', 'whitespace-nowrap', variant, color]">
+  <component
+    :is="tag"
+    :class="['c-button', 'whitespace-nowrap', variant, color]"
+  >
     <slot></slot>
-  </button>
+  </component>
 </template>
 
 <style>
