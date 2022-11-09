@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import type { PolygonProblem } from '@/composables/types';
-import { storeToRefs } from 'pinia';
 
 useHead({
   title: 'Polygon',
 });
 
 const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
-  `/api/polygon/own`
+  `/api/polygon/own`,
+  { initialCache: false }
 );
-
-const { counter } = storeToRefs(usePolygonBus());
-
-watch(counter, async () => {
-  await refresh();
-});
 
 const upload = async (ev: Event) => {
   const target = ev.target as HTMLInputElement;

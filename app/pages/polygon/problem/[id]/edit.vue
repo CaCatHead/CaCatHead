@@ -5,8 +5,6 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
-const { notify } = usePolygonBus();
-
 const submit = async () => {
   await fetchAPI(`/api/polygon/${problem.value.id}/edit`, {
     method: 'POST',
@@ -18,8 +16,6 @@ const submit = async () => {
       hint: problem.value.problem_info.problem_content.hint ?? '',
     },
   });
-
-  notify();
 
   await navigateTo(`/polygon/problem/${problem.value.id}/`);
 };
