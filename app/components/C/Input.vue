@@ -11,7 +11,7 @@ const props = withDefaults(
   {
     name: p => p.id,
     placeholder: '',
-    color: 'primary',
+    color: 'info',
   }
 );
 
@@ -31,12 +31,21 @@ const { id, name, placeholder, type, color } = toRefs(props);
     </div>
     <div :class="['c-input-container', 'py2']">
       <input
+        v-if="type !== 'textarea'"
         :id="id"
         :class="['c-input', 'w-full']"
         :type="type"
         :placeholder="placeholder"
         v-model="data"
       />
+      <textarea
+        v-else
+        :name="name"
+        :id="id"
+        :class="['c-input', 'c-input-textarea', 'w-full']"
+        rows="10"
+        v-model="data"
+      ></textarea>
     </div>
   </div>
 </template>
@@ -55,5 +64,9 @@ const { id, name, placeholder, type, color } = toRefs(props);
 
   --at-apply: border-1 border-base rounded py2 px4;
   --at-apply: outline-none;
+}
+
+.c-input.c-input-textarea {
+  --at-apply: p2;
 }
 </style>
