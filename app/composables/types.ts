@@ -28,3 +28,12 @@ export interface PolygonProblem {
   owner: User;
   problem_type: 'classic_ac';
 }
+
+export interface FullPolygonProblem {
+  id: number;
+  display_id: number;
+  title: string;
+  is_public: boolean;
+  owner: User;
+  problem_type: 'classic_ac';
+}

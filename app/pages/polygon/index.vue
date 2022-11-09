@@ -52,7 +52,7 @@ const { data } = await useFetchAPI<{ problems: PolygonProblem[] }>(
 
       <template #title="{ row }">
         <nuxt-link
-          :to="`/polygon/problem/${row.display_id}/`"
+          :to="`/polygon/problem/${row.id}/`"
           text-sky-700
           text-op-80
           hover:text-op-100
