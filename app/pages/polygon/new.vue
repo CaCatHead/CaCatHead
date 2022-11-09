@@ -1,5 +1,18 @@
 <script setup lang="ts">
+import type { PolygonProblem } from '@/composables/types';
+
 const title = ref('');
+
+const submit = async () => {
+  const { problem } = await fetchAPI()<{ problem: PolygonProblem }>(
+    `/api/polygon/create`,
+    {
+      method: 'POST',
+      body: { title: title.value ?? 'Unknown' },
+    }
+  );
+  await navigateTo(`/polygon/problem/${problem.id}`);
+};
 </script>
 
 <template>
@@ -21,7 +34,7 @@ const title = ref('');
       </c-input>
     </div>
     <div>
-      <c-button color="success">创建</c-button>
+      <c-button color="success" @click="submit">创建</c-button>
     </div>
   </div>
 </template>

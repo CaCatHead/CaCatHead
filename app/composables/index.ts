@@ -5,6 +5,16 @@ import type { User } from './types';
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
 
+// Fetch API
+export const fetchAPI: () => typeof $fetch = () => {
+  return $fetch.create({
+    baseURL: useRuntimeConfig().API_BASE,
+    headers: {
+      Authorization: useToken().value,
+    },
+  });
+};
+
 // Use url as the asyncData key
 export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
   const token = useToken();

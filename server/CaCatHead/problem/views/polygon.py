@@ -32,7 +32,7 @@ def create_problem(request: Request):
     title = request.data['title']
     display_id = request.data.get('display_id', None)
     problem = make_problem(title=title, user=request.user, display_id=display_id)
-    return make_response(problem=ProblemSerializer(problem).data)
+    return make_response(problem=PolygonProblemSerializer(problem).data)
 
 
 @api_view(['POST'])

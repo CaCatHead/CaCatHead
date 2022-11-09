@@ -19,3 +19,12 @@ export interface Post {
 
   updated: string;
 }
+
+export interface PolygonProblem {
+  id: number;
+  display_id: number;
+  title: string;
+  is_public: boolean;
+  owner: User;
+  problem_type: 'classic_ac';
+}

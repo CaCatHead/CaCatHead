@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import type { PolygonProblem } from '@/composables/types';
+
 useHead({
   title: 'Polygon',
 });
 
-const { data } = await useFetchAPI<{ problems: any[] }>(`/api/polygon/own`);
+const { data } = await useFetchAPI<{ problems: PolygonProblem[] }>(
+  `/api/polygon/own`
+);
 </script>
 
 <template>
