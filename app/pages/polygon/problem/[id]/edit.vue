@@ -6,7 +6,7 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 const { problem } = toRefs(props);
 
 const submit = async () => {
-  await fetchAPI()(`/api/polygon/${problem.value.id}/edit`, {
+  await fetchAPI(`/api/polygon/${problem.value.id}/edit`, {
     method: 'POST',
     body: {
       title: problem.value.title,

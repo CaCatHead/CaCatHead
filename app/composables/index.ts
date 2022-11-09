@@ -1,3 +1,5 @@
+import type { FetchOptions } from 'ohmyfetch';
+
 import { defineStore } from 'pinia';
 
 import type { User } from './types';
@@ -6,10 +8,12 @@ import type { User } from './types';
 export const useToken = () => useCookie('token');
 
 // Fetch API
-export const fetchAPI: () => typeof $fetch = () => {
-  return $fetch.create({
+export const fetchAPI = (url: string, options?: FetchOptions) => {
+  return $fetch(url, {
+    ...options,
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
+      ...options?.headers,
       Authorization: useToken().value,
     },
   });

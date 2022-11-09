@@ -5,9 +5,27 @@ useHead({
   title: 'Polygon',
 });
 
-const { data } = await useFetchAPI<{ problems: PolygonProblem[] }>(
+const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
   `/api/polygon/own`
 );
+
+const upload = async (ev: Event) => {
+  const target = ev.target as HTMLInputElement;
+  if (target.files.length === 0) {
+    return;
+  }
+  const formData = new FormData();
+  formData.append('file', target.files[0]);
+  await fetchAPI(`/api/polygon/upload`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `form-data; filename="${target.files[0].name}"`,
+    },
+  });
+  await refresh();
+};
 </script>
 
 <template>
@@ -18,7 +36,7 @@ const { data } = await useFetchAPI<{ problems: PolygonProblem[] }>(
         <h3 text-lg font-500>程序设计竞赛试题创建系统</h3>
       </div>
       <div flex-auto></div>
-      <div>
+      <div flex items-center>
         <c-button
           color="success"
           mr4
@@ -26,7 +44,13 @@ const { data } = await useFetchAPI<{ problems: PolygonProblem[] }>(
           @click="navigateTo('/polygon/new')"
           >新建题目</c-button
         >
-        <c-button color="success">上传题目</c-button>
+        <c-file-input
+          id="upload-problem"
+          color="success"
+          accept=".zip"
+          @change="upload"
+          >上传题目</c-file-input
+        >
       </div>
     </div>
 
