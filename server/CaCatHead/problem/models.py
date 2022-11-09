@@ -93,7 +93,9 @@ class ProblemInfo(models.Model):
 
     class Meta:
         db_table = 'problem_info'
+
         verbose_name = _(u"题目信息")
+
         verbose_name_plural = _(u"题目信息列表")
 
 
@@ -194,3 +196,5 @@ class ProblemRepository(models.Model):
         verbose_name = _(u"题目仓库")
 
         verbose_name_plural = _(u"题目仓库列表")
+
+        permissions = (('polygon', 'Can use Polygon'),)
