@@ -8,8 +8,8 @@ import type { User } from './types';
 export const useToken = () => useCookie('token');
 
 // Fetch API
-export const fetchAPI = (url: string, options?: FetchOptions) => {
-  return $fetch(url, {
+export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
+  return $fetch<T>(url, {
     ...options,
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
