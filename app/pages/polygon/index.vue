@@ -15,7 +15,13 @@ const { data } = await useFetchAPI<{ problems: any[] }>(`/api/polygon/own`);
       </div>
       <div flex-auto></div>
       <div>
-        <c-button color="success" mr4 variant="outline">新建题目</c-button>
+        <c-button
+          color="success"
+          mr4
+          variant="outline"
+          @click="navigateTo('/polygon/new')"
+          >新建题目</c-button
+        >
         <c-button color="success">上传题目</c-button>
       </div>
     </div>

@@ -1,29 +1,40 @@
 <script setup lang="ts">
-const props = defineProps<{
-  id?: string;
-  placeholder?: string;
-  modelValue: string;
-  type: string;
-  color?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    id: string;
+    name?: string;
+    placeholder?: string;
+    modelValue: string;
+    type: string;
+    color?: string;
+  }>(),
+  {
+    name: p => p.id,
+    placeholder: '',
+    color: 'primary',
+  }
+);
+
 const emit = defineEmits(['update:modelValue']);
 
 const data = useVModel(props, 'modelValue', emit);
 
-const color = props.color ?? 'primary';
+const { id, name, placeholder, type, color } = toRefs(props);
 </script>
 
 <template>
   <div :class="['c-input-root', color]">
     <div>
-      <slot name="label"></slot>
+      <slot name="label"
+        ><label :for="id">{{ name }}</label></slot
+      >
     </div>
     <div :class="['c-input-container', 'py2']">
       <input
-        :id="props.id"
+        :id="id"
         :class="['c-input', 'w-full']"
-        :type="props.type"
-        :placeholder="props.placeholder"
+        :type="type"
+        :placeholder="placeholder"
         v-model="data"
       />
     </div>
