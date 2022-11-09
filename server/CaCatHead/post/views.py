@@ -45,6 +45,7 @@ def create_post(request: Request):
     """
     创建公告
     """
+    # TODO: init sort_time and is_public
     post = Post(title=request.data['title'], owner=request.user)
     post.save()
     post_content = PostContent(post=post, content=request.data['title'])
