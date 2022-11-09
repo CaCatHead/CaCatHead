@@ -4,7 +4,7 @@ import type { PolygonProblem } from '@/composables/types';
 const title = ref('');
 
 const submit = async () => {
-  const { problem } = await fetchAPI()<{ problem: PolygonProblem }>(
+  const { problem } = await fetchAPI<{ problem: PolygonProblem }>(
     `/api/polygon/create`,
     {
       method: 'POST',
