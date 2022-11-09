@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: 'Polygon',
+});
+
 const { data } = await useFetchAPI<{ problems: any[] }>(`/api/polygon/own`);
 </script>
 
