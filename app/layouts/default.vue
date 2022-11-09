@@ -10,6 +10,7 @@ const user = computed(() => authUser.user);
 
 const logout = async () => {
   await authUser.logout();
+  await navigateTo('/');
 };
 
 const activeTab = computed(() => {
