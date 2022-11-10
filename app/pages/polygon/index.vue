@@ -10,6 +10,10 @@ const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
   { initialCache: false }
 );
 
+if (!data.value?.problems) {
+  await navigateTo('/');
+}
+
 const upload = async (ev: Event) => {
   const target = ev.target as HTMLInputElement;
   if ((target.files?.length ?? 0) === 0) {
@@ -55,7 +59,7 @@ const upload = async (ev: Event) => {
       </div>
     </div>
 
-    <c-table :data="data.problems">
+    <c-table :data="data!.problems">
       <template #headers>
         <c-table-header
           name="id"
