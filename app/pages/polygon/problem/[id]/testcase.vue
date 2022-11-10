@@ -31,8 +31,8 @@ interface Testcase {
 const testcases = computed(() => {
   if (files.value.length === 0) {
     return problem.value.problem_info.problem_judge.testcase_detail.map(d => ({
-      input: { name: d.in },
-      answer: { name: d.ans },
+      input: { name: d.in, size: undefined },
+      answer: { name: d.ans, size: undefined },
       score: d.score,
       sample: d.sample ?? false,
     }));
@@ -50,14 +50,19 @@ const testcases = computed(() => {
       map.get(name)!.answer = file;
     }
   }
+
   const testcases = [...map.values()];
   for (const testcase of testcases) {
     testcase.score = Math.max(1, Math.floor(100 / testcases.length));
   }
+
   if (testcases.length > 0) {
     testcases[testcases.length - 1].score =
       100 - Math.floor(100 / testcases.length) * (testcases.length - 1);
+
+    testcases[0].sample = true;
   }
+
   return testcases;
 });
 
@@ -141,7 +146,19 @@ const save = async () => {
     },
     { level: 4, mtime: new Date() }
   );
-  console.log(arch);
+
+  const formData = new FormData();
+  formData.append('file', new Blob([arch]));
+  await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
+    },
+  });
+
+  problem.value.problem_info.problem_content.sample = sample;
 };
 </script>
 
@@ -169,13 +186,13 @@ const save = async () => {
         </div>
         <div flex items-center gap4>
           <div>
-            <c-button color="info">
+            <c-button color="info" v-if="!!testcase.input?.size">
               <span mr2>输入文件</span>
               <span>{{ testcase.input?.name }}</span>
             </c-button>
           </div>
           <div>
-            <c-button color="info">
+            <c-button color="info" v-if="!!testcase.answer?.size">
               <span mr2>答案文件</span>
               <span>{{ testcase.answer?.name }}</span>
             </c-button>

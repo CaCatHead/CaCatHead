@@ -125,6 +125,28 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     return None
 
 
+def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
+    config_json = upload_problem_zip(problem.id, zip_content)
+
+    if config_json is not None:
+        if 'problem' in config_json:
+            problem_config = config_json['problem']
+            serializer = EditProblemPayload(data=problem_config)
+            if serializer.is_valid():
+                edit_problem(problem, problem_config)
+        if 'testcases' in config_json:
+            # TODO: check testcases format valid
+            testcases_config = config_json['testcases']
+            problem_judge = problem.problem_info.problem_judge
+            problem_judge.testcase_count = len(testcases_config)
+            problem_judge.testcase_detail = testcases_config
+            for testcase in testcases_config:
+                problem_judge.score += testcase['score']
+            problem_judge.save()
+
+    return problem
+
+
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):
     display_id = repo.problems.aggregate(models.Max('display_id'))['display_id__max']
     if display_id is None:

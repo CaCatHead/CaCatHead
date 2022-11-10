@@ -14,7 +14,7 @@ from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
-    make_problem_by_uploading
+    make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
@@ -45,6 +45,25 @@ def upload_problem(request: Request):
     zip_file = request.data['file']
     problem = make_problem_by_uploading(zip_file, user=request.user)
     return make_response(problem=FullProblemSerializer(problem).get_or_raise())
+
+
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+@parser_classes([FileUploadParser])
+def edit_polygon_problem_by_upload(request: Request, problem_id: int):
+    """
+    上传题目压缩包更新题目
+    """
+    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     id=problem_id,
+                                                     user=request.user,
+                                                     permission=ProblemPermissions.Edit).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        zip_file = request.data['file']
+        problem = edit_problem_by_uploading(zip_file, problem=problem)
+        return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
 @api_view(['POST'])

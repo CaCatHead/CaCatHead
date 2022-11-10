@@ -12,17 +12,17 @@ const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
 
 const upload = async (ev: Event) => {
   const target = ev.target as HTMLInputElement;
-  if (target.files.length === 0) {
+  if ((target.files?.length ?? 0) === 0) {
     return;
   }
   const formData = new FormData();
-  formData.append('file', target.files[0]);
+  formData.append('file', target.files![0]);
   await fetchAPI(`/api/polygon/upload`, {
     method: 'POST',
     body: formData,
     headers: {
       'Content-Type': 'application/zip',
-      'Content-Disposition': `form-data; filename="${target.files[0].name}"`,
+      'Content-Disposition': `form-data; filename="${target.files![0].name}"`,
     },
   });
   await refresh();
