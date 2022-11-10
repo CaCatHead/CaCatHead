@@ -40,14 +40,28 @@ const testcases = computed(() => {
 
   const map = new Map<string, Testcase>();
   for (const file of files.value) {
-    if (file.name.endsWith('.in')) {
-      const name = file.name.slice(0, file.name.length - 3);
+    const setInput = (name: string, file: File) => {
       if (!map.has(name)) map.set(name, { score: 0, sample: false });
       map.get(name)!.input = file;
-    } else if (file.name.endsWith('.ans')) {
-      const name = file.name.slice(0, file.name.length - 4);
+    };
+    const setAnswer = (name: string, file: File) => {
       if (!map.has(name)) map.set(name, { score: 0, sample: false });
       map.get(name)!.answer = file;
+    };
+
+    // CaCatHead 使用的测试数据后缀名格式: .in / .ans
+    // Codeforces 使用的测试数据后缀名格式: 无后缀 / .a
+    if (file.name.endsWith('.in')) {
+      const name = file.name.slice(0, file.name.length - 3);
+      setInput(name, file);
+    } else if (file.name.endsWith('.ans')) {
+      const name = file.name.slice(0, file.name.length - 4);
+      setAnswer(name, file);
+    } else if (file.name.endsWith('.a')) {
+      const name = file.name.slice(0, file.name.length - 2);
+      setAnswer(name, file);
+    } else if (file.name.indexOf('.') === -1) {
+      setInput(file.name, file);
     }
   }
 
@@ -169,7 +183,7 @@ const save = async () => {
         id="testcase"
         @change="onUploadTestcase"
         multiple
-        accept=".in, .ans"
+        accept=".a, .in, .ans"
         variant="outline"
         >导入测试用例文件</c-file-input
       >
