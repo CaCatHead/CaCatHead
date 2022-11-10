@@ -41,7 +41,7 @@ export default defineNuxtConfig({
   },
   modules: [
     'nuxt-proxy',
-    '@nuxtjs/fontaine',
+    // '@nuxtjs/fontaine', // TODO: not work with katex
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',

@@ -11,15 +11,15 @@ async function copyToClipboard(text: string) {
 </script>
 
 <template>
-  <div class="w-full text-base prose prose-truegray">
+  <div class="!max-w-full !w-full text-base prose prose-truegray">
     <h4>题目描述</h4>
-    <p>{{ content.description }}</p>
+    <c-markdown :content="content.description"></c-markdown>
 
     <h4>输入格式</h4>
-    <p>{{ content.input }}</p>
+    <c-markdown :content="content.input"></c-markdown>
 
     <h4>输出格式</h4>
-    <p>{{ content.output }}</p>
+    <c-markdown :content="content.output"></c-markdown>
 
     <h4>样例</h4>
     <div w-full>
@@ -78,6 +78,6 @@ async function copyToClipboard(text: string) {
     </div>
 
     <h4 v-if="content.hint">提示</h4>
-    <p v-if="content.hint">{{ content.hint }}</p>
+    <c-markdown v-if="content.hint" :content="content.hint"></c-markdown>
   </div>
 </template>

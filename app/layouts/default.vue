@@ -6,7 +6,7 @@ const toggleDark = useToggle(isDark);
 
 const authUser = useAuthUser();
 await authUser.fetchUser();
-const user = computed(() => authUser.user);
+const user = computed(() => authUser.user!);
 
 const logout = async () => {
   await authUser.logout();
@@ -112,7 +112,7 @@ const activeTab = computed(() => {
         </div>
       </nav>
 
-      <div mt12 mb12>
+      <div mt12 mb12 w-full>
         <slot></slot>
       </div>
 
