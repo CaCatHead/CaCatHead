@@ -8,6 +8,7 @@ const props = withDefaults(
   }>(),
   {
     multiple: false,
+    color: 'success',
   }
 );
 
@@ -19,14 +20,8 @@ const { id, color, accept, multiple } = toRefs(props);
 </script>
 
 <template>
-  <div inline-block>
-    <c-button
-      tag="label"
-      :for="id"
-      :color="color"
-      leading-none
-      flex
-      items-center
+  <div inline-flex items-center>
+    <c-button tag="label" :for="id" :color="color" flex items-center
       ><slot></slot
     ></c-button>
     <input

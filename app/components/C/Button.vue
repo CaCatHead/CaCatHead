@@ -34,7 +34,8 @@ const variant = computed(() => 'c-' + _variant.value);
   padding-right: 1em;
   font-weight: 500;
 
-  --at-apply: inline-block rounded-2 cursor-pointer select-none;
+  --at-apply: inline-flex items-center justify-center rounded-2 cursor-pointer
+    select-none;
 
   --c-bg: hsla(var(--c-color), var(--un-bg-opacity));
   background-color: var(--c-bg);
