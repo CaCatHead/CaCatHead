@@ -11,8 +11,8 @@
     "@pinia/nuxt": "^0.4.3",
     "@vueuse/core": "^9.5.0",
     "@vueuse/nuxt": "^9.5.0",
-    "client-zip": "^2.3.0",
-    "date-fns": "^2.29.3"
+    "date-fns": "^2.29.3",
+    "fflate": "^0.7.4"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.9",

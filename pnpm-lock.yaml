@@ -14,16 +14,16 @@ importers:
       '@unocss/nuxt': ^0.46.3
       '@vueuse/core': ^9.5.0
       '@vueuse/nuxt': ^9.5.0
-      client-zip: ^2.3.0
       date-fns: ^2.29.3
+      fflate: ^0.7.4
       nuxt: 3.0.0-rc.13
       nuxt-proxy: ^0.2.4
     dependencies:
       '@pinia/nuxt': 0.4.3
       '@vueuse/core': 9.5.0
       '@vueuse/nuxt': 9.5.0_nuxt@3.0.0-rc.13
-      client-zip: 2.3.0
       date-fns: 2.29.3
+      fflate: 0.7.4
     devDependencies:
       '@iconify-json/carbon': 1.1.9
       '@nuxtjs/fontaine': 0.2.2
@@ -1795,10 +1795,6 @@ packages:
     resolution: {integrity: sha512-ZksGS2xpa/bYkNzN3BAw1wEjsLV/ZKOf/CCrJ/QOBsxx6fOARIkwTutxp1XIOIohi6HKmOFjMoK/XaqDVUpEEw==}
     engines: {node: '>= 12'}
 
-  /client-zip/2.3.0:
-    resolution: {integrity: sha512-5hJpXzaNx7SEy35QqtdgNh9T3/w2Rjup7n31If5DO+kSgXsTPANmdwO5gRBgAbBn16GVDaGRc7vS2kUMazyXOw==}
-    dev: false
-
   /clipboardy/3.0.0:
     resolution: {integrity: sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -2525,6 +2521,10 @@ packages:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.2.1
+
+  /fflate/0.7.4:
+    resolution: {integrity: sha512-5u2V/CDW15QM1XbbgS+0DfPxVB+jUKhWEKuuFuHncbk3tEEqzmoXL+2KyOFuKGqOnmdIy0/davWF1CkuwtibCw==}
+    dev: false
 
   /figures/5.0.0:
     resolution: {integrity: sha512-ej8ksPF4x6e5wvK9yevct0UCXh8TTFlWGVLlgjZuoBH1HwjIfKE/IdL5mq89sFA7zELi1VhKpmtDnrs7zWyeyg==}

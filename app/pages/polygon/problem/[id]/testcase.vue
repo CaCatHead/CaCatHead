@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FullPolygonProblem } from '@/composables/types';
 
+import { zipSync, strToU8 } from 'fflate';
+
 const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
@@ -58,6 +60,89 @@ const testcases = computed(() => {
   }
   return testcases;
 });
+
+const save = async () => {
+  if (files.value.length === 0) return;
+
+  const readFileContent = (file: File): Promise<string> => {
+    return new Promise(res => {
+      const reader = new FileReader();
+      reader.addEventListener('loadend', ev => {
+        res((ev.target?.result as string) ?? '');
+      });
+      reader.readAsText(file);
+    });
+  };
+  const fileToU8 = (file: File): Promise<Uint8Array> => {
+    return new Promise(res => {
+      const reader = new FileReader();
+      reader.addEventListener('loadend', ev => {
+        const buffer: ArrayBuffer = ev.target?.result! as ArrayBuffer;
+        res(new Uint8Array(buffer));
+      });
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const uploadFileList: Record<string, any> = {};
+  const sample = [];
+
+  const testcaseDetail = [];
+  const tasks = [];
+
+  // 读取所有测试用例
+  for (const testcase of testcases.value) {
+    if (testcase.input && testcase.answer) {
+      const inputFile = testcase.input as File;
+      const answerFile = testcase.answer as File;
+
+      tasks.push(
+        (async () => {
+          uploadFileList[inputFile.name] = await fileToU8(inputFile);
+        })()
+      );
+      tasks.push(
+        (async () => {
+          uploadFileList[answerFile.name] = await fileToU8(answerFile);
+        })()
+      );
+
+      testcaseDetail.push({
+        in: testcase.input.name,
+        ans: testcase.answer.name,
+        score: testcase.score,
+        sample: testcase.sample,
+      });
+
+      // 手动读取样例
+      if (testcase.sample) {
+        const inp = await readFileContent(testcase.input as File);
+        const ans = await readFileContent(testcase.answer as File);
+        if (inp.length > 1024 || ans.length > 1024) {
+          // 不应该上传这么大的样例
+        }
+        sample.push({ input: inp, answer: ans });
+      }
+    }
+  }
+  await Promise.all(tasks);
+
+  const config = {
+    problem: {
+      sample,
+    },
+    testcases: testcaseDetail,
+  };
+
+  const arch = zipSync(
+    {
+      ...uploadFileList,
+      'config.json': strToU8(JSON.stringify(config, null, 2)),
+    },
+    { level: 4, mtime: new Date() }
+  );
+  console.log(arch);
+};
 </script>
 
 <template>
@@ -71,8 +156,9 @@ const testcases = computed(() => {
         variant="outline"
         >导入测试用例文件</c-file-input
       >
-      <c-button color="success">保存</c-button>
+      <c-button color="success" @click="save">保存</c-button>
     </div>
+
     <div mt4 shadow-box rounded divide-y>
       <div v-for="(testcase, idx) in testcases" :key="idx" w-full p4>
         <div mb2 flex items-center>
