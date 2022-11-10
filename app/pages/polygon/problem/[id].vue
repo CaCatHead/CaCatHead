@@ -7,7 +7,11 @@ const { data } = await useFetchAPI<{ problem: FullPolygonProblem }>(
   `/api/polygon/${route.params.id}`
 );
 
-const problem = ref(data.value.problem);
+if (data.value === null) {
+  await navigateTo('/polygon');
+}
+
+const problem = ref(data.value!.problem);
 </script>
 
 <template>
@@ -16,14 +20,22 @@ const problem = ref(data.value.problem);
       <Title>Polygon #{{ problem.id }}. {{ problem.title }}</Title>
     </Head>
     <div>
-      <h2 text-2xl font-bold mb4 px2>{{ problem.title }}</h2>
+      <div flex pl2>
+        <h2 text-2xl font-bold mb4>{{ problem.title }}</h2>
+        <div flex-auto></div>
+        <div>
+          <c-file-input id="update-zip" accept=".zip"
+            >上传题目包更新</c-file-input
+          >
+        </div>
+      </div>
       <c-nav :prefix="`/polygon/problem/${route.params.id}/`" mb4>
         <c-nav-item to="">预览</c-nav-item>
         <c-nav-item to="edit">编辑题面</c-nav-item>
         <c-nav-item to="testcase">测试数据</c-nav-item>
         <c-nav-item to="permission">权限管理</c-nav-item>
       </c-nav>
-      <NuxtPage :problem="problem" px2 />
+      <NuxtPage :problem="problem" pl2 />
     </div>
   </div>
 </template>

@@ -39,6 +39,15 @@ export interface ProblemContent {
   source: string;
 }
 
+export interface ProblemJudge {
+  testcase_detail: Array<{
+    in: string;
+    ans: string;
+    score: number;
+    sample?: boolean;
+  }>;
+}
+
 export interface FullPolygonProblem {
   id: number;
   display_id: number;
@@ -48,6 +57,7 @@ export interface FullPolygonProblem {
   problem_type: 'classic_ac';
 
   problem_info: {
+    problem_judge: ProblemJudge;
     problem_content: ProblemContent;
   };
 }

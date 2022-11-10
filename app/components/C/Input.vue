@@ -4,7 +4,7 @@ const props = withDefaults(
     id: string;
     name?: string;
     placeholder?: string;
-    modelValue: string;
+    modelValue: string | number;
     type: string;
     color?: string;
   }>(),

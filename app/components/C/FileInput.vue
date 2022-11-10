@@ -5,10 +5,12 @@ const props = withDefaults(
     color?: string;
     accept?: string;
     multiple?: boolean;
+    variant?: 'fill' | 'outline' | 'light' | 'text';
   }>(),
   {
     multiple: false,
     color: 'success',
+    variant: 'fill',
   }
 );
 
@@ -16,12 +18,18 @@ const emit = defineEmits<{
   (e: 'change', ev: Event): void;
 }>();
 
-const { id, color, accept, multiple } = toRefs(props);
+const { id, color, variant, accept, multiple } = toRefs(props);
 </script>
 
 <template>
   <div inline-flex items-center>
-    <c-button tag="label" :for="id" :color="color" flex items-center
+    <c-button
+      tag="label"
+      :for="id"
+      :color="color"
+      :variant="variant"
+      flex
+      items-center
       ><slot></slot
     ></c-button>
     <input
