@@ -173,6 +173,7 @@ const save = async () => {
   });
 
   problem.value.problem_info.problem_content.sample = sample;
+  problem.value.problem_info.problem_judge.testcase_detail = testcaseDetail;
 };
 </script>
 
