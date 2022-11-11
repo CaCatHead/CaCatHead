@@ -6,12 +6,14 @@ useHead({
 });
 
 const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
+
+const posts = ref(data.value?.posts ?? []);
 </script>
 
 <template>
   <div flex gap8 lt-md:flex-col-reverse>
     <div w="5/8" lt-md:w-full>
-      <div v-for="post in data.posts" mb12>
+      <div v-for="post in posts" mb12>
         <h2 text-2xl font-bold>
           <NuxtLink :to="`/post/${post.id}`">{{ post.title }}</NuxtLink>
         </h2>
