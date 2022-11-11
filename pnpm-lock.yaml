@@ -21,6 +21,7 @@ importers:
       katex: ^0.16.3
       markdown-it: ^13.0.1
       markdown-it-math: ^4.1.1
+      md-editor-v3: ^2.4.1
       nuxt: 3.0.0-rc.13
       nuxt-proxy: ^0.2.4
     dependencies:
@@ -33,6 +34,7 @@ importers:
       katex: 0.16.3
       markdown-it: 13.0.1
       markdown-it-math: 4.1.1
+      md-editor-v3: 2.4.1
     devDependencies:
       '@iconify-json/carbon': 1.1.9
       '@nuxtjs/fontaine': 0.2.2
@@ -3407,6 +3409,11 @@ packages:
       linkify-it: 4.0.1
       mdurl: 1.0.1
       uc.micro: 1.0.6
+    dev: false
+
+  /md-editor-v3/2.4.1:
+    resolution: {integrity: sha512-ORI1g4bQK+6NkTKriizqXYd0wtrchhP2bnnxS8u0P2UX8/A7kWBjb9jSUAqiTDVWpi8RrJ4/OyUh+Njb5krEEg==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /mdn-data/2.0.14:

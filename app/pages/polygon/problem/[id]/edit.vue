@@ -23,43 +23,40 @@ const submit = async () => {
 
 <template>
   <div>
-    <div space-y-4>
-      <c-input
-        id="title"
-        name="标题"
-        type="text"
-        v-model="problem.title"
-      ></c-input>
+    <div space-y-8>
+      <c-input id="title" type="text" v-model="problem.title">
+        <template #label><label for="title" font-600>标题</label></template>
+      </c-input>
 
-      <c-input
-        id="description"
-        name="题目描述"
-        type="textarea"
-        v-model="problem.problem_info.problem_content.description"
-      ></c-input>
+      <div>
+        <h4 mb2 font-600>题目描述</h4>
+        <markdown-editor
+          v-model="problem.problem_info.problem_content.description"
+        ></markdown-editor>
+      </div>
 
-      <c-input
-        id="input"
-        name="输入格式"
-        type="textarea"
-        v-model="problem.problem_info.problem_content.input"
-      ></c-input>
+      <div>
+        <h4 mb2 font-600>输入格式</h4>
+        <markdown-editor
+          v-model="problem.problem_info.problem_content.input"
+        ></markdown-editor>
+      </div>
 
-      <c-input
-        id="output"
-        name="输出格式"
-        type="textarea"
-        v-model="problem.problem_info.problem_content.output"
-      ></c-input>
+      <div>
+        <h4 mb2 font-600>输出格式</h4>
+        <markdown-editor
+          v-model="problem.problem_info.problem_content.output"
+        ></markdown-editor>
+      </div>
 
-      <c-input
-        id="hint"
-        name="提示"
-        type="textarea"
-        v-model="problem.problem_info.problem_content.hint"
-      ></c-input>
+      <div>
+        <h4 mb2 font-600>提示</h4>
+        <markdown-editor
+          v-model="problem.problem_info.problem_content.hint"
+        ></markdown-editor>
+      </div>
     </div>
-    <div>
+    <div mt4>
       <c-button color="success" @click="submit">保存</c-button>
     </div>
   </div>
