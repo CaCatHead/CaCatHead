@@ -129,6 +129,23 @@ def submit_polygon_problem(request: Request, problem_id: int):
         return make_response(submission=FullSubmissionSerializer(submission).data)
 
 
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+def list_polygon_problem_submissions(request: Request, problem_id: int):
+    """
+    列出该题目的所有提交列表
+    """
+    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     id=problem_id,
+                                                     user=request.user,
+                                                     permission=ProblemPermissions.ReadSubmission).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY, problem=problem)
+        return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
+
+
 @api_view()
 @permission_classes([HasPolygonPermission])
 def get_polygon_submission(request: Request, submission_id: int):
