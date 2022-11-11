@@ -4,6 +4,7 @@ export interface CTableColumn {
   name: string;
   width?: number | string;
   class: string | string[];
+  align: 'left' | 'right' | 'center';
 }
 
 export interface CTableContext {

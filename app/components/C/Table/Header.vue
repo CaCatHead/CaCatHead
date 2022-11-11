@@ -6,15 +6,22 @@ const props = withDefaults(
     name: string;
     label?: string;
     width?: number | string;
+    align?: 'left' | 'right' | 'center';
     rowClass?: string | string[];
   }>(),
   {
     label: p => p.name,
+    align: 'center',
     rowClass: () => [],
   }
 );
+
 const ctx = useCTableContext();
-ctx.columns.value.push({ name: props.name, class: props.rowClass });
+ctx.columns.value.push({
+  name: props.name,
+  class: props.rowClass,
+  align: props.align,
+});
 </script>
 
 <template>

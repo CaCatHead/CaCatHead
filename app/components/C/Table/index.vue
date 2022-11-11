@@ -12,6 +12,9 @@ const columns = ref<CTableColumn[]>([]);
 provide(CTABLE, {
   columns,
 });
+
+// used for generate style class
+const alignClasses = ['text-left', 'text-right', 'text-center'];
 </script>
 
 <template>
@@ -24,7 +27,11 @@ provide(CTABLE, {
       </thead>
       <tbody divide-y>
         <tr v-for="row in data">
-          <td v-for="col in columns" p2 :class="col.class">
+          <td
+            v-for="col in columns"
+            p2
+            :class="['text-' + col.align, col.class]"
+          >
             <slot :name="col.name" v-bind="{ row }">{{ row[col.name] }}</slot>
           </td>
         </tr>

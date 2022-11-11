@@ -17,37 +17,13 @@ const submission = ref(data.value!.submission);
     <div shadow-box rounded>
       <c-table :data="[submission]">
         <template #headers>
-          <c-table-header
-            name="id"
-            label="#"
-            width="64px"
-            row-class="text-center"
-          ></c-table-header>
-          <c-table-header
-            name="created"
-            label="提交时间"
-            row-class="text-center"
-          ></c-table-header>
-          <c-table-header
-            name="owner"
-            label="用户"
-            row-class="text-center"
-          ></c-table-header>
-          <c-table-header
-            name="problem"
-            label="题目"
-            row-class="text-center"
-          ></c-table-header>
-          <c-table-header
-            name="language"
-            label="语言"
-            row-class="text-center"
-          ></c-table-header>
-          <c-table-header
-            name="verdict"
-            label="结果"
-            row-class="text-center"
-          ></c-table-header>
+          <c-table-header name="id" label="#" width="64px"></c-table-header>
+          <c-table-header name="created" label="提交时间"></c-table-header>
+          <c-table-header name="owner" label="用户"></c-table-header>
+          <c-table-header name="problem" label="题目"></c-table-header>
+          <c-table-header name="language" label="语言"></c-table-header>
+          <c-table-header name="verdict" label="结果"></c-table-header>
+          <c-table-header name="score" label="得分"></c-table-header>
         </template>
 
         <template #id="{ row }">
