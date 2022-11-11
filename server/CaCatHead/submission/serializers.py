@@ -22,6 +22,9 @@ class FullSubmissionSerializer(serializers.ModelSerializer):
 
     problem = ProblemSerializer(read_only=True)
 
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Submission
-        fields = ['id', 'repository', 'problem', 'code', 'language', 'created', 'judged', 'verdict', 'score', 'detail']
+        fields = ['id', 'repository', 'problem', 'code', 'language', 'created', 'judged', 'verdict', 'score', 'detail',
+                  'owner']
