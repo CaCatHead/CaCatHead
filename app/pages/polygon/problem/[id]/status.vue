@@ -5,7 +5,7 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
-const { data } = useFetchAPI<{ sumbissions: any[] }>(
+const { data } = await useFetchAPI<{ sumbissions: any[] }>(
   `/api/polygon/${problem.value.id}/submissions`
 );
 
