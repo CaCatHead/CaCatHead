@@ -16,6 +16,6 @@ const submission = ref(data.value!.submission);
   <div>
     <div>结果: {{ submission.verdict }}</div>
     <div>得分: {{ submission.score }}</div>
-    <div font-mono p4 shadow-box>{{ submission.code }}</div>
+    <pre pt4 font-mono p4 shadow-box rounded>{{ submission.code }}</pre>
   </div>
 </template>
