@@ -33,6 +33,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
     baseURL: useRuntimeConfig().API_BASE,
     async onResponseError({ response }) {
       if (response.status === 401) {
+        token.value = '';
         await navigateTo({ path: '/login' });
       }
     },
@@ -58,7 +59,7 @@ export const useAuthUser = defineStore('AuthUser', () => {
           },
           baseURL: useRuntimeConfig().API_BASE,
         });
-        
+
         if (data.value === null) {
           cookie.value = '';
           user.value = undefined;
