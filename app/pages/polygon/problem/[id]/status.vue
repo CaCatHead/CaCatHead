@@ -6,4 +6,6 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 const { problem } = toRefs(props);
 </script>
 
-<template></template>
+<template>
+  <div></div>
+</template>
