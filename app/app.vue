@@ -53,4 +53,17 @@ html.dark {
 .danger {
   --c-color: var(--c-danger);
 }
+
+.text-success {
+  color: hsla(var(--c-success), var(--un-text-opacity));
+}
+.text-info {
+  color: hsla(var(--c-info), var(--un-text-opacity));
+}
+.text-warning {
+  color: hsla(var(--c-warning), var(--un-text-opacity));
+}
+.text-danger {
+  color: hsla(var(--c-danger), var(--un-text-opacity));
+}
 </style>

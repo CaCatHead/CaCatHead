@@ -195,6 +195,14 @@ const save = async () => {
       <div v-for="(testcase, idx) in testcases" :key="idx" w-full p4>
         <div mb2 flex items-center>
           <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
+          <span
+            v-if="!!testcase.input?.size && !!testcase.answer?.size"
+            i-mdi-check
+            font-bold
+            ml2
+            class="text-success"
+          ></span>
+          <span v-else i-mdi-close ml2 class="text-danger" font-bold></span>
           <div flex-auto></div>
           <span font-bold mr2>显示为样例</span>
           <c-switch v-model="testcase.sample"></c-switch>
