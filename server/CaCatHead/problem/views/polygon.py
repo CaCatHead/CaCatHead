@@ -129,7 +129,7 @@ def submit_polygon_problem(request: Request, problem_id: int):
         return make_response(submission=FullSubmissionSerializer(submission).data)
 
 
-@api_view(['POST'])
+@api_view()
 @permission_classes([HasPolygonPermission])
 def list_polygon_problem_submissions(request: Request, problem_id: int):
     """
