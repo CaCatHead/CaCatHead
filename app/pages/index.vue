@@ -6,12 +6,14 @@ useHead({
 });
 
 const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
+
+const posts = ref(data.value?.posts ?? []);
 </script>
 
 <template>
   <div flex gap8 lt-md:flex-col-reverse>
     <div w="5/8" lt-md:w-full>
-      <PostList :posts="data.posts"></PostList>
+      <PostList :posts="posts"></PostList>
     </div>
     <div w="3/8" lt-md:w-full>
       <div shadow-box rounded>
