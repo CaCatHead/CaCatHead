@@ -17,6 +17,7 @@ const submissions = ref(data.value?.sumbissions ?? []);
     <c-table :data="submissions">
       <template #headers>
         <c-table-header name="id" label="#"></c-table-header>
+        <c-table-header name="verdict" label="结果"></c-table-header>
       </template>
 
       <template #id="{ row }">
@@ -24,6 +25,7 @@ const submissions = ref(data.value?.sumbissions ?? []);
           row.id
         }}</nuxt-link>
       </template>
+      <template #verdict="{ row }">{{ row.verdict }}</template>
     </c-table>
   </div>
 </template>
