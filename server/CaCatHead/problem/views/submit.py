@@ -36,7 +36,7 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         'submission_id': submission.id,
         'code': code,
         'language': language,
-        'problem_id': 1,
+        'problem_id': problem.id,
         'problem_type': problem.problem_type,
         'time_limit': problem.time_limit,
         'memory_limit': problem.memory_limit,
