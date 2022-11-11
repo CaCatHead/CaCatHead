@@ -5,11 +5,11 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
-const { data } = await useFetchAPI<{ sumbissions: any[] }>(
+const { data } = await useFetchAPI<{ submissions: any[] }>(
   `/api/polygon/${problem.value.id}/submissions`
 );
 
-const submissions = ref(data.value?.sumbissions ?? []);
+const submissions = ref(data.value?.submissions ?? []);
 </script>
 
 <template>
