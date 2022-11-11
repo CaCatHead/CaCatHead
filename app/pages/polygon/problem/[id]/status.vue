@@ -23,6 +23,26 @@ const submissions = ref(data.value?.submissions ?? []);
           row-class="text-center"
         ></c-table-header>
         <c-table-header
+          name="created"
+          label="提交时间"
+          row-class="text-center"
+        ></c-table-header>
+        <c-table-header
+          name="owner"
+          label="用户"
+          row-class="text-center"
+        ></c-table-header>
+        <c-table-header
+          name="problem"
+          label="题目"
+          row-class="text-center"
+        ></c-table-header>
+        <c-table-header
+          name="language"
+          label="语言"
+          row-class="text-center"
+        ></c-table-header>
+        <c-table-header
           name="verdict"
           label="结果"
           row-class="text-center"
@@ -38,7 +58,25 @@ const submissions = ref(data.value?.submissions ?? []);
           >{{ row.id }}</nuxt-link
         >
       </template>
-      <template #verdict="{ row }">{{ row.verdict }}</template>
+      <template #created="{ row }">
+        <span>{{ formatDateTime(row.created) }}</span>
+      </template>
+      <template #owner="{ row }">
+        <user-link :user="row.owner"></user-link>
+      </template>
+      <template #problem="{ row }">
+        <nuxt-link
+          :to="`/polygon/problem/${problem.id}/`"
+          text-sky-700
+          text-op-70
+          hover:text-op-100
+          >{{ problem.id }}. {{ problem.title }}</nuxt-link
+        >
+      </template>
+      <template #language="{ row }">{{ row.language }}</template>
+      <template #verdict="{ row }">
+        <verdict :verdict="row.verdict"></verdict>
+      </template>
     </c-table>
   </div>
 </template>

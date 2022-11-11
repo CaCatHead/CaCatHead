@@ -23,7 +23,7 @@ class Verdict(str, Enum):
     TimeLimitExceeded = 'TimeLimitExceeded'
     IdlenessLimitExceeded = 'IdlenessLimitExceeded'
     MemoryLimitExceeded = 'MemoryLimitExceeded'
-    OutputLimitExceeded = 'OutputLimitExceeded',
+    OutputLimitExceeded = 'OutputLimitExceeded'
     RuntimeError = 'RuntimeError'
     Point = 'Point'
     PartiallyCorrect = 'PartiallyCorrect'

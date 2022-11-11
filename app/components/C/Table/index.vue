@@ -22,7 +22,7 @@ provide(CTABLE, {
           <slot name="headers"></slot>
         </tr>
       </thead>
-      <tbody>
+      <tbody divide-y>
         <tr v-for="row in data">
           <td v-for="col in columns" p2 :class="col.class">
             <slot :name="col.name" v-bind="{ row }">{{ row[col.name] }}</slot>
