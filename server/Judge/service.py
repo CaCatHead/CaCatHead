@@ -13,7 +13,7 @@ class JudgeService:
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=settings.RMQ_HOST, port=settings.RMQ_PORT))
         self.channel = self.connection.channel()
-        queue_name = "judge_task"
+        queue_name = settings.DEFAULT_JUDGE_QUEUE
         self.channel.queue_declare(queue=queue_name, durable=True)
         self.channel.basic_qos(prefetch_count=1)
         self.channel.basic_consume(queue=queue_name, on_message_callback=self.consume)

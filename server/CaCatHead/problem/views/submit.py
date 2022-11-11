@@ -13,7 +13,7 @@ def send_message(message):
     channel.queue_declare(queue='judge_task', durable=True)
     channel.basic_publish(
         exchange='',
-        routing_key='judge_task',
+        routing_key=settings.DEFAULT_JUDGE_QUEUE,
         body=json.dumps(message),
         properties=pika.BasicProperties(
             delivery_mode=2,  # make message persistent

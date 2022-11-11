@@ -53,5 +53,9 @@ class Submission(models.Model):
 
     class Meta:
         db_table = 'submission'
+
+        ordering = ('-created', '-judged', '-score', '-id')
+
         verbose_name = _(u"提交信息")
+
         verbose_name_plural = _(u"提交信息列表")

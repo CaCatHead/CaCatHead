@@ -42,6 +42,7 @@ RMQ_HOST = os.getenv('RMQ_HOST')
 RMQ_PORT = os.getenv('RMQ_PORT')
 RMQ_USER = os.getenv('RMQ_USER')
 RMQ_PASS = os.getenv('RMQ_PASS')
+DEFAULT_JUDGE_QUEUE = os.getenv('JUDGE_QUEUE', 'judge_task')
 
 ALLOWED_HOSTS = ['*']
 
