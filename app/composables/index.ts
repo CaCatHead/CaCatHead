@@ -31,6 +31,11 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
     ...options,
     headers,
     baseURL: useRuntimeConfig().API_BASE,
+    async onResponseError({ response }) {
+      if (response.status === 401) {
+        await navigateTo({ path: '/login' });
+      }
+    },
   });
 };
 
@@ -53,8 +58,16 @@ export const useAuthUser = defineStore('AuthUser', () => {
           },
           baseURL: useRuntimeConfig().API_BASE,
         });
-        user.value = data.value.user;
-        return data.value.user;
+        
+        if (data.value === null) {
+          cookie.value = '';
+          user.value = undefined;
+          await navigateTo({ path: '/login', query: { redirect: '' } });
+          return undefined;
+        } else {
+          user.value = data.value.user;
+          return data.value.user;
+        }
       } catch {
         return undefined;
       }
@@ -73,7 +86,7 @@ export const useAuthUser = defineStore('AuthUser', () => {
       method: 'POST',
       key: `logout_${cookie.value}`,
     });
-    cookie.value = undefined;
+    cookie.value = '';
     user.value = undefined;
   };
 
