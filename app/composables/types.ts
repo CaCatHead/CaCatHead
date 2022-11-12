@@ -6,6 +6,8 @@ export interface User {
   nickname: string;
 }
 
+export type FullUser = User & { polygon: boolean };
+
 export interface Post {
   id: number;
 

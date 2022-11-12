@@ -205,8 +205,16 @@ class PolygonPermission(APIView):
     @class_validate_request(EditPermissionPayload)
     def post(self, request: Request, problem_id: int):
         problem = self.get_problem_or_raise(request, problem_id)
-        if 'user_id' in request.data:
-            user = User.objects.get(id=request.data['user_id'])
+        if 'user_id' in request.data or 'username' in request.data:
+            if 'user_id' in request.data:
+                user = User.objects.get(id=request.data['user_id'])
+            else:
+                user = User.objects.get(username=request.data['username'])
+            if user is None:
+                raise NotFound(detail='用户未找到')
+            if problem.owner == user:
+                return make_response(user_id=user.id)
+
             grant = False
             revoke = False
             if 'grant' in request.data:

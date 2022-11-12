@@ -2,7 +2,7 @@ import type { FetchOptions } from 'ohmyfetch';
 
 import { defineStore } from 'pinia';
 
-import type { User } from './types';
+import type { User, FullUser } from './types';
 
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
@@ -40,25 +40,34 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
   });
 };
 
+export const AuthUserKey = Symbol('cacathead-auth-user');
+
+export const useUser = () => {
+  return inject<FullUser>(AuthUserKey);
+};
+
 // Store auth user
 export const useAuthUser = defineStore('AuthUser', () => {
   const cookie = useToken();
-  const user = ref<User | undefined>();
+  const user = ref<FullUser | undefined>();
 
   const isLogin = computed(() => {
     return user.value !== undefined && user.value !== null;
   });
 
-  const fetchUser = async (): Promise<User | undefined> => {
+  const fetchUser = async (): Promise<FullUser | undefined> => {
     if (cookie.value) {
       try {
-        const { data } = await useFetch<{ user: User }>(`/api/user/profile`, {
-          key: `profile_${cookie.value}`,
-          headers: {
-            Authorization: cookie.value,
-          },
-          baseURL: useRuntimeConfig().API_BASE,
-        });
+        const { data } = await useFetch<{ user: FullUser }>(
+          `/api/user/profile`,
+          {
+            key: `profile_${cookie.value}`,
+            headers: {
+              Authorization: cookie.value,
+            },
+            baseURL: useRuntimeConfig().API_BASE,
+          }
+        );
 
         if (data.value === null) {
           cookie.value = '';

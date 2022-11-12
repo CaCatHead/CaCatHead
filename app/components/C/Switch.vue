@@ -14,13 +14,16 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'change']);
 
 const { id, modelValue } = toRefs(props);
 const flag = ref(modelValue.value);
 
 watch(modelValue, modelValue => (flag.value = modelValue));
-watch(flag, flag => emit('update:modelValue', flag));
+watch(flag, flag => {
+  emit('update:modelValue', flag);
+  emit('change', flag);
+});
 </script>
 
 <template>

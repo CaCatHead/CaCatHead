@@ -8,6 +8,8 @@ const authUser = useAuthUser();
 await authUser.fetchUser();
 const user = computed(() => authUser.user!);
 
+provide(AuthUserKey, user);
+
 const logout = async () => {
   await authUser.logout();
   await navigateTo('/');
@@ -101,7 +103,7 @@ const activeTab = computed(() => {
         </div>
 
         <div
-          v-if="user && user.username === 'root'"
+          v-if="user && user.polygon"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>

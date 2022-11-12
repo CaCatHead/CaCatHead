@@ -12,6 +12,8 @@ if (data.value === null) {
 }
 
 const problem = ref(data.value!.problem);
+
+const user = useUser();
 </script>
 
 <template>
@@ -35,7 +37,9 @@ const problem = ref(data.value!.problem);
         <c-nav-item to="testcase">测试数据</c-nav-item>
         <c-nav-item to="submit">提交代码</c-nav-item>
         <c-nav-item to="status">所有提交</c-nav-item>
-        <c-nav-item to="permission">权限管理</c-nav-item>
+        <c-nav-item to="permission" v-if="problem.owner.id === user?.id"
+          >权限管理</c-nav-item
+        >
       </c-nav>
       <NuxtPage :problem="problem" pl2 />
     </div>
