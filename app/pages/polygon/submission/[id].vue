@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const route = useRoute();
 
+useHead({
+  title: 'Submission #' + route.params.id,
+});
+
 const { data } = await useFetchAPI<{ submission: any }>(
   `/api/polygon/submission/${route.params.id}`
 );
