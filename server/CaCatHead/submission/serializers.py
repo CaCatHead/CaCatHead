@@ -14,8 +14,8 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['id', 'repository', 'problem', 'code_length', 'language', 'created', 'judged', 'verdict', 'score',
-                  'owner']
+        fields = ['id', 'repository', 'problem', 'code_length', 'language', 'created', 'judged', 'verdict',
+                  'score', 'time_used', 'memory_used', 'owner']
 
 
 class FullPolygonSubmissionSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class FullPolygonSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['id', 'repository', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'verdict',
-                  'score', 'detail', 'owner']
+                  'score', 'detail', 'time_used', 'memory_used', 'owner']
 
 
 class FullSubmissionSerializer(serializers.ModelSerializer):
@@ -41,4 +41,4 @@ class FullSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['id', 'repository', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'verdict',
-                  'score', 'detail', 'owner']
+                  'score', 'detail', 'time_used', 'memory_used', 'owner']
