@@ -7,6 +7,8 @@ import type { User, FullUser } from './types';
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
 
+export const clearCookie = () => {};
+
 // Fetch API
 export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
   return $fetch<T>(url, {
@@ -97,6 +99,8 @@ export const useAuthUser = defineStore('AuthUser', () => {
       key: `logout_${cookie.value}`,
     });
     cookie.value = '';
+    useCookie('csrftoken').value = '';
+    useCookie('sessionid').value = '';
     user.value = undefined;
   };
 
