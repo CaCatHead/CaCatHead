@@ -29,6 +29,7 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         problem=problem,
         owner=user,
         code=code,
+        code_length=len(code),
         language=language,
     )
     submission.save()

@@ -11,13 +11,14 @@ from CaCatHead.core.decorators import HasPolygonPermission, func_validate_reques
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
-from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
+from CaCatHead.problem.serializers import CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
 from CaCatHead.submission.models import Submission
-from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
+from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
+    FullPolygonSubmissionSerializer
 from CaCatHead.utils import make_response, make_error_response
 
 
@@ -161,7 +162,7 @@ def get_polygon_submission(request: Request, submission_id: int):
     if submission is None:
         raise NotFound('提交未找到')
     else:
-        return make_response(submission=FullSubmissionSerializer(submission).data)
+        return make_response(submission=FullPolygonSubmissionSerializer(submission).data)
 
 
 @api_view()
