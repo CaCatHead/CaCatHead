@@ -50,8 +50,10 @@ const submission = ref(data.value!.submission);
         </template>
       </c-table>
     </div>
-    <pre mt4 font-mono p4 shadow-box rounded>{{ submission.code }}</pre>
-    <pre mt4 font-mono p4 shadow-box rounded>{{
+    <pre mt4 font-mono p4 shadow-box rounded overflow-auto>{{
+      submission.code
+    }}</pre>
+    <pre mt4 font-mono p4 shadow-box rounded overflow-auto>{{
       JSON.stringify(submission.detail, null, 2)
     }}</pre>
   </div>
