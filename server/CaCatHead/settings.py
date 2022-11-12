@@ -27,8 +27,9 @@ SECRET_KEY = 'django-insecure-jve48vpw^1-z+1lc8#u^f@6gai%r)k-m-47^qw$^@nct1u)*^_
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Enable DEBUG mode by default
-DEBUG_ENV = os.getenv('DEBUG', 'true').lower()
-DEBUG = False if DEBUG_ENV == 'false' else True
+DEBUG = False if os.getenv('DEBUG', 'true').lower() == 'false' else True
+# Disable DEBUG_JUDGE by default
+DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else False
 
 # Root username and password
 CACATHEAD_ROOT_USER = os.getenv('CACATHEAD_ROOT_USER', 'root')
