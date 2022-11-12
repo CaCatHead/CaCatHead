@@ -65,12 +65,13 @@ const upload = async (ev: Event) => {
           name="id"
           label="#"
           width="64px"
-          row-class="text-center"
+          row-class="text-center font-600"
         ></c-table-header>
         <c-table-header
           name="title"
           label="标题"
           class="text-left"
+          align="left"
         ></c-table-header>
         <c-table-header
           name="owner"
