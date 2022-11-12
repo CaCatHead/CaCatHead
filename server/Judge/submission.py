@@ -75,8 +75,9 @@ class SubmissionTask:
             self.submission.score = score
         if detail is not None:
             self.submission.detail = detail
-            self.submission.time_used = max([d['time'] for d in detail])
-            self.submission.memory_used = max([d['memory'] for d in detail])
+        if len(self.results) > 0:
+            self.submission.time_used = max([d['time'] for d in self.results])
+            self.submission.memory_used = max([d['memory'] for d in self.results])
         self.submission.save()
 
     def run(self):
