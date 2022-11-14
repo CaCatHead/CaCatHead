@@ -35,6 +35,9 @@ DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else F
 CACATHEAD_ROOT_USER = os.getenv('CACATHEAD_ROOT_USER', 'root')
 CACATHEAD_ROOT_PASS = os.getenv('CACATHEAD_ROOT_PASS', '12345678')
 
+# Trusted origin
+TRUSTED_ORIGIN = os.getenv('TRUSTED_ORIGIN', 'http://127.0.0.1')
+
 # Testcase root dir
 TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
 
@@ -45,7 +48,8 @@ RMQ_USER = os.getenv('RMQ_USER')
 RMQ_PASS = os.getenv('RMQ_PASS')
 DEFAULT_JUDGE_QUEUE = os.getenv('JUDGE_QUEUE', 'judge_task')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['http://127.0.0.1', TRUSTED_ORIGIN]
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', TRUSTED_ORIGIN]
 
 # Application definition
 INSTALLED_APPS = [
