@@ -48,7 +48,7 @@ RMQ_USER = os.getenv('RMQ_USER')
 RMQ_PASS = os.getenv('RMQ_PASS')
 DEFAULT_JUDGE_QUEUE = os.getenv('JUDGE_QUEUE', 'judge_task')
 
-ALLOWED_HOSTS = ['http://127.0.0.1', TRUSTED_ORIGIN]
+ALLOWED_HOSTS = ['127.0.0.1', TRUSTED_ORIGIN.strip('https://').strip('http://')]
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', TRUSTED_ORIGIN]
 
 # Application definition
@@ -209,6 +209,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
     },
     'loggers': {
         'Judge.service': {
