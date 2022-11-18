@@ -61,7 +61,7 @@ class ProblemDirectory:
         problem_info['source'] = problem.problem_info.problem_content.source
         problem_info['extra_content'] = problem.problem_info.problem_content.extra_content
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
-        json.dump(self.config, open(self.root / 'config.json', 'w'), indent=2)
+        json.dump(self.config, open(self.root / 'config.json', 'w'), indent=2, ensure_ascii=False)
 
 
 def find_config_root(root: Path) -> Path | None:
