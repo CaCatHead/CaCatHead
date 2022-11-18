@@ -9,9 +9,11 @@ useHead({
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <c-notification-provider>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </c-notification-provider>
 </template>
 
 <style>

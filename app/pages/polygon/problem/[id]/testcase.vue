@@ -7,6 +7,8 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
+const notify = useNotification();
+
 const files = ref<File[]>([]);
 
 const onUploadTestcase = (ev: Event) => {
@@ -171,6 +173,8 @@ const save = async () => {
       'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
     },
   });
+
+  notify.success(`题目 ${problem.value.title} 测试数据保存成功`);
 
   problem.value.problem_info.problem_content.sample = sample;
   problem.value.problem_info.problem_judge.testcase_detail = testcaseDetail;
