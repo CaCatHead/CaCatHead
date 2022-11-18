@@ -83,7 +83,10 @@ const testcases = computed(() => {
 });
 
 const save = async () => {
-  if (files.value.length === 0) return;
+  if (files.value.length === 0) {
+    notify.warning('没有上传测试用例');
+    return;
+  }
 
   const readFileContent = (file: File): Promise<string> => {
     return new Promise(res => {
@@ -112,6 +115,7 @@ const save = async () => {
   const tasks = [];
 
   // 读取所有测试用例
+  notify.info('开始读取测试用例');
   for (const testcase of testcases.value) {
     if (testcase.input && testcase.answer) {
       const inputFile = testcase.input as File;
@@ -155,6 +159,7 @@ const save = async () => {
     testcases: testcaseDetail,
   };
 
+  notify.info('开始打包测试用例');
   const arch = zipSync(
     {
       ...uploadFileList,
@@ -163,6 +168,7 @@ const save = async () => {
     { level: 4, mtime: new Date() }
   );
 
+  notify.info('开始上传测试用例');
   const formData = new FormData();
   formData.append('file', new Blob([arch]));
   await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
