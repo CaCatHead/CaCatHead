@@ -129,8 +129,8 @@ const save = async () => {
       );
 
       testcaseDetail.push({
-        in: testcase.input.name,
-        ans: testcase.answer.name,
+        input: testcase.input.name,
+        answer: testcase.answer.name,
         score: testcase.score,
         sample: testcase.sample,
       });

@@ -8,6 +8,37 @@ from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
+from CaCatHead.problem.serializers import TestcaseInfoPayload
+
+
+class ProblemDirectory:
+    def __init__(self, root: str | Path):
+        self.root = Path(root)
+        self.config = json.load(open(root / 'config.json'))
+
+    def check_valid(self):
+        if 'testcases' not in self.config:
+            # 必须包含 testcases
+            return False
+
+        testcases = self.config['testcases']
+        if not isinstance(testcases, list):
+            # testcases 必须是数组
+            return False
+
+        for testcase in testcases:
+            serializer = TestcaseInfoPayload(data=testcase)
+            if not serializer.is_valid(raise_exception=False):
+                # 输入不合法
+                return False
+            input_file = self.root / testcase['input']
+            answer_file = self.root / testcase['answer']
+            if not input_file.exists() or not answer_file.exists():
+                # 输入或输出文件不存在
+                return False
+
+        return True
+
 
 def find_config_root(root: Path) -> Path | None:
     # TODO: not init a list
@@ -15,11 +46,10 @@ def find_config_root(root: Path) -> Path | None:
     if len(config_path) != 1:
         return None
     config_path = config_path[0]
-    # TODO: check testcases exist
     return config_path.parent
 
 
-def unzip_problem(problem_root: Path, file_name: str, zip_content):
+def unzip_problem(problem_root: Path, file_name: str, zip_content: InMemoryUploadedFile):
     zip_tmp = tempfile.mkdtemp()
     os.chmod(zip_tmp, 0o775)
     zip_path = Path(zip_tmp) / file_name
@@ -38,18 +68,23 @@ def unzip_problem(problem_root: Path, file_name: str, zip_content):
     shutil.unpack_archive(zip_path, problem_temp)
     root = find_config_root(Path(problem_temp))
 
+    valid = False
+
     if root is not None:
-        # clear previous data
-        shutil.rmtree(problem_root)
-        problem_root.mkdir(parents=True)
-        # move current data
-        for f in root.iterdir():
-            shutil.move(f, problem_root)
+        problem_dir = ProblemDirectory(root)
+        if problem_dir.check_valid():
+            valid = True
+            # clear previous data
+            shutil.rmtree(problem_root)
+            problem_root.mkdir(parents=True)
+            # move current data
+            for f in root.iterdir():
+                shutil.move(f, problem_root)
 
     shutil.rmtree(zip_tmp)
     shutil.rmtree(problem_temp)
 
-    return root is not None
+    return valid
 
 
 def upload_problem_zip(pid: int, file: InMemoryUploadedFile):

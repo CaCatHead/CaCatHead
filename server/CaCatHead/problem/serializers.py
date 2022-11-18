@@ -25,6 +25,12 @@ class EditProblemPayload(serializers.Serializer):
     extra_judge = serializers.JSONField(required=False)
 
 
+class TestcaseInfoPayload(serializers.Serializer):
+    input = serializers.CharField(required=True)
+    answer = serializers.CharField(required=True)
+    score = serializers.IntegerField(default=1, required=False)
+    sample = serializers.BooleanField(default=False, required=False)
+
 class EditPermissionPayload(serializers.Serializer):
     username = serializers.CharField(max_length=32, required=False)
     user_id = serializers.IntegerField(required=False)

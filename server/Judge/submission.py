@@ -155,7 +155,7 @@ class SubmissionTask:
 
         verdict = Verdict.Accepted
         for testcase in self.testcase_detail:
-            self.prepare_testcase_file(in_file=testcase['in'], ans_file=testcase['ans'])
+            self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
             self.run_sandbox()
             detail = self.read_result()
 
