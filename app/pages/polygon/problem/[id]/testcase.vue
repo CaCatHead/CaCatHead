@@ -33,8 +33,8 @@ interface Testcase {
 const testcases = computed(() => {
   if (files.value.length === 0) {
     return problem.value.problem_info.problem_judge.testcase_detail.map(d => ({
-      input: { name: d.in, size: undefined },
-      answer: { name: d.ans, size: undefined },
+      input: { name: d.input, size: undefined },
+      answer: { name: d.answer, size: undefined },
       score: d.score,
       sample: d.sample ?? false,
     }));

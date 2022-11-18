@@ -43,8 +43,8 @@ export interface ProblemContent {
 
 export interface ProblemJudge {
   testcase_detail: Array<{
-    in: string;
-    ans: string;
+    input: string;
+    answer: string;
     score: number;
     sample?: boolean;
   }>;
