@@ -8,13 +8,22 @@ from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
+from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
 
 class ProblemDirectory:
     def __init__(self, root: str | Path):
         self.root = Path(root)
-        self.config = json.load(open(root / 'config.json'))
+        self.root.mkdir(parents=True, exist_ok=True)
+        config_path = root / 'config.json'
+        if not config_path.exists():
+            json.dump({'problem': {}, 'testcases': []}, open(config_path, 'w'))
+        self.config = json.load(open(config_path))
+
+    @classmethod
+    def make(cls, problem: Problem):
+        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.id))
 
     def check_valid(self):
         if 'testcases' not in self.config:
@@ -38,6 +47,21 @@ class ProblemDirectory:
                 return False
 
         return True
+
+    def save_config(self, problem: Problem):
+        problem_info = self.config['problem']
+        problem_info['title'] = problem.problem_info.problem_content.title
+        problem_info['time_limit'] = problem.problem_info.problem_judge.time_limit
+        problem_info['memory_limit'] = problem.problem_info.problem_judge.memory_limit
+        problem_info['description'] = problem.problem_info.problem_content.description
+        problem_info['input'] = problem.problem_info.problem_content.input
+        problem_info['output'] = problem.problem_info.problem_content.output
+        problem_info['sample'] = problem.problem_info.problem_content.sample
+        problem_info['hint'] = problem.problem_info.problem_content.hint
+        problem_info['source'] = problem.problem_info.problem_content.source
+        problem_info['extra_content'] = problem.problem_info.problem_content.extra_content
+        problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
+        json.dump(self.config, open(self.root / 'config.json', 'w'), indent=2)
 
 
 def find_config_root(root: Path) -> Path | None:
