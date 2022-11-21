@@ -16,6 +16,9 @@ from CaCatHead.submission.models import Submission
 
 logger = logging.getLogger('Judge.service')
 
+MAX_COMPILE_OUTPUT_SIZE = 1024
+MAX_OUTPUT_SIZE = 512
+
 
 class NoTestDataException(Exception):
     pass
@@ -28,7 +31,6 @@ class NoLanguageException(Exception):
 class SubmissionTask:
     def __init__(self, message: bytes):
         data = json.loads(message)
-        logger.info(data)
 
         self.submission = Submission.objects.get(id=data['submission_id'])
         self.code = data["code"]
@@ -39,7 +41,19 @@ class SubmissionTask:
         self.memory_limit = str(data["memory_limit"])
         self.testcase_detail = data["testcase_detail"]
 
-        self.compiler_output = None
+        logger.info(f'Submission ID  {self.submission.id}')
+        logger.info(f'Language       {self.language}')
+        logger.info(f'Problem ID     {self.problem_id}')
+        logger.info(f'Problem type   {self.problem_type}')
+        logger.info(f'Time limit     {self.time_limit}')
+        logger.info(f'Memory limit   {self.memory_limit}')
+
+        logger.info(self.testcase_detail)
+        logger.info(data["extra_info"])
+
+        # 保存编译输出
+        self.compile_stdout = None
+
         self.verdict = Verdict.Waiting
         self.score = 0
         self.results = []
@@ -47,6 +61,10 @@ class SubmissionTask:
         self.tmp_dir = Path(tempfile.mkdtemp())
         os.chmod(self.tmp_dir, 0o775)
         self.code_file = self.tmp_dir / ("Main." + self.language)
+
+        if settings.DEBUG_JUDGE:
+            logger.info(f'Tmp dir        {self.tmp_dir}')
+            logger.info(f'Code file      {self.code_file}')
 
     def update_submission(self, judged=None, verdict=None, score=None, detail=None):
         if judged is not None:
@@ -57,39 +75,41 @@ class SubmissionTask:
             self.submission.score = score
         if detail is not None:
             self.submission.detail = detail
+        if len(self.results) > 0:
+            self.submission.time_used = max([d['time'] for d in self.results])
+            self.submission.memory_used = max([d['memory'] for d in self.results])
         self.submission.save()
 
     def run(self):
-        logger.info(f'Run submission at {self.tmp_dir}')
+        logger.info(f'Run submission {self.submission.id}')
+
         self.verdict = Verdict.Compiling
         self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling)
 
         try:
             self.dump_code()
-
             self.compile_code()
 
             if self.verdict != Verdict.CompileError:
                 self.verdict = Verdict.Running
                 self.update_submission(verdict=Verdict.Running)
                 self.judge()
-
-            self.save_result()
         except NoTestDataException:
             self.verdict = Verdict.TestCaseError
         except NoLanguageException:
             self.verdict = Verdict.JudgeError
         finally:
+            self.save_final_result()
             self.clean_temp()
 
     def dump_code(self):
-        logger.info(f'Dump code to {self.code_file}')
+        logger.info(f'Dump code of submission {self.submission.id}')
         code_file = io.open(self.code_file, 'w', encoding='utf8')
         code_file.write(self.code)
         code_file.close()
 
     def compile_code(self):
-        logger.info(f'Start compiling code {self.code_file}')
+        logger.info(f'Start compiling code of submission {self.submission.id}')
         if self.language == 'cpp':
             commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
                         "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE"]
@@ -103,17 +123,19 @@ class SubmissionTask:
 
         cwd = Path(tempfile.mkdtemp())
         os.chmod(cwd, 0o775)
+
         try:
             subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
             self.prepare_exec_file(cwd)
         except subprocess.CalledProcessError as e:
             self.verdict = Verdict.CompileError
-            self.compiler_output = e.output
+            self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
         except OSError as e:
             self.verdict = Verdict.CompileError
             logger.error(e)
         finally:
-            shutil.rmtree(cwd)
+            if not settings.DEBUG_JUDGE:
+                shutil.rmtree(cwd)
 
     def prepare_exec_file(self, tmp_dir: Path):
         if self.language in ['cpp', 'c']:
@@ -129,11 +151,11 @@ class SubmissionTask:
         os.chmod(exec_file_dst, 0o775)
 
     def judge(self):
-        logger.info("Start judging ...")
+        logger.info(f"Start judging submission {self.submission.id}")
 
         verdict = Verdict.Accepted
         for testcase in self.testcase_detail:
-            self.prepare_testcase_file(in_file=testcase['in'], ans_file=testcase['ans'])
+            self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
             self.run_sandbox()
             detail = self.read_result()
 
@@ -191,28 +213,32 @@ class SubmissionTask:
         self.results.append(detail)
         return detail
 
-    def save_result(self):
-        logger.info("Save result, result is %s" % self.results)
+    def save_final_result(self):
+        logger.info(f"Save result of submission {self.submission.id}")
+
         detail = {
             'verdict': Verdict.Accepted,
             'score': self.score,
             'compile': {
-                'stdout': '',
-                'stderr': ''
+                'stdout': ''
             },
             'results': self.results
         }
 
         if self.verdict == Verdict.CompileError:
             detail['verdict'] = Verdict.CompileError
-            detail['compile']['stdout'] = self.compiler_output
+            detail['compile']['stdout'] = self.compile_stdout
         elif self.verdict in [Verdict.TestCaseError, Verdict.SystemError, Verdict.JudgeError]:
             detail['verdict'] = self.verdict
         else:
             detail['verdict'] = self.verdict
 
+        if settings.DEBUG_JUDGE:
+            logger.info(detail)
+
         self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
 
     def clean_temp(self):
-        logger.info(f'Clean submission running directory {self.tmp_dir}')
-        shutil.rmtree(self.tmp_dir)
+        if not settings.DEBUG_JUDGE:
+            logger.info(f'Clean running directory of submission {self.submission.id}')
+            shutil.rmtree(self.tmp_dir)

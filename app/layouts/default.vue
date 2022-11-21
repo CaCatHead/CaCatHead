@@ -6,16 +6,21 @@ const toggleDark = useToggle(isDark);
 
 const authUser = useAuthUser();
 await authUser.fetchUser();
-const user = computed(() => authUser.user);
+const user = computed(() => authUser.user!);
+
+provide(AuthUserKey, user);
 
 const logout = async () => {
   await authUser.logout();
+  await navigateTo('/');
 };
 
 const activeTab = computed(() => {
   const p = route.fullPath;
   if (p.startsWith('/contest')) {
     return 'contest';
+  } else if (p.startsWith('/post')) {
+    return 'post';
   } else if (p.startsWith('/repository')) {
     return 'repository';
   } else if (p.startsWith('/help')) {
@@ -80,6 +85,9 @@ const activeTab = computed(() => {
         <div :class="['default-nav-item', activeTab === 'home' && 'is-active']">
           <NuxtLink to="/">主页</NuxtLink>
         </div>
+        <div :class="['default-nav-item', activeTab === 'post' && 'is-active']">
+          <NuxtLink to="/post/">博客</NuxtLink>
+        </div>
         <div
           :class="['default-nav-item', activeTab === 'contest' && 'is-active']"
         >
@@ -93,18 +101,20 @@ const activeTab = computed(() => {
         >
           <NuxtLink to="/repository/">题库</NuxtLink>
         </div>
-        <div :class="['default-nav-item', activeTab === 'help' && 'is-active']">
-          <NuxtLink to="/help">帮助</NuxtLink>
-        </div>
+
         <div
-          v-if="user && user.username === 'root'"
+          v-if="user && user.polygon"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>
         </div>
+
+        <div :class="['default-nav-item', activeTab === 'help' && 'is-active']">
+          <NuxtLink to="/help">帮助</NuxtLink>
+        </div>
       </nav>
 
-      <div mt12 mb12>
+      <div mt12 mb12 w-full>
         <slot></slot>
       </div>
 
@@ -141,6 +151,11 @@ const activeTab = computed(() => {
 </template>
 
 <style>
+:root {
+  --main-padding-y: 4rem;
+  --main-max-width: 64rem;
+}
+
 .default-nav-item {
   --at-apply: px1 py1 flex items-center;
   --at-apply: border-b border-b-3 border-transparent;

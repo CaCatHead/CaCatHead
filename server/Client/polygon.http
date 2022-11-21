@@ -57,6 +57,10 @@ Content-Type: application/json
   "code": "#include <iostream>\n\nusing namespace std;\n\nint main() {\n  int a = 1, b = 1;\n  cin >> a >> b;\n  cout << a - b << '\\n';\n  return 0;\n}"
 }
 
+### List problem submissions
+GET http://127.0.0.1:8000/api/polygon/1/submissions
+Authorization: Token {{auth_token}}
+
 ### List submissions
 GET http://127.0.0.1:8000/api/polygon/submissions
 Authorization: Token {{auth_token}}

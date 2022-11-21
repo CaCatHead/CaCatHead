@@ -9,16 +9,15 @@ useHead({
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <c-notification-provider>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </c-notification-provider>
 </template>
 
 <style>
 :root {
-  --main-padding-y: 1rem;
-  --main-max-width: 64rem;
-
   --c-primary: 265, 97.7%, 66.3%;
   --c-success: 94.5, 100%, 39.6%;
   --c-info: 200.1, 100%, 54.3%;
@@ -55,5 +54,18 @@ html.dark {
 }
 .danger {
   --c-color: var(--c-danger);
+}
+
+.text-success {
+  color: hsla(var(--c-success), var(--un-text-opacity));
+}
+.text-info {
+  color: hsla(var(--c-info), var(--un-text-opacity));
+}
+.text-warning {
+  color: hsla(var(--c-warning), var(--un-text-opacity));
+}
+.text-danger {
+  color: hsla(var(--c-danger), var(--un-text-opacity));
 }
 </style>

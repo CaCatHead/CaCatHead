@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
+from CaCatHead.core.constants import Permissions
 from CaCatHead.user.models import UserInfo
 
 
@@ -36,5 +37,6 @@ class FullUserSerializer(serializers.BaseSerializer):
             'id': user.id,
             'username': user.username,
             'email': user.email,
-            'nickname': user_info.nickname
+            'nickname': user_info.nickname,
+            'polygon': user.has_perm(Permissions.POLYGON)
         }

@@ -27,8 +27,9 @@ SECRET_KEY = 'django-insecure-jve48vpw^1-z+1lc8#u^f@6gai%r)k-m-47^qw$^@nct1u)*^_
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # Enable DEBUG mode by default
-DEBUG_ENV = os.getenv('DEBUG', 'true').lower()
-DEBUG = False if DEBUG_ENV == 'false' else True
+DEBUG = False if os.getenv('DEBUG', 'true').lower() == 'false' else True
+# Disable DEBUG_JUDGE by default
+DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else False
 
 # Root username and password
 CACATHEAD_ROOT_USER = os.getenv('CACATHEAD_ROOT_USER', 'root')
@@ -42,8 +43,14 @@ RMQ_HOST = os.getenv('RMQ_HOST')
 RMQ_PORT = os.getenv('RMQ_PORT')
 RMQ_USER = os.getenv('RMQ_USER')
 RMQ_PASS = os.getenv('RMQ_PASS')
+DEFAULT_JUDGE_QUEUE = os.getenv('JUDGE_QUEUE', 'judge_task')
 
-ALLOWED_HOSTS = ['*']
+# Trusted origin
+TRUSTED_ORIGIN = os.getenv('TRUSTED_ORIGIN', 'http://127.0.0.1')
+ALLOWED_HOST = os.getenv('ALLOWED_HOST', '127.0.0.1')
+
+ALLOWED_HOSTS = ['127.0.0.1', ALLOWED_HOST, TRUSTED_ORIGIN.strip('https://').strip('http://')]
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', TRUSTED_ORIGIN]
 
 # Application definition
 INSTALLED_APPS = [
@@ -203,6 +210,10 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
     },
     'loggers': {
         'Judge.service': {

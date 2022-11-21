@@ -2,6 +2,7 @@ import {
   presetUno,
   presetIcons,
   presetWebFonts,
+  presetTypography,
   presetAttributify,
   transformerDirectives,
   transformerVariantGroup,
@@ -40,7 +41,7 @@ export default defineNuxtConfig({
   },
   modules: [
     'nuxt-proxy',
-    '@nuxtjs/fontaine',
+    // '@nuxtjs/fontaine', // TODO: not work with katex
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',
@@ -65,6 +66,7 @@ export default defineNuxtConfig({
           mono: 'Input Mono',
         },
       }),
+      presetTypography(),
     ],
     transformers: [transformerDirectives(), transformerVariantGroup()],
     shortcuts: {

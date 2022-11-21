@@ -15,14 +15,16 @@
   },
   "testcases": [
     {
-      "in": "1.in",
-      "ans": "1.ans",
-      "score": 50
+      "input": "1.in",
+      "answer": "1.ans",
+      "score": 50,
+      "sample": true
     },
     {
-      "in": "2.in",
-      "ans": "2.ans",
-      "score": 50
+      "input": "2.in",
+      "answer": "2.ans",
+      "score": 50,
+      "sample": true
     }
   ]
 }

@@ -11,13 +11,14 @@ from CaCatHead.core.decorators import HasPolygonPermission, func_validate_reques
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
-from CaCatHead.problem.serializers import ProblemSerializer, CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload
+from CaCatHead.problem.serializers import CreateProblemPayload, \
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
-    make_problem_by_uploading
+    make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
 from CaCatHead.submission.models import Submission
-from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
+from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
+    FullPolygonSubmissionSerializer
 from CaCatHead.utils import make_response, make_error_response
 
 
@@ -32,7 +33,7 @@ def create_problem(request: Request):
     title = request.data['title']
     display_id = request.data.get('display_id', None)
     problem = make_problem(title=title, user=request.user, display_id=display_id)
-    return make_response(problem=ProblemSerializer(problem).data)
+    return make_response(problem=PolygonProblemSerializer(problem).data)
 
 
 @api_view(['POST'])
@@ -45,6 +46,25 @@ def upload_problem(request: Request):
     zip_file = request.data['file']
     problem = make_problem_by_uploading(zip_file, user=request.user)
     return make_response(problem=FullProblemSerializer(problem).get_or_raise())
+
+
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+@parser_classes([FileUploadParser])
+def edit_polygon_problem_by_upload(request: Request, problem_id: int):
+    """
+    上传题目压缩包更新题目
+    """
+    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     id=problem_id,
+                                                     user=request.user,
+                                                     permission=ProblemPermissions.Edit).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        zip_file = request.data['file']
+        problem = edit_problem_by_uploading(zip_file, problem=problem)
+        return make_response(problem=FullProblemSerializer(problem).get_or_raise())
 
 
 @api_view(['POST'])
@@ -87,7 +107,7 @@ def list_polygon_problems(request):
     problems = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                   user=request.user,
                                                   permission=ProblemPermissions.ReadProblem)
-    return make_response(problems=ProblemSerializer(problems, many=True).data)
+    return make_response(problems=PolygonProblemSerializer(problems, many=True).data)
 
 
 @api_view(['POST'])
@@ -112,6 +132,23 @@ def submit_polygon_problem(request: Request, problem_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
+def list_polygon_problem_submissions(request: Request, problem_id: int):
+    """
+    列出该题目的所有提交列表
+    """
+    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     id=problem_id,
+                                                     user=request.user,
+                                                     permission=ProblemPermissions.ReadSubmission).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY, problem=problem)
+        return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
 def get_polygon_submission(request: Request, submission_id: int):
     """
     获取提交
@@ -125,7 +162,7 @@ def get_polygon_submission(request: Request, submission_id: int):
     if submission is None:
         raise NotFound('提交未找到')
     else:
-        return make_response(submission=FullSubmissionSerializer(submission).data)
+        return make_response(submission=FullPolygonSubmissionSerializer(submission).data)
 
 
 @api_view()
@@ -168,8 +205,16 @@ class PolygonPermission(APIView):
     @class_validate_request(EditPermissionPayload)
     def post(self, request: Request, problem_id: int):
         problem = self.get_problem_or_raise(request, problem_id)
-        if 'user_id' in request.data:
-            user = User.objects.get(id=request.data['user_id'])
+        if 'user_id' in request.data or 'username' in request.data:
+            if 'user_id' in request.data:
+                user = User.objects.get(id=request.data['user_id'])
+            else:
+                user = User.objects.get(username=request.data['username'])
+            if user is None:
+                raise NotFound(detail='用户未找到')
+            if problem.owner == user:
+                return make_response(user_id=user.id)
+
             grant = False
             revoke = False
             if 'grant' in request.data:

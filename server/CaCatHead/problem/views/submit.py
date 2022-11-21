@@ -13,7 +13,7 @@ def send_message(message):
     channel.queue_declare(queue='judge_task', durable=True)
     channel.basic_publish(
         exchange='',
-        routing_key='judge_task',
+        routing_key=settings.DEFAULT_JUDGE_QUEUE,
         body=json.dumps(message),
         properties=pika.BasicProperties(
             delivery_mode=2,  # make message persistent
@@ -29,6 +29,7 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         problem=problem,
         owner=user,
         code=code,
+        code_length=len(code),
         language=language,
     )
     submission.save()
@@ -36,7 +37,7 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         'submission_id': submission.id,
         'code': code,
         'language': language,
-        'problem_id': 1,
+        'problem_id': problem.id,
         'problem_type': problem.problem_type,
         'time_limit': problem.time_limit,
         'memory_limit': problem.memory_limit,

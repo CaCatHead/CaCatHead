@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from CaCatHead.problem.serializers import ProblemSerializer, ProblemRepositorySerializer
+from CaCatHead.problem.serializers import ProblemSerializer, ProblemRepositorySerializer, PolygonProblemSerializer
 from CaCatHead.submission.models import Submission
+from CaCatHead.user.serializers import UserSerializer
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -9,9 +10,25 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     problem = ProblemSerializer(read_only=True)
 
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Submission
-        fields = ['id', 'repository', 'problem', 'language', 'created', 'judged', 'verdict', 'score']
+        fields = ['id', 'repository', 'problem', 'code_length', 'language', 'created', 'judged', 'verdict',
+                  'score', 'time_used', 'memory_used', 'owner']
+
+
+class FullPolygonSubmissionSerializer(serializers.ModelSerializer):
+    repository = ProblemRepositorySerializer(read_only=True)
+
+    problem = PolygonProblemSerializer(read_only=True)
+
+    owner = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Submission
+        fields = ['id', 'repository', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'verdict',
+                  'score', 'detail', 'time_used', 'memory_used', 'owner']
 
 
 class FullSubmissionSerializer(serializers.ModelSerializer):
@@ -19,6 +36,9 @@ class FullSubmissionSerializer(serializers.ModelSerializer):
 
     problem = ProblemSerializer(read_only=True)
 
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Submission
-        fields = ['id', 'repository', 'problem', 'code', 'language', 'created', 'judged', 'verdict', 'score', 'detail']
+        fields = ['id', 'repository', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'verdict',
+                  'score', 'detail', 'time_used', 'memory_used', 'owner']

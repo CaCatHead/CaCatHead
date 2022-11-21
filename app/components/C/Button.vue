@@ -1,18 +1,29 @@
 <script setup lang="ts">
-const props = defineProps<{
-  variant?: 'fill' | 'outline' | 'light' | 'text';
-  color?: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    variant?: 'fill' | 'outline' | 'light' | 'text';
+    color?: string;
+    tag?: string;
+  }>(),
+  {
+    variant: 'fill',
+    color: 'primary',
+    tag: 'button',
+  }
+);
 
-const variant = 'c-' + (props.variant ?? 'fill');
+const { color, variant: _variant, tag } = toRefs(props);
 
-const color = props.color ?? 'primary';
+const variant = computed(() => 'c-' + _variant.value);
 </script>
 
 <template>
-  <button :class="['c-button', 'whitespace-nowrap', variant, color]">
+  <component
+    :is="tag"
+    :class="['c-button', 'whitespace-nowrap', variant, color]"
+  >
     <slot></slot>
-  </button>
+  </component>
 </template>
 
 <style>
@@ -23,7 +34,8 @@ const color = props.color ?? 'primary';
   padding-right: 1em;
   font-weight: 500;
 
-  --at-apply: rounded-2;
+  --at-apply: inline-flex items-center justify-center rounded-2 cursor-pointer
+    select-none;
 
   --c-bg: hsla(var(--c-color), var(--un-bg-opacity));
   background-color: var(--c-bg);

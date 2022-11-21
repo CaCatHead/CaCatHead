@@ -2,10 +2,15 @@
 
 FROM python:3.10 AS builder
 
+# 换成阿里源
+RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update \
   && apt-get install -y gcc g++ cmake default-jdk default-jre
 
-RUN pip install --user pipenv
+# 换成清华源
+RUN pip install --user pipenv -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cnpypi.tuna.tsinghua.edu.cn 
 
 ENV PIPENV_VENV_IN_PROJECT=1
 
@@ -41,6 +46,10 @@ RUN cd /usr/src/CatJudge \
   && cp ./yesno /usr/bin/yesno
 
 FROM python:3.10 AS runtime
+
+# 换成阿里源
+RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
   && apt-get install -y gcc g++ default-jdk default-jre

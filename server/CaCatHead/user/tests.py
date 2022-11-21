@@ -6,7 +6,7 @@ ROOT_USER = settings.CACATHEAD_ROOT_USER
 ROOT_PASS = settings.CACATHEAD_ROOT_PASS
 DEFAULT_EMAIL = 'root@example.com'
 
-ROOT_PROFILE = {'id': 1, 'username': 'root', 'nickname': 'root', 'email': 'root@example.com'}
+ROOT_PROFILE = {'id': 1, 'username': 'root', 'nickname': 'root', 'email': 'root@example.com', 'polygon': True}
 
 
 def login_token_valid(resp):
@@ -118,7 +118,8 @@ class UserAuthTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
+                          'polygon': False})
         user = User.objects.get(username='world')
         username = user.username
         email = user.email
@@ -135,7 +136,8 @@ class UserAuthTests(APITestCase):
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
         self.assertEqual(resp2.data, {'status': 'ok', 'user': {'id': 2, 'username': 'world', 'nickname': 'world',
-                                                               'email': 'world@example.com'}})
+                                                               'email': 'world@example.com',
+                                                               'polygon': False}})
         # 退出
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
@@ -182,7 +184,8 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
+                          'polygon': False})
         self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
@@ -206,7 +209,8 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
+                          'polygon': False})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         resp2 = self.client.post('/api/auth/register', {
@@ -228,7 +232,8 @@ class UserRegisterTests(APITestCase):
         })
         assert resp.status_code == 200
         self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com'})
+                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
+                          'polygon': False})
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         self.client.post('/api/auth/register', {
