@@ -9,6 +9,10 @@ DEFAULT_EMAIL = 'root@example.com'
 ROOT_PROFILE = {'id': 1, 'username': 'root', 'nickname': 'root', 'email': 'root@example.com', 'polygon': True}
 
 
+WORLD_PROFILE = {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com','polygon': False}
+
+WORLD_INFO = {"username": "world", "email": "world@example.com", "password": "12345678"}
+
 def login_token_valid(resp):
     return len(resp.data['expiry']) > 0 and len(resp.data['token']) > 0
 
@@ -57,7 +61,7 @@ class UserAuthTests(APITestCase):
         TODO: SQL injection failure
         """
         resp = self.client.post('/api/auth/login',
-                                {"username": "root; DELETE FROM User", "password": "12345678"})
+                                {"username": "root; DELETE FROM auth_user", "password": "12345678"})
 
     def test_multi_login_logout(self):
         """
@@ -111,15 +115,9 @@ class UserAuthTests(APITestCase):
         测试整个流程 注册-登录-查看-退出
         """
         # 注册
-        resp = self.client.post('/api/auth/register', {
-            "username": "world",
-            "email": "world@example.com",
-            "password": "12345678"
-        })
+        resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
-                          'polygon': False})
+        self.assertEqual(resp.data['user'], WORLD_PROFILE)
         user = User.objects.get(username='world')
         username = user.username
         email = user.email
@@ -135,9 +133,7 @@ class UserAuthTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertEqual(resp2.data, {'status': 'ok', 'user': {'id': 2, 'username': 'world', 'nickname': 'world',
-                                                               'email': 'world@example.com',
-                                                               'polygon': False}})
+        self.assertEqual(resp2.data, {'status': 'ok', 'user': WORLD_PROFILE})
         # 退出
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
@@ -177,15 +173,9 @@ class UserRegisterTests(APITestCase):
         """
         正常注册
         """
-        resp = self.client.post('/api/auth/register', {
-            "username": "world",
-            "email": "world@example.com",
-            "password": "12345678"
-        })
+        resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
-                          'polygon': False})
+        self.assertEqual(resp.data['user'], WORLD_PROFILE)
         self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
@@ -208,9 +198,7 @@ class UserRegisterTests(APITestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
-                          'polygon': False})
+        self.assertEqual(resp.data['user'], WORLD_PROFILE)
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         resp2 = self.client.post('/api/auth/register', {
@@ -225,15 +213,9 @@ class UserRegisterTests(APITestCase):
         同一个邮箱多次注册
         """
         # 注册
-        resp = self.client.post('/api/auth/register', {
-            "username": "world",
-            "email": "world@example.com",
-            "password": "12345678"
-        })
+        resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'],
-                         {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com',
-                          'polygon': False})
+        self.assertEqual(resp.data['user'], WORLD_PROFILE)
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         self.client.post('/api/auth/register', {
