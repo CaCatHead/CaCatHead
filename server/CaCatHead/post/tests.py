@@ -5,9 +5,6 @@ from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 from CaCatHead.user.tests import ROOT_USER
 
-POST1_INFO = {'id': 1, 'owner': {'id': 1, 'username': 'root', 'nickname': 'root'}, 'content': '你好！',
-              'created': '2022-10-27T02:20:03.089000+08:00', 'updated': '2022-10-27T02:20:03.089000+08:00',
-              'sort_time': '2022-10-27T02:20:03.089000+08:00', 'title': '系统公告', 'is_public': True}
 
 
 class PostManagerTests(TestCase):
@@ -91,16 +88,13 @@ class PostViewTests(TestCase):
     def test_superuser_view_public_post(self):
         resp = self.user_view_post(self.root, 1)
         assert resp.status_code == 200
-        post = resp.data['post']
-        assert post['is_public']
-        self.assertEqual(post, POST1_INFO)
+        self.assertMatchSnapshot(resp.content)
         # assert resp body, this may be wrapped with another method
 
     def test_superuser_view_private_post(self):
         resp = self.user_view_post(self.root, 2)
         assert resp.status_code == 200
-        post = resp.data['post']
-        assert post['is_public'] == False
+        self.assertMatchSnapshot(resp.content)
 
     def test_superuser_view_nonexistence_post(self):
         resp = self.user_view_post(self.root, 999)
@@ -112,12 +106,14 @@ class PostViewTests(TestCase):
         assert resp.status_code == 200
         post = resp.data['post']
         assert post['is_public']
+        self.assertMatchSnapshot(resp.content)
 
     def test_admin_view_private_post(self):
         resp = self.user_view_post(self.root, 2)
         assert resp.status_code == 200
         post = resp.data['post']
-        assert post['is_public'] == False
+        assert not post['is_public']
+        self.assertMatchSnapshot(resp.content)
 
     def test_admin_view_nonexistence_post(self):
         resp = self.user_view_post(self.root, 999)
@@ -138,7 +134,9 @@ class PostViewTests(TestCase):
         resp1 = self.user_view_post(self.root, 2)
         assert resp1.status_code == 200
         post = resp1.data['post']
-        assert post['is_public'] == False
+        print(post)
+        self.assertMatchSnapshot(resp.content)
+        assert not post['is_public']
 
     def test_guest_view_nonexistence_post(self):
         resp = self.visitor_view_post(999)
