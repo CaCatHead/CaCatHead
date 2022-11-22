@@ -88,3 +88,38 @@ class PostViewTests(APITestCase):
         resp = self.user_view_post(self.root, 1)
         assert resp.status_code == 200
         # assert resp body, this may be wrapped with another method
+
+    def test_superuser_view_private_post(self):
+        resp = self.user_view_post(self.root, 2)
+        assert resp.status_code == 200
+        post = resp.data['post']
+        assert post['is_public'] == False
+
+    def test_superuser_view_nonexistence_post(self):
+        resp = self.user_view_post(self.root, 999)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == "公告未找到"
+
+    def test_guest_view_public_post(self):
+        resp = self.visitor_list_public_posts()
+        posts = resp.data['posts']
+        for post in posts:
+            assert post['is_public']
+        assert resp.status_code == 200
+
+    def test_guest_view_private_post(self):
+        resp = self.visitor_view_post(2)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == "公告未找到"
+        resp1 = self.user_view_post(self.root, 2)
+        assert resp1.status_code == 200
+        post = resp.data['post']
+        assert post['is_public'] == False
+
+    def test_guest_view_nonexistence_post(self):
+        resp = self.visitor_view_post(999)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == "公告未找到"
+        resp1 = self.user_view_post(self.root, 999)
+        assert resp1.status_code == 404
+
