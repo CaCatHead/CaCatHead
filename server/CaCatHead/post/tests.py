@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
 
+from CaCatHead.core.tests import TestCase
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 from CaCatHead.user.tests import ROOT_USER
 
 
-class PostManagerTests(APITestCase):
+class PostManagerTests(TestCase):
     fixtures = ('post.json',)
 
     @classmethod
@@ -34,7 +34,7 @@ class PostManagerTests(APITestCase):
         assert not private_post.is_public
 
 
-class PostViewTests(APITestCase):
+class PostViewTests(TestCase):
     fixtures = ('post.json',)
 
     @classmethod
