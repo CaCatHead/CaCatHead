@@ -22,6 +22,7 @@ uvicorn = "==0.19.0"
 autopep8 = "*"
 coverage = "*"
 pylint = "*"
+snapshottest = "==0.6.0"
 
 [requires]
 python_version = "3.10"
