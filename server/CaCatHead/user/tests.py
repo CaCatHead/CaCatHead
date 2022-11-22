@@ -35,7 +35,7 @@ class UserAuthTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertEqual(resp2.data, {'status': 'ok', 'user': ROOT_PROFILE})
+        self.assertMatchSnapshot(resp2.data)
 
     def test_token_error_authentication_fail(self):
         resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
@@ -100,7 +100,7 @@ class UserAuthTests(TestCase):
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
             assert resp2.status_code == 200
-            self.assertEqual(resp2.data, {'status': 'ok', 'user': ROOT_PROFILE})
+            self.assertMatchSnapshot(resp2.data)
         # 退出
         self.client.credentials(HTTP_AUTHORIZATION=authorizations[0])
         resp3 = self.client.post('/api/auth/logoutall')
@@ -119,7 +119,7 @@ class UserAuthTests(TestCase):
         # 注册
         resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], WORLD_PROFILE)
+        self.assertMatchSnapshot(resp.data['user'])
         user = User.objects.get(username='world')
         username = user.username
         email = user.email
@@ -135,7 +135,7 @@ class UserAuthTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertEqual(resp2.data, {'status': 'ok', 'user': WORLD_PROFILE})
+        self.assertMatchSnapshot(resp2.data)
         # 退出
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204
