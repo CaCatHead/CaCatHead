@@ -117,7 +117,7 @@ class PostViewTests(TestCase):
         self.assertMatchSnapshot(resp.content)
 
     def test_public_view_list_posts(self):
-        resp = self.visitor_list_posts()
+        resp = self. visitor_list_public_posts()
         assert resp.status_code == 200
         self.assertMatchSnapshot(resp.content)
 
