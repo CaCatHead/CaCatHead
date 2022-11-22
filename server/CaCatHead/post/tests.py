@@ -96,6 +96,31 @@ class PostViewTests(TestCase):
         assert resp.status_code == 200
         self.assertMatchSnapshot(resp.content)
 
+    def test_superuser_view_list_posts(self):
+        resp = self.user_list_posts(self.root)
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+
+    def test_admin_view_list_posts(self):
+        resp = self.user_list_posts(self.admin)
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+
+    def test_user_view_list_posts(self):
+        resp = self.user_list_posts(self.user)
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+
+    def test_guest_view_list_posts(self):
+        resp = self.visitor_list_posts()
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+
+    def test_public_view_list_posts(self):
+        resp = self.visitor_list_posts()
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+
     def test_superuser_view_nonexistence_post(self):
         resp = self.user_view_post(self.root, 999)
         assert resp.status_code == 404
@@ -144,4 +169,5 @@ class PostViewTests(TestCase):
         assert resp.data['detail'] == "公告未找到"
         resp1 = self.user_view_post(self.root, 999)
         assert resp1.status_code == 404
+
 
