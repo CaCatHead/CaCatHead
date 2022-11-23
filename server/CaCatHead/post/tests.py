@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
-
+from django.contrib.auth.models import Group
 from CaCatHead.core.tests import TestCase
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 from CaCatHead.user.tests import ROOT_USER
-
+from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
 
 
 class PostManagerTests(TestCase):
@@ -34,9 +34,27 @@ class PostManagerTests(TestCase):
         assert private_post.title == '公告测试'
         assert not private_post.is_public
 
+    def test_query_user_public_posts(self):
+        user = User.objects.filter(username='world').first()
+        posts = Post.objects.filter_public()
+        self.assertMatchSnapshot(posts)
+
+    def test_query_user_group_read_posts(self):
+        user = User.objects.filter(username='world').first()
+        my_group = Group.objects.filter(name=NJUST_ICPC_GROUP_NAME).first()
+        my_group.user_set.add(user)
+        Post.objects.revoke_user_permission(user, PostPermissions.Read, 2)
+        posts = Post.objects.filter_user_public(user=user, permission=PostPermissions.Read)
+        self.assertMatchSnapshot(posts)
+        Post.objects.grant_group_permission(my_group, PostPermissions.Read, 2)
+        posts = Post.objects.filter_user_public(user=user, permission=PostPermissions.Read)
+        self.assertMatchSnapshot(posts)
+
+
 
 class PostViewTests(TestCase):
     fixtures = ('post.json',)
+
     @classmethod
     def setUpTestData(cls):
         cls.root = User.objects.get(username=ROOT_USER)
@@ -49,7 +67,6 @@ class PostViewTests(TestCase):
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         user.save()
         cls.user = user
-
 
     def user_login(self, user: User):
         # 用户登陆
@@ -117,7 +134,7 @@ class PostViewTests(TestCase):
         self.assertMatchSnapshot(resp.content)
 
     def test_public_view_list_posts(self):
-        resp = self. visitor_list_public_posts()
+        resp = self.visitor_list_public_posts()
         assert resp.status_code == 200
         self.assertMatchSnapshot(resp.content)
 
@@ -125,6 +142,10 @@ class PostViewTests(TestCase):
         resp = self.user_view_post(self.root, 999)
         assert resp.status_code == 404
         assert resp.data['detail'] == "公告未找到"
+        post_id = -1
+        resp = self.client.get(f'/api/post/{post_id}')
+        assert resp.status_code == 404
+        # HttpResponseNotFound
 
     def test_admin_view_public_post(self):
         resp = self.user_view_post(self.admin, 1)
@@ -144,6 +165,10 @@ class PostViewTests(TestCase):
         resp = self.user_view_post(self.root, 999)
         assert resp.status_code == 404
         assert resp.data['detail'] == "公告未找到"
+        post_id = -1
+        resp = self.client.get(f'/api/post/{post_id}')
+        assert resp.status_code == 404
+        # HttpResponseNotFound
 
     def test_guest_view_public_post(self):
         resp = self.visitor_list_public_posts()
@@ -169,5 +194,3 @@ class PostViewTests(TestCase):
         assert resp.data['detail'] == "公告未找到"
         resp1 = self.user_view_post(self.root, 999)
         assert resp1.status_code == 404
-
-
