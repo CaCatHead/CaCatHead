@@ -13,8 +13,22 @@ class PostManagerTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
+        user.save()
+        cls.user = user
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
         Post.objects.grant_user_permission(user, PostPermissions.Read, 2)
+
+    def user_login(self, user: User):
+        # 用户登陆
+        resp = self.client.post('/api/auth/login', {"username": user.username, "password": '12345678'})
+        assert resp.status_code == 200
+        authorization = "Token " + resp.data['token']
+        self.client.credentials(HTTP_AUTHORIZATION=authorization)
+
+    def user_view_post(self, user: User, post_id: int):
+        # 用户请求公告
+
+        return self.client.get(f'/api/post/{post_id}')
 
     def test_posts(self):
         posts = Post.objects.all()
@@ -50,6 +64,46 @@ class PostManagerTests(TestCase):
         posts = Post.objects.filter_user_public(user=user, permission=PostPermissions.Read)
         self.assertMatchSnapshot(posts)
 
+    def test_query_user_group_only_edit_post(self):
+        user = User.objects.filter(username='world').first()
+        my_group = Group.objects.filter(name=NJUST_ICPC_GROUP_NAME).first()
+        my_group.user_set.add(user)
+        Post.objects.revoke_user_permission(user, PostPermissions.Read, 2)
+        Post.objects.grant_group_permission(my_group, PostPermissions.Edit, 2)
+        self.user_login(user)
+        resp = self.user_view_post(self.user, 2)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == '公告未找到'
+
+    def test_query_user_private_unread_post(self):
+        user = User.objects.filter(username='world').first()
+        self.user_login(user)
+        resp = self.user_view_post(self.user, 2)
+        assert resp.status_code == 200
+        self.assertMatchSnapshot(resp.content)
+        Post.objects.revoke_user_permission(user, PostPermissions.Read, 2)
+        resp = self.user_view_post(self.user, 2)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == '公告未找到'
+
+    def test_query_user_private_only_edit_post(self):
+        user = User.objects.filter(username='world').first()
+        Post.objects.revoke_user_permission(user, PostPermissions.Read, 2)
+        Post.objects.grant_user_permission(user, PostPermissions.Edit, 2)
+        self.user_login(user)
+        resp = self.user_view_post(self.user, 2)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == '公告未找到'
+
+    def test_query_user_nonexistence_post(self):
+        user = User.objects.filter(username='world').first()
+        self.user_login(user)
+        resp = self.user_view_post(self.user, 999)
+        assert resp.status_code == 404
+        assert resp.data['detail'] == "公告未找到"
+        resp = self.user_view_post(self.user, -1)
+        assert resp.status_code == 404
+        # HttpResponseNotFound
 
 
 class PostViewTests(TestCase):
