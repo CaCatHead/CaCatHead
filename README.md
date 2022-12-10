@@ -42,7 +42,9 @@ server {
 }
 ```
 
-You should change the `server_name` to the address of your website. If you want to enable HTTPS, you should use the following config, and create the SSL key at `./.cert/ssl.pem` and `./.cert/ssl.key` (in the host machine).
+You should change the `server_name` to the address of your website. If you want to enable HTTPS, you should use the following config, and create the SSL key at `./.cert/ssl.pem` and `./.cert/ssl.key` (in your host machine).
+
+Then, you also need add `TRUSTED_ORIGIN=<your address of your website>` at [./deploy/server/.env](./deploy/server/.env).
 
 ## License
 
