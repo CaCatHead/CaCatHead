@@ -1,8 +1,10 @@
 server:
   allowed_host:
     - 127.0.0.1
+    - server  # This is docker-compose service name, and is used for nginx
   trusted_origin:
     - http://127.0.0.1
+    # -   # Config your domain here
   # Root user
   root:
     username: !ENV ${CACATHEAD_ROOT_USER:root}
