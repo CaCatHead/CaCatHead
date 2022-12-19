@@ -8,7 +8,7 @@ server:
   # Root user
   root:
     username: !ENV ${CACATHEAD_ROOT_USER:root}
-    password: !ENV ${CACATHEAD_ROOT_PASS:'12345678'}
+    password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}
