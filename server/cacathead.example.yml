@@ -1,0 +1,30 @@
+server:
+  allowed_host:
+    - 127.0.0.1
+  trusted_origin:
+    - http://127.0.0.1
+  # Root user
+  root:
+    username: !ENV ${CACATHEAD_ROOT_USER:root}
+    password: !ENV ${CACATHEAD_ROOT_PASS:'12345678'}
+
+testcase:
+  root: !ENV ${TESTCASE_ROOT:./.testcase}
+  minio:
+    host: !ENV ${MINIO_HOST}
+    port: !ENV ${MINIO_PORT}
+
+database:
+  engine: !ENV ${CACATHEAD_DATABASE:sqlite}
+  name: !ENV ${DB_NAME:db.sqlite3}
+  host: !ENV ${DB_HOST}
+  port: !ENV ${DB_PORT}
+  username: !ENV ${DB_USER}
+  password: !ENV ${DB_PASS}
+
+rabbitmq:
+  host: !ENV ${RMQ_HOST:localhost}
+  port: !ENV ${RMQ_PORT:5672}
+  username: !ENV ${RMQ_USER:guest}
+  password: !ENV ${RMQ_PASS:guest}
+  judge_queue: !ENV ${JUDGE_QUEUE:judge_task}

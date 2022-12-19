@@ -31,6 +31,7 @@ class TestcaseInfoPayload(serializers.Serializer):
     score = serializers.IntegerField(default=1, required=False)
     sample = serializers.BooleanField(default=False, required=False)
 
+
 class EditPermissionPayload(serializers.Serializer):
     username = serializers.CharField(max_length=32, required=False)
     user_id = serializers.IntegerField(required=False)
