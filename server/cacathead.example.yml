@@ -2,6 +2,7 @@ server:
   allowed_host:
     - 127.0.0.1
     - server  # This is docker-compose service name, and is used for nginx
+    # -   # Config your domain here
   trusted_origin:
     - http://127.0.0.1
     # -   # Config your domain here

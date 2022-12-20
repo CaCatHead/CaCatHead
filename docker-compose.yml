@@ -93,7 +93,7 @@ services:
       - '3306:3306'
     volumes:
       - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
-      # - /var/lib/mysql:/var/lib/mysql
+      - ./.cacathead/database:/var/lib/mysql
     secrets:
       - db_pass
     environment:
