@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "build:app": "pnpm -C app run build",
+    "build:docs": "pnpm -C docs run build",
     "dev:app": "pnpm -C app run dev",
+    "dev:docs": "pnpm -C docs run dev",
     "dev:server": "pnpm -C server run dev"
   },
   "packageManager": "pnpm@7.13.6",

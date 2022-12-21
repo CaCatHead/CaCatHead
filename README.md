@@ -8,6 +8,9 @@
 
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
++ 📺 [Online Demo | 在线 Demo](https://oj.xlorpaste.cn/)
++ 📖 [Document | 文档](https://oj.docs.onekuma.cn/)
+
 ## Deploy
 
 > **Prerequisite**
