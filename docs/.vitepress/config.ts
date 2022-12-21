@@ -10,7 +10,7 @@ export default defineConfig({
   ],
   lastUpdated: true,
   themeConfig: {
-    logo: '/favicon.svg',
+    logo: '/favicon.png',
     editLink: {
       pattern: 'https://github.com/XLoJ/CaCatHead/tree/main/docs/:path',
       text: '反馈修改建议',
