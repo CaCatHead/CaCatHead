@@ -23,11 +23,9 @@ hero:
       text: GitHub
       link: https://github.com/XLoJ/CaCatHead
 
-# features:
-#   - title: 自动化
-#     details: 自动抓取 / 下载 / 上传动画资源
-#   - title: 无服务器架构
-#     details: 你无需购买服务器来部署
-#   - title: 集成媒体库
-#     details: 本地资源可被 Jellyfin, Plex 等软件自动识别
+features:
+  - title: Django
+    details: Django makes it easier to build better web apps more quickly and with less code.
+  - title: Nuxt3
+    details: Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.
 ---
