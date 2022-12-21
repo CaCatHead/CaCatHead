@@ -50,10 +50,12 @@ services:
     networks:
       - cat_net
     volumes:
+      - ./deploy/server/cacathead.yml:/root/CaCatHead/cacathead.yml
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/static:/root/CaCatHead/static
     secrets:
       - db_pass
+      - minio_pass
     env_file:
       - ./deploy/server/.env
 
@@ -75,10 +77,12 @@ services:
     networks:
       - cat_net
     volumes:
+      - ./deploy/server/cacathead.yml:/root/CaCatHead/cacathead.yml
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/logs/catj:/root/catj/logs
     secrets:
       - db_pass
+      - minio_pass
     env_file:
       - ./deploy/server/.env
 
@@ -98,6 +102,23 @@ services:
       - db_pass
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_pass
+
+  minio:
+    image: minio/minio
+    container_name: cacathead_minio
+    restart: always
+    networks:
+      - cat_net
+    ports:
+      - '9000:9000'
+      - '9090:9090'
+    volumes:
+      - ./.cacathead/minio:/data
+    secrets:
+      - minio_pass
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_pass
 
   redis:
     image: redis:7.0.5-alpine
@@ -123,4 +144,6 @@ networks:
 
 secrets:
   db_pass:
+    file: ./pass.txt
+  minio_pass:
     file: ./pass.txt

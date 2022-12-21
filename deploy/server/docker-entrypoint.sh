@@ -7,6 +7,8 @@ fi
 
 export DB_PASS=$(cat $DB_PASS_FILE)
 
+export MINIO_PASS=$(cat $MINIO_PASS_FILE)
+
 if [ "$1" = "server" ] ; then
   # wait mysql bootstrap
   ./wait
