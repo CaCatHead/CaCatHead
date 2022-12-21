@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   lang: 'zh-CN',
-  title: 'CaCatHead',
+  title: '猫猫头',
   description: '一个开源的在线评测系统',
   head: [
     ['meta', { name: 'theme-color', content: '#ffffff' }],
@@ -51,14 +51,19 @@ export default defineConfig({
           text: '使用',
           items: [
             {
-              text: '文档',
+              text: '使用文档',
               link: '/usage/',
             },
           ],
         },
         {
-          text: '系统设计',
-          items: [],
+          text: '设计',
+          items: [
+            {
+              text: '设计文档',
+              link: '/design/',
+            },
+          ],
         },
       ],
     },
