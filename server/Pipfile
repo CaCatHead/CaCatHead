@@ -23,6 +23,7 @@ pyaml-env = "==1.2.1"
 autopep8 = "*"
 coverage = "*"
 pylint = "*"
+snapshottest = "==0.6.0"
 
 [requires]
 python_version = "3.10"

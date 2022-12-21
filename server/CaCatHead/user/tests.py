@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
+
+from CaCatHead.core.tests import TestCase
 
 ROOT_USER = settings.CACATHEAD_ROOT_USER
 ROOT_PASS = settings.CACATHEAD_ROOT_PASS
@@ -13,12 +14,13 @@ def login_token_valid(resp):
     return len(resp.data['expiry']) > 0 and len(resp.data['token']) > 0
 
 
-class UserAuthTests(APITestCase):
+class UserAuthTests(TestCase):
     def test_hello_world(self):
         resp = self.client.get('/api/ping')
         assert resp.status_code == 200
         assert resp.data['status'] == 'ok'
         assert resp.data['message'] == 'Hello, world!'
+        self.assertMatchSnapshot(resp.data)
 
     def test_login(self):
         resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
@@ -167,7 +169,7 @@ class UserAuthTests(APITestCase):
         assert resp3.data['detail'] == "认证令牌无效。"
 
 
-class UserRegisterTests(APITestCase):
+class UserRegisterTests(TestCase):
     def assertUserRegistered(self, username='world', email='world@example.com'):
         user = User.objects.get(username=username)
         assert user.username == username
