@@ -121,12 +121,14 @@ DATABASES = {
         'NAME': BASE_DIR / cacathead_config.database.name,
     }
 } if cacathead_config.database.engine == 'sqlite' else {
-    'ENGINE': 'django.db.backends.mysql',
-    'NAME': cacathead_config.database.name,
-    'USER': cacathead_config.database.username,
-    'PASSWORD': cacathead_config.database.password,
-    'HOST': cacathead_config.database.host,
-    'PORT': cacathead_config.database.port,
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': cacathead_config.database.name,
+        'USER': cacathead_config.database.username,
+        'PASSWORD': cacathead_config.database.password,
+        'HOST': cacathead_config.database.host,
+        'PORT': cacathead_config.database.port,
+    }
 }
 
 # Caches
