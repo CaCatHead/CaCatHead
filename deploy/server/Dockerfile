@@ -18,9 +18,8 @@ ADD ./server/Pipfile.lock ./server/Pipfile /usr/src/
 
 WORKDIR /usr/src
 
-RUN /root/.local/bin/pipenv sync
-
-RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)"
+RUN /root/.local/bin/pipenv sync \
+  && /usr/src/.venv/bin/python -c "import django; print(django.__version__)"
 
 ADD ./CatJudge /usr/src/CatJudge/
 

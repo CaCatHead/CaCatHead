@@ -92,6 +92,26 @@ services:
     env_file:
       - ./deploy/server/.env
 
+  backup:
+    build:
+      context: ./
+      dockerfile: ./deploy/backup/Dockerfile
+    container_name: cacathead_backup
+    depends_on:
+      - mysql
+    restart: always
+    entrypoint: ./docker-entrypoint.sh
+    networks:
+      - cat_net
+    volumes:
+      - ./.cacathead/backup:/root/backup
+    secrets:
+      - db_pass
+    environment:
+      WAIT_HOSTS: mysql:3306  # See https://github.com/ufoscout/docker-compose-wait
+    env_file:
+      - ./deploy/server/.env
+
   mysql:
     image: mysql:8.0.30
     container_name: cacathead_mysql
