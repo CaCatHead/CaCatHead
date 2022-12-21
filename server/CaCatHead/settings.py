@@ -13,11 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+from CaCatHead.config import BASE_DIR, cacathead_config
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -32,25 +28,22 @@ DEBUG = False if os.getenv('DEBUG', 'true').lower() == 'false' else True
 DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else False
 
 # Root username and password
-CACATHEAD_ROOT_USER = os.getenv('CACATHEAD_ROOT_USER', 'root')
-CACATHEAD_ROOT_PASS = os.getenv('CACATHEAD_ROOT_PASS', '12345678')
+CACATHEAD_ROOT_USER = cacathead_config.server.root.username
+CACATHEAD_ROOT_PASS = cacathead_config.server.root.password
 
 # Testcase root dir
-TESTCASE_ROOT = Path(os.getenv('TESTCASE_ROOT', BASE_DIR / '.testcase'))
+TESTCASE_ROOT = Path(cacathead_config.testcase.root)
 
 # Config rabbit mq connection
-RMQ_HOST = os.getenv('RMQ_HOST')
-RMQ_PORT = os.getenv('RMQ_PORT')
-RMQ_USER = os.getenv('RMQ_USER')
-RMQ_PASS = os.getenv('RMQ_PASS')
-DEFAULT_JUDGE_QUEUE = os.getenv('JUDGE_QUEUE', 'judge_task')
+RMQ_HOST = cacathead_config.rabbitmq.host
+RMQ_PORT = str(cacathead_config.rabbitmq.port)
+RMQ_USER = cacathead_config.rabbitmq.username
+RMQ_PASS = cacathead_config.rabbitmq.password
+DEFAULT_JUDGE_QUEUE = cacathead_config.rabbitmq.judge_queue
 
 # Trusted origin
-TRUSTED_ORIGIN = os.getenv('TRUSTED_ORIGIN', 'http://127.0.0.1')
-ALLOWED_HOST = os.getenv('ALLOWED_HOST', '127.0.0.1')
-
-ALLOWED_HOSTS = ['127.0.0.1', ALLOWED_HOST, TRUSTED_ORIGIN.strip('https://').strip('http://')]
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', TRUSTED_ORIGIN]
+ALLOWED_HOSTS = ['127.0.0.1'] + cacathead_config.server.allowed_host
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1'] + cacathead_config.server.trusted_origin
 
 # Application definition
 INSTALLED_APPS = [
@@ -71,7 +64,8 @@ INSTALLED_APPS = [
     'CaCatHead.permission.apps.PermissionConfig',
     'CaCatHead.problem.apps.ProblemConfig',
     'CaCatHead.post.apps.PostConfig',
-    'CaCatHead.submission.apps.SubmissionConfig'
+    'CaCatHead.submission.apps.SubmissionConfig',
+    'CaCatHead.contest.apps.ContestConfig'
 ]
 
 # Django REST framework config
@@ -124,19 +118,18 @@ WSGI_APPLICATION = 'CaCatHead.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / cacathead_config.database.name,
+    }
+} if cacathead_config.database.engine == 'sqlite' else {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': cacathead_config.database.name,
+        'USER': cacathead_config.database.username,
+        'PASSWORD': cacathead_config.database.password,
+        'HOST': cacathead_config.database.host,
+        'PORT': cacathead_config.database.port,
     }
 }
-if not DEBUG:
-    # 生产环境使用 mysql 数据库
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'cacathead'),
-        'USER': os.getenv('DB_USER', 'root'),
-        'PASSWORD': os.getenv('DB_PASS', ''),
-        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
-        'PORT': os.getenv('DB_PORT', '3306'),
-    }
 
 # Caches
 # https://docs.djangoproject.com/zh-hans/4.1/topics/cache/

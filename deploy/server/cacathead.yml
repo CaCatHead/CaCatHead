@@ -1,0 +1,35 @@
+server:
+  allowed_host:
+    - '127.0.0.1'
+    - server  # This is docker-compose service name, and is used for nginx
+    # -   # Config your domain here
+  trusted_origin:
+    - http://127.0.0.1
+    # -   # Config your domain here
+  # Root user
+  root:
+    username: !ENV ${CACATHEAD_ROOT_USER:root}
+    password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
+
+testcase:
+  root: /root/testcases
+  minio:
+    host: minio
+    port: '9000'
+    username: root
+    password: !ENV ${MINIO_PASS}
+
+database:
+  engine: mysql
+  name: cacathead
+  host: mysql
+  port: '3306'
+  username: root
+  password: !ENV ${DB_PASS}
+
+rabbitmq:
+  host: rabbitmq
+  port: '5672'
+  username: guest
+  password: !ENV ${RMQ_PASS}
+  judge_queue: judge_task
