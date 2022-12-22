@@ -84,7 +84,7 @@ Docker version 20.10.8, build 3967b7d
 
 If you are tired of setting up the following environment, you can use this `docker-compose.yml` to start up all the required dev service.
 
-Make a temp directory. Then copy the following config to `docker-compose.yml` and create a text file `pass.txt` with your database password.
+First, make a temp directory. Then copy the following config to `docker-compose.yml` and create a text file `pass.txt` with your database password.
 
 ```yml
 version: '3.9'
@@ -153,6 +153,12 @@ secrets:
     file: ./pass.txt
   rmq_pass:
     file: ./pass.txt
+```
+
+Finally, start up docker compose service in this temp directory.
+
+```bash
+$ docker compose up
 ```
 
 ### [MinIO](https://min.io/)
