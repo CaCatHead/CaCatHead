@@ -29,7 +29,7 @@ RUN cd /usr/src/CatJudge \
   && export LOG_PATH="/root/catj/logs" \
   && export DEFAULT_CHECKER="/usr/bin/lcmp" \
   && cmake -DCMAKE_BUILD_TYPE:STRING=Release -B ./build -G "Unix Makefiles" \
-  && cmake --build ./build --config Release --target all -j 18 \
+  && cmake --build ./build --config Release --target all \
   && cd ./build \
   && ctest --verbose \
   && cp ./main /usr/bin/catj \

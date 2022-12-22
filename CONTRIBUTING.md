@@ -274,7 +274,7 @@ $ export DEFAULT_CHECKER="/usr/bin/lcmp"
 
 # Build the program
 $ cmake -DCMAKE_BUILD_TYPE:STRING=Release -B ./build -G "Unix Makefiles"
-$ cmake --build ./build --config Release --target all -j 18
+$ cmake --build ./build --config Release --target all
 
 # Test whether CatJ works fine
 $ cd ./build
