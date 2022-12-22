@@ -151,3 +151,14 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'username': 'root'
     }
 }
+
+snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
+    'status': 'ok',
+    'user': {
+        'email': 'world@example.com',
+        'id': 2,
+        'nickname': 'world',
+        'polygon': False,
+        'username': 'world'
+    }
+}

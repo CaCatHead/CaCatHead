@@ -7,11 +7,6 @@ ROOT_USER = settings.CACATHEAD_ROOT_USER
 ROOT_PASS = settings.CACATHEAD_ROOT_PASS
 DEFAULT_EMAIL = 'root@example.com'
 
-ROOT_PROFILE = {'id': 1, 'username': 'root', 'nickname': 'root', 'email': 'root@example.com', 'polygon': True}
-
-
-WORLD_PROFILE = {'id': 2, 'username': 'world', 'nickname': 'world', 'email': 'world@example.com','polygon': False}
-
 WORLD_INFO = {"username": "world", "email": "world@example.com", "password": "12345678"}
 
 def login_token_valid(resp):
@@ -177,7 +172,7 @@ class UserRegisterTests(TestCase):
         """
         resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], WORLD_PROFILE)
+        self.assertMatchSnapshot(resp.data)
         self.assertUserRegistered('world', 'world@example.com')
 
     def test_register_validate_error(self):
@@ -200,7 +195,7 @@ class UserRegisterTests(TestCase):
             "password": "12345678"
         })
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], WORLD_PROFILE)
+        self.assertMatchSnapshot(resp.data)
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         resp2 = self.client.post('/api/auth/register', {
@@ -217,7 +212,7 @@ class UserRegisterTests(TestCase):
         # 注册
         resp = self.client.post('/api/auth/register', WORLD_INFO)
         assert resp.status_code == 200
-        self.assertEqual(resp.data['user'], WORLD_PROFILE)
+        self.assertMatchSnapshot(resp.data)
         self.assertUserRegistered('world', 'world@example.com')
         # 二次注册
         self.client.post('/api/auth/register', {
