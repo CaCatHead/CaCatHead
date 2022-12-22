@@ -217,6 +217,8 @@ Options:
 
 Third, copy [./server/cacathead.example.yml](./server/cacathead.example.yml) to `./server/cacathead.yml`. Then modify the config of your database and RabbitMQ connection like the following.
 
+**Notice that your judge queue and django server should share the same database and rabbitmq config.**
+
 ```yml
 # ...
 
@@ -238,7 +240,7 @@ rabbitmq:
 # ...
 ```
 
-Finally, start the judge node.
+Finally, start the judge node and django server
 
 ```bash
 $ pipenv run python ./judge.py
