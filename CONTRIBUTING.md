@@ -71,48 +71,20 @@ $ pipenv --version
 pipenv, version 2022.10.12
 ```
 
-### [MinIO](https://min.io/)
-
-> Life is short, we use docker.
-
-```bash
-$ docker run -d --name cacathead_dev_minio \
-  -p 9000:9000 -p 9090:9090 \
-  minio server --console-address ":9090"
-```
-
-### [RabbitMQ](https://www.rabbitmq.com/)
-
-This is *optional*. If you want to develop something related to the judge queue, you should install it.
-
-> Life is short, we use docker.
-
-```bash
-$ docker run -d --name cacathead_dev_rabbitmq \
-  -p 15672:15672 -p 5672:5672 \
-  rabbitmq:management
-```
-
-### [PostgreSQL](https://www.postgresql.org/)
-
-This is *optional*. If you want to develop something related to the judge queue, you should install it.
-
-> Life is short, we use docker.
-
-```bash
-$ docker run -d --name cacathead_dev_postgresql \
-  -e TZ=Asia/Shanghai \
-  -e PGTZ=Asia/Shanghai \
-  -e POSTGRES_DB=cacathead \
-  -e POSTGRES_USER=root \
-  -e POSTGRES_PASSWORD=123456 \
-  -p 5432:5432 \
-  postgres
-```
-
 ### [Docker](https://www.docker.com/)
 
-A simple docker compose to start services:
+Docker is a platform designed to help developers build, share, and run modern applications. We handle the tedious setup, so you can focus on the code.
+
+If you are using Windows or Mac OS, you can download Docker Desktop [here](https://www.docker.com/get-started/). If you are using Linux, you can follow official guide [here](https://docs.docker.com/engine/install/).
+
+```bash
+$ docker --version
+Docker version 20.10.8, build 3967b7d
+```
+
+If you are tired of setting up the following environment, you can use this `docker-compose.yml` to start up all the required dev service.
+
+Make a temp directory. Then copy the following config to `docker-compose.yml` and create a text file `pass.txt` with your database password.
 
 ```yml
 version: '3.9'
@@ -181,6 +153,45 @@ secrets:
     file: ./pass.txt
   rmq_pass:
     file: ./pass.txt
+```
+
+### [MinIO](https://min.io/)
+
+> Life is short, we use docker.
+
+```bash
+$ docker run -d --name cacathead_dev_minio \
+  -p 9000:9000 -p 9090:9090 \
+  minio server --console-address ":9090"
+```
+
+### [RabbitMQ](https://www.rabbitmq.com/)
+
+This is *optional*. If you want to develop something related to the judge queue, you should install it.
+
+> Life is short, we use docker.
+
+```bash
+$ docker run -d --name cacathead_dev_rabbitmq \
+  -p 15672:15672 -p 5672:5672 \
+  rabbitmq:management
+```
+
+### [PostgreSQL](https://www.postgresql.org/)
+
+This is *optional*. If you want to develop something related to the judge queue, you should install it.
+
+> Life is short, we use docker.
+
+```bash
+$ docker run -d --name cacathead_dev_postgresql \
+  -e TZ=Asia/Shanghai \
+  -e PGTZ=Asia/Shanghai \
+  -e POSTGRES_DB=cacathead \
+  -e POSTGRES_USER=root \
+  -e POSTGRES_PASSWORD=123456 \
+  -p 5432:5432 \
+  postgres
 ```
 
 ## Start CaCatHead Dev Server
