@@ -11,7 +11,7 @@ MINIO_CLIENT = Minio(MINIO_PATH,
                      secret_key=cacathead_config.testcase.minio.password) if cacathead_config.testcase.minio.host != 'N/A' else None
 
 if MINIO_CLIENT is not None:
-    print(f'Connect to MinIO at {MINIO_PATH}')
+    print(f'Connecting to MinIO at {MINIO_PATH}')
     if not MINIO_CLIENT.bucket_exists(cacathead_config.testcase.minio.bucket):
         MINIO_CLIENT.make_bucket(cacathead_config.testcase.minio.bucket)
 else:
