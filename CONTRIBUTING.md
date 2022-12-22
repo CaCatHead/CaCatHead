@@ -110,7 +110,7 @@ services:
   minio:
     image: minio/minio:RELEASE.2022-12-12T19-27-27Z
     container_name: cacathead_dev_minio
-    command: server /data --console-address ":9090"
+    command: server --console-address ":9090" /data
     restart: always
     networks:
       - cat_net
@@ -134,7 +134,7 @@ services:
       - '6379:6379'
 
   rabbitmq:
-    image: rabbitmq:3.11.0
+    image: rabbitmq:management
     container_name: cacathead_dev_rabbitmq
     restart: always
     ports:
