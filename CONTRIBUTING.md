@@ -110,6 +110,77 @@ $ docker run -d --name cacathead_dev_postgresql \
   postgres
 ```
 
+### [Docker](https://www.docker.com/)
+
+A simple docker compose to start services:
+
+```yml
+version: '3.9'
+
+services:
+  postgresql:
+    image: postgres:15.1
+    container_name: cacathead_dev_postgres
+    restart: always
+    networks:
+      - cat_net
+    ports:
+      - '5432:5432'
+    secrets:
+      - db_pass
+    environment:
+      TZ: Asia/Shanghai
+      PGTZ: Asia/Shanghai
+      POSTGRES_DB: cacathead
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
+
+  minio:
+    image: minio/minio:RELEASE.2022-12-12T19-27-27Z
+    container_name: cacathead_dev_minio
+    command: server /data --console-address ":9090"
+    restart: always
+    networks:
+      - cat_net
+    ports:
+      - '9000:9000'
+      - '9090:9090'
+    secrets:
+      - minio_pass
+    environment:
+      TZ: Asia/Shanghai
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_pass
+
+  redis:
+    image: redis:7.0.5-alpine
+    container_name: cacathead_dev_redis
+    restart: always
+    networks:
+      - cat_net
+
+  rabbitmq:
+    image: rabbitmq:3.11.0
+    container_name: cacathead_dev_rabbitmq
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - cat_net
+
+networks:
+  cat_net:
+
+secrets:
+  db_pass:
+    file: ./pass.txt
+  minio_pass:
+    file: ./pass.txt
+  rmq_pass:
+    file: ./pass.txt
+```
+
 ## Start CaCatHead Dev Server
 
 After cloning the project, you should first update the submodules.
