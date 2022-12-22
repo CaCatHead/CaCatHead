@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
-from CaCatHead.core.minio import upload_minio_testcase
+from CaCatHead.core.minio import upload_minio_testcase, download_minio_testcase
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
@@ -25,6 +25,10 @@ class ProblemDirectory:
     @classmethod
     def make(cls, problem: Problem):
         return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.id))
+
+    @classmethod
+    def make_from_id(cls, problem_id: int | str):
+        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem_id))
 
     def check_valid(self):
         if 'testcases' not in self.config:
@@ -71,7 +75,14 @@ class ProblemDirectory:
             upload_minio_testcase(directory, self.root / testcase['answer'])
 
     def download_testcases(self):
-        pass
+        directory = self.root.name
+        for testcase in self.config['testcases']:
+            input_file = self.root / testcase['input']
+            if not input_file.exists():
+                download_minio_testcase(directory, input_file)
+            answer_file = self.root / testcase['answer']
+            if not answer_file.exists():
+                download_minio_testcase(directory, answer_file)
 
 def find_config_root(root: Path) -> Path | None:
     # TODO: not init a list
