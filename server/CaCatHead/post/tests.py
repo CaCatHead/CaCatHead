@@ -1,12 +1,11 @@
-from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 
-from CaCatHead import user
+from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
 from CaCatHead.core.tests import TestCase
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
 from CaCatHead.user.tests import ROOT_USER
-from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
 
 Error_INFO_404 = '公告未找到'
 
@@ -101,7 +100,7 @@ class PostManagerTests(TestCase):
         self.user_login(user)
         resp = self.user_view_post(post_id=999)
         assert resp.status_code == 404
-        assert resp.data['detail'] == "公告未找到"
+        assert resp.data['detail'] == Error_INFO_404
         resp = self.user_view_post(post_id=-1)
         assert resp.status_code == 404
         # HttpResponseNotFound
@@ -222,7 +221,7 @@ class PostViewTests(TestCase):
         self.user_login(self.root)
         resp = self.user_view_post(post_id=999)
         assert resp.status_code == 404
-        assert resp.data['detail'] == "公告未找到"
+        assert resp.data['detail'] == Error_INFO_404
         resp = self.user_view_post(post_id=-1)
         assert resp.status_code == 404
         # HttpResponseNotFound
@@ -247,7 +246,7 @@ class PostViewTests(TestCase):
         self.user_login(self.admin)
         resp = self.user_view_post(post_id=999)
         assert resp.status_code == 404
-        assert resp.data['detail'] == "公告未找到"
+        assert resp.data['detail'] == Error_INFO_404
         resp = self.user_view_post(post_id=-1)
         assert resp.status_code == 404
         # HttpResponseNotFound
@@ -262,19 +261,17 @@ class PostViewTests(TestCase):
     def test_guest_view_private_post(self):
         resp = self.visitor_view_post(2)
         assert resp.status_code == 404
-        assert resp.data['detail'] == "公告未找到"
+        assert resp.data['detail'] == Error_INFO_404
         self.user_login(self.root)
         resp1 = self.user_view_post(post_id=2)
         assert resp1.status_code == 200
-        post = resp1.data['post']
-        print(post)
         self.assertMatchSnapshot(resp.content)
         assert not post['is_public']
 
     def test_guest_view_nonexistence_post(self):
         resp = self.visitor_view_post(999)
         assert resp.status_code == 404
-        assert resp.data['detail'] == "公告未找到"
+        assert resp.data['detail'] == Error_INFO_404
         self.user_login(self.root)
         resp1 = self.user_view_post(post_id=999)
         assert resp1.status_code == 404
