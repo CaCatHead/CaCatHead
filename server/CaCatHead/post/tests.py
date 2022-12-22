@@ -265,6 +265,7 @@ class PostViewTests(TestCase):
         self.user_login(self.root)
         resp1 = self.user_view_post(post_id=2)
         assert resp1.status_code == 200
+        post = resp1.data['post']
         self.assertMatchSnapshot(resp.content)
         assert not post['is_public']
 
