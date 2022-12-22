@@ -84,6 +84,7 @@ class ProblemDirectory:
             if not answer_file.exists():
                 download_minio_testcase(directory, answer_file)
 
+
 def find_config_root(root: Path) -> Path | None:
     # TODO: not init a list
     config_path = list(root.glob('**/config.json'))

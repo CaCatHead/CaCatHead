@@ -97,21 +97,11 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
     if problem_directory is not None:
-        config_json = problem_directory.config
-        if 'problem' in config_json:
-            problem_config = config_json['problem']
-            serializer = EditProblemPayload(data=problem_config)
-            if serializer.is_valid():
-                edit_problem(problem, problem_config)
-        if 'testcases' in config_json:
-            testcases_config = config_json['testcases']
-            problem_judge = problem.problem_info.problem_judge
-            problem_judge.testcase_count = len(testcases_config)
-            problem_judge.testcase_detail = testcases_config
-            for testcase in testcases_config:
-                problem_judge.score += testcase['score']
-            problem_judge.save()
-        return problem
+        try:
+            save_arch_to_database(problem, problem_directory)
+            return problem
+        except Exception:
+            pass
 
     # 上传的题目不合法, 删除该题目
     problem_info = problem.problem_info
@@ -129,34 +119,39 @@ def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Proble
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
     if problem_directory is not None:
-        config_json = problem_directory.config
-        if 'problem' in config_json:
-            problem_config = config_json['problem']
-            serializer = EditProblemPayload(data=problem_config)
-            if serializer.is_valid():
-                edit_problem(problem, problem_config)
-        if 'testcases' in config_json:
-            testcases_config = config_json['testcases']
-
-            # 检查测试用例格式是否合法
-            valid = not isinstance(testcases_config, list)
-            if valid:
-                for testcase in testcases_config:
-                    serializer = TestcaseInfoPayload(data=testcase)
-                    if not serializer.is_valid(raise_exception=False):
-                        valid = False
-            if valid:
-                problem_judge = problem.problem_info.problem_judge
-                problem_judge.score = 0
-                problem_judge.testcase_count = len(testcases_config)
-                problem_judge.testcase_detail = testcases_config
-                for testcase in testcases_config:
-                    problem_judge.score += testcase['score']
-                problem_judge.save()
-
+        save_arch_to_database(problem, problem_directory)
         ProblemDirectory.make(problem).save_config(problem)
 
     return problem
+
+
+def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory):
+    config_json = problem_directory.config
+    if 'problem' in config_json:
+        problem_config = config_json['problem']
+        serializer = EditProblemPayload(data=problem_config)
+        if serializer.is_valid():
+            edit_problem(problem, problem_config)
+    if 'testcases' in config_json:
+        testcases_config = config_json['testcases']
+
+        # 检查测试用例格式是否合法
+        valid = isinstance(testcases_config, list)
+        if valid:
+            for testcase in testcases_config:
+                serializer = TestcaseInfoPayload(data=testcase)
+                if not serializer.is_valid(raise_exception=False):
+                    valid = False
+        if valid:
+            problem_judge = problem.problem_info.problem_judge
+            problem_judge.score = 0
+            problem_judge.testcase_count = len(testcases_config)
+            problem_judge.testcase_detail = testcases_config
+            for testcase in testcases_config:
+                problem_judge.score += testcase['score']
+            problem_judge.save()
+        if not valid:
+            raise APIException(detail='测试用例格式非法', code=status.HTTP_400_BAD_REQUEST)
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):
