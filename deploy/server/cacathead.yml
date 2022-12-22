@@ -18,6 +18,7 @@ testcase:
     port: '9000'
     username: root
     password: !ENV ${MINIO_PASS}
+    bucket: testcase
 
 database:
   engine: postgresql

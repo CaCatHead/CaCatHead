@@ -8,7 +8,7 @@ from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REP
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
 from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
-from CaCatHead.problem.views.upload import upload_problem_zip, ProblemDirectory
+from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
@@ -94,9 +94,10 @@ def edit_problem(problem: Problem, payload: dict):
 
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
-    config_json = upload_problem_zip(problem.id, zip_content)
+    problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if config_json is not None:
+    if problem_directory is not None:
+        config_json = problem_directory.config
         if 'problem' in config_json:
             problem_config = config_json['problem']
             serializer = EditProblemPayload(data=problem_config)
@@ -125,9 +126,10 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
 
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
-    config_json = upload_problem_zip(problem.id, zip_content)
+    problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if config_json is not None:
+    if problem_directory is not None:
+        config_json = problem_directory.config
         if 'problem' in config_json:
             problem_config = config_json['problem']
             serializer = EditProblemPayload(data=problem_config)

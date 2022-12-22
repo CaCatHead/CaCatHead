@@ -59,9 +59,6 @@ INSTALLED_APPS = [
     # Authentication Module for django rest auth
     # See: https://github.com/James1345/django-rest-knox
     'knox',
-    # MinIO backend
-    # See: https://github.com/theriverman/django-minio-backend
-    'django_minio_backend',
     # Custom apps
     'CaCatHead.user.apps.UserConfig',
     'CaCatHead.permission.apps.PermissionConfig',
@@ -125,29 +122,20 @@ DATABASES = {
     }
 } if cacathead_config.database.engine == 'sqlite' else {
     'default': {
-        'ENGINE':   'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
-        'NAME':     cacathead_config.database.name,
-        'USER':     cacathead_config.database.username,
+        'ENGINE': 'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
+        'NAME': cacathead_config.database.name,
+        'USER': cacathead_config.database.username,
         'PASSWORD': cacathead_config.database.password,
-        'HOST':     cacathead_config.database.host,
-        'PORT':     cacathead_config.database.port,
+        'HOST': cacathead_config.database.host,
+        'PORT': cacathead_config.database.port,
     }
 }
-
-# MinIO
-MINIO_ENDPOINT = cacathead_config.testcase.minio.host
-MINIO_ACCESS_KEY = cacathead_config.testcase.minio.username
-MINIO_SECRET_KEY = cacathead_config.testcase.minio.password
-MINIO_USE_HTTPS = True
-MINIO_PRIVATE_BUCKETS = [
-    "testcase"
-]
 
 # Caches
 # https://docs.djangoproject.com/zh-hans/4.1/topics/cache/
 CACHES = {
     'default': {
-        'BACKEND':  'django.core.cache.backends.memcached.PyMemcacheCache',
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
         'LOCATION': '127.0.0.1:11211',
     }
 }
