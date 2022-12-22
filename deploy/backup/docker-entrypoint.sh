@@ -14,14 +14,14 @@ BACKUP="models:
         type: local
         path: /root/backup
     databases:
-      mysql:
-        type: mysql
-        host: mysql
-        port: 3306
+      postgresql:
+        type: postgresql
+        host: postgresql
+        port: 5432
         database: cacathead
         username: root
         password: $DB_PASS
-        additional_options: --single-transaction --quick"
+        args: --if-exists --no-owner"
 
 echo "$BACKUP" > ~/.gobackup/gobackup.yml
 

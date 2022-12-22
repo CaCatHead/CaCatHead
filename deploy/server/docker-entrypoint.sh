@@ -14,7 +14,7 @@ export MINIO_PASS=$(cat $MINIO_PASS_FILE)
 export RMQ_PASS=guest
 
 if [ "$1" = "server" ] ; then
-  # wait mysql bootstrap
+  # wait postgresql bootstrap
   ./wait
   /usr/src/.venv/bin/python ./manage.py migrate
   /usr/src/.venv/bin/python ./manage.py collectstatic --no-input

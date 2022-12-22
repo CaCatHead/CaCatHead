@@ -122,7 +122,7 @@ DATABASES = {
     }
 } if cacathead_config.database.engine == 'sqlite' else {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
         'NAME': cacathead_config.database.name,
         'USER': cacathead_config.database.username,
         'PASSWORD': cacathead_config.database.password,

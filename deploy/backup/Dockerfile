@@ -1,4 +1,4 @@
-FROM mysql:8.0.30
+FROM postgres:15.1
 
 # See https://github.com/ufoscout/docker-compose-wait
 ADD ./deploy/server/wait ./
