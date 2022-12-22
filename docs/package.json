@@ -1,0 +1,24 @@
+{
+  "name": "@cacathead/docs",
+  "private": true,
+  "scripts": {
+    "build": "vitepress build",
+    "dev": "vitepress --open",
+    "serve": "vitepress serve"
+  },
+  "dependencies": {
+    "@vueuse/core": "^9.8.2",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.1.11",
+    "@types/node": "^18.11.17",
+    "@unocss/reset": "^0.48.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "unocss": "^0.48.0",
+    "vite": "^4.0.0",
+    "vite-plugin-pwa": "^0.14.0",
+    "vitepress": "^1.0.0-alpha.33",
+    "workbox-window": "^6.5.4"
+  }
+}

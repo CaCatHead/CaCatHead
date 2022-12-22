@@ -7,6 +7,12 @@ fi
 
 export DB_PASS=$(cat $DB_PASS_FILE)
 
+export MINIO_PASS=$(cat $MINIO_PASS_FILE)
+
+# TODO
+# export RMQ_PASS=$(cat $RMQ_PASS_FILE)
+export RMQ_PASS=guest
+
 if [ "$1" = "server" ] ; then
   # wait mysql bootstrap
   ./wait

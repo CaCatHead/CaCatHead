@@ -7,7 +7,7 @@ from rest_framework.exceptions import APIException
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
     ProblemRepository
-from CaCatHead.problem.serializers import EditProblemPayload
+from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
 from CaCatHead.problem.views.upload import upload_problem_zip, ProblemDirectory
 
 try:
@@ -60,7 +60,6 @@ def edit_problem(problem: Problem, payload: dict):
         problem.title = payload['title']
         problem.problem_info.problem_content.title = payload['title']
     if 'display_id' in payload:
-        # TODO: check unique display_id
         problem.display_id = payload['display_id']
     if 'time_limit' in payload:
         problem.time_limit = payload['time_limit']
@@ -135,14 +134,24 @@ def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Proble
             if serializer.is_valid():
                 edit_problem(problem, problem_config)
         if 'testcases' in config_json:
-            # TODO: check testcases format valid
             testcases_config = config_json['testcases']
-            problem_judge = problem.problem_info.problem_judge
-            problem_judge.testcase_count = len(testcases_config)
-            problem_judge.testcase_detail = testcases_config
-            for testcase in testcases_config:
-                problem_judge.score += testcase['score']
-            problem_judge.save()
+
+            # 检查测试用例格式是否合法
+            valid = not isinstance(testcases_config, list)
+            if valid:
+                for testcase in testcases_config:
+                    serializer = TestcaseInfoPayload(data=testcase)
+                    if not serializer.is_valid(raise_exception=False):
+                        valid = False
+            if valid:
+                problem_judge = problem.problem_info.problem_judge
+                problem_judge.score = 0
+                problem_judge.testcase_count = len(testcases_config)
+                problem_judge.testcase_detail = testcases_config
+                for testcase in testcases_config:
+                    problem_judge.score += testcase['score']
+                problem_judge.save()
+
         ProblemDirectory.make(problem).save_config(problem)
 
     return problem

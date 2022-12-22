@@ -8,6 +8,9 @@
 
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
++ 📺 [Online Demo | 在线 Demo](https://oj.xlorpaste.cn/)
++ 📖 [Document | 文档](https://oj-docs.onekuma.cn/)
+
 ## Deploy
 
 > **Prerequisite**
@@ -20,29 +23,60 @@ Create `pass.txt` to set the password of the database root user. (If you are usi
 $ echo 'xxxyyy' > pass.txt
 ```
 
-Locally deploy:
+### Deploy locally
 
 ```bash
 # Clone submodule CatJudge
 $ git submodule update --init --recursive
+
 # Deploy docker
-$ docker compose up
+$ docker compose up -d
+
+# See container logs
+$ docker compose logs -f
+
+# Rebuild and Restart service
+$ docker compose up --build -d
 ```
 
-If you want to deploy it to a server, you should first modify the nginx config at [./deploy/nginx/sites-enabled/cacathead.conf](./deploy/nginx/sites-enabled/cacathead.conf).
+### Deploy on your server
+
+First modify the nginx config at [./deploy/nginx/sites-enabled/cacathead.conf](./deploy/nginx/sites-enabled/cacathead.conf).
 
 ```nginx
 server {
     listen              80;
     listen              [::]:80;
-    server_name         127.0.0.1;
+    server_name         <server domain>;
     # listen              443 ssl http2;
     # listen              [::]:443 ssl http2;
-    # server_name         <server address>;
+    # server_name         <server domain>;
 }
 ```
 
-You should change the `server_name` to the address of your website. If you want to enable HTTPS, you should use the following config, and create the SSL key at `./.cert/ssl.pem` and `./.cert/ssl.key` (in the host machine).
+You should change the `<server domain>` to the domain of your website.
+
+If you want to enable HTTPS, you should use the following config, and create the SSL key at `./.cert/ssl.pem` and `./.cert/ssl.key` (at the root directory of this project in your host machine).
+
+```nginx
+    # SSL
+    ssl_certificate     /root/cert/ssl.pem;
+    ssl_certificate_key /root/cert/ssl.key;
+```
+
+Then, modify the server config at [./deploy/server/cacathead.yml](./deploy/server/cacathead.yml). Add your site domain to the `server.allowed_host` and your site url to the `server.trusted_origin`, like this.
+
+```yaml
+server:
+  allowed_host:
+    - '127.0.0.1'
+    - server  # This is docker-compose service name, and is used for nginx
+    - oj.xlorpaste.cn  # Config your domain here
+  trusted_origin:
+    - http://127.0.0.1
+    - https://oj.xlorpaste.cn  # Config your domain here
+  # ...
+```
 
 ## License
 
