@@ -158,6 +158,8 @@ services:
     restart: always
     networks:
       - cat_net
+    ports:
+      - '6379:6379'
 
   rabbitmq:
     image: rabbitmq:3.11.0
