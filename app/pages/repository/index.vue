@@ -2,7 +2,7 @@
 definePageMeta({
   middleware(to) {
     if (to.fullPath === '/repository/' || to.fullPath === '/repository') {
-      return navigateTo('/repository/2');
+      return navigateTo('/repository/1');
     }
   },
 });

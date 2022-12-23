@@ -20,8 +20,7 @@ BACKUP="models:
         port: 5432
         database: cacathead
         username: root
-        password: $DB_PASS
-        args: --if-exists --no-owner"
+        password: '$DB_PASS'"
 
 echo "$BACKUP" > ~/.gobackup/gobackup.yml
 
