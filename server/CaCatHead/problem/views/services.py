@@ -96,29 +96,34 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if problem_directory is not None:
+    def clear():
+        # 上传的题目不合法, 删除该题目
+        problem_info = problem.problem_info
+        problem_content = problem_info.problem_content
+        problem_judge = problem.problem_info.problem_judge
+        problem.delete()
+        problem_info.delete()
+        problem_content.delete()
+        problem_judge.delete()
+
+    if problem_directory is None:
+        clear()
+        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+    else:
         try:
             save_arch_to_database(problem, problem_directory)
             return problem
-        except Exception:
-            pass
-
-    # 上传的题目不合法, 删除该题目
-    problem_info = problem.problem_info
-    problem_content = problem_info.problem_content
-    problem_judge = problem.problem_info.problem_judge
-    problem.delete()
-    problem_info.delete()
-    problem_content.delete()
-    problem_judge.delete()
-
-    return None
+        except Exception as ex:
+            clear()
+            raise ex
 
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if problem_directory is not None:
+    if problem_directory is None:
+        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+    else:
         save_arch_to_database(problem, problem_directory)
         problem_directory.save_config(problem)
 
