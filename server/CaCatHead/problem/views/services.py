@@ -120,21 +120,15 @@ def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Proble
 
     if problem_directory is not None:
         save_arch_to_database(problem, problem_directory)
-        ProblemDirectory.make(problem).save_config(problem)
+        problem_directory.save_config(problem)
 
     return problem
 
 
 def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory):
     config_json = problem_directory.config
-    if 'problem' in config_json:
-        problem_config = config_json['problem']
-        serializer = EditProblemPayload(data=problem_config)
-        if serializer.is_valid():
-            edit_problem(problem, problem_config)
     if 'testcases' in config_json:
         testcases_config = config_json['testcases']
-
         # 检查测试用例格式是否合法
         valid = isinstance(testcases_config, list)
         if valid:
@@ -152,6 +146,11 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             problem_judge.save()
         if not valid:
             raise APIException(detail='测试用例格式非法', code=status.HTTP_400_BAD_REQUEST)
+    if 'problem' in config_json:
+        problem_config = config_json['problem']
+        serializer = EditProblemPayload(data=problem_config)
+        if serializer.is_valid():
+            edit_problem(problem, problem_config)
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):
