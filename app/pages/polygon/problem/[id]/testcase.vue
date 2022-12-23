@@ -194,7 +194,7 @@ const save = async () => {
         id="testcase"
         @change="onUploadTestcase"
         multiple
-        accept=".a, .in, .ans"
+        accept=".a, .in, .ans, .out"
         variant="outline"
         >导入测试用例文件</c-file-input
       >
