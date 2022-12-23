@@ -25,11 +25,11 @@ def init_problem_repository(_apps, _schema_editor):
     初始化题库
     """
     root = User.objects.filter(is_superuser=True).first()
-    main_repo = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY, owner=root, is_public=False)
-    main_repo.save()
     for repo_name in REPOS:
         repo = ProblemRepository(name=repo_name, owner=root, is_public=repo_name == REPOS[0])
         repo.save()
+    main_repo = ProblemRepository(name=MAIN_PROBLEM_REPOSITORY, owner=root, is_public=False)
+    main_repo.save()
 
 
 class Migration(migrations.Migration):

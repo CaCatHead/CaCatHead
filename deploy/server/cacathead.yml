@@ -18,12 +18,13 @@ testcase:
     port: '9000'
     username: root
     password: !ENV ${MINIO_PASS}
+    bucket: testcase
 
 database:
-  engine: mysql
+  engine: postgresql
   name: cacathead
-  host: mysql
-  port: '3306'
+  host: postgresql
+  port: '5432'
   username: root
   password: !ENV ${DB_PASS}
 

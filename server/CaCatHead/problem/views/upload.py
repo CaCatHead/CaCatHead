@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
+from CaCatHead.core.minio import upload_minio_testcase, download_minio_testcase
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
@@ -24,6 +25,10 @@ class ProblemDirectory:
     @classmethod
     def make(cls, problem: Problem):
         return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.id))
+
+    @classmethod
+    def make_from_id(cls, problem_id: int | str):
+        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem_id))
 
     def check_valid(self):
         if 'testcases' not in self.config:
@@ -63,6 +68,22 @@ class ProblemDirectory:
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
         json.dump(self.config, open(self.root / 'config.json', 'w'), indent=2, ensure_ascii=False)
 
+    def upload_testcases(self):
+        directory = self.root.name
+        for testcase in self.config['testcases']:
+            upload_minio_testcase(directory, self.root / testcase['input'])
+            upload_minio_testcase(directory, self.root / testcase['answer'])
+
+    def download_testcases(self):
+        directory = self.root.name
+        for testcase in self.config['testcases']:
+            input_file = self.root / testcase['input']
+            if not input_file.exists():
+                download_minio_testcase(directory, input_file)
+            answer_file = self.root / testcase['answer']
+            if not answer_file.exists():
+                download_minio_testcase(directory, answer_file)
+
 
 def find_config_root(root: Path) -> Path | None:
     # TODO: not init a list
@@ -73,7 +94,7 @@ def find_config_root(root: Path) -> Path | None:
     return config_path.parent
 
 
-def unzip_problem(problem_root: Path, file_name: str, zip_content: InMemoryUploadedFile):
+def try_unzip_problem_arch(problem_root: Path, file_name: str, zip_content: InMemoryUploadedFile) -> bool:
     zip_tmp = tempfile.mkdtemp()
     os.chmod(zip_tmp, 0o775)
     zip_path = Path(zip_tmp) / file_name
@@ -111,13 +132,15 @@ def unzip_problem(problem_root: Path, file_name: str, zip_content: InMemoryUploa
     return valid
 
 
-def upload_problem_zip(pid: int, file: InMemoryUploadedFile):
+def upload_problem_arch(pid: int, file: InMemoryUploadedFile) -> ProblemDirectory:
     problem_root = settings.TESTCASE_ROOT / str(pid)
     problem_root.mkdir(parents=True, exist_ok=True)
     zip_file_name = 'p' + str(pid) + '_' + str(timezone.now().timestamp()) + '.zip'
     try:
-        if unzip_problem(problem_root, zip_file_name, file):
-            return json.load(open(problem_root / 'config.json'))
+        if try_unzip_problem_arch(problem_root, zip_file_name, file):
+            problem_directory = ProblemDirectory(problem_root)
+            problem_directory.upload_testcases()
+            return problem_directory
         else:
             return None
     except Exception:

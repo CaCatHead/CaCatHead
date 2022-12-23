@@ -37,7 +37,7 @@ services:
       dockerfile: ./deploy/server/Dockerfile
     container_name: cacathead_server
     depends_on:
-      - mysql
+      - postgresql
       - redis
       - rabbitmq
       - minio
@@ -59,7 +59,7 @@ services:
       - minio_pass
       - rmq_pass
     environment:
-      WAIT_HOSTS: mysql:3306  # See https://github.com/ufoscout/docker-compose-wait
+      WAIT_HOSTS: postgresql:5432  # See https://github.com/ufoscout/docker-compose-wait
     env_file:
       - ./deploy/server/.env
 
@@ -69,7 +69,7 @@ services:
       dockerfile: ./deploy/server/Dockerfile
     container_name: cacathead_judge
     depends_on:
-      - mysql
+      - postgresql
       - redis
       - rabbitmq
       - minio
@@ -92,22 +92,45 @@ services:
     env_file:
       - ./deploy/server/.env
 
-  mysql:
-    image: mysql:8.0.30
-    container_name: cacathead_mysql
+  backup:
+    build:
+      context: ./
+      dockerfile: ./deploy/backup/Dockerfile
+    container_name: cacathead_backup
+    depends_on:
+      - postgresql
     restart: always
-    command: --default-authentication-plugin=mysql_native_password
+    entrypoint: ./docker-entrypoint.sh
     networks:
       - cat_net
-    ports:
-      - '3306:3306'
     volumes:
-      - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./.cacathead/database:/var/lib/mysql
+      - ./.cacathead/backup:/root/backup
     secrets:
       - db_pass
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_pass
+      WAIT_HOSTS: postgresql:5432  # See https://github.com/ufoscout/docker-compose-wait
+    env_file:
+      - ./deploy/server/.env
+
+  postgresql:
+    image: postgres:15.1
+    container_name: cacathead_postgres
+    restart: always
+    networks:
+      - cat_net
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./.cacathead/database:/var/lib/postgresql/data
+    secrets:
+      - db_pass
+    environment:
+      TZ: Asia/Shanghai
+      PGTZ: Asia/Shanghai
+      POSTGRES_DB: cacathead
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_pass
 
   minio:
     image: minio/minio:RELEASE.2022-12-12T19-27-27Z

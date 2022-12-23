@@ -18,9 +18,8 @@ ADD ./server/Pipfile.lock ./server/Pipfile /usr/src/
 
 WORKDIR /usr/src
 
-RUN /root/.local/bin/pipenv sync
-
-RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)"
+RUN /root/.local/bin/pipenv sync \
+  && /usr/src/.venv/bin/python -c "import django; print(django.__version__)"
 
 ADD ./CatJudge /usr/src/CatJudge/
 
@@ -30,7 +29,7 @@ RUN cd /usr/src/CatJudge \
   && export LOG_PATH="/root/catj/logs" \
   && export DEFAULT_CHECKER="/usr/bin/lcmp" \
   && cmake -DCMAKE_BUILD_TYPE:STRING=Release -B ./build -G "Unix Makefiles" \
-  && cmake --build ./build --config Release --target all -j 18 \
+  && cmake --build ./build --config Release --target all \
   && cd ./build \
   && ctest --verbose \
   && cp ./main /usr/bin/catj \

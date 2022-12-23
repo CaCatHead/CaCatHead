@@ -28,7 +28,11 @@ export function createMarkdown(options: MarkdownItOption = {}) {
     blockRenderer,
   });
 
-  return (raw: string) => {
-    return markdown.render(raw);
+  return (raw: string | undefined | null) => {
+    if (raw === undefined || raw === null) {
+      return '';
+    } else {
+      return markdown.render(raw);
+    }
   };
 }

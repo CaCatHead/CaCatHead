@@ -16,9 +16,12 @@ testcase:
   minio:
     host: !ENV ${MINIO_HOST}
     port: !ENV ${MINIO_PORT}
+    username: !ENV ${MINIO_USERNAME}
+    password: !ENV ${MINIO_PASSWORD}
+    bucket: testcase
 
 database:
-  engine: !ENV ${CACATHEAD_DATABASE:sqlite}
+  engine: !ENV ${CACATHEAD_DATABASE:sqlite}  # Or postgresql
   name: !ENV ${DB_NAME:db.sqlite3}
   host: !ENV ${DB_HOST}
   port: !ENV ${DB_PORT}

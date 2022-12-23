@@ -24,7 +24,7 @@
       "input": "2.in",
       "answer": "2.ans",
       "score": 50,
-      "sample": true
+      "sample": false
     }
   ]
 }

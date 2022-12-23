@@ -12,6 +12,7 @@ from django.utils import timezone
 
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes
+from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission
 
 logger = logging.getLogger('Judge.service')
@@ -155,7 +156,14 @@ class SubmissionTask:
 
         verdict = Verdict.Accepted
         for testcase in self.testcase_detail:
-            self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
+            try:
+                self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
+            except NoTestDataException:
+                # Try downloading testcases from minio
+                problem_directory = ProblemDirectory.make_from_id(self.problem_id)
+                problem_directory.download_testcases()
+                self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
+
             self.run_sandbox()
             detail = self.read_result()
 
