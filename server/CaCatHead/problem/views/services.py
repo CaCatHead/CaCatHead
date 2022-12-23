@@ -65,7 +65,7 @@ def edit_problem(problem: Problem, payload: dict):
         problem.time_limit = payload['time_limit']
         problem.problem_info.problem_judge.time_limit = payload['time_limit']
     if 'memory_limit' in payload:
-        problem.time_limit = payload['memory_limit']
+        problem.memory_limit = payload['memory_limit']
         problem.problem_info.problem_judge.memory_limit = payload['memory_limit']
     if 'description' in payload:
         problem.problem_info.problem_content.description = payload['description']
