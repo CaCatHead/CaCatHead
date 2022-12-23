@@ -48,6 +48,6 @@ def create_post(request: Request):
     # TODO: init sort_time and is_public
     post = Post(title=request.data['title'], owner=request.user)
     post.save()
-    post_content = PostContent(post=post, content=request.data['title'])
+    post_content = PostContent(post=post, content=request.data['content'])
     post_content.save()
     return make_response(post=PostContentSerializer(post).get_or_raise())
