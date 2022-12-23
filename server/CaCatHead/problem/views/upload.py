@@ -31,7 +31,7 @@ class ProblemDirectory:
         root = Path(settings.TESTCASE_ROOT) / str(problem_id)
         if not root.exists():
             problem_directory = ProblemDirectory(root=root)
-            problem = Problem.objects.filter(id=int(problem_id))
+            problem = Problem.objects.filter(id=int(problem_id)).first()
             problem_directory.config['testcases'] = problem.problem_info.problem_judge.testcase_detail
             problem_directory.save_config(problem)
             return problem_directory
