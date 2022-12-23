@@ -51,12 +51,12 @@ const testcases = computed(() => {
       map.get(name)!.answer = file;
     };
 
-    // CaCatHead 使用的测试数据后缀名格式: .in / .ans
+    // CaCatHead 使用的测试数据后缀名格式: .in / .ans, .out
     // Codeforces 使用的测试数据后缀名格式: 无后缀 / .a
     if (file.name.endsWith('.in')) {
       const name = file.name.slice(0, file.name.length - 3);
       setInput(name, file);
-    } else if (file.name.endsWith('.ans')) {
+    } else if (file.name.endsWith('.ans') || file.name.endsWith('.out')) {
       const name = file.name.slice(0, file.name.length - 4);
       setAnswer(name, file);
     } else if (file.name.endsWith('.a')) {
