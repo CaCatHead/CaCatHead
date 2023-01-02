@@ -11,6 +11,10 @@ server:
     username: !ENV ${CACATHEAD_ROOT_USER:root}
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
+judge:
+  name: local_dev
+  queue: !ENV ${JUDGE_QUEUE:judge_task}
+
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}
   minio:
@@ -33,4 +37,3 @@ rabbitmq:
   port: !ENV ${RMQ_PORT:5672}
   username: !ENV ${RMQ_USER:guest}
   password: !ENV ${RMQ_PASS:guest}
-  judge_queue: !ENV ${JUDGE_QUEUE:judge_task}
