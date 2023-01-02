@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from knox import views as knox_views
 
+from CaCatHead.contest import views as contest_views
 from CaCatHead.post import views as post_views
 from CaCatHead.problem import views as problem_views
 from CaCatHead.user import views as user_views
@@ -67,18 +68,18 @@ urlpatterns = [
     path('api/repo/<int:repo_id>/submissions', problem_views.list_repo_submissions),  # 获取所有提交状态
     path('api/repo/<int:repo_id>/submission/<int:submission_id>', problem_views.get_repo_submission),  # 获取提交状态详情
     # contest
-    # path('api/contests'),  # 列出所有比赛
-    # path('api/contest'),  # 创建比赛
+    path('api/contests', contest_views.list_contests),  # 列出所有比赛
+    path('api/contest', contest_views.create_contest),  # 创建比赛
+    path('api/contest/<int:contest_id>/edit', contest_views.edit_contest),  # 编辑比赛信息
+    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
+    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
+    # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     # path('api/contest/<int:contest_id>/register'),  # 参加比赛
     # path('api/contest/<int:contest_id>/content'),  # 查看比赛详情, 包括题目内容
     # path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit'),  # 提交代码
     # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
     # path('api/contest/<int:contest_id>/submission/<int:submission_id>'),  # 获取比赛提交状态详情
     # path('api/contest/<int:contest_id>/standings'),  # 查看比赛排行榜
-    # path('api/contest/<int:contest_id>/edit'),  # 编辑比赛信息
-    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
-    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
-    # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
     # team
     # path('api/teams'),  # 列出自己参加的团队

@@ -10,6 +10,8 @@ from CaCatHead.problem.models import ProblemRepository
 class Contest(BaseModel):
     title = models.CharField(max_length=256, verbose_name=_(u"标题"))
 
+    type = models.CharField(max_length=64, verbose_name=_(u"比赛类型"))
+
     start_time = models.DateTimeField(verbose_name=_(u"开始时间"))
 
     freeze_time = models.DateTimeField(default=None, blank=True, verbose_name=_(u"封榜时间"))

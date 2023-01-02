@@ -113,11 +113,11 @@ class PostManagerTests(TestCase):
         assert resp.status_code == 404
         assert resp.data['detail'] == Error_INFO_404
         my_group = self.group
-        Post.objects.grant_group_permission(my_group,PostPermissions.Read,2)
+        Post.objects.grant_group_permission(my_group, PostPermissions.Read, 2)
         resp = self.user_view_post(post_id=2)
         assert resp.status_code == 200
         self.assertMatchSnapshot(resp.content)
-        Post.objects.revoke_group_permission(my_group,PostPermissions.Read,2)
+        Post.objects.revoke_group_permission(my_group, PostPermissions.Read, 2)
         resp = self.user_view_post(post_id=2)
         assert resp.status_code == 404
 
