@@ -10,6 +10,7 @@ from pathlib import Path
 from django.conf import settings
 from django.utils import timezone
 
+from CaCatHead.config import cacathead_config
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.problem.views.upload import ProblemDirectory
@@ -230,6 +231,7 @@ class SubmissionTask:
             'compile': {
                 'stdout': ''
             },
+            'node': cacathead_config.judge.name,
             'results': self.results
         }
 
