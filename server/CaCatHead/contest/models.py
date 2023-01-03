@@ -10,11 +10,11 @@ from CaCatHead.problem.models import ProblemRepository
 class Contest(BaseModel):
     title = models.CharField(max_length=256, verbose_name=_(u"标题"))
 
-    type = models.CharField(max_length=64, verbose_name=_(u"比赛类型"))
+    type = models.CharField(default='icpc', max_length=64, verbose_name=_(u"比赛类型"))
 
     start_time = models.DateTimeField(verbose_name=_(u"开始时间"))
 
-    freeze_time = models.DateTimeField(default=None, blank=True, verbose_name=_(u"封榜时间"))
+    freeze_time = models.DateTimeField(default=None, null=True, verbose_name=_(u"封榜时间"))
 
     end_time = models.DateTimeField(verbose_name=_(u"结束时间"))
 
@@ -24,7 +24,7 @@ class Contest(BaseModel):
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
-    password = models.CharField(default=None, blank=True, max_length=256, verbose_name=_(u"注册密码"))
+    password = models.CharField(default=None, null=True, blank=True, max_length=256, verbose_name=_(u"注册密码"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 

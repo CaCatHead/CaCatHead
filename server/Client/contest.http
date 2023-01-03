@@ -1,0 +1,13 @@
+### List contests
+GET http://127.0.0.1:8000/api/contests
+Authorization: Token {{auth_token}}
+
+### Create a new contest
+POST http://127.0.0.1:8000/api/contest
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "CaCatHead Round 1",
+  "type": "icpc"
+}
