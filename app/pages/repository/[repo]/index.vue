@@ -13,7 +13,7 @@ const { data: problems } = await useFetchAPI<{ problems: any[] }>(
 <template>
   <div w-full flex="~ gap8 lt-md:col-reverse">
     <div w="4/5 lt-md:full">
-      <c-table :data="problems.problems">
+      <c-table :data="problems?.problems ?? []">
         <template #headers>
           <c-table-header
             name="id"

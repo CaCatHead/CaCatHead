@@ -20,6 +20,7 @@ def make_contest(user: User, title: str, type: str = 'icpc') -> Contest:
     problem_repository = ProblemRepository()
     problem_repository.name = f'Contest {title}'
     problem_repository.is_public = False
+    problem_repository.is_contest = True
     problem_repository.owner = user
     problem_repository.save()
     contest.problem_repository = problem_repository

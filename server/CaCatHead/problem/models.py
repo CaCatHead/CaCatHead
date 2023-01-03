@@ -178,6 +178,8 @@ class ProblemRepository(models.Model):
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
+    is_contest = models.BooleanField(default=False, verbose_name=_(u"是否为比赛"))
+
     problems = models.ManyToManyField(Problem, verbose_name=_(u"题目列表"))
 
     owner = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='repo_owner', verbose_name=_(u"创建者"))
