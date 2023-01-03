@@ -9,6 +9,7 @@ DEFAULT_EMAIL = 'root@example.com'
 
 WORLD_INFO = {"username": "world", "email": "world@example.com", "password": "12345678"}
 
+
 def login_token_valid(resp):
     return len(resp.data['expiry']) > 0 and len(resp.data['token']) > 0
 

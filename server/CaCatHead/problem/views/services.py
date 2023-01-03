@@ -96,45 +96,44 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if problem_directory is not None:
+    def clear():
+        # 上传的题目不合法, 删除该题目
+        problem_info = problem.problem_info
+        problem_content = problem_info.problem_content
+        problem_judge = problem.problem_info.problem_judge
+        problem.delete()
+        problem_info.delete()
+        problem_content.delete()
+        problem_judge.delete()
+
+    if problem_directory is None:
+        clear()
+        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+    else:
         try:
             save_arch_to_database(problem, problem_directory)
             return problem
-        except Exception:
-            pass
-
-    # 上传的题目不合法, 删除该题目
-    problem_info = problem.problem_info
-    problem_content = problem_info.problem_content
-    problem_judge = problem.problem_info.problem_judge
-    problem.delete()
-    problem_info.delete()
-    problem_content.delete()
-    problem_judge.delete()
-
-    return None
+        except Exception as ex:
+            clear()
+            raise ex
 
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
     problem_directory = upload_problem_arch(problem.id, zip_content)
 
-    if problem_directory is not None:
+    if problem_directory is None:
+        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+    else:
         save_arch_to_database(problem, problem_directory)
-        ProblemDirectory.make(problem).save_config(problem)
+        problem_directory.save_config(problem)
 
     return problem
 
 
 def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory):
     config_json = problem_directory.config
-    if 'problem' in config_json:
-        problem_config = config_json['problem']
-        serializer = EditProblemPayload(data=problem_config)
-        if serializer.is_valid():
-            edit_problem(problem, problem_config)
     if 'testcases' in config_json:
         testcases_config = config_json['testcases']
-
         # 检查测试用例格式是否合法
         valid = isinstance(testcases_config, list)
         if valid:
@@ -152,6 +151,11 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             problem_judge.save()
         if not valid:
             raise APIException(detail='测试用例格式非法', code=status.HTTP_400_BAD_REQUEST)
+    if 'problem' in config_json:
+        problem_config = config_json['problem']
+        serializer = EditProblemPayload(data=problem_config)
+        if serializer.is_valid():
+            edit_problem(problem, problem_config)
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):

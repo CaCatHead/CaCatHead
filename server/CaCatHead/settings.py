@@ -39,7 +39,7 @@ RMQ_HOST = cacathead_config.rabbitmq.host
 RMQ_PORT = str(cacathead_config.rabbitmq.port)
 RMQ_USER = cacathead_config.rabbitmq.username
 RMQ_PASS = cacathead_config.rabbitmq.password
-DEFAULT_JUDGE_QUEUE = cacathead_config.rabbitmq.judge_queue
+DEFAULT_JUDGE_QUEUE = cacathead_config.judge.queue
 
 # Trusted origin
 ALLOWED_HOSTS = ['127.0.0.1'] + cacathead_config.server.allowed_host

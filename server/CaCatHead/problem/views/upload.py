@@ -28,7 +28,15 @@ class ProblemDirectory:
 
     @classmethod
     def make_from_id(cls, problem_id: int | str):
-        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem_id))
+        root = Path(settings.TESTCASE_ROOT) / str(problem_id)
+        if not root.exists():
+            problem_directory = ProblemDirectory(root=root)
+            problem = Problem.objects.filter(id=int(problem_id)).first()
+            problem_directory.config['testcases'] = problem.problem_info.problem_judge.testcase_detail
+            problem_directory.save_config(problem)
+            return problem_directory
+        else:
+            return ProblemDirectory(root=root)
 
     def check_valid(self):
         if 'testcases' not in self.config:
@@ -66,7 +74,7 @@ class ProblemDirectory:
         problem_info['source'] = problem.problem_info.problem_content.source
         problem_info['extra_content'] = problem.problem_info.problem_content.extra_content
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
-        json.dump(self.config, open(self.root / 'config.json', 'w'), indent=2, ensure_ascii=False)
+        json.dump(self.config, open(self.root / 'config.json', 'w', encoding='UTF-8'), indent=2, ensure_ascii=False)
 
     def upload_testcases(self):
         directory = self.root.name
