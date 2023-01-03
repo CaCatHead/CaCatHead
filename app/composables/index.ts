@@ -2,7 +2,7 @@ import type { FetchOptions } from 'ohmyfetch';
 
 import { defineStore } from 'pinia';
 
-import type { User, FullUser } from './types';
+import type { FullUser } from './types';
 
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
@@ -16,7 +16,7 @@ export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
       ...options?.headers,
-      Authorization: useToken().value,
+      Authorization: useToken().value ?? '',
     },
   });
 };

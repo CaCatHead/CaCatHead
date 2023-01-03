@@ -5,6 +5,8 @@ useHead({
   title: '比赛',
 });
 
+const user = useUser();
+
 const { data } = await useFetchAPI<{ contests: Contest[] }>('/api/contests');
 </script>
 
@@ -30,5 +32,17 @@ const { data } = await useFetchAPI<{ contests: Contest[] }>('/api/contests');
         </div>
       </template>
     </c-table>
+    <div flex items-center v-if="user?.permissions.add_contest">
+      <div></div>
+      <div flex-auto></div>
+      <div flex items-center>
+        <c-button
+          color="success"
+          variant="outline"
+          @click="navigateTo('/contests/new')"
+          >新建比赛</c-button
+        >
+      </div>
+    </div>
   </div>
 </template>
