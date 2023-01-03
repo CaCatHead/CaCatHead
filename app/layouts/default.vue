@@ -103,7 +103,7 @@ const activeTab = computed(() => {
         </div>
 
         <div
-          v-if="user && user.polygon"
+          v-if="user && user.permissions.polygon"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>

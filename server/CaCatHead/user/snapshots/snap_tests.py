@@ -4,13 +4,18 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
 snapshots['UserAuthTests::test_flow 1'] = {
     'email': 'world@example.com',
-    'id': 2,
+    'id': 5,
     'nickname': 'world',
-    'polygon': False,
+    'permissions': {
+        'add_contest': False,
+        'add_post': False,
+        'polygon': False
+    },
     'username': 'world'
 }
 
@@ -18,9 +23,13 @@ snapshots['UserAuthTests::test_flow 2'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 2,
+        'id': 5,
         'nickname': 'world',
-        'polygon': False,
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'polygon': False
+        },
         'username': 'world'
     }
 }
@@ -36,7 +45,11 @@ snapshots['UserAuthTests::test_login 1'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -47,7 +60,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -58,7 +75,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -69,7 +90,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -80,7 +105,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -91,7 +120,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -102,7 +135,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -113,7 +150,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -124,7 +165,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -135,7 +180,11 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
     }
 }
@@ -146,8 +195,42 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'email': 'root@example.com',
         'id': 1,
         'nickname': 'root',
-        'polygon': True,
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'polygon': True
+        },
         'username': 'root'
+    }
+}
+
+snapshots['UserRegisterTests::test_register 1'] = {
+    'status': 'ok',
+    'user': {
+        'email': 'world@example.com',
+        'id': 6,
+        'nickname': 'world',
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'polygon': False
+        },
+        'username': 'world'
+    }
+}
+
+snapshots['UserRegisterTests::test_register_error_same_username 1'] = {
+    'status': 'ok',
+    'user': {
+        'email': 'world@example.com',
+        'id': 7,
+        'nickname': 'world',
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'polygon': False
+        },
+        'username': 'world'
     }
 }
 
@@ -155,9 +238,13 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 2,
+        'id': 9,
         'nickname': 'world',
-        'polygon': False,
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'polygon': False
+        },
         'username': 'world'
     }
 }

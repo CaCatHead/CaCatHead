@@ -6,7 +6,9 @@ export interface User {
   nickname: string;
 }
 
-export type FullUser = User & { polygon: boolean };
+export type FullUser = User & {
+  permissions: { polygon: boolean; add_post: boolean; add_contest: boolean };
+};
 
 export interface Contest {
   id: number;

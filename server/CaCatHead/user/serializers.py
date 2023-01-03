@@ -38,5 +38,9 @@ class FullUserSerializer(serializers.BaseSerializer):
             'username': user.username,
             'email': user.email,
             'nickname': user_info.nickname,
-            'polygon': user.has_perm(Permissions.POLYGON)
+            'permissions': {
+                'polygon': user.has_perm(Permissions.POLYGON),
+                'add_post': user.has_perm('post.add_post'),
+                'add_contest': user.has_perm('contest.add_contest')
+            }
         }
