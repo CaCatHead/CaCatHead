@@ -8,6 +8,16 @@ export interface User {
 
 export type FullUser = User & { polygon: boolean };
 
+export interface Contest {
+  id: number;
+
+  title: string;
+
+  start_time: string;
+
+  end_time: string;
+}
+
 export interface Post {
   id: number;
 

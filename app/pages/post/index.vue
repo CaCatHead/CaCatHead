@@ -10,6 +10,6 @@ const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts');
 
 <template>
   <div>
-    <PostList :posts="data.posts"></PostList>
+    <PostList :posts="data?.posts ?? []"></PostList>
   </div>
 </template>

@@ -22,7 +22,8 @@ Authorization: Token {{auth_token}}
 Content-Type: application/json
 
 {
-  "title": "CaCatHead Round 2"
+  "title": "CaCatHead Round 1",
+  "is_public": true
 }
 
 ### Edit contest problems

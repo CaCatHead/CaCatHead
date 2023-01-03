@@ -91,7 +91,7 @@ const activeTab = computed(() => {
         <div
           :class="['default-nav-item', activeTab === 'contest' && 'is-active']"
         >
-          <NuxtLink to="/contest/">比赛</NuxtLink>
+          <NuxtLink to="/contests/">比赛</NuxtLink>
         </div>
         <div
           :class="[

@@ -6,8 +6,7 @@ useHead({
 });
 
 const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
-  `/api/polygon/own`,
-  { initialCache: false }
+  `/api/polygon/own`
 );
 
 if (!data.value?.problems) {
@@ -59,7 +58,7 @@ const upload = async (ev: Event) => {
       </div>
     </div>
 
-    <c-table :data="data!.problems">
+    <c-table :data="data?.problems ?? []">
       <template #headers>
         <c-table-header
           name="id"
