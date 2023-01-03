@@ -23,6 +23,9 @@ class EditContestPayloadSerializer(serializers.Serializer):
 
     is_public = serializers.BooleanField(required=False, allow_null=True)
 
+    problems = serializers.ListSerializer(child=serializers.IntegerField(), required=False, allow_null=True,
+                                          allow_empty=True)
+
 
 class ContestSerializer(serializers.ModelSerializer):
     class Meta:

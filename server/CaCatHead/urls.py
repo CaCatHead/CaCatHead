@@ -71,8 +71,7 @@ urlpatterns = [
     path('api/contests', contest_views.list_contests),  # 列出所有比赛
     path('api/contest', contest_views.create_contest),  # 创建比赛
     path('api/contest/<int:contest_id>/edit', contest_views.edit_contest),  # 编辑比赛信息
-    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
-    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
+    # path('api/contest/<int:contest_id>/edit/contestants'),  # 编辑比赛人员列表
     # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     # path('api/contest/<int:contest_id>/register'),  # 参加比赛
     path('api/contest/<int:contest_id>/content', contest_views.get_contest),  # 查看比赛详情, 包括题目内容

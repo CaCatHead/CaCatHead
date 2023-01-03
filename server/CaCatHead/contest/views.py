@@ -59,5 +59,5 @@ def get_contest(request: Request, contest_id: int):
 @func_validate_request(EditContestPayloadSerializer)
 def edit_contest(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
-    contest = edit_contest_payload(contest, request.data)
+    contest = edit_contest_payload(request.user, contest, request.data)
     return make_response(contest=ContestContentSerializer(contest).data)
