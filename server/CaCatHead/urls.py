@@ -75,7 +75,7 @@ urlpatterns = [
     # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
     # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     # path('api/contest/<int:contest_id>/register'),  # 参加比赛
-    # path('api/contest/<int:contest_id>/content'),  # 查看比赛详情, 包括题目内容
+    path('api/contest/<int:contest_id>/content', contest_views.get_contest),  # 查看比赛详情, 包括题目内容
     # path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit'),  # 提交代码
     # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
     # path('api/contest/<int:contest_id>/submission/<int:submission_id>'),  # 获取比赛提交状态详情

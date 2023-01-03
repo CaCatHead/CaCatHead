@@ -23,3 +23,25 @@ def make_contest(user: User, title: str, type: str = 'icpc') -> Contest:
 
     contest.save()
     return contest
+
+
+def edit_contest_payload(contest: Contest, payload) -> Contest:
+    # payload see CaCatHead.contest.serializers.EditContestPayloadSerializer
+    if 'title' in payload:
+        contest.title = payload['title']
+    if 'start_time' in payload:
+        contest.start_time = payload['start_time']
+    if 'end_time' in payload:
+        end_time = payload['end_time']
+        if end_time > contest.start_time:
+            if contest.freeze_time is None or 'freeze_time' in payload or end_time > contest.freeze_time:
+                contest.end_time = end_time
+    if 'freeze_time' in payload:
+        freeze_time = payload['freeze_time']
+        if contest.start_time < freeze_time < contest.end_time:
+            contest.freeze_time = freeze_time
+    if 'password' in payload:
+        contest.password = payload['password']
+    if 'is_public' in payload:
+        contest.is_public = payload['is_public']
+    return contest

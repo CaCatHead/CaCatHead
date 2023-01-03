@@ -11,3 +11,16 @@ Content-Type: application/json
   "title": "CaCatHead Round 1",
   "type": "icpc"
 }
+
+### Get contest
+GET http://127.0.0.1:8000/api/contest/5/content
+Authorization: Token {{auth_token}}
+
+### Edit contest
+POST http://127.0.0.1:8000/api/contest/5/edit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "CaCatHead Round 2"
+}
