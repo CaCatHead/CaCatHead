@@ -7,7 +7,7 @@ from rest_framework.request import Request
 
 from CaCatHead.contest.models import Contest
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
-    EditContestPayloadSerializer
+    EditContestPayloadSerializer, ContestContentSerializer
 from CaCatHead.contest.services import make_contest, edit_contest_payload
 from CaCatHead.core.decorators import func_validate_request
 from CaCatHead.permission.constants import ContestPermissions
@@ -29,7 +29,7 @@ def create_contest(request: Request):
     创建比赛
     """
     contest = make_contest(user=request.user, title=request.data['title'], type=request.data['type'])
-    return make_response(contest=ContestSerializer(contest).data)
+    return make_response(contest=ContestContentSerializer(contest).data)
 
 
 def check_read_contest(user: User, contest_id: int):
@@ -52,7 +52,7 @@ def check_contest(user: User, contest_id: int, permission: str):
 @api_view()
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
-    return make_response(contest=ContestSerializer(contest).data)
+    return make_response(contest=ContestContentSerializer(contest).data)
 
 
 @api_view(['POST'])
@@ -60,4 +60,4 @@ def get_contest(request: Request, contest_id: int):
 def edit_contest(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
     contest = edit_contest_payload(contest, request.data)
-    return make_response(contest=ContestSerializer(contest).data)
+    return make_response(contest=ContestContentSerializer(contest).data)

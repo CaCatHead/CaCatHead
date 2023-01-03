@@ -44,4 +44,5 @@ def edit_contest_payload(contest: Contest, payload) -> Contest:
         contest.password = payload['password']
     if 'is_public' in payload:
         contest.is_public = payload['is_public']
+    contest.save()
     return contest
