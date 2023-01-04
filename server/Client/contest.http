@@ -12,8 +12,12 @@ Content-Type: application/json
   "type": "icpc"
 }
 
-### Get contest
+### Get contest content
 GET http://127.0.0.1:8000/api/contest/5/content
+Authorization: Token {{auth_token}}
+
+### Get contest public
+GET http://127.0.0.1:8000/api/contest/5/public
 Authorization: Token {{auth_token}}
 
 ### Edit contest

@@ -26,6 +26,16 @@ export interface Contest {
 
 export type FullContest = Contest & { problems: Array<FullPolygonProblem> };
 
+export interface Registration {
+  name: string;
+  team: {
+    name: string;
+    owner: User;
+    members: User[];
+  };
+  extra_info: Record<string, any>;
+}
+
 export interface Post {
   id: number;
 

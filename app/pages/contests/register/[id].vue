@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Contest } from '@/composables/types';
+import type { Contest, Registration } from '@/composables/types';
 
 const route = useRoute();
 
-const { data: contest } = await useFetchAPI<{ contest: Contest }>(
-  `/api/contest/${route.params.id}/public`
-);
+const { data: contest } = await useFetchAPI<{
+  contest: Contest;
+  registration: Registration | null;
+}>(`/api/contest/${route.params.id}/public`);
 
 useHead({
   title: `注册比赛 ${contest.value?.contest.title}`,
@@ -18,7 +19,12 @@ if (!user) {
   await navigateTo('/login');
 }
 
-const name = ref(user?.value?.nickname ?? user?.value?.username ?? '');
+const name = ref(
+  contest.value?.registration?.name ??
+    user?.value?.nickname ??
+    user?.value?.username ??
+    ''
+);
 
 const submit = async () => {
   try {
@@ -43,6 +49,17 @@ const submit = async () => {
     <c-input type="text" id="team_name" v-model="name">
       <template #label>队伍名称</template>
     </c-input>
-    <c-button w-full color="success" @click="submit">注册</c-button>
+    <div v-if="!contest?.registration">
+      <c-button w-full color="success" @click="submit">注册</c-button>
+    </div>
+    <div v-else space-y-4>
+      <div border rounded p4 bg-success bg-op-30 font-bold>
+        你已经注册本比赛
+      </div>
+      <div flex gap4>
+        <c-button w="1/2" color="success" @click="submit">更新信息</c-button>
+        <c-button w="1/2" color="danger">取消注册</c-button>
+      </div>
+    </div>
   </div>
 </template>

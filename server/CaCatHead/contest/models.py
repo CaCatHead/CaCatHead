@@ -71,6 +71,10 @@ class ContestRegistrationManager(models.Manager):
             team_id__in=self.filter_register_team(contest).values('id')).values('user_id')
         return User.objects.filter(id__in=members)
 
+    def get_registration(self, contest: Contest, user: User):
+        teams = Team.members.through.objects.filter(user_id=user.id).values('team_id')
+        return self.filter(contest=contest, team__in=teams).first()
+
 
 class ContestRegistration(models.Model):
     name = models.CharField(max_length=256, verbose_name=_(u"名称"))
