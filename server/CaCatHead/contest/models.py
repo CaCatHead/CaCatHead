@@ -33,7 +33,7 @@ class Contest(BaseModel):
     class Meta:
         db_table = 'contest'
 
-        ordering = ('start_time',)
+        ordering = ('-start_time',)
 
         verbose_name = _("比赛")
 
@@ -68,10 +68,22 @@ class ContestRegistration(models.Model):
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))
 
+    score = models.IntegerField(default=0, verbose_name=_(u"得分"))
+
+    dirty = models.IntegerField(default=0, verbose_name=_(u"罚时"))
+
+    standings = models.JSONField(default=dict, verbose_name=_(u"排名信息"))
+
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
     class Meta:
         db_table = 'contest_registration'
+
+        ordering = ('-score', 'dirty')
+
+        indexes = [
+            models.Index(fields=['contest', 'team'], name='contest_team_index')
+        ]
 
         verbose_name = _("比赛注册信息")
 

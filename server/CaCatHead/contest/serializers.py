@@ -28,6 +28,12 @@ class EditContestPayloadSerializer(serializers.Serializer):
                                           allow_empty=True)
 
 
+class UserRegisterPayloadSerializer(serializers.Serializer):
+    name = serializers.CharField(required=False, allow_null=True, max_length=256)
+
+    extra_info = serializers.JSONField(required=False, allow_null=True)
+
+
 class ContestSerializer(serializers.ModelSerializer):
     owner = UserSerializer(read_only=True)
 
@@ -66,5 +72,6 @@ class ContestRegistrationSerializer(serializers.BaseSerializer):
         return {
             'name': registration.name,
             'team': TeamSerializer(registration.team).data,
-            'created': registration.created
+            'created': registration.created,
+            'extra_info': registration.extra_info
         }

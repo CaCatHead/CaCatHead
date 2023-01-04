@@ -42,3 +42,4 @@ class ContestPermissions(str, Enum):
     """
     ReadContest = 'read_contest'
     EditContest = 'edit_contest'
+    RegisterContest = 'register_contest'

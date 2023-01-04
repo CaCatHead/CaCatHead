@@ -40,3 +40,15 @@ Content-Type: application/json
 ### List contest registrations
 GET http://127.0.0.1:8000/api/contest/5/registrations
 Authorization: Token {{auth_token}}
+
+### Register contest
+POST http://127.0.0.1:8000/api/contest/5/register
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "gdx",
+  "extra_info": {
+    "student_number": "12345678"
+  }
+}

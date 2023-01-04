@@ -1,15 +1,17 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, APIException
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
-    EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer
+    EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, UserRegisterPayloadSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
+from CaCatHead.contest.services.registration import single_user_register
 from CaCatHead.core.decorators import func_validate_request
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.utils import make_response
@@ -34,7 +36,18 @@ def create_contest(request: Request):
 
 
 def check_read_contest(user: User, contest_id: int):
-    contest = Contest.objects.filter_user_permission(user=user, permission=ContestPermissions.ReadContest,
+    contest = Contest.objects.filter_user_permission(user=user,
+                                                     permission=ContestPermissions.ReadContest,
+                                                     id=contest_id).first()
+    if contest is not None:
+        return contest
+    else:
+        raise NotFound(detail='比赛未找到或权限不足')
+
+
+def check_register_contest(user: User, contest_id: int):
+    contest = Contest.objects.filter_user_permission(user=user,
+                                                     permission=ContestPermissions.RegisterContest,
                                                      id=contest_id).first()
     if contest is not None:
         return contest
@@ -76,3 +89,18 @@ class ContestRegistrationView(APIView):
 
     def post(self, request: Request, contest_id: int):
         return make_response()
+
+
+@api_view(['POST'])
+@func_validate_request(UserRegisterPayloadSerializer)
+def user_register_contest(request: Request, contest_id: int):
+    # 用户有注册比赛的权限
+    contest = check_register_contest(user=request.user, contest_id=contest_id)
+    # 比赛尚未结束
+    if timezone.now() > contest.end_time:
+        raise APIException(detail='比赛已结束', code=400)
+    # TODO: 检查用户是否已经注册该比赛
+    registration = single_user_register(user=request.user, contest=contest,
+                                        name=request.data['name'],
+                                        extra_info=request.data['extra_info'])
+    return make_response(registration=ContestRegistrationSerializer(registration).data)
