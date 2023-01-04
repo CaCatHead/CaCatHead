@@ -5,6 +5,8 @@ useHead({
   title: '登录',
 });
 
+const notfiy = useNotification();
+
 const username = ref('');
 const password = ref('');
 const login = async () => {
@@ -23,8 +25,9 @@ const login = async () => {
     const expiry = resp.expiry;
     await authUser.setToken(token, expiry);
     await navigateTo('/');
-  } catch (error) {
+  } catch (error: any) {
     // show error message
+    notfiy.danger(error?.response?._data?.detail ?? '未知错误');
   }
 };
 </script>

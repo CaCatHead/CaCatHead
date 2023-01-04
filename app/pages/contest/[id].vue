@@ -2,17 +2,24 @@
 import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
-
 const user = useUser();
+const notify = useNotification();
 
 const { data: contest } = await useFetchAPI<{ contest: FullContest }>(
   `/api/contest/${route.params.id}/content`
 );
 
-if (contest !== null) {
+if (
+  contest !== undefined &&
+  contest.value !== undefined &&
+  contest.value !== null
+) {
   useHead({
     title: `比赛 ${contest.value?.contest.title}`,
   });
+} else {
+  notify.danger('比赛未找到或你无权访问此比赛');
+  await navigateTo('/contests');
 }
 </script>
 
