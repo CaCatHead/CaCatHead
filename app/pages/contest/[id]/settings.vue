@@ -28,24 +28,48 @@ const start_time = ref(formatDatetime(contest.value.start_time));
 
 const duration = ref(formatDuration());
 
+const problems = ref('');
+
+const is_public = ref(contest.value.is_public);
+
 const notify = useNotification();
 
 const submit = async () => {
   const start = new Date(start_time.value);
   const end = addMinutes(start, duration.value);
 
-  await fetchAPI(`/api/contest/${route.params.id}/edit`, {
-    method: 'POST',
-    body: {
-      title: title.value,
-      start_time: start,
-      end_time: end,
-    },
-  });
+  try {
+    const { contest: newContest } = await fetchAPI<{ contest: FullContest }>(
+      `/api/contest/${route.params.id}/edit`,
+      {
+        method: 'POST',
+        body: {
+          title: title.value,
+          start_time: start,
+          end_time: end,
+          is_public: is_public.value,
+          problems:
+            problems.value !== ''
+              ? problems.value
+                  .split(',')
+                  .map(p => p.trim())
+                  .filter(Boolean)
+              : undefined,
+        },
+      }
+    );
 
-  contest.value.title = title.value;
+    contest.value = newContest;
 
-  notify.success(`比赛 ${contest.value.title} 修改成功`);
+    notify.success(`比赛 ${contest.value.title} 修改成功`);
+  } catch (err: any) {
+    if ('response' in err) {
+      notify.danger(err.data.detail);
+    } else {
+      notify.danger('未知错误');
+    }
+    problems.value = '';
+  }
 };
 </script>
 
@@ -60,6 +84,13 @@ const submit = async () => {
     <c-input type="number" id="duration" v-model="duration">
       <template #label>比赛持续时间 (分钟)</template>
     </c-input>
+    <c-input type="text" id="problems" v-model="problems">
+      <template #label>题目列表 (使用 Polygon 题目编号, 逗号分隔)</template>
+    </c-input>
+    <div flex items-center space-x-4>
+      <span>是否公开</span>
+      <c-switch id="is_public" v-model="is_public"></c-switch>
+    </div>
 
     <div>
       <c-button color="success" @click="submit">保存</c-button>

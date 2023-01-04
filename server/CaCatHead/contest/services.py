@@ -38,17 +38,17 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
     if 'end_time' in payload:
         end_time = payload['end_time']
         if end_time > contest.start_time:
-            if contest.freeze_time is None or 'freeze_time' in payload or end_time > contest.freeze_time:
+            if contest.freeze_time is None or 'freeze_time' in payload or end_time >= contest.freeze_time:
                 contest.end_time = end_time
     if 'freeze_time' in payload:
         freeze_time = payload['freeze_time']
-        if contest.start_time < freeze_time < contest.end_time:
+        if contest.start_time <= freeze_time <= contest.end_time:
             contest.freeze_time = freeze_time
     if 'password' in payload:
         contest.password = payload['password']
     if 'is_public' in payload:
         contest.is_public = payload['is_public']
-    if 'problems' in payload:
+    if 'problems' in payload and payload['problems'] is not None and isinstance(payload['problems'], list):
         contest = edit_contest_problems(user, contest, payload['problems'])
     contest.save()
     return contest

@@ -20,6 +20,8 @@ export interface Contest {
   end_time: string;
 
   owner: User;
+
+  is_public: boolean;
 }
 
 export type FullContest = Contest & { problems: Array<FullPolygonProblem> };

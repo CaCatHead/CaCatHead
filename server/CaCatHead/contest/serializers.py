@@ -45,6 +45,7 @@ class ContestContentSerializer(serializers.BaseSerializer):
             'start_time': contest.start_time,
             'freeze_time': contest.freeze_time,
             'end_time': contest.end_time,
+            'is_public': contest.is_public,
             'owner': UserSerializer(contest.owner).data,
             'problems': ProblemContentSerializer(contest.problem_repository.problems, many=True).data
         }
