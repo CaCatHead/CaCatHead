@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from CaCatHead.contest.models import Contest
 from CaCatHead.problem.serializers import ProblemContentSerializer
+from CaCatHead.user.serializers import UserSerializer
 
 
 class CreateContestPayloadSerializer(serializers.Serializer):
@@ -28,9 +29,11 @@ class EditContestPayloadSerializer(serializers.Serializer):
 
 
 class ContestSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
+
     class Meta:
         model = Contest
-        fields = ['id', 'title', 'type', 'start_time', 'freeze_time', 'end_time', 'is_public']
+        fields = ['id', 'title', 'type', 'start_time', 'freeze_time', 'end_time', 'is_public', 'owner']
 
 
 class ContestContentSerializer(serializers.BaseSerializer):
@@ -42,5 +45,6 @@ class ContestContentSerializer(serializers.BaseSerializer):
             'start_time': contest.start_time,
             'freeze_time': contest.freeze_time,
             'end_time': contest.end_time,
+            'owner': UserSerializer(contest.owner).data,
             'problems': ProblemContentSerializer(contest.problem_repository.problems, many=True).data
         }

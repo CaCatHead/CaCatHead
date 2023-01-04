@@ -20,7 +20,7 @@ class Contest(BaseModel):
 
     problem_repository = models.ForeignKey(ProblemRepository, on_delete=models.RESTRICT, verbose_name=_(u"比赛题库"))
 
-    owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"创建者"))
+    owner = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='contest_owner', verbose_name=_(u"创建者"))
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 

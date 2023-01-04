@@ -3,6 +3,8 @@ import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
 
+const user = useUser();
+
 const { data: contest } = await useFetchAPI<{ contest: FullContest }>(
   `/api/contest/${route.params.id}/content`
 );
@@ -23,9 +25,12 @@ if (contest !== null) {
       <c-nav-item to="status">我的提交</c-nav-item>
       <c-nav-item to="submissions">所有提交</c-nav-item>
       <c-nav-item to="standings">排行榜</c-nav-item>
-      <!-- <c-nav-item to="permission" v-if="contest.owner.id === user?.id"
+      <c-nav-item to="settings" v-if="contest.contest.owner.id === user?.id"
+        >比赛设置</c-nav-item
+      >
+      <c-nav-item to="permissions" v-if="contest.contest.owner.id === user?.id"
         >权限管理</c-nav-item
-      > -->
+      >
     </c-nav>
     <NuxtPage :contest="contest.contest" />
   </div>
