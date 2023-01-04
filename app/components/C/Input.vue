@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number | Date">
 const props = withDefaults(
   defineProps<{
     id: string;
     name?: string;
     placeholder?: string;
-    modelValue: string | number;
+    modelValue: T;
     type: string;
     color?: string;
   }>(),
@@ -14,6 +14,8 @@ const props = withDefaults(
     color: 'info',
   }
 );
+
+const attr = useAttrs();
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -37,6 +39,16 @@ const { id, name, placeholder, type, color } = toRefs(props);
         :type="type"
         :placeholder="placeholder"
         v-model="data"
+        @change="attr.onChange"
+        @click="attr.onClick"
+        @focus="attr.onFocus"
+        @focusin="attr.onFocusin"
+        @focusout="attr.onFocusout"
+        @input="attr.onInput"
+        @keyup="attr.onKeyup"
+        @mouseenter="attr.onMouseenter"
+        @mouseleave="attr.onMouseleave"
+        @mousemove="attr.onMousemove"
       />
       <textarea
         v-else
@@ -44,7 +56,7 @@ const { id, name, placeholder, type, color } = toRefs(props);
         :id="id"
         :class="['c-input', 'c-input-textarea', 'w-full']"
         rows="10"
-        v-model="data"
+        v-model="data as string"
       ></textarea>
     </div>
   </div>
