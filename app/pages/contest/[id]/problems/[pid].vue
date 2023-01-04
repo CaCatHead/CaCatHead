@@ -9,7 +9,6 @@ const { contest } = toRefs(props);
 
 const getPid = () => {
   const pid = route.params.pid as string;
-  console.log(pid);
   if (/^[A-Z]$/.test(pid)) {
     return pid.charCodeAt(0) - 65;
   } else if (/^[a-z]$/.test(pid)) {
