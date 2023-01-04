@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
-    EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, UserRegisterPayloadSerializer
+    EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
+    UserRegisterPayloadSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register
 from CaCatHead.core.decorators import func_validate_request
@@ -42,7 +43,18 @@ def check_read_contest(user: User, contest_id: int):
     if contest is not None:
         return contest
     else:
-        raise NotFound(detail='比赛未找到或权限不足')
+        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
+                                                     id=contest_id).first()
+        if contest is not None:
+            if timezone.now() >= contest.start_time:
+                if ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
+                    return contest
+                else:
+                    raise NotFound(detail='你尚未注册该比赛')
+            else:
+                raise NotFound(detail='比赛尚未开始')
+        else:
+            raise NotFound(detail='比赛未找到')
 
 
 def check_register_contest(user: User, contest_id: int):
@@ -84,7 +96,8 @@ class ContestRegistrationView(APIView):
 
     def get(self, request: Request, contest_id: int):
         contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
-        registrations = ContestRegistration.objects.filter(contest=contest).all()
+        registrations = ContestRegistration.objects.filter_registration(contest).all()
+
         return make_response(registrations=ContestRegistrationSerializer(registrations, many=True).data)
 
     def post(self, request: Request, contest_id: int):

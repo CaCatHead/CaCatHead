@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
-from CaCatHead.permission.manager import PermissionManager
+from CaCatHead.permission.managers import PermissionManager
 
 
 class Post(BaseModel):

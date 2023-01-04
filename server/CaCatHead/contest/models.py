@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
-from CaCatHead.permission.manager import PermissionManager
+from CaCatHead.permission.managers import PermissionManager
 from CaCatHead.problem.models import ProblemRepository
 
 
@@ -59,6 +59,19 @@ class Team(models.Model):
         verbose_name_plural = _("队伍列表")
 
 
+class ContestRegistrationManager(models.Manager):
+    def filter_registration(self, contest: Contest):
+        return self.filter(contest=contest)
+
+    def filter_register_team(self, contest: Contest):
+        return Team.objects.filter(id__in=self.filter(contest=contest).values('team'))
+
+    def filter_register_user(self, contest: Contest):
+        members = Team.members.through.objects.filter(
+            team_id__in=self.filter_register_team(contest).values('id')).values('user_id')
+        return User.objects.filter(id__in=members)
+
+
 class ContestRegistration(models.Model):
     name = models.CharField(max_length=256, verbose_name=_(u"名称"))
 
@@ -75,6 +88,8 @@ class ContestRegistration(models.Model):
     standings = models.JSONField(default=dict, verbose_name=_(u"排名信息"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
+
+    objects = ContestRegistrationManager()
 
     class Meta:
         db_table = 'contest_registration'
