@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends string | number | Date">
+<script setup lang="ts" generic="T extends string | number">
 const props = withDefaults(
   defineProps<{
     id: string;
@@ -56,7 +56,7 @@ const { id, name, placeholder, type, color } = toRefs(props);
         :id="id"
         :class="['c-input', 'c-input-textarea', 'w-full']"
         rows="10"
-        v-model="data as string"
+        v-model="data"
       ></textarea>
     </div>
   </div>
