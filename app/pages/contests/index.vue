@@ -94,8 +94,13 @@ const formatDuration = (row: Contest) => {
           }}</span>
         </div>
       </template>
-      <template #operation>
-        <c-button variant="text" color="success">注册</c-button>
+      <template #operation="{ row }">
+        <c-button
+          variant="text"
+          color="success"
+          @click="navigateTo(`/contests/register/${row.id}`)"
+          >注册</c-button
+        >
       </template>
 
       <template #empty>

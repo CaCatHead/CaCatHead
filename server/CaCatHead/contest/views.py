@@ -76,6 +76,11 @@ def check_contest(user: User, contest_id: int, permission: str):
 
 
 @api_view()
+def get_contest_public(request: Request, contest_id: int):
+    contest = check_read_contest(user=request.user, contest_id=contest_id)
+    return make_response(contest=ContestSerializer(contest).data)
+
+@api_view()
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     return make_response(contest=ContestContentSerializer(contest).data)

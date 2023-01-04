@@ -1,4 +1,5 @@
 import type { FetchOptions } from 'ohmyfetch';
+import type { Ref } from 'vue';
 
 import { defineStore } from 'pinia';
 
@@ -45,7 +46,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
 export const AuthUserKey = Symbol('cacathead-auth-user');
 
 export const useUser = () => {
-  return inject<FullUser>(AuthUserKey);
+  return inject<Ref<FullUser>>(AuthUserKey);
 };
 
 // Store auth user
