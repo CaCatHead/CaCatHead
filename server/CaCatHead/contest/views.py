@@ -4,11 +4,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
+from rest_framework.views import APIView
 
-from CaCatHead.contest.models import Contest
+from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
-    EditContestPayloadSerializer, ContestContentSerializer
-from CaCatHead.contest.services import make_contest, edit_contest_payload
+    EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer
+from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.core.decorators import func_validate_request
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.utils import make_response
@@ -61,3 +62,17 @@ def edit_contest(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
     contest = edit_contest_payload(request.user, contest, request.data)
     return make_response(contest=ContestContentSerializer(contest).data)
+
+
+class ContestRegistrationView(APIView):
+    """
+    编辑比赛注册者列表
+    """
+
+    def get(self, request: Request, contest_id: int):
+        contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
+        registrations = ContestRegistration.objects.filter(contest=contest).all()
+        return make_response(registrations=ContestRegistrationSerializer(registrations, many=True).data)
+
+    def post(self, request: Request, contest_id: int):
+        return make_response()

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from CaCatHead.contest.models import Contest
+from CaCatHead.contest.models import Contest, ContestRegistration, Team
 from CaCatHead.problem.serializers import ProblemContentSerializer
 from CaCatHead.user.serializers import UserSerializer
 
@@ -48,4 +48,23 @@ class ContestContentSerializer(serializers.BaseSerializer):
             'is_public': contest.is_public,
             'owner': UserSerializer(contest.owner).data,
             'problems': ProblemContentSerializer(contest.problem_repository.problems, many=True).data
+        }
+
+
+class TeamSerializer(serializers.BaseSerializer):
+    def to_representation(self, team: Team):
+        return {
+            'name': team.name,
+            'owner': UserSerializer(team.owner).data,
+            'members': UserSerializer(team.members, many=True).data,
+            'created': team.created,
+        }
+
+
+class ContestRegistrationSerializer(serializers.BaseSerializer):
+    def to_representation(self, registration: ContestRegistration):
+        return {
+            'name': registration.name,
+            'team': TeamSerializer(registration.team).data,
+            'created': registration.created
         }

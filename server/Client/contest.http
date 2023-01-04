@@ -37,3 +37,6 @@ Content-Type: application/json
   ]
 }
 
+### List contest registrations
+GET http://127.0.0.1:8000/api/contest/5/registrations
+Authorization: Token {{auth_token}}
