@@ -28,7 +28,7 @@ const name = ref(
 
 const submit = async () => {
   try {
-    await fetchAPI(`/contest/${route.params.id}/register`, {
+    await fetchAPI(`/api/contest/${route.params.id}/register`, {
       method: 'POST',
       body: {
         name: name.value,
