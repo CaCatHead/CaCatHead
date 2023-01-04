@@ -19,8 +19,8 @@ const historyContests = computed(() => {
   return data.value?.contests.filter(c => new Date(c.end_time).getTime() < now);
 });
 
-const isContestAdmin = (contest: Contest, user: User) => {
-  return contest.owner.id === user.id;
+const isContestAdmin = (contest: Contest, user: User | undefined) => {
+  return user && contest.owner.id === user.id;
 };
 const contestStatus = (contest: Contest) => {
   const now = new Date();
