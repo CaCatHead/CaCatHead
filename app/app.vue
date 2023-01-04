@@ -30,7 +30,7 @@ html {
   font-weight: 400;
 }
 
-.text-link:hover {
+.text-link:hover, [text-link=""]:hover {
   --at-apply: text-sky-700 dark:text-sky-200;
 }
 

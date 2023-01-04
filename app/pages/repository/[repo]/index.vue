@@ -40,7 +40,7 @@ const { data: problems } = await useFetchAPI<{ problems: any[] }>(
     </div>
 
     <div w="1/5 lt-md:full" overflow-auto pb2 shadow-box rounded p4>
-      <div v-for="repo in repos.repos">
+      <div v-for="repo in repos?.repos ?? []">
         <c-button
           variant="text"
           color="info"

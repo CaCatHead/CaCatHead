@@ -20,6 +20,8 @@ export interface Contest {
   end_time: string;
 }
 
+export type FullContest = Contest & { problems: Array<FullPolygonProblem> };
+
 export interface Post {
   id: number;
 

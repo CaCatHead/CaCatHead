@@ -1,3 +1,38 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { FullContest } from '@/composables/types';
 
-<template></template>
+const route = useRoute();
+
+const props = defineProps<{ contest: FullContest }>();
+
+const { contest } = toRefs(props);
+
+const toDisplayId = (id: number, offset = 1000) => {
+  return String.fromCharCode(65 + (id - offset));
+};
+</script>
+
+<template>
+  <div>
+    <c-table :data="contest.problems">
+      <template #headers>
+        <c-table-header name="display_id" width="80">#</c-table-header>
+        <c-table-header name="title" align="left" text-left
+          >标题</c-table-header
+        >
+      </template>
+      <template #display_id="{ row }">{{
+        toDisplayId(row.display_id)
+      }}</template>
+      <template #title="{ row }">
+        <nuxt-link
+          :to="`/contest/${route.params.id}/problems/${toDisplayId(
+            row.display_id
+          )}`"
+          class="text-link"
+          >{{ row.title }}</nuxt-link
+        >
+      </template>
+    </c-table>
+  </div>
+</template>
