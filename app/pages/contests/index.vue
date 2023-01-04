@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Contest } from '@/composables/types';
+import type { Contest, User } from '@/composables/types';
 
 useHead({
   title: '比赛',
@@ -19,6 +19,9 @@ const historyContests = computed(() => {
   return data.value?.contests.filter(c => new Date(c.end_time).getTime() < now);
 });
 
+const isContestAdmin = (contest: Contest, user: User) => {
+  return contest.owner.id === user.id;
+};
 const contestStatus = (contest: Contest) => {
   const now = new Date();
   const start_time = new Date(contest.start_time);
@@ -65,9 +68,18 @@ const formatDuration = (row: Contest) => {
         <c-table-header name="operation"><span></span></c-table-header>
       </template>
       <template #title="{ row }">
-        <nuxt-link :to="`/contest/${row.id}`" class="text-link">{{
-          row.title
-        }}</nuxt-link>
+        <div
+          v-if="contestStatus(row) === '即将开始' && !isContestAdmin(row, user)"
+        >
+          <nuxt-link :to="`/contests/register/${row.id}`" class="text-link">{{
+            row.title
+          }}</nuxt-link>
+        </div>
+        <div v-else>
+          <nuxt-link :to="`/contest/${row.id}`" class="text-link">{{
+            row.title
+          }}</nuxt-link>
+        </div>
       </template>
       <template #start_time="{ row }">
         <div>
