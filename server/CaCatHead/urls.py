@@ -81,7 +81,7 @@ urlpatterns = [
     path('api/contest/<int:contest_id>/status', contest_views.user_list_own_submissions),  # 查看比赛个人提交
     path('api/contest/<int:contest_id>/submission/<int:submission_id>', contest_views.user_view_submission),
     # 获取比赛提交状态详情
-    # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
+    path('api/contest/<int:contest_id>/submissions', contest_views.user_view_all_submissions),  # 查看比赛所有提交
     path('api/contest/<int:contest_id>/standings', contest_views.user_view_standings),  # 查看比赛排行榜
     # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
     # team

@@ -166,6 +166,27 @@ def user_list_own_submissions(request: Request, contest_id: int):
 
 
 @api_view()
+def user_view_all_submissions(request: Request, contest_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository).all()
+
+    if contest.has_admin_permission(request.user):
+        # 管理员用户，比赛所有者，用户自己
+        return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+    else:
+        if contest.is_ended():
+            # 比赛已经结束
+            if contest.enable_settings(ContestSettings.view_submissions_after_contest):
+                return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+            else:
+                # 没有权限访问该提交
+                raise NotFound(detail='没有权限访问该提交')
+        else:
+            # 比赛尚未结束，无法查看其他提交
+            raise NotFound(detail='比赛尚未结束，无法查看其他提交')
+
+
+@api_view()
 def user_view_submission(request: Request, contest_id: int, submission_id: int):
     contest = check_read_contest(request.user, contest_id)
     submission = ContestSubmission.objects.filter(repository=contest.problem_repository, id=submission_id).first()

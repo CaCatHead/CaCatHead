@@ -11,7 +11,7 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
 </script>
 
 <template>
-  <div>
+  <div text-sm>
     <c-table :data="data?.submissions ?? []">
       <template #headers>
         <c-table-header name="id" label="#" width="64px"></c-table-header>
