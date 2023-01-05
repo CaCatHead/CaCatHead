@@ -31,6 +31,8 @@ class EditContestPayloadSerializer(serializers.Serializer):
 class UserRegisterPayloadSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, max_length=256)
 
+    password = serializers.CharField(required=False, allow_null=True, max_length=256)
+
     extra_info = serializers.JSONField(required=False, allow_null=True)
 
 

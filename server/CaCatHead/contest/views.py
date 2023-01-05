@@ -127,6 +127,14 @@ def user_register_contest(request: Request, contest_id: int):
     # 比赛尚未结束
     if timezone.now() > contest.end_time:
         raise APIException(detail='比赛已结束', code=400)
+    # 检查比赛邀请码是否输入正确
+    if contest.password is not None and len(contest.password) > 0:
+        if 'password' in request.data:
+            password = request.data['password']
+            if password != contest.password:
+                raise APIException(detail='比赛邀请码错误', code=400)
+        else:
+            raise APIException(detail='请填写比赛邀请码', code=400)
     # TODO: 检查用户是否已经注册该比赛
     registration = single_user_register(user=request.user, contest=contest,
                                         name=request.data['name'],
