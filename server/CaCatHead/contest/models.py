@@ -9,10 +9,16 @@ from CaCatHead.permission.managers import PermissionManager
 from CaCatHead.problem.models import ProblemRepository
 
 
+class ContestType(models.TextChoices):
+    icpc = 'icpc'
+    ioi = 'ioi'
+
+
 class Contest(BaseModel):
     title = models.CharField(max_length=256, verbose_name=_(u"标题"))
 
-    type = models.CharField(default='icpc', max_length=64, verbose_name=_(u"比赛类型"))
+    type = models.CharField(default=ContestType.icpc, choices=ContestType.choices, max_length=64,
+                            verbose_name=_(u"比赛类型"))
 
     start_time = models.DateTimeField(verbose_name=_(u"开始时间"))
 

@@ -5,7 +5,7 @@ import { displyaIdToIndex } from './problem/utils';
 
 const route = useRoute();
 
-const { data } = useFetchAPI<{ submissions: ContestSubmission[] }>(
+const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
   `/api/contest/${route.params.id}/status`
 );
 </script>

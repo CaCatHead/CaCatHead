@@ -62,9 +62,9 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
 
 
 def check_register_contest(user: User, contest_id: int) -> Contest:
-    contest = Contest.objects.filter_user_permission(user=user,
-                                                     permission=ContestPermissions.RegisterContest,
-                                                     id=contest_id).first()
+    contest = Contest.objects.filter_user_public(user=user,
+                                                 permission=ContestPermissions.RegisterContest,
+                                                 id=contest_id).first()
     if contest is not None:
         return contest
     else:
@@ -81,7 +81,8 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 
 @api_view()
 def get_contest_public(request: Request, contest_id: int):
-    contest = check_read_contest(user=request.user, contest_id=contest_id)
+    contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
+                                                 id=contest_id).first()
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
     return make_response(contest=ContestSerializer(contest).data,
                          registration=ContestRegistrationSerializer(registration).data)

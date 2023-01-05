@@ -107,12 +107,21 @@ const formatDuration = (row: Contest) => {
         </div>
       </template>
       <template #operation="{ row }">
-        <c-button
-          variant="text"
-          color="success"
-          @click="navigateTo(`/contests/register/${row.id}`)"
-          >注册</c-button
-        >
+        <div inline-flex>
+          <c-button
+            variant="text"
+            color="success"
+            @click="navigateTo(`/contests/register/${row.id}`)"
+            >注册</c-button
+          >
+          <c-button
+            v-if="contestStatus(row) === '正在进行'"
+            variant="text"
+            color="info"
+            @click="navigateTo(`/contest/${row.id}`)"
+            >进入比赛</c-button
+          >
+        </div>
       </template>
 
       <template #empty>

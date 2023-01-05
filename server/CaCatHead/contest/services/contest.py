@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from rest_framework.exceptions import NotFound
 
-from CaCatHead.contest.models import Contest
+from CaCatHead.contest.models import Contest, ContestType
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.views import copy_repo_problem, MAIN_PROBLEM_REPOSITORY
 
 
-def make_contest(user: User, title: str, type: str = 'icpc') -> Contest:
+def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest = Contest()
     contest.title = title
     contest.type = type

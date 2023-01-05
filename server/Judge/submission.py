@@ -11,10 +11,11 @@ from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.config import cacathead_config
+from CaCatHead.contest.models import ContestRegistration, ContestType
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.problem.views.upload import ProblemDirectory
-from CaCatHead.submission.models import Submission, ContestSubmission
+from CaCatHead.submission.models import Submission, ContestSubmission, ContestSubmissionType
 
 logger = logging.getLogger('Judge.service')
 
@@ -43,6 +44,11 @@ class SubmissionTask:
         else:
             # This is unreachable
             assert False
+
+        if 'registration_id' in data:
+            self.registration = ContestRegistration.objects.get(id=int(data['registration_id']))
+        else:
+            self.registration = None
 
         self.code = data["code"]
         self.language = data["language"]
@@ -78,20 +84,6 @@ class SubmissionTask:
         if settings.DEBUG_JUDGE:
             logger.info(f'Tmp dir        {self.tmp_dir}')
             logger.info(f'Code file      {self.code_file}')
-
-    def update_submission(self, judged=None, verdict=None, score=None, detail=None):
-        if judged is not None:
-            self.submission.judged = judged
-        if verdict is not None:
-            self.submission.verdict = verdict
-        if score is not None:
-            self.submission.score = score
-        if detail is not None:
-            self.submission.detail = detail
-        if len(self.results) > 0:
-            self.submission.time_used = max([d['time'] for d in self.results])
-            self.submission.memory_used = max([d['memory'] for d in self.results])
-        self.submission.save()
 
     def run(self):
         logger.info(f'Run submission {self.submission.id}')
@@ -235,6 +227,54 @@ class SubmissionTask:
         self.results.append(detail)
         return detail
 
+    def update_submission(self, judged=None, verdict=None, score=None, detail=None):
+        if judged is not None:
+            self.submission.judged = judged
+        if verdict is not None:
+            self.submission.verdict = verdict
+        if score is not None:
+            self.submission.score = score
+        if detail is not None:
+            self.submission.detail = detail
+        if len(self.results) > 0:
+            self.submission.time_used = max([d['time'] for d in self.results])
+            self.submission.memory_used = max([d['memory'] for d in self.results])
+        self.submission.save()
+
+    def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
+        if self.registration is None:
+            return
+        contest = self.registration.contest
+        if contest.type == ContestType.icpc:
+            submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
+                                                           type=ContestSubmissionType.contestant).all()
+            score = 0
+            dirty = 0  # 单位：秒
+            accepted = set()
+            penalty = dict()
+            penalty_unit = 20 * 60  # 20 分钟
+            for sub in submissions:
+                if sub.verdict == Verdict.Accepted:
+                    # 第一次通过
+                    if sub.problem.id not in accepted:
+                        accepted.add(sub.problem.id)
+                        score += 1
+                        dirty += sub.relative_time
+                        if sub.problem.id in penalty:
+                            dirty += penalty[sub.problem.id] * penalty_unit
+                elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                                     Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+                    # 添加罚时次数
+                    if sub.problem.id not in penalty:
+                        penalty[sub.problem.id] = 1
+                    else:
+                        penalty[sub.problem.id] += 1
+            self.registration.score = score
+            self.registration.dirty = dirty
+        elif contest.type == ContestType.ioi:
+            pass
+        self.registration.save()
+
     def save_final_result(self):
         logger.info(f"Save result of submission {self.submission.id}")
 
@@ -260,6 +300,7 @@ class SubmissionTask:
             logger.info(detail)
 
         self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
+        self.save_contest_result(verdict=detail['verdict'], score=detail['score'], detail=detail)
 
     def clean_temp(self):
         if not settings.DEBUG_JUDGE:
