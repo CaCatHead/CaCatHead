@@ -14,7 +14,6 @@ useHead({
 
 const notify = useNotification();
 const user = useUser();
-console.log(user?.value);
 if (!user || !user.value) {
   await navigateTo('/login');
 }
