@@ -24,11 +24,11 @@ class ProblemDirectory:
 
     @classmethod
     def make(cls, problem: Problem):
-        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.id))
+        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.problem_info.problem_judge.id))
 
     @classmethod
-    def make_from_id(cls, problem_id: int | str):
-        root = Path(settings.TESTCASE_ROOT) / str(problem_id)
+    def make_from_id(cls, problem_id: int | str, problem_judge_id: int | str):
+        root = Path(settings.TESTCASE_ROOT) / str(problem_judge_id)
         if not root.exists():
             problem_directory = ProblemDirectory(root=root)
             problem = Problem.objects.filter(id=int(problem_id)).first()
@@ -140,10 +140,10 @@ def try_unzip_problem_arch(problem_root: Path, file_name: str, zip_content: InMe
     return valid
 
 
-def upload_problem_arch(pid: int, file: InMemoryUploadedFile) -> ProblemDirectory:
-    problem_root = settings.TESTCASE_ROOT / str(pid)
+def upload_problem_arch(problem_judge_id: int, file: InMemoryUploadedFile) -> ProblemDirectory:
+    problem_root = settings.TESTCASE_ROOT / str(problem_judge_id)
     problem_root.mkdir(parents=True, exist_ok=True)
-    zip_file_name = 'p' + str(pid) + '_' + str(timezone.now().timestamp()) + '.zip'
+    zip_file_name = 'p' + str(problem_judge_id) + '_' + str(timezone.now().timestamp()) + '.zip'
     try:
         if try_unzip_problem_arch(problem_root, zip_file_name, file):
             problem_directory = ProblemDirectory(problem_root)

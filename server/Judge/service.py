@@ -3,8 +3,8 @@ import logging
 import pika
 from django.conf import settings
 from pika import BasicProperties
-from pika.spec import Basic
 from pika.channel import Channel
+from pika.spec import Basic
 
 from Judge.submission import SubmissionTask
 

@@ -40,6 +40,11 @@ class EditPermissionPayload(serializers.Serializer):
     revoke = serializers.CharField(max_length=32, required=False)
 
 
+class SubmitCodePayload(serializers.Serializer):
+    code = serializers.CharField(required=True)
+    language = serializers.ChoiceField(choices=('c', 'cpp', 'java'), required=True)
+
+
 class ProblemRepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemRepository

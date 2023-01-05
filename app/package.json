@@ -27,6 +27,6 @@
     "@types/node": "18.8.0",
     "@unocss/nuxt": "^0.48.0",
     "nuxt": "3.0.0",
-    "nuxt-proxy": "^0.3.7"
+    "nuxt-proxy": "^0.3.4"
   }
 }

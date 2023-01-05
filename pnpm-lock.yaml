@@ -24,7 +24,7 @@ importers:
       markdown-it-math: ^4.1.1
       md-editor-v3: ^2.7.2
       nuxt: 3.0.0
-      nuxt-proxy: ^0.3.7
+      nuxt-proxy: 0.3.4
     dependencies:
       '@pinia/nuxt': 0.4.6
       '@vueuse/core': 9.10.0
@@ -44,7 +44,7 @@ importers:
       '@types/node': 18.8.0
       '@unocss/nuxt': 0.48.0
       nuxt: 3.0.0_@types+node@18.8.0
-      nuxt-proxy: 0.3.7
+      nuxt-proxy: 0.3.4
 
   docs:
     specifiers:
@@ -5321,15 +5321,14 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
 
-  /nuxt-proxy/0.3.7:
-    resolution: {integrity: sha512-eynHDXOjn5rvUsi0lDeN0aeHD/GDc28YKadL/RFasydABRP5BwPxYylf0gbtdG5bvDGN/zAwgDrNu31oTu20Wg==}
+  /nuxt-proxy/0.3.4:
+    resolution: {integrity: sha512-PHW9hN4DRNuLQO0vL3Q20/o7kdvNay3UYkkEL/9MkzxaOd/shLOHRsyyc4Nm2BW3qE03cyJoTgmM5axWSxVzqQ==}
     dependencies:
       '@nuxt/kit': 3.0.0
       defu: 6.1.1
       h3: 1.0.2
       http-proxy-middleware: 3.0.0-beta.0
       ohash: 1.0.0
-      pathe: 1.0.0
     transitivePeerDependencies:
       - '@types/express'
       - rollup

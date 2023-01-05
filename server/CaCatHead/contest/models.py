@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
+from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.permission.managers import PermissionManager
-from CaCatHead.problem.models import ProblemRepository
+from CaCatHead.problem.models import ProblemRepository, Problem
 
 
 class Contest(BaseModel):
@@ -38,6 +40,25 @@ class Contest(BaseModel):
         verbose_name = _("比赛")
 
         verbose_name_plural = _("比赛列表")
+
+    def is_running(self):
+        now = timezone.now()
+        return self.start_time <= now <= self.end_time
+
+    def is_started(self):
+        now = timezone.now()
+        return self.start_time <= now
+
+    def is_ended(self):
+        now = timezone.now()
+        return self.end_time < now
+
+    def can_edit_contest(self, user: User):
+        return Contest.objects.filter_user_permission(user=user, permission=ContestPermissions.EditContest).filter(
+            id=self.id).count() > 0
+
+    def get_problem(self, display_id: int):
+        return Problem.objects.filter(repository=self.problem_repository, display_id=display_id).first()
 
 
 class Team(models.Model):

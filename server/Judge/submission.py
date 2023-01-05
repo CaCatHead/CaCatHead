@@ -14,7 +14,7 @@ from CaCatHead.config import cacathead_config
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.problem.views.upload import ProblemDirectory
-from CaCatHead.submission.models import Submission
+from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.service')
 
@@ -34,21 +34,32 @@ class SubmissionTask:
     def __init__(self, message: bytes):
         data = json.loads(message)
 
-        self.submission = Submission.objects.get(id=data['submission_id'])
+        if 'submission_id' in data:
+            self.type = 'Submission'
+            self.submission = Submission.objects.get(id=data['submission_id'])
+        elif 'contest_submission_id' in data:
+            self.type = 'Contest Submission'
+            self.submission = ContestSubmission.objects.get(id=data['contest_submission_id'])
+        else:
+            # This is unreachable
+            assert False
+
         self.code = data["code"]
         self.language = data["language"]
         self.problem_id = str(data["problem_id"])
+        self.problem_judge_id = str(data["problem_judge_id"])
         self.problem_type = data['problem_type']
         self.time_limit = str(data["time_limit"])
         self.memory_limit = str(data["memory_limit"])
         self.testcase_detail = data["testcase_detail"]
 
-        logger.info(f'Submission ID  {self.submission.id}')
-        logger.info(f'Language       {self.language}')
-        logger.info(f'Problem ID     {self.problem_id}')
-        logger.info(f'Problem type   {self.problem_type}')
-        logger.info(f'Time limit     {self.time_limit}')
-        logger.info(f'Memory limit   {self.memory_limit}')
+        logger.info(f'{self.type} ID: {self.submission.id}')
+        logger.info(f'Language: {self.language}')
+        logger.info(f'Problem ID: {self.problem_id}')
+        logger.info(f'Problem Judge ID: {self.problem_judge_id}')
+        logger.info(f'Problem type: {self.problem_type}')
+        logger.info(f'Time limit: {self.time_limit}')
+        logger.info(f'Memory limit: {self.memory_limit}')
 
         logger.info(self.testcase_detail)
         logger.info(data["extra_info"])
@@ -161,7 +172,8 @@ class SubmissionTask:
                 self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
             except NoTestDataException:
                 # Try downloading testcases from minio
-                problem_directory = ProblemDirectory.make_from_id(self.problem_id)
+                problem_directory = ProblemDirectory.make_from_id(problem_id=self.problem_id,
+                                                                  problem_judge_id=self.problem_judge_id)
                 problem_directory.download_testcases()
                 self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
 
@@ -191,9 +203,10 @@ class SubmissionTask:
         logger.info(f'Finish judging, verdict is {self.verdict}')
 
     def prepare_testcase_file(self, in_file: str, ans_file: str):
+        # TODO: extract these logic
         logger.info(f'Prepare testcase (in = {in_file}, ans = {ans_file})')
-        in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_id, in_file)
-        ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_id, ans_file)
+        in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, in_file)
+        ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, ans_file)
         in_file_dst = os.path.join(self.tmp_dir, "in.in")
         ans_file_dst = os.path.join(self.tmp_dir, "out.out")
         if not os.path.exists(in_file_src) or not os.path.exists(ans_file_src):

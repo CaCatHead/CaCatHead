@@ -12,7 +12,7 @@ from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
@@ -112,6 +112,7 @@ def list_polygon_problems(request):
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
+@func_validate_request(SubmitCodePayload)
 def submit_polygon_problem(request: Request, problem_id: int):
     """
     向自己创建的题目，或者被授予提交权限的题目，提交代码

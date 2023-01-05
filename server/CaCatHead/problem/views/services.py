@@ -94,7 +94,7 @@ def edit_problem(problem: Problem, payload: dict):
 
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
-    problem_directory = upload_problem_arch(problem.id, zip_content)
+    problem_directory = upload_problem_arch(problem.problem_info.problem_judge.id, zip_content)
 
     def clear():
         # 上传的题目不合法, 删除该题目
