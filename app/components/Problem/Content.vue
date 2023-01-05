@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type { ProblemContent } from '@/composables/types';
 
-const props = defineProps<{ content: ProblemContent }>();
+const props = defineProps<{
+  content: ProblemContent;
+  time: number;
+  memory: number;
+}>();
 
 const { content } = toRefs(props);
 
@@ -11,8 +15,17 @@ async function copyToClipboard(text: string) {
 </script>
 
 <template>
+  <div space-y-2 mb8>
+    <div>
+      <span font-600 mr2>时间限制</span>
+      <span>{{ time }} ms</span>
+    </div>
+    <div>
+      <span font-600 mr2>空间限制</span>
+      <span>{{ memory }} KB</span>
+    </div>
+  </div>
   <div class="!max-w-full !w-full text-base prose prose-truegray">
-    <h4>题目描述</h4>
     <c-markdown :content="content.description"></c-markdown>
 
     <h4>输入格式</h4>

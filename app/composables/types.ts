@@ -92,6 +92,8 @@ export interface FullPolygonProblem {
   is_public: boolean;
   owner: User;
   problem_type: 'classic_ac';
+  time_limit: number;
+  memory_limit: number;
 
   problem_info: {
     problem_judge: ProblemJudge;
