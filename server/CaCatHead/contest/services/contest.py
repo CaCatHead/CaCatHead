@@ -55,7 +55,15 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
 
 
 def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
+    # 删除之前的题目
+    old_problems = map(lambda p: p.id, contest.problem_repository.problems.all())
     contest.problem_repository.problems.clear()
+    for pid in old_problems:
+        problem = Problem.objects.get(id=pid)
+        if problem is not None:
+            problem.delete()
+
+    # 复制新的题目
     for p in problems:
         problem = Problem.objects.filter_user_permission(user=user,
                                                          problemrepository=MAIN_PROBLEM_REPOSITORY,

@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from CaCatHead.core.models import BaseModel
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.permission.managers import PermissionManager
-from CaCatHead.problem.models import ProblemRepository, Problem
+from CaCatHead.problem.models import ProblemRepository
 
 
 class Contest(BaseModel):
@@ -62,7 +62,7 @@ class Contest(BaseModel):
             id=self.id).count() > 0
 
     def get_problem(self, display_id: int):
-        return Problem.objects.filter(repository=self.problem_repository, display_id=display_id).first()
+        return self.problem_repository.problems.filter(display_id=display_id).first()
 
 
 class Team(models.Model):
