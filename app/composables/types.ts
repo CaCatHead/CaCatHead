@@ -91,3 +91,5 @@ export interface FullPolygonProblem {
     problem_content: ProblemContent;
   };
 }
+
+export interface ContestSubmission {}

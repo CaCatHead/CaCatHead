@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FullContest } from '@/composables/types';
 
+import { indexToOffset } from './utils';
+
 const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
@@ -9,10 +11,9 @@ const { contest } = toRefs(props);
 
 const getPid = () => {
   const pid = route.params.pid as string;
-  if (/^[A-Z]$/.test(pid)) {
-    return pid.charCodeAt(0) - 65;
-  } else if (/^[a-z]$/.test(pid)) {
-    return pid.charCodeAt(0) - 97;
+  const value = indexToOffset(pid);
+  if (value !== undefined) {
+    return value;
   } else {
     navigateTo(`/contest/${route.params.id}`);
     return 0;

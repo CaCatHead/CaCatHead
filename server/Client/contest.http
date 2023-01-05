@@ -56,3 +56,17 @@ Content-Type: application/json
     "student_number": "12345678"
   }
 }
+
+### Submit contest code
+POST http://127.0.0.1:8000/api/contest/5/problem/1000/submit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "language": "cpp",
+  "code": "#include <iostream>\n\nusing namespace std;\n\nint main() {\n  int a = 1, b = 1;\n  cin >> a >> b;\n  cout << a + b << '\\n';\n  return 0;\n}"
+}
+
+### List own submissions
+GET http://127.0.0.1:8000/api/contest/6/status
+Authorization: Token {{auth_token}}

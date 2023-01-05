@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import type { FullContest } from '@/composables/types';
 
+import { displyaIdToIndex } from './problems/utils';
+
 const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
-
-const toDisplayId = (id: number, offset = 1000) => {
-  return String.fromCharCode(65 + (id - offset));
-};
 </script>
 
 <template>
@@ -22,11 +20,11 @@ const toDisplayId = (id: number, offset = 1000) => {
         >
       </template>
       <template #display_id="{ row }">{{
-        toDisplayId(row.display_id)
+        displyaIdToIndex(row.display_id)
       }}</template>
       <template #title="{ row }">
         <nuxt-link
-          :to="`/contest/${route.params.id}/problems/${toDisplayId(
+          :to="`/contest/${route.params.id}/problems/${displyaIdToIndex(
             row.display_id
           )}`"
           class="text-link"

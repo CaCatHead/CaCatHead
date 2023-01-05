@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
+from CaCatHead.contest.serializers import TeamSerializer
 from CaCatHead.problem.serializers import ProblemSerializer, ProblemRepositorySerializer, PolygonProblemSerializer
-from CaCatHead.submission.models import Submission
+from CaCatHead.submission.models import Submission, ContestSubmission
 from CaCatHead.user.serializers import UserSerializer
 
 
@@ -15,6 +16,17 @@ class SubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = ['id', 'repository', 'problem', 'code_length', 'language', 'created', 'judged', 'verdict',
+                  'score', 'time_used', 'memory_used', 'owner']
+
+
+class ContestSubmissionSerializer(serializers.ModelSerializer):
+    problem = ProblemSerializer(read_only=True)
+
+    owner = TeamSerializer(read_only=True)
+
+    class Meta:
+        model = ContestSubmission
+        fields = ['id', 'type', 'problem', 'code_length', 'language', 'created', 'judged', 'relative_time', 'verdict',
                   'score', 'time_used', 'memory_used', 'owner']
 
 

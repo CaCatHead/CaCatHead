@@ -12,11 +12,13 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
     EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
     UserRegisterPayloadSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
-from CaCatHead.contest.services.registration import single_user_register
+from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem
 from CaCatHead.core.decorators import func_validate_request
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
+from CaCatHead.submission.models import ContestSubmission
+from CaCatHead.submission.serializers import ContestSubmissionSerializer
 from CaCatHead.utils import make_response
 
 
@@ -140,4 +142,21 @@ def user_submit_code(request: Request, contest_id: int, problem_id: int):
         raise NotFound(f'比赛 {contest.title} 没有题目 {problem_id}')
     contest_submission = user_submit_problem(request.user, contest, problem,
                                              code=request.data['code'], language=request.data['language'])
+    return make_response(submission=ContestSubmissionSerializer(contest_submission).data)
+
+
+@api_view()
+def user_list_own_submissions(request: Request, contest_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    teams = [make_single_user_team(request.user).id]
+    registration = ContestRegistration.objects.get_registration(contest, request.user)
+    if registration is not None:
+        teams.append(registration.team.id)
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
+    return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+
+
+@api_view()
+def user_view_submission(request: Request, contest_id: int, submission_id: int):
+    contest = check_read_contest(request.user, contest_id)
     return make_response()
