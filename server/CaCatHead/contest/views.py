@@ -18,7 +18,7 @@ from CaCatHead.core.decorators import func_validate_request
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
 from CaCatHead.submission.models import ContestSubmission
-from CaCatHead.submission.serializers import ContestSubmissionSerializer
+from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer
 from CaCatHead.utils import make_response
 
 
@@ -159,4 +159,10 @@ def user_list_own_submissions(request: Request, contest_id: int):
 @api_view()
 def user_view_submission(request: Request, contest_id: int, submission_id: int):
     contest = check_read_contest(request.user, contest_id)
-    return make_response()
+    submission = ContestSubmission.objects.filter(repository=contest.problem_repository, id=submission_id).first()
+    # 管理员用户，比赛所有者，用户自己
+    if request.user.is_staff or request.user.is_superuser or contest.has_admin_permission(
+            request.user) or submission.has_user(request.user):
+        return make_response(submission=FullContestSubmissionSerializer(submission).data)
+    else:
+        raise NotFound(detail='提交未找到')

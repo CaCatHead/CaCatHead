@@ -93,3 +93,8 @@ export interface FullPolygonProblem {
 }
 
 export interface ContestSubmission {}
+
+export interface FullContestSubmission {
+  code: string;
+  detail: any;
+}

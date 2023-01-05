@@ -127,3 +127,10 @@ class ContestSubmission(models.Model):
         verbose_name = _(u"比赛提交信息")
 
         verbose_name_plural = _(u"比赛提交信息列表")
+
+    def has_user(self, user: User):
+        members = self.owner.members.all()
+        for member in members:
+            if member.id == user.id:
+                return True
+        return False

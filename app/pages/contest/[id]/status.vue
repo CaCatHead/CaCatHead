@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ContestSubmission } from '@/composables/types';
 
-import { displyaIdToIndex } from './problems/utils';
+import { displyaIdToIndex } from './problem/utils';
 
 const route = useRoute();
 
@@ -38,7 +38,7 @@ const { data } = useFetchAPI<{ submissions: ContestSubmission[] }>(
       </template>
       <template #problem="{ row }">
         <nuxt-link
-          :to="`/contest/${route.params.id}/problems/${displyaIdToIndex(
+          :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
             row.problem.display_id
           )}/`"
           text-sky-700
@@ -50,7 +50,7 @@ const { data } = useFetchAPI<{ submissions: ContestSubmission[] }>(
       </template>
       <template #language="{ row }">{{ row.language }}</template>
       <template #verdict="{ row }">
-        <nuxt-link :to="`/contest/${route.params.id}/submissions/${row.id}`">
+        <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`">
           <verdict :verdict="row.verdict"></verdict>
         </nuxt-link>
       </template>

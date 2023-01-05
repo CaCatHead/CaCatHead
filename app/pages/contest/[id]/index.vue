@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FullContest } from '@/composables/types';
 
-import { displyaIdToIndex } from './problems/utils';
+import { displyaIdToIndex } from './problem/utils';
 
 const route = useRoute();
 
@@ -24,7 +24,7 @@ const { contest } = toRefs(props);
       }}</template>
       <template #title="{ row }">
         <nuxt-link
-          :to="`/contest/${route.params.id}/problems/${displyaIdToIndex(
+          :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
             row.display_id
           )}`"
           class="text-link"

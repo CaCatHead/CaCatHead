@@ -53,6 +53,10 @@ class Contest(BaseModel):
         now = timezone.now()
         return self.end_time < now
 
+    def has_admin_permission(self, user: User):
+        return Contest.objects.filter_user_permission(user=user, permission=ContestPermissions.EditContest).filter(
+            id=self.id).count() > 0
+
     def can_edit_contest(self, user: User):
         return Contest.objects.filter_user_permission(user=user, permission=ContestPermissions.EditContest).filter(
             id=self.id).count() > 0
