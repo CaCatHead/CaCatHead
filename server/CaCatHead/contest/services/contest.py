@@ -51,7 +51,7 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
     if 'problems' in payload and payload['problems'] is not None and isinstance(payload['problems'], list):
         contest = edit_contest_problems(user, contest, payload['problems'])
     contest.save()
-    return contest
+    return Contest.objects.filter(id=contest.id).first()
 
 
 def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
@@ -73,5 +73,4 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
             copy_repo_problem(user=contest.owner, repo=contest.problem_repository, problem=problem)
         else:
             raise NotFound(detail=f'未找到题目{p}，或者权限不足')
-    contest = Contest.objects.filter(id=contest.id).first()
     return contest
