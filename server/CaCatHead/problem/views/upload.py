@@ -20,7 +20,7 @@ class ProblemDirectory:
         config_path = root / 'config.json'
         if not config_path.exists():
             json.dump({'problem': {}, 'testcases': []}, open(config_path, 'w'))
-        self.config = json.load(open(config_path))
+        self.config = json.load(open(config_path, encoding='UTF-8'))
 
     @classmethod
     def make(cls, problem: Problem):
