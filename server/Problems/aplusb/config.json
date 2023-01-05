@@ -3,13 +3,13 @@
     "title": "A + B",
     "time_limit": 1000,
     "memory_limit": 262144,
-    "description": "Calculate A + B.",
-    "input": "Two numbers.",
-    "output": "Answer.",
+    "description": "You are given two integers $a$ and $b$. Print $a+b$.",
+    "input": "The only line of the input contains integers $a$ and $b$ ($-100 \\le a,b \\le 100$).",
+    "output": "Print $a+b$.",
     "sample": [
       { "input": "1 1", "answer": "2" }
     ],
-    "hint": "",
+    "hint": "In the first example, $a=1$ and $b=1$. Thus, the answer is $a+b=1+1=2$.",
     "source": "",
     "extra_content": {}
   },
@@ -17,13 +17,61 @@
     {
       "input": "1.in",
       "answer": "1.ans",
-      "score": 50,
+      "score": 10,
       "sample": true
     },
     {
       "input": "2.in",
       "answer": "2.ans",
-      "score": 50,
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "3.in",
+      "answer": "3.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "4.in",
+      "answer": "4.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "5.in",
+      "answer": "5.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "6.in",
+      "answer": "6.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "7.in",
+      "answer": "7.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "8.in",
+      "answer": "8.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "9.in",
+      "answer": "9.ans",
+      "score": 10,
+      "sample": false
+    },
+    {
+      "input": "10.in",
+      "answer": "10.ans",
+      "score": 10,
       "sample": false
     }
   ]

@@ -119,7 +119,7 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
 
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
-    problem_directory = upload_problem_arch(problem.id, zip_content)
+    problem_directory = upload_problem_arch(problem.problem_info.problem_judge.id, zip_content)
 
     if problem_directory is None:
         raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
