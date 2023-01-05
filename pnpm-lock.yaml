@@ -24,7 +24,7 @@ importers:
       markdown-it-math: ^4.1.1
       md-editor-v3: ^2.7.2
       nuxt: 3.0.0
-      nuxt-proxy: 0.3.4
+      nuxt-proxy: ^0.3.4
     dependencies:
       '@pinia/nuxt': 0.4.6
       '@vueuse/core': 9.10.0
