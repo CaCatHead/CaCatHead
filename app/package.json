@@ -9,24 +9,24 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.6",
-    "@vueuse/core": "^9.6.0",
-    "@vueuse/nuxt": "^9.6.0",
+    "@vueuse/core": "^9.10.0",
+    "@vueuse/nuxt": "^9.10.0",
     "date-fns": "^2.29.3",
     "fflate": "^0.7.4",
     "github-markdown-css": "^5.1.0",
-    "katex": "^0.16.3",
+    "katex": "^0.16.4",
     "markdown-it": "^13.0.1",
     "markdown-it-math": "^4.1.1",
-    "md-editor-v3": "^2.5.0"
+    "md-editor-v3": "^2.7.2"
   },
   "devDependencies": {
-    "@iconify-json/carbon": "^1.1.11",
-    "@iconify-json/mdi": "^1.1.36",
-    "@nuxtjs/fontaine": "^0.2.3",
-    "@types/katex": "^0.14.0",
+    "@iconify-json/carbon": "^1.1.13",
+    "@iconify-json/mdi": "^1.1.41",
+    "@nuxtjs/fontaine": "^0.2.4",
+    "@types/katex": "^0.16.0",
     "@types/node": "18.8.0",
-    "@unocss/nuxt": "^0.47.5",
+    "@unocss/nuxt": "^0.48.0",
     "nuxt": "3.0.0",
-    "nuxt-proxy": "^0.3.4"
+    "nuxt-proxy": "^0.3.7"
   }
 }
