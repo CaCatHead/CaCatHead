@@ -1,3 +1,5 @@
+import { Verdict } from './verdict';
+
 export interface User {
   id: number;
 
@@ -9,6 +11,8 @@ export interface User {
 export type FullUser = User & {
   permissions: { polygon: boolean; add_post: boolean; add_contest: boolean };
 };
+
+export interface Team {}
 
 export interface Contest {
   id: number;
@@ -92,9 +96,35 @@ export interface FullPolygonProblem {
   };
 }
 
-export interface ContestSubmission {}
+export interface ContestSubmission {
+  relative_time: number;
+
+  verdict: Verdict;
+
+  problem: {
+    display_id: number;
+
+    title: string;
+  };
+}
 
 export interface FullContestSubmission {
   code: string;
   detail: any;
+}
+
+export interface ContestStandings {
+  name: string;
+
+  team: Team;
+
+  created: string;
+
+  score: number;
+
+  dirty: number;
+
+  standings: {
+    submissions: ContestSubmission[];
+  };
 }

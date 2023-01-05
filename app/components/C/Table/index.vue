@@ -26,13 +26,14 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
         </tr>
       </thead>
       <tbody divide-y>
-        <tr v-for="row in data">
+        <tr v-for="(row, index) in data">
           <td
             v-for="col in columns"
-            p2
-            :class="['text-' + col.align, col.class]"
+            :class="['p2', 'text-' + col.align, col.class]"
           >
-            <slot :name="col.name" v-bind="{ row }">{{ row[col.name] }}</slot>
+            <slot :name="col.name" v-bind="{ row, index }">{{
+              row[col.name]
+            }}</slot>
           </td>
         </tr>
       </tbody>
