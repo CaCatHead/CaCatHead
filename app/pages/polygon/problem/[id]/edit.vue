@@ -16,6 +16,8 @@ const submit = async () => {
       input: problem.value.problem_info.problem_content.input ?? '',
       output: problem.value.problem_info.problem_content.output ?? '',
       hint: problem.value.problem_info.problem_content.hint ?? '',
+      time_limit: problem.value.time_limit,
+      memory_limit: problem.value.memory_limit,
     },
   });
 
@@ -29,6 +31,22 @@ const submit = async () => {
     <div space-y-8>
       <c-input id="title" type="text" v-model="problem.title">
         <template #label><label for="title" font-600>标题</label></template>
+      </c-input>
+
+      <c-input id="time_limit" type="number" v-model="problem.time_limit">
+        <template #label
+          ><label for="time_limit" font-600
+            >时间限制 (单位: ms)</label
+          ></template
+        >
+      </c-input>
+
+      <c-input id="memory_limit" type="number" v-model="problem.memory_limit">
+        <template #label
+          ><label for="memory_limit" font-600
+            >空间限制 (单位: KB)</label
+          ></template
+        >
       </c-input>
 
       <div>
