@@ -75,3 +75,11 @@ class ContestRegistrationSerializer(serializers.BaseSerializer):
             'created': registration.created,
             'extra_info': registration.extra_info
         }
+
+
+class ContestStandingSerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+
+    class Meta:
+        model = ContestRegistration
+        fields = ['name', 'team', 'created', 'score', 'dirty', 'standings', 'extra_info']

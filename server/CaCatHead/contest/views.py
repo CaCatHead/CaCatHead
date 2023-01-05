@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
     EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
-    UserRegisterPayloadSerializer
+    UserRegisterPayloadSerializer, ContestStandingSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem
@@ -167,3 +167,11 @@ def user_view_submission(request: Request, contest_id: int, submission_id: int):
         return make_response(submission=FullContestSubmissionSerializer(submission).data)
     else:
         raise NotFound(detail='提交未找到')
+
+
+@api_view()
+def user_view_standings(request: Request, contest_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    registrations = ContestRegistration.objects.filter(contest=contest)
+    # TODO: 添加权限开关
+    return make_response(registrations=ContestStandingSerializer(registrations, many=True).data)

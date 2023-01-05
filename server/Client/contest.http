@@ -70,3 +70,8 @@ Content-Type: application/json
 ### List own submissions
 GET http://127.0.0.1:8000/api/contest/6/status
 Authorization: Token {{auth_token}}
+
+### Get standings
+GET http://127.0.0.1:8000/api/contest/5/standings
+Authorization: Token {{auth_token}}
+

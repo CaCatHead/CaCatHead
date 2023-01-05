@@ -250,6 +250,7 @@ class SubmissionTask:
                                                            type=ContestSubmissionType.contestant).all()
             score = 0
             dirty = 0  # 单位：秒
+            standings = []
             accepted = set()
             penalty = dict()
             penalty_unit = 20 * 60  # 20 分钟
@@ -269,8 +270,25 @@ class SubmissionTask:
                         penalty[sub.problem.id] = 1
                     else:
                         penalty[sub.problem.id] += 1
+                standings.append({
+                    'id': sub.id,
+                    'problem': {
+                        'display_id': sub.problem.display_id,
+                        'title': sub.problem.title
+                    },
+                    'code_length': sub.code_length,
+                    'language': sub.language,
+                    'created': sub.created.isoformat(),
+                    'judged': sub.judged.isoformat(),
+                    'relative_time': sub.relative_time,
+                    'verdict': sub.verdict,
+                    'score': sub.score,
+                    'time_used': sub.time_used,
+                    'memory_used': sub.memory_used
+                })
             self.registration.score = score
             self.registration.dirty = dirty
+            self.registration.standings = {'submissions': standings}
         elif contest.type == ContestType.ioi:
             pass
         self.registration.save()
