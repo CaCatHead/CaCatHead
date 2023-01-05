@@ -17,6 +17,16 @@ const alphabet = new Array(contest.value.problems.length)
   .fill(undefined)
   .map((_value, idx) => String.fromCharCode(65 + idx));
 
+function toNumDuration(seconds: number) {
+  function alignNumber(value: number) {
+    return (value < 10 ? '0' : '') + value;
+  }
+  const hour = Math.floor(seconds / 3600);
+  const minute = Math.floor((seconds % 3600) / 60);
+  const sec = seconds % 60;
+  return `${hour}:${alignNumber(minute)}:${alignNumber(sec)}`;
+}
+
 const registrations = computed(() => {
   const list = data?.value?.registrations ?? [];
 
@@ -83,7 +93,7 @@ const registrations = computed(() => {
       <template #name="{ row }">
         <team-link :team="row.team"></team-link>
       </template>
-      <template #penalty="{ row }">{{ (row.dirty / 60).toFixed(0) }}</template>
+      <template #penalty="{ row }">{{ toNumDuration(row.dirty) }}</template>
 
       <template v-for="idx in alphabet" #[idx]="{ row }">
         <standing-result
