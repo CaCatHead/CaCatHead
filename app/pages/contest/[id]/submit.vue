@@ -1,20 +1,28 @@
 <script setup lang="ts">
+import type { FullContest } from '@/composables/types';
+
+const props = defineProps<{ contest: FullContest }>();
+
+const { contest } = toRefs(props);
+
 const route = useRoute();
 const notify = useNotification();
 
 const problem = ref(1000);
-const code = ref('');
-const language = ref('cpp');
+const handleSelect = (e: any) => {
+  problem.value = e?.target?.value ?? 1000;
+};
 
-const submit = async () => {
+const submit = async (payload: { code: string; language: string }) => {
+  const { code, language } = payload;
   try {
     await fetchAPI(
       `/api/contest/${route.params.id}/problem/${problem.value}/submit`,
       {
         method: 'POST',
         body: {
-          code: code.value,
-          language: language.value,
+          code,
+          language,
         },
       }
     );
@@ -28,22 +36,19 @@ const submit = async () => {
 
 <template>
   <div>
-    <div>
-      <c-input type="text" id="problem" v-model="problem">
-        <template #label>
-          <span font-600>题目</span>
-        </template>
-      </c-input>
-    </div>
-    <div>
-      <span mr2 font-600>语言:</span>
-      <span>C++</span>
-    </div>
-    <c-input type="textarea" id="code" v-model="code" font-mono>
-      <template #label><span></span></template>
-    </c-input>
-    <div>
-      <c-button color="success" w-full @click="submit">提交</c-button>
-    </div>
+    <problem-submit @submit="submit">
+      <div>
+        <label for="problem" font-600 mb2 inline-block>题目</label>
+        <c-select id="problem" @click="handleSelect">
+          <option
+            v-for="p in contest.problems"
+            :value="p.display_id"
+            :selected="problem === p.display_id"
+          >
+            {{ displyaIdToIndex(p.display_id) }}. {{ p.title }}
+          </option>
+        </c-select>
+      </div>
+    </problem-submit>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { FullContest } from '@/composables/types';
 import { format, addMinutes } from 'date-fns';
+
+import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
 

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { FullContest } from '@/composables/types';
 
-import { displyaIdToIndex } from './problem/utils';
-
 const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { ContestSubmission } from '@/composables/types';
 
-import { displyaIdToIndex } from './problem/utils';
-
 const route = useRoute();
 
 const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
