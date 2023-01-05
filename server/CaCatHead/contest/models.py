@@ -14,6 +14,11 @@ class ContestType(models.TextChoices):
     ioi = 'ioi'
 
 
+class ContestSettings(models.TextChoices):
+    view_standings = 'view_standings'
+    view_submissions_after_contest = 'view_submissions_after_contest'
+
+
 class Contest(BaseModel):
     title = models.CharField(max_length=256, verbose_name=_(u"标题"))
 
@@ -33,6 +38,10 @@ class Contest(BaseModel):
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
     password = models.CharField(default=None, null=True, blank=True, max_length=256, verbose_name=_(u"注册密码"))
+
+    settings = models.JSONField(default={ContestSettings.view_standings: True,
+                                         ContestSettings.view_submissions_after_contest: False},
+                                verbose_name=_(u"比赛设置"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
@@ -59,7 +68,15 @@ class Contest(BaseModel):
         now = timezone.now()
         return self.end_time < now
 
+    def enable_settings(self, perm: str) -> bool:
+        if perm in self.settings:
+            return bool(self.settings[perm])
+        else:
+            return False
+
     def has_admin_permission(self, user: User):
+        if user.is_superuser or user.is_staff:
+            return True
         return Contest.objects.filter_user_permission(user=user, permission=ContestPermissions.EditContest).filter(
             id=self.id).count() > 0
 

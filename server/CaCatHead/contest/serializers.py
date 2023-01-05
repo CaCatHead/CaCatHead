@@ -27,6 +27,10 @@ class EditContestPayloadSerializer(serializers.Serializer):
     problems = serializers.ListSerializer(child=serializers.IntegerField(), required=False, allow_null=True,
                                           allow_empty=True)
 
+    view_standings = serializers.BooleanField(required=False, allow_null=True)
+
+    view_submissions_after_contest = serializers.BooleanField(required=False, allow_null=True)
+
 
 class UserRegisterPayloadSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, max_length=256)
@@ -54,6 +58,7 @@ class ContestContentSerializer(serializers.BaseSerializer):
             'freeze_time': contest.freeze_time,
             'end_time': contest.end_time,
             'is_public': contest.is_public,
+            'settings': contest.settings,
             'owner': UserSerializer(contest.owner).data,
             'problems': ProblemContentSerializer(contest.problem_repository.problems, many=True).data
         }

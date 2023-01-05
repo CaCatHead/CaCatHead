@@ -30,12 +30,20 @@ if (
       <c-nav-item to="">面板</c-nav-item>
       <c-nav-item to="submit">提交代码</c-nav-item>
       <c-nav-item to="status">我的提交</c-nav-item>
-      <c-nav-item to="submissions">所有提交</c-nav-item>
+      <c-nav-item
+        to="submissions"
+        v-if="
+          isContestAdmin(contest.contest, user) ||
+          (isContestEnd(contest.contest) &&
+            contest.contest?.settings?.view_submissions_after_contest)
+        "
+        >所有提交</c-nav-item
+      >
       <c-nav-item to="standings">排行榜</c-nav-item>
-      <c-nav-item to="settings" v-if="contest.contest.owner.id === user?.id"
+      <c-nav-item to="settings" v-if="isContestAdmin(contest.contest, user)"
         >比赛设置</c-nav-item
       >
-      <c-nav-item to="permissions" v-if="contest.contest.owner.id === user?.id"
+      <c-nav-item to="permissions" v-if="isContestAdmin(contest.contest, user)"
         >权限管理</c-nav-item
       >
     </c-nav>

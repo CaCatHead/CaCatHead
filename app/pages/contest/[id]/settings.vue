@@ -31,6 +31,10 @@ const duration = ref(formatDuration());
 const problems = ref('');
 
 const is_public = ref(contest.value.is_public);
+const view_standings = ref(contest.value?.settings?.view_standings);
+const view_submissions_after_contest = ref(
+  contest.value?.settings?.view_submissions_after_contest
+);
 
 const notify = useNotification();
 
@@ -48,6 +52,8 @@ const submit = async () => {
           start_time: start,
           end_time: end,
           is_public: is_public.value,
+          view_standings: view_standings.value,
+          view_submissions_after_contest: view_submissions_after_contest.value,
           problems:
             problems.value !== ''
               ? problems.value
@@ -90,6 +96,17 @@ const submit = async () => {
     <div flex items-center space-x-4>
       <span>是否公开</span>
       <c-switch id="is_public" v-model="is_public"></c-switch>
+    </div>
+    <div flex items-center space-x-4>
+      <span>是否开启赛时榜单</span>
+      <c-switch id="view_standings" v-model="view_standings"></c-switch>
+    </div>
+    <div flex items-center space-x-4>
+      <span>是否开启赛后查看提交</span>
+      <c-switch
+        id="view_submissions_after_contest"
+        v-model="view_submissions_after_contest"
+      ></c-switch>
     </div>
 
     <div>

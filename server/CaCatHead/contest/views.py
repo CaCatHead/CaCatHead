@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from CaCatHead.contest.models import Contest, ContestRegistration
+from CaCatHead.contest.models import Contest, ContestRegistration, ContestSettings
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
     EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
     UserRegisterPayloadSerializer, ContestStandingSerializer
@@ -169,17 +169,42 @@ def user_list_own_submissions(request: Request, contest_id: int):
 def user_view_submission(request: Request, contest_id: int, submission_id: int):
     contest = check_read_contest(request.user, contest_id)
     submission = ContestSubmission.objects.filter(repository=contest.problem_repository, id=submission_id).first()
-    # 管理员用户，比赛所有者，用户自己
-    if request.user.is_staff or request.user.is_superuser or contest.has_admin_permission(
-            request.user) or submission.has_user(request.user):
+
+    if submission is None:
+        raise NotFound('提交未找到')
+    elif contest.has_admin_permission(request.user) or submission.has_user(request.user):
+        # 管理员用户，比赛所有者，用户自己
         return make_response(submission=FullContestSubmissionSerializer(submission).data)
     else:
-        raise NotFound(detail='提交未找到')
+        if contest.is_ended():
+            # 比赛已经结束
+            if contest.enable_settings(ContestSettings.view_submissions_after_contest):
+                return make_response(submission=FullContestSubmissionSerializer(submission).data)
+            else:
+                # 没有权限访问该提交
+                raise NotFound(detail='没有权限访问该提交')
+        else:
+            # 比赛尚未结束，无法查看其他提交
+            raise NotFound(detail='比赛尚未结束，无法查看其他提交')
 
 
 @api_view()
 def user_view_standings(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     registrations = ContestRegistration.objects.filter(contest=contest)
-    # TODO: 添加权限开关
-    return make_response(registrations=ContestStandingSerializer(registrations, many=True).data)
+    response = make_response(registrations=ContestStandingSerializer(registrations, many=True).data)
+
+    if contest.has_admin_permission(request.user):
+        # 管理员可以查看榜单
+        return response
+    elif contest.is_running():
+        # 比赛进行中，必须打开设置才能查看榜单
+        if contest.enable_settings(ContestSettings.view_standings):
+            return response
+        else:
+            raise APIException(detail='您无权访问比赛榜单', code=400)
+    elif contest.is_ended():
+        # 比赛结束，可以查看榜单
+        return response
+    else:
+        raise APIException(detail='您无权访问比赛榜单', code=400)

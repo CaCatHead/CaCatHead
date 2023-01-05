@@ -28,7 +28,10 @@ export interface Contest {
   is_public: boolean;
 }
 
-export type FullContest = Contest & { problems: Array<FullPolygonProblem> };
+export type FullContest = Contest & {
+  settings: Record<string, boolean>;
+  problems: Array<FullPolygonProblem>;
+};
 
 export interface Registration {
   name: string;
