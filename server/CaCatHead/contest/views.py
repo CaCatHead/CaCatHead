@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.utils import timezone
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound, APIException
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
@@ -14,7 +14,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem
-from CaCatHead.core.decorators import func_validate_request
+from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
 from CaCatHead.submission.models import ContestSubmission
@@ -165,6 +165,7 @@ def user_unregister_contest(request: Request, contest_id: int):
 
 
 @api_view(['POST'])
+@throttle_classes([SubmitRateThrottle])
 @func_validate_request(SubmitCodePayload)
 def user_submit_code(request: Request, contest_id: int, problem_id: int):
     contest = check_read_contest(request.user, contest_id)
