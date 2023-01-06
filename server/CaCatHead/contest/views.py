@@ -124,7 +124,7 @@ class ContestRegistrationView(APIView):
 def user_register_contest(request: Request, contest_id: int):
     # 用户有注册比赛的权限
     contest = check_register_contest(user=request.user, contest_id=contest_id)
-    # 比赛尚未结束
+    # 比赛结束后，无法注册
     if timezone.now() > contest.end_time:
         raise APIException(detail='比赛已结束', code=400)
     # 检查比赛邀请码是否输入正确
@@ -140,6 +140,20 @@ def user_register_contest(request: Request, contest_id: int):
                                         name=request.data['name'],
                                         extra_info=request.data['extra_info'])
     return make_response(registration=ContestRegistrationSerializer(registration).data)
+
+
+@api_view(['POST'])
+def user_unregister_contest(request: Request, contest_id: int):
+    contest = check_register_contest(user=request.user, contest_id=contest_id)
+    # 比赛开始后，无法取消注册
+    if timezone.now() >= contest.start_time:
+        raise APIException(detail='比赛已开始', code=400)
+    registration = ContestRegistration.objects.get_registration(contest, request.user)
+    if registration.team.owner == request.user:
+        registration.delete()
+        return make_response()
+    else:
+        raise APIException(detail='只有队伍的队长可以取消比赛注册', code=400)
 
 
 @api_view(['POST'])

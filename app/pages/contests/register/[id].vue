@@ -25,7 +25,7 @@ const name = ref(
     ''
 );
 
-const submit = async () => {
+const register = async () => {
   try {
     await fetchAPI(`/api/contest/${route.params.id}/register`, {
       method: 'POST',
@@ -40,6 +40,18 @@ const submit = async () => {
     notify.danger(`比赛 ${contest.value?.contest.title} 注册失败`);
   }
 };
+
+const unregister = async () => {
+  try {
+    await fetchAPI(`/api/contest/${route.params.id}/unregister`, {
+      method: 'POST',
+    });
+    notify.success(`比赛 ${contest.value?.contest.title} 取消注册成功`);
+    await navigateTo(`/contests`);
+  } catch {
+    notify.danger(`比赛 ${contest.value?.contest.title} 取消注册失败`);
+  }
+};
 </script>
 
 <template>
@@ -49,15 +61,15 @@ const submit = async () => {
       <template #label>队伍名称</template>
     </c-input>
     <div v-if="!contest?.registration">
-      <c-button w-full color="success" @click="submit">注册</c-button>
+      <c-button w-full color="success" @click="register">注册</c-button>
     </div>
     <div v-else space-y-4>
       <div border rounded p4 bg-success bg-op-30 font-bold>
         你已经注册本比赛
       </div>
       <div flex gap4>
-        <c-button w="1/2" color="success" @click="submit">更新信息</c-button>
-        <c-button w="1/2" color="danger">取消注册</c-button>
+        <c-button w="1/2" color="success" @click="register">更新信息</c-button>
+        <c-button w="1/2" color="danger" @click="unregister">取消注册</c-button>
       </div>
     </div>
   </div>

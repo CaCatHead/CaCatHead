@@ -74,7 +74,7 @@ urlpatterns = [
     path('api/contest/<int:contest_id>/registrations', contest_views.ContestRegistrationView.as_view()),  # 编辑比赛人员列表
     # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     path('api/contest/<int:contest_id>/register', contest_views.user_register_contest),  # 参加比赛
-    # path('api/contest/<int:contest_id>/unregister'),  # 取消注册比赛
+    path('api/contest/<int:contest_id>/unregister', contest_views.user_unregister_contest),  # 取消注册比赛
     path('api/contest/<int:contest_id>/public', contest_views.get_contest_public),  # 查看比赛详情, 包括题目内容
     path('api/contest/<int:contest_id>/content', contest_views.get_contest),  # 查看比赛详情, 包括题目内容
     path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit', contest_views.user_submit_code),  # 提交代码
