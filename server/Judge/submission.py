@@ -271,22 +271,27 @@ class SubmissionTask:
                         penalty[sub.problem.id] = 1
                     else:
                         penalty[sub.problem.id] += 1
-                standings.append({
-                    'id': sub.id,
-                    'problem': {
-                        'display_id': sub.problem.display_id,
-                        'title': sub.problem.title
-                    },
-                    'code_length': sub.code_length,
-                    'language': sub.language,
-                    'created': sub.created.isoformat(),
-                    'judged': sub.judged.isoformat(),
-                    'relative_time': sub.relative_time,
-                    'verdict': sub.verdict,
-                    'score': sub.score,
-                    'time_used': sub.time_used,
-                    'memory_used': sub.memory_used
-                })
+
+                # 只有 AC 或者错误提交，才会记录到排行榜的提交中
+                if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+                    standings.append({
+                        'id': sub.id,
+                        'problem': {
+                            'display_id': sub.problem.display_id,
+                            'title': sub.problem.title
+                        },
+                        'code_length': sub.code_length,
+                        'language': sub.language,
+                        'created': sub.created.isoformat(),
+                        'judged': sub.judged.isoformat(),
+                        'relative_time': sub.relative_time,
+                        'verdict': sub.verdict,
+                        'score': sub.score,
+                        'time_used': sub.time_used,
+                        'memory_used': sub.memory_used
+                    })
+
             self.registration.score = score
             self.registration.dirty = dirty
             self.registration.standings = {'submissions': standings}
