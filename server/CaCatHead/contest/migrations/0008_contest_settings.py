@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('contest', '0007_alter_contest_type'),
     ]
@@ -13,6 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contest',
             name='settings',
-            field=models.JSONField(default={'view_standings': True, 'view_submissions_after_contest': False}, verbose_name='比赛设置'),
+            field=models.JSONField(default={'view_standings': True, 'view_submissions_after_contest': False},
+                                   verbose_name='比赛设置'),
         ),
     ]

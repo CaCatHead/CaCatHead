@@ -244,6 +244,7 @@ class SubmissionTask:
     def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
         if self.registration is None:
             return
+        self.registration.is_participate = True
         contest = self.registration.contest
         if contest.type == ContestType.icpc:
             submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
@@ -273,7 +274,8 @@ class SubmissionTask:
                         penalty[sub.problem.id] += 1
 
                 # 只有 AC 或者错误提交，才会记录到排行榜的提交中
-                if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
+                                   Verdict.IdlenessLimitExceeded,
                                    Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
                     standings.append({
                         'id': sub.id,

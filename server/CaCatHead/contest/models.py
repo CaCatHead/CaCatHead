@@ -137,6 +137,9 @@ class ContestRegistration(models.Model):
 
     dirty = models.IntegerField(default=0, verbose_name=_(u"罚时"))
 
+    # 标记是否真正参加了比赛，且提交过代码
+    is_participate = models.BooleanField(default=False, verbose_name=_(u"是否参加比赛"))
+
     standings = models.JSONField(default=dict, verbose_name=_(u"排名信息"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
@@ -146,7 +149,7 @@ class ContestRegistration(models.Model):
     class Meta:
         db_table = 'contest_registration'
 
-        ordering = ('-score', 'dirty')
+        ordering = ('-score', 'dirty', '-is_participate')
 
         indexes = [
             models.Index(fields=['contest', 'team'], name='contest_team_index')
