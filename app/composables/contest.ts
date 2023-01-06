@@ -1,6 +1,7 @@
 import type { Contest, User } from './types';
 
 import { formatInterval } from './date';
+import { off } from 'process';
 
 export const isContestStart = (contest: Contest) => {
   const now = new Date();
@@ -47,6 +48,15 @@ export function indexToOffset(pid: string) {
 }
 
 const OFFSET = 1000;
+
+export function indexToDisplayId(pid: string) {
+  const v = indexToOffset(pid);
+  if (v !== undefined) {
+    return v + OFFSET;
+  } else {
+    return undefined;
+  }
+}
 
 export function displyaIdToIndex(display_id: number) {
   return String.fromCharCode(65 + (display_id - OFFSET));

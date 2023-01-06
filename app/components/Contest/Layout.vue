@@ -3,9 +3,72 @@ import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
 
+const notify = useNotification();
+
 const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
+
+const problemId = computed(() => {
+  const path = route.path;
+  const match = /\/problem\/([a-zA-Z])\/?$/.exec(path);
+  if (match) {
+    return indexToDisplayId(match[1]) ?? -1;
+  } else {
+    return -1;
+  }
+});
+
+const language = ref('cpp');
+const codeFile = ref<File | undefined>(undefined);
+const onFileChange = (ev: any) => {
+  const target = ev.target as HTMLInputElement;
+  if (!target.files) return;
+  codeFile.value = target.files[0];
+  if (codeFile.value) {
+    const name = codeFile.value.name;
+    if (name.endsWith('.c')) {
+      language.value = 'c';
+    } else if (name.endsWith('.cpp') || name.endsWith('.cc')) {
+      language.value = 'cpp';
+    } else if (name.endsWith('.java')) {
+      language.value = 'java';
+    }
+  }
+};
+const submit = async () => {
+  try {
+    const readFileContent = (file: File): Promise<string> => {
+      return new Promise(res => {
+        const reader = new FileReader();
+        reader.addEventListener('loadend', ev => {
+          res((ev.target?.result as string) ?? '');
+        });
+        reader.readAsText(file);
+      });
+    };
+    if (problemId.value < 0) return;
+    if (codeFile.value) {
+      const code = await readFileContent(codeFile.value);
+      await fetchAPI(
+        `/api/contest/${route.params.id}/problem/${problemId.value}/submit`,
+        {
+          method: 'POST',
+          body: {
+            code,
+            language: language.value,
+          },
+        }
+      );
+      notify.success(`代码提交成功`);
+      await navigateTo(`/contest/${route.params.id}/status`);
+    } else {
+      notify.danger(`请选择上传代码文件`);
+    }
+  } catch {
+    notify.danger(`代码提交失败`);
+  }
+};
 
 const timestamp = useTimestamp({ offset: 1000 });
 const duration = getContestDuration(contest.value) * 60;
@@ -97,6 +160,32 @@ const formatProgress = (value: number) => {
                 {{ problem.title }}</span
               >
             </nuxt-link>
+          </div>
+        </div>
+      </div>
+      <div v-if="problemId >= 0" border="1 base" rounded-2>
+        <h3 p4 border="b-1 base" font-bold>提交代码</h3>
+        <div p4 space-y-4>
+          <problem-select-language
+            v-model="language"
+            :inline="true"
+            w-full
+          ></problem-select-language>
+          <div v-if="codeFile" flex="~ gap4" items-center>
+            <span font-600 inline-block>代码</span>
+            <span inline-block>{{ codeFile.name }}</span>
+          </div>
+
+          <div flex gap2>
+            <c-file-input
+              id="code"
+              @change="onFileChange"
+              accept=".cpp, .c, .cc, .java, .py"
+              variant="outline"
+              color="info"
+              >选择代码</c-file-input
+            >
+            <c-button color="success" @click="submit">提交</c-button>
           </div>
         </div>
       </div>
