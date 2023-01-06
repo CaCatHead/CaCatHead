@@ -46,7 +46,16 @@ if (!submission.value) {
           <team-link :team="row.owner"></team-link>
         </template>
         <template #problem="{ row }">
-          <span>{{ row.problem.title }}</span>
+          <nuxt-link
+            :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
+              row.problem.display_id
+            )}/`"
+            text-sky-700
+            text-op-70
+            hover:text-op-100
+            >{{ displyaIdToIndex(row.problem.display_id) }}.
+            {{ row.problem.title }}</nuxt-link
+          >
         </template>
         <template #language="{ row }">{{ row.language }}</template>
         <template #verdict="{ row }">
