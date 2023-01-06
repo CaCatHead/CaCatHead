@@ -56,6 +56,7 @@ services:
       - ./.cacathead/static:/root/CaCatHead/static
     secrets:
       - db_pass
+      - redis_pass
       - minio_pass
       - rmq_pass
     environment:
@@ -87,6 +88,7 @@ services:
       - ./.cacathead/logs/catj:/root/catj/logs
     secrets:
       - db_pass
+      - redis_pass
       - minio_pass
       - rmq_pass
     env_file:
@@ -157,8 +159,10 @@ services:
     restart: always
     networks:
       - cat_net
-    # volumes:
-    #   - /data:/data
+    secrets:
+      - redis_pass
+    volumes:
+      - ./.cacathead/redis:/data
 
   rabbitmq:
     image: rabbitmq:3.11.0
@@ -175,6 +179,8 @@ networks:
 
 secrets:
   db_pass:
+    file: ./pass.txt
+  redis_pass:
     file: ./pass.txt
   minio_pass:
     file: ./pass.txt

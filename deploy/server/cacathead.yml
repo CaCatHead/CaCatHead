@@ -32,6 +32,11 @@ database:
   username: root
   password: !ENV ${DB_PASS}
 
+redis:
+  host: redis
+  port: 6379
+  password: !ENV ${REDIS_PASS}
+
 rabbitmq:
   host: rabbitmq
   port: '5672'
