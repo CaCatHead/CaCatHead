@@ -25,7 +25,7 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
 
       <template #id="{ row }">
         <nuxt-link
-          :to="`/polygon/submission/${row.id}`"
+          :to="`/contest/${route.params.id}/submission/${row.id}`"
           text-sky-700
           text-op-70
           hover:text-op-100
