@@ -247,6 +247,7 @@ class SubmissionTask:
         contest = self.registration.contest
         if contest.type == ContestType.icpc:
             submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
+                                                           owner=self.registration.team,
                                                            type=ContestSubmissionType.contestant).all()
             score = 0
             dirty = 0  # 单位：秒
