@@ -274,7 +274,7 @@ class SubmissionTask:
 
                 # 只有 AC 或者错误提交，才会记录到排行榜的提交中
                 if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
                     standings.append({
                         'id': sub.id,
                         'problem': {
