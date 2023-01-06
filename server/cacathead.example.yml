@@ -32,6 +32,11 @@ database:
   username: !ENV ${DB_USER}
   password: !ENV ${DB_PASS}
 
+redis:
+  host: !ENV ${REDIS_HOST:localhost}
+  port: !ENV ${REDIS_HOST:6379}
+  password: !ENV ${REDIS_PASS}
+
 rabbitmq:
   host: !ENV ${RMQ_HOST:localhost}
   port: !ENV ${RMQ_PORT:5672}

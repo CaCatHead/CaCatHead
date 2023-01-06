@@ -73,6 +73,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/second',
+        'user': '10/second'
+    },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
@@ -135,8 +139,12 @@ DATABASES = {
 # https://docs.djangoproject.com/zh-hans/4.1/topics/cache/
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': '127.0.0.1:11211',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    },
+    'redis': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
     }
 }
 

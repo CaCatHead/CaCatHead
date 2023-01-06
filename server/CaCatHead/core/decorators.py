@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.throttling import UserRateThrottle
 
 from CaCatHead.core.constants import Permissions
 
@@ -44,3 +45,7 @@ class HasPolygonPermission(BasePermission):
             return user.has_perm(Permissions.POLYGON)
         else:
             return False
+
+
+class SubmitRateThrottle(UserRateThrottle):
+    rate = '12/minute'
