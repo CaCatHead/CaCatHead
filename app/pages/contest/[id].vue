@@ -26,7 +26,7 @@ if (
 <template>
   <div v-if="contest" class="c-contest">
     <h3 font-bold text-xl>{{ contest.contest.title }}</h3>
-    <c-nav :prefix="`/contest/${route.params.id}/`" my4>
+    <c-nav :prefix="`/contest/${route.params.id}/`" my4 lt-md="text-xs">
       <c-nav-item to="">面板</c-nav-item>
       <c-nav-item to="submit">提交代码</c-nav-item>
       <c-nav-item to="status">我的提交</c-nav-item>

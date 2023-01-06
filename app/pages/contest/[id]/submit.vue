@@ -35,20 +35,22 @@ const submit = async (payload: { code: string; language: string }) => {
 </script>
 
 <template>
-  <div>
-    <problem-submit @submit="submit">
-      <div>
-        <label for="problem" font-600 mb2 inline-block>题目</label>
-        <c-select id="problem" @click="handleSelect">
-          <option
-            v-for="p in contest.problems"
-            :value="p.display_id"
-            :selected="problem === p.display_id"
-          >
-            {{ displyaIdToIndex(p.display_id) }}. {{ p.title }}
-          </option>
-        </c-select>
-      </div>
-    </problem-submit>
-  </div>
+  <contest-layout :contest="contest">
+    <div>
+      <problem-submit @submit="submit">
+        <div>
+          <label for="problem" font-600 mb2 inline-block>题目</label>
+          <c-select id="problem" @click="handleSelect">
+            <option
+              v-for="p in contest.problems"
+              :value="p.display_id"
+              :selected="problem === p.display_id"
+            >
+              {{ displyaIdToIndex(p.display_id) }}. {{ p.title }}
+            </option>
+          </c-select>
+        </div>
+      </problem-submit>
+    </div>
+  </contest-layout>
 </template>

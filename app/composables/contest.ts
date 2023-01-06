@@ -1,5 +1,17 @@
 import type { Contest, User } from './types';
 
+import { formatInterval } from './date';
+
+export const isContestStart = (contest: Contest) => {
+  const now = new Date();
+  const start_time = new Date(contest.start_time);
+  if (now.getTime() >= start_time.getTime()) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const isContestEnd = (contest: Contest) => {
   const now = new Date();
   const end_time = new Date(contest.end_time);
@@ -8,6 +20,16 @@ export const isContestEnd = (contest: Contest) => {
   } else {
     return false;
   }
+};
+
+export const getContestDuration = (contest: Contest) => {
+  const d = formatInterval(
+    new Date(contest.start_time),
+    new Date(contest.end_time)
+  );
+  const h = d.hours ?? 0;
+  const m = d.minutes ?? 0;
+  return h * 60 + m;
 };
 
 export const isContestAdmin = (contest: Contest, user: User | undefined) => {

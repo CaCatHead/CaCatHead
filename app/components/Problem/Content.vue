@@ -34,8 +34,8 @@ async function copyToClipboard(text: string) {
     <h4>输出格式</h4>
     <c-markdown :content="content.output"></c-markdown>
 
-    <h4>样例</h4>
-    <div w-full>
+    <h4 v-if="content.sample && content.sample.length > 0">样例</h4>
+    <div v-if="content.sample && content.sample.length > 0" w-full>
       <div
         v-for="(sample, index) in content.sample"
         :key="index"

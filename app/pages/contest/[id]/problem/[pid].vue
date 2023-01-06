@@ -30,14 +30,16 @@ if (problem.value === undefined) {
 </script>
 
 <template>
-  <div v-if="problem">
-    <div text-left mb4>
-      <h3 font-bold text-2xl>{{ route.params.pid }}. {{ problem.title }}</h3>
+  <contest-layout :contest="contest">
+    <div v-if="problem">
+      <div text-left mb4>
+        <h3 font-bold text-2xl>{{ route.params.pid }}. {{ problem.title }}</h3>
+      </div>
+      <problem-content
+        :time="problem.time_limit"
+        :memory="problem.memory_limit"
+        :content="problem.problem_info.problem_content"
+      ></problem-content>
     </div>
-    <problem-content
-      :time="problem.time_limit"
-      :memory="problem.memory_limit"
-      :content="problem.problem_info.problem_content"
-    ></problem-content>
-  </div>
+  </contest-layout>
 </template>
