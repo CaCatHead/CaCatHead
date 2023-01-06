@@ -15,7 +15,7 @@ if (
   contest.value !== null
 ) {
   useHead({
-    title: `比赛 ${contest.value?.contest.title}`,
+    title: `${contest.value?.contest.title}`,
   });
 } else {
   notify.danger('比赛未找到或你无权访问此比赛');

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { FullContest, ContestSubmission } from '@/composables/types';
 
-import { format } from 'date-fns';
-
 const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
+
+const { contest } = toRefs(props);
+
+useHead({
+  title: `我的提交 - ${contest.value.title}`,
+});
 
 const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
   `/api/contest/${route.params.id}/status`

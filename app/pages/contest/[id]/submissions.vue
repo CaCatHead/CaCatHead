@@ -5,6 +5,12 @@ const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
 
+const { contest } = toRefs(props);
+
+useHead({
+  title: `所有提交 - ${contest.value.title}`,
+});
+
 const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
   `/api/contest/${route.params.id}/submissions`
 );

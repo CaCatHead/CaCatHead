@@ -7,6 +7,10 @@ const route = useRoute();
 const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
+
+useHead({
+  title: `面板 - ${contest.value.title}`,
+});
 </script>
 
 <template>

@@ -7,6 +7,10 @@ const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
 
+useHead({
+  title: `排行榜 - ${contest.value.title}`,
+});
+
 const { data } = await useFetchAPI<{ registrations: ContestStandings[] }>(
   `/api/contest/${route.params.id}/standings`
 );

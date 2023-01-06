@@ -9,6 +9,10 @@ const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
 
+useHead({
+  title: `比赛设置 - ${contest.value.title}`,
+});
+
 const title = ref(contest.value.title);
 
 const formatDatetime = (date: string) => {

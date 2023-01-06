@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import type { FullContestSubmission } from '@/composables/types';
+import type { FullContestSubmission, FullContest } from '@/composables/types';
 
 const route = useRoute();
+
+const props = defineProps<{ contest: FullContest }>();
+
+const { contest } = toRefs(props);
 
 const { data } = await useFetchAPI<{ submission: FullContestSubmission }>(
   `/api/contest/${route.params.id}/submission/${route.params.sid}`
@@ -14,6 +18,10 @@ const submission = computed(() => {
 if (!submission.value) {
   await navigateTo(`/contest/${route.params.id}/status`);
 }
+
+useHead({
+  title: `提交 #${route.params.sid} - ${contest.value.title}`,
+});
 </script>
 
 <template>

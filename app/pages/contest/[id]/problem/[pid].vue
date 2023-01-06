@@ -32,6 +32,10 @@ useLocalStorage(
   `contest/${route.params.id}/last-problem`,
   problem.value?.display_id
 ).value = problem.value?.display_id;
+
+useHead({
+  title: `${route.params.pid}. ${problem.value?.title} - ${contest.value.title}`,
+});
 </script>
 
 <template>

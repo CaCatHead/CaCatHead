@@ -5,6 +5,10 @@ const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
 
+useHead({
+  title: `提交代码 - ${contest.value.title}`,
+});
+
 const route = useRoute();
 const notify = useNotification();
 
