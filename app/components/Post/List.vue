@@ -21,7 +21,7 @@ defineProps<{ posts: Post[] }>();
         ></span>
       </p>
       <p v-if="post.content" mt4 pl4 py2 border="l-4 base">
-        {{ post.content }}
+        <c-markdown :content="post.content"></c-markdown>
       </p>
       <div
         v-if="post.content"
