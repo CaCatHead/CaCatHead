@@ -8,7 +8,12 @@ const { contest } = toRefs(props);
 const route = useRoute();
 const notify = useNotification();
 
-const problem = ref(1000);
+const lastProblem = useLocalStorage(
+  `contest/${route.params.id}/last-problem`,
+  1000
+);
+
+const problem = ref(lastProblem.value);
 const handleSelect = (e: any) => {
   problem.value = e?.target?.value ?? 1000;
 };

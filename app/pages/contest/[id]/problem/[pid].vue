@@ -27,6 +27,11 @@ const problem = computed(() => {
 if (problem.value === undefined) {
   await navigateTo(`/contest/${route.params.id}`);
 }
+
+useLocalStorage(
+  `contest/${route.params.id}/last-problem`,
+  problem.value?.display_id
+).value = problem.value?.display_id;
 </script>
 
 <template>
