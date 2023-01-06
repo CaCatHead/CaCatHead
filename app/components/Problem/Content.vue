@@ -28,13 +28,13 @@ async function copyToClipboard(text: string) {
   <div class="!max-w-full !w-full text-base prose prose-truegray">
     <c-markdown :content="content.description"></c-markdown>
 
-    <h4>输入格式</h4>
+    <h4 mt0>输入格式</h4>
     <c-markdown :content="content.input"></c-markdown>
 
-    <h4>输出格式</h4>
+    <h4 mt0>输出格式</h4>
     <c-markdown :content="content.output"></c-markdown>
 
-    <h4 v-if="content.sample && content.sample.length > 0">样例</h4>
+    <h4 v-if="content.sample && content.sample.length > 0" mt0>样例</h4>
     <div v-if="content.sample && content.sample.length > 0" w-full>
       <div
         v-for="(sample, index) in content.sample"

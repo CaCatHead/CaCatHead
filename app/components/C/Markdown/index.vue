@@ -15,5 +15,7 @@ const result = computed(() => render(content.value));
 </script>
 
 <template>
-  <div v-html="result"></div>
+  <div class="markdown-body">
+    <div v-html="result"></div>
+  </div>
 </template>
