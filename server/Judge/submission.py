@@ -249,13 +249,14 @@ class SubmissionTask:
         if contest.type == ContestType.icpc:
             submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
                                                            owner=self.registration.team,
-                                                           type=ContestSubmissionType.contestant).all()
-            score = 0
-            dirty = 0  # 单位：秒
+                                                           type=ContestSubmissionType.contestant).order_by(
+                'relative_time', 'judged').all()
+            score = 0  # 通过题数
+            dirty = 0  # 罚时，单位：秒
             standings = []
             accepted = set()
             penalty = dict()
-            penalty_unit = 20 * 60  # 20 分钟
+            penalty_unit = 20 * 60  # 单次罚时：20 分钟
             for sub in submissions:
                 if sub.verdict == Verdict.Accepted:
                     # 第一次通过
