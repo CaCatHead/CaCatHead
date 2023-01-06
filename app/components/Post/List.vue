@@ -21,7 +21,7 @@ defineProps<{ posts: Post[] }>();
         ></span>
       </p>
       <p v-if="post.content" mt4 pl4 py2 border="l-4 base">
-        <pre>{{ post.content }}</pre>
+        <pre overflow-auto>{{ post.content }}</pre>
       </p>
 
       <div
