@@ -145,10 +145,18 @@ def user_register_contest(request: Request, contest_id: int):
 @api_view(['POST'])
 def user_unregister_contest(request: Request, contest_id: int):
     contest = check_register_contest(user=request.user, contest_id=contest_id)
+    registration = ContestRegistration.objects.get_registration(contest, request.user)
+
+    # 比赛管理员可以取消注册
+    if contest.has_admin_permission(request.user):
+        registration.delete()
+        return make_response()
+
     # 比赛开始后，无法取消注册
     if timezone.now() >= contest.start_time:
         raise APIException(detail='比赛已开始', code=400)
-    registration = ContestRegistration.objects.get_registration(contest, request.user)
+
+    # 只有队长可以取消注册
     if registration.team.owner == request.user:
         registration.delete()
         return make_response()
