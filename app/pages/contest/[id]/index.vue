@@ -12,16 +12,33 @@ const { contest } = toRefs(props);
 <template>
   <div>
     <contest-layout :contest="contest">
-      <c-table :data="contest.problems">
+      <c-table :data="contest.problems" border="1 base" rounded-2>
         <template #headers>
-          <c-table-header name="display_id" width="80">#</c-table-header>
-          <c-table-header name="title" align="left" text-left
+          <c-table-header
+            name="display_id"
+            width="80"
+            row-class="border-r-1 border-base"
+            class="border-r-1 border-base"
+            >#</c-table-header
+          >
+          <c-table-header
+            name="title"
+            align="left"
+            text-left
+            row-class="px4"
+            class="px4"
             >标题</c-table-header
           >
         </template>
-        <template #display_id="{ row }">{{
-          displyaIdToIndex(row.display_id)
-        }}</template>
+        <template #display_id="{ row }">
+          <nuxt-link
+            :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
+              row.display_id
+            )}`"
+            class="text-link"
+            >{{ displyaIdToIndex(row.display_id) }}</nuxt-link
+          ></template
+        >
         <template #title="{ row }">
           <nuxt-link
             :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
@@ -32,6 +49,23 @@ const { contest } = toRefs(props);
           >
         </template>
       </c-table>
+
+      <div mt12>
+        <div font-bold text-xl flex items-center>
+          <span i-carbon-information text-2xl></span>
+          <span ml2>比赛信息</span>
+        </div>
+        <ul mt4 space-y-2>
+          <li>
+            <span font-bold mr2>开始时间:</span
+            ><span>{{ formatDateTime(contest.start_time) }}</span>
+          </li>
+          <li>
+            <span font-bold mr2>持续时间:</span>
+            <span>{{ formatContestDuration(contest) }}</span>
+          </li>
+        </ul>
+      </div>
     </contest-layout>
   </div>
 </template>

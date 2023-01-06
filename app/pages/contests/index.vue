@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Contest, User } from '@/composables/types';
+import type { Contest } from '@/composables/types';
 
 useHead({
   title: '比赛',
@@ -40,17 +40,6 @@ const statusColor = (status: string) => {
     return 'text-info';
   }
 };
-
-const formatDuration = (row: Contest) => {
-  const d = formatInterval(new Date(row.start_time), new Date(row.end_time));
-  const h = d.hours ? `${d.hours} 小时` : '';
-  const m = d.minutes ? `${d.minutes} 分钟` : '';
-  if (h && m) {
-    return h + ' ' + m;
-  } else {
-    return h + m;
-  }
-};
 </script>
 
 <template>
@@ -84,7 +73,7 @@ const formatDuration = (row: Contest) => {
         </div>
       </template>
       <template #duration="{ row }">
-        <span>{{ formatDuration(row) }}</span>
+        <span>{{ formatContestDuration(row) }}</span>
       </template>
       <template #status="{ row }">
         <div flex items-center gap2>
@@ -144,7 +133,7 @@ const formatDuration = (row: Contest) => {
         formatDateTime(row.start_time)
       }}</template>
       <template #duration="{ row }">
-        {{ formatDuration(row) }}
+        {{ formatContestDuration(row) }}
       </template>
 
       <template #empty>

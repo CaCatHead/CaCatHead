@@ -33,6 +33,17 @@ export const getContestDuration = (contest: Contest) => {
   return h * 60 + m;
 };
 
+export const formatContestDuration = (row: Contest) => {
+  const d = formatInterval(new Date(row.start_time), new Date(row.end_time));
+  const h = d.hours ? `${d.hours} 小时` : '';
+  const m = d.minutes ? `${d.minutes} 分钟` : '';
+  if (h && m) {
+    return h + ' ' + m;
+  } else {
+    return h + m;
+  }
+};
+
 export const isContestAdmin = (contest: Contest, user: User | undefined) => {
   return user && contest.owner.id === user.id;
 };
