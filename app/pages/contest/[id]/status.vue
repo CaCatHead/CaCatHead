@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FullContest, ContestSubmission } from '@/composables/types';
 
+import { format } from 'date-fns';
+
 const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
@@ -35,7 +37,8 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
           >
         </template>
         <template #created="{ row }">
-          <span>{{ formatDateTime(row.created) }}</span>
+          <div>{{ formatDateTimeDay(row.created) }}</div>
+          <div>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #problem="{ row }">
           <nuxt-link

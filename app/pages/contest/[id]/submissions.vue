@@ -36,7 +36,8 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
           >
         </template>
         <template #created="{ row }">
-          <span>{{ formatDateTime(row.created) }}</span>
+          <div>{{ formatDateTimeDay(row.created) }}</div>
+          <div>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #team="{ row }">
           <team-link :team="row.owner"></team-link>

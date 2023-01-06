@@ -40,7 +40,8 @@ if (!submission.value) {
           >
         </template>
         <template #created="{ row }">
-          <span>{{ formatDateTime(row.created) }}</span>
+          <div>{{ formatDateTimeDay(row.created) }}</div>
+          <div>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #owner="{ row }">
           <team-link :team="row.owner"></team-link>
