@@ -75,6 +75,10 @@ Authorization: Token {{auth_token}}
 GET http://127.0.0.1:8000/api/contest/5/submissions
 Authorization: Token {{auth_token}}
 
+### List all submissions with page
+GET http://127.0.0.1:8000/api/contest/5/submissions?page=1
+Authorization: Token {{auth_token}}
+
 ### Get standings
 GET http://127.0.0.1:8000/api/contest/5/standings
 Authorization: Token {{auth_token}}

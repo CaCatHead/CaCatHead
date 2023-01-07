@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound, APIException
@@ -191,16 +192,23 @@ def user_list_own_submissions(request: Request, contest_id: int):
 @api_view()
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
-    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository).all()
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
+
+    def get_response():
+        page = int(request.query_params.get('page', 1))
+        page_size = int(request.query_params.get('page_size', 30))
+        paginator = Paginator(submissions, page_size)
+        return make_response(count=paginator.count, page=page, page_size=page_size, num_pages=paginator.num_pages,
+                             submissions=ContestSubmissionSerializer(paginator.page(page).object_list, many=True).data)
 
     if contest.has_admin_permission(request.user):
         # 管理员用户，比赛所有者，用户自己
-        return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+        return get_response()
     else:
         if contest.is_ended():
             # 比赛已经结束
             if contest.enable_settings(ContestSettings.view_submissions_after_contest):
-                return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+                return get_response()
             else:
                 # 没有权限访问该提交
                 raise NotFound(detail='没有权限访问该提交')

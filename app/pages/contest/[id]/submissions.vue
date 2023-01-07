@@ -11,9 +11,23 @@ useHead({
   title: `所有提交 - ${contest.value.title}`,
 });
 
-const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
-  `/api/contest/${route.params.id}/submissions`
-);
+const page = computed(() => +(route.query.page ?? 1));
+
+const { data } = await useFetchAPI<{
+  submissions: ContestSubmission[];
+  count: number;
+  page: number;
+  page_size: number;
+  num_pages: number;
+}>(`/api/contest/${route.params.id}/submissions`, {
+  query: {
+    page,
+  },
+});
+
+const handlePageChange = async (toPage: number) => {
+  await navigateTo({ path: route.path, query: { page: toPage + 1 } });
+};
 </script>
 
 <template>
@@ -73,6 +87,14 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
           <span>{{ row.memory_used }} KB</span>
         </template>
       </c-table>
+
+      <c-table-page
+        v-if="(data?.num_pages ?? 1) > 1"
+        :count="data!.count"
+        :page="page - 1"
+        :page-size="data!.page_size"
+        @change="handlePageChange"
+      ></c-table-page>
     </div>
   </contest-layout>
 </template>
