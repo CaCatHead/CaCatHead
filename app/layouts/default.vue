@@ -120,19 +120,15 @@ const activeTab = computed(() => {
 
       <footer block pb8 w-full text-center text-base-500>
         <div border="b-2 base" mb8></div>
-        <div>
-          <span>
-            <button
-              icon-btn
-              i-carbon-sun
-              dark:i-carbon-moon
-              lt-md:text-sm
-              text-base
-              @click="toggleDark()"
-            />
-          </span>
-        </div>
-        <div flex items-center justify-center gap1 align-middle>
+        <div flex="~ gap2" mb2 items-center justify-center text-lg>
+          <button
+            icon-btn
+            i-carbon-sun
+            dark:i-carbon-moon
+            lt-md:text-sm
+            text-base
+            @click="toggleDark()"
+          />
           <a
             i-carbon-logo-github
             icon-btn
@@ -140,10 +136,19 @@ const activeTab = computed(() => {
             hover:text="$c-brand"
             :href="`https://github.com/XLoJ/CaCatHead`"
             target="_blank"
-          ></a
-          ><a :href="`https://github.com/XLoJ/CaCatHead`" target="_blank"
-            >CaCatHead</a
-          >
+          ></a>
+        </div>
+        <div flex items-center justify-center gap1 align-middle>
+          <span i-ic-round-electric-bolt class="text-gray-500/50"></span>
+          <span
+            >Powered by
+            <a
+              :href="`https://github.com/XLoJ/CaCatHead`"
+              target="_blank"
+              text-link
+              >CaCatHead</a
+            >
+          </span>
         </div>
       </footer>
     </div>
