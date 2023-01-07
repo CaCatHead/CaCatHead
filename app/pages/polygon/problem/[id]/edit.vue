@@ -16,6 +16,7 @@ const submit = async () => {
       input: problem.value.problem_info.problem_content.input ?? '',
       output: problem.value.problem_info.problem_content.output ?? '',
       hint: problem.value.problem_info.problem_content.hint ?? '',
+      source: problem.value.problem_info.problem_content.source ?? '',
       time_limit: problem.value.time_limit,
       memory_limit: problem.value.memory_limit,
     },
@@ -76,6 +77,14 @@ const submit = async () => {
           v-model="problem.problem_info.problem_content.hint"
         ></markdown-editor>
       </div>
+
+      <c-input
+        id="source"
+        type="text"
+        v-model="problem.problem_info.problem_content.source"
+      >
+        <template #label><label for="source" font-600>来源</label></template>
+      </c-input>
     </div>
     <div mt4>
       <c-button color="success" @click="submit">保存</c-button>
