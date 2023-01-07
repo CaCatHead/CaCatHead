@@ -11,18 +11,6 @@ const notify = useNotification();
 
 const files = ref<File[]>([]);
 
-const onUploadTestcase = (ev: Event) => {
-  const target = ev.target as HTMLInputElement;
-  if (!target.files) return;
-  const uploaded: File[] = [];
-  for (let i = 0; i < target.files.length; i++) {
-    if (target.files[i]) {
-      uploaded.push(target.files[i]);
-    }
-  }
-  files.value.splice(0, files.value.length, ...uploaded);
-};
-
 interface Testcase {
   input?: File;
   answer?: File;
@@ -88,26 +76,6 @@ const save = async () => {
     return;
   }
 
-  const readFileContent = (file: File): Promise<string> => {
-    return new Promise(res => {
-      const reader = new FileReader();
-      reader.addEventListener('loadend', ev => {
-        res((ev.target?.result as string) ?? '');
-      });
-      reader.readAsText(file);
-    });
-  };
-  const fileToU8 = (file: File): Promise<Uint8Array> => {
-    return new Promise(res => {
-      const reader = new FileReader();
-      reader.addEventListener('loadend', ev => {
-        const buffer: ArrayBuffer = ev.target?.result! as ArrayBuffer;
-        res(new Uint8Array(buffer));
-      });
-      reader.readAsArrayBuffer(file);
-    });
-  };
-
   const uploadFileList: Record<string, any> = {};
   const sample = [];
 
@@ -123,12 +91,12 @@ const save = async () => {
 
       tasks.push(
         (async () => {
-          uploadFileList[inputFile.name] = await fileToU8(inputFile);
+          uploadFileList[inputFile.name] = await readFileToU8(inputFile);
         })()
       );
       tasks.push(
         (async () => {
-          uploadFileList[answerFile.name] = await fileToU8(answerFile);
+          uploadFileList[answerFile.name] = await readFileToU8(answerFile);
         })()
       );
 
@@ -192,7 +160,7 @@ const save = async () => {
     <div space-x-4>
       <c-file-input
         id="testcase"
-        @change="onUploadTestcase"
+        v-model="files"
         multiple
         accept=".a, .in, .ans, .out"
         variant="outline"

@@ -20,13 +20,10 @@ const problemId = computed(() => {
 });
 
 const language = ref('cpp');
-const codeFile = ref<File | undefined>(undefined);
-const onFileChange = (ev: any) => {
-  const target = ev.target as HTMLInputElement;
-  if (!target.files) return;
-  codeFile.value = target.files[0];
-  if (codeFile.value) {
-    const name = codeFile.value.name;
+const codeFile = ref<File[]>([]);
+const onFileChange = () => {
+  if (codeFile.value.length > 0) {
+    const name = codeFile.value[0].name;
     if (name.endsWith('.c')) {
       language.value = 'c';
     } else if (name.endsWith('.cpp') || name.endsWith('.cc')) {
@@ -38,18 +35,9 @@ const onFileChange = (ev: any) => {
 };
 const submit = async () => {
   try {
-    const readFileContent = (file: File): Promise<string> => {
-      return new Promise(res => {
-        const reader = new FileReader();
-        reader.addEventListener('loadend', ev => {
-          res((ev.target?.result as string) ?? '');
-        });
-        reader.readAsText(file);
-      });
-    };
     if (problemId.value < 0) return;
-    if (codeFile.value) {
-      const code = await readFileContent(codeFile.value);
+    if (codeFile.value.length > 0) {
+      const code = await readFileContent(codeFile.value[0]);
       await fetchAPI(
         `/api/contest/${route.params.id}/problem/${problemId.value}/submit`,
         {
@@ -171,14 +159,15 @@ const formatProgress = (value: number) => {
             :inline="true"
             w-full
           ></problem-select-language>
-          <div v-if="codeFile" flex="~ gap4" items-center>
+          <div v-if="codeFile.length > 0" flex="~ gap4" items-center>
             <span font-600 inline-block>代码</span>
-            <span inline-block>{{ codeFile.name }}</span>
+            <span inline-block>{{ codeFile[0].name }}</span>
           </div>
 
           <div flex gap2>
             <c-file-input
               id="code"
+              v-model="codeFile"
               @change="onFileChange"
               accept=".cpp, .c, .cc, .java, .py"
               variant="outline"
