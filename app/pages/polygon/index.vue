@@ -5,6 +5,8 @@ useHead({
   title: 'Polygon',
 });
 
+const notify = useNotification();
+
 const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
   `/api/polygon/own`
 );
@@ -13,22 +15,29 @@ if (!data.value?.problems) {
   await navigateTo('/');
 }
 
-const upload = async (ev: Event) => {
-  const target = ev.target as HTMLInputElement;
-  if ((target.files?.length ?? 0) === 0) {
-    return;
+const files = ref<File[]>([]);
+const upload = async () => {
+  if (files.value.length > 0) {
+    const file = files.value[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      await fetchAPI(`/api/polygon/upload`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `form-data; filename="${encodeURIComponent(
+            file.name
+          )}"`,
+        },
+      });
+      await refresh();
+    } catch (err: unknown) {
+      console.error(err);
+      notify.danger(`题目上传失败`);
+    }
   }
-  const formData = new FormData();
-  formData.append('file', target.files![0]);
-  await fetchAPI(`/api/polygon/upload`, {
-    method: 'POST',
-    body: formData,
-    headers: {
-      'Content-Type': 'application/zip',
-      'Content-Disposition': `form-data; filename="${target.files![0].name}"`,
-    },
-  });
-  await refresh();
 };
 </script>
 
@@ -52,6 +61,7 @@ const upload = async (ev: Event) => {
           id="upload-problem"
           color="success"
           accept=".zip"
+          v-model="files"
           @change="upload"
           >上传题目</c-file-input
         >

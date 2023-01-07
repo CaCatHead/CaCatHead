@@ -156,6 +156,8 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
         serializer = EditProblemPayload(data=problem_config)
         if serializer.is_valid():
             edit_problem(problem, problem_config)
+        else:
+            raise APIException(detail={'detail': serializer.errors}, code=400)
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):

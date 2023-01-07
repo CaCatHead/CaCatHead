@@ -44,11 +44,14 @@ const onUpdateZip = async () => {
         body: formData,
         headers: {
           'Content-Type': 'application/zip',
-          'Content-Disposition': `form-data; filename="${file.name}"`,
+          'Content-Disposition': `form-data; filename="${encodeURIComponent(
+            file.name
+          )}"`,
         },
       });
       notify.success(`题目 ${problem.value.title} 更新成功`);
-    } catch {
+    } catch (err: unknown) {
+      console.error(err);
       notify.danger(`题目 ${problem.value.title} 更新失败`);
     }
   }
