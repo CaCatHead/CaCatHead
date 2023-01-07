@@ -22,7 +22,7 @@ useHead({
             name="display_id"
             width="80"
             row-class="border-r-1 border-base"
-            class="border-r-1 border-base"
+            class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
             >#</c-table-header
           >
           <c-table-header
@@ -30,7 +30,7 @@ useHead({
             align="left"
             text-left
             row-class="px4"
-            class="px4"
+            class="px4 bg-gray-100 dark:bg-dark-100"
             >标题</c-table-header
           >
         </template>
