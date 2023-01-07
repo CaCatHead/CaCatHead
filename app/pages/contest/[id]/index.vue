@@ -42,6 +42,7 @@ const goSubmit = async (id: number) => {
           <c-table-header
             name="operation"
             class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
+            width="60px"
             ><span></span
           ></c-table-header>
         </template>
