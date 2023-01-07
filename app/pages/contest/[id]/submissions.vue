@@ -36,7 +36,11 @@ const handlePageChange = async (toPage: number) => {
       <c-table :data="data?.submissions ?? []">
         <template #headers>
           <c-table-header name="id" label="#" width="64px"></c-table-header>
-          <c-table-header name="created" label="提交时间"></c-table-header>
+          <c-table-header
+            name="created"
+            label="提交时间"
+            width="96px"
+          ></c-table-header>
           <c-table-header name="problem" label="题目"></c-table-header>
           <c-table-header name="team" label="队伍"></c-table-header>
           <c-table-header
