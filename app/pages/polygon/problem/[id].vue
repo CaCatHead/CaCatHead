@@ -65,7 +65,7 @@ const onUpdateZip = async () => {
     </Head>
     <div>
       <div flex pl2>
-        <h2 text-2xl font-bold mb4>{{ problem.title }}</h2>
+        <h2 text-2xl font-bold mb4>#{{ problem.id }}. {{ problem.title }}</h2>
         <div flex-auto></div>
         <div>
           <c-button mr2 variant="outline" color="info" @click="downloadZip"
