@@ -97,10 +97,11 @@ class ProblemDirectory:
     def generate_zip(self):
         mem_zip = BytesIO()
         with zipfile.ZipFile(mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
-            for dirname, _, files in os.walk(self.root):
-                zf.write(dirname)
-                for filename in files:
-                    zf.write(os.path.join(dirname, filename))
+            root_length = len(str(self.root))
+            for root, dirs, files in os.walk(self.root):
+                folder = root[root_length:]
+                for file in files:
+                    zf.write(os.path.join(root, file), os.path.join(folder, file))
         return mem_zip.getvalue()
 
 
