@@ -14,7 +14,7 @@ class CreateContestPayloadSerializer(serializers.Serializer):
 class EditContestPayloadSerializer(serializers.Serializer):
     title = serializers.CharField(required=False, allow_null=True, max_length=256)
 
-    description = serializers.CharField(required=False, allow_null=True)
+    description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     start_time = serializers.DateTimeField(required=False, allow_null=True)
 
