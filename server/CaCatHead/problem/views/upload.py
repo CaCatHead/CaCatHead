@@ -140,7 +140,8 @@ def try_unzip_problem_arch(problem_root: Path, file_name: str, zip_content: InMe
     return valid
 
 
-def upload_problem_arch(problem_judge_id: int, file: InMemoryUploadedFile) -> ProblemDirectory:
+def upload_problem_arch(problem: Problem, file: InMemoryUploadedFile) -> ProblemDirectory:
+    problem_judge_id = problem.problem_info.problem_judge.id
     problem_root = settings.TESTCASE_ROOT / str(problem_judge_id)
     problem_root.mkdir(parents=True, exist_ok=True)
     zip_file_name = 'p' + str(problem_judge_id) + '_' + str(timezone.now().timestamp()) + '.zip'
