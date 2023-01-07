@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.exceptions import NotFound
@@ -16,6 +17,7 @@ from CaCatHead.problem.serializers import CreateProblemPayload, \
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
+from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
     FullPolygonSubmissionSerializer
@@ -96,6 +98,22 @@ def get_polygon_problem(request: Request, problem_id: int):
                                                  user=request.user,
                                                  permission=ProblemPermissions.ReadProblem).first()
     return make_response(problem=FullProblemSerializer(problem).get_or_raise())
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
+def export_polygon_problem_zip(request: Request, problem_id: int):
+    """
+    导出题目 zip
+    """
+    problem = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                 id=problem_id,
+                                                 user=request.user,
+                                                 permission=ProblemPermissions.ReadProblem).first()
+    problem_directory = ProblemDirectory.make(problem)
+    response = HttpResponse(problem_directory.generate_zip(), content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={problem.title}.zip'
+    return response
 
 
 @api_view()

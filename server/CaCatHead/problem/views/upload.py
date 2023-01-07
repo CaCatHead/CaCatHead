@@ -2,6 +2,8 @@ import json
 import os
 import shutil
 import tempfile
+import zipfile
+from io import BytesIO
 from pathlib import Path
 
 from django.conf import settings
@@ -91,6 +93,15 @@ class ProblemDirectory:
             answer_file = self.root / testcase['answer']
             if not answer_file.exists():
                 download_minio_testcase(directory, answer_file)
+
+    def generate_zip(self):
+        mem_zip = BytesIO()
+        with zipfile.ZipFile(mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for dirname, _, files in os.walk(self.root):
+                zf.write(dirname)
+                for filename in files:
+                    zf.write(os.path.join(dirname, filename))
+        return mem_zip.getvalue()
 
 
 def find_config_root(root: Path) -> Path | None:

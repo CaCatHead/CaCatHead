@@ -37,6 +37,10 @@ Content-Type: application/json
   "description": "Calculate A + B."
 }
 
+### Export problem zip
+GET http://127.0.0.1:8000/api/polygon/1/export
+Authorization: Token {{auth_token}}
+
 ### Submit created problem ac code
 POST http://127.0.0.1:8000/api/polygon/1/submit
 Authorization: Token {{auth_token}}
