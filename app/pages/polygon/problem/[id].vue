@@ -19,6 +19,20 @@ const user = useUser();
 
 const files = ref<File[]>([]);
 
+const downloadZip = async () => {
+  const result = await fetchAPI(`/api/polygon/${problem.value.id}/export`, {
+    responseType: 'blob',
+  });
+  const data = window.URL.createObjectURL(result as Blob);
+  const el = document.createElement('a');
+  el.setAttribute('href', data);
+  el.setAttribute('download', `${problem.value.title}.zip`);
+  el.style.display = 'none';
+  document.body.appendChild(el);
+  el.click();
+  document.body.removeChild(el);
+};
+
 const onUpdateZip = async () => {
   if (files.value.length > 0) {
     const formData = new FormData();
@@ -51,6 +65,9 @@ const onUpdateZip = async () => {
         <h2 text-2xl font-bold mb4>{{ problem.title }}</h2>
         <div flex-auto></div>
         <div>
+          <c-button mr2 variant="outline" color="info" @click="downloadZip"
+            >下载题目包</c-button
+          >
           <c-file-input
             id="update-zip"
             accept=".zip"
