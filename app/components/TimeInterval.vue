@@ -8,7 +8,7 @@ const { left, right } = toRefs(props);
 const duration = computed(() => {
   return formatInterval(
     new Date(left.value),
-    new Date(right.value ?? new Date())
+    new Date(right?.value ?? new Date())
   );
 });
 </script>
@@ -26,7 +26,7 @@ const duration = computed(() => {
       >前</span
     >
     <span v-else>
-      <span v-if="!!duration.minutes">{{ duration.minutes }} 分钟前</span>
+      <span v-if="!!duration.minutes">&nbsp;{{ duration.minutes }} 分钟前</span>
       <span v-else>刚刚</span>
     </span>
   </span>
