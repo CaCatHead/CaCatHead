@@ -39,9 +39,17 @@ const handlePageChange = async (toPage: number) => {
           <c-table-header name="created" label="提交时间"></c-table-header>
           <c-table-header name="problem" label="题目"></c-table-header>
           <c-table-header name="team" label="队伍"></c-table-header>
-          <c-table-header name="language" label="语言"></c-table-header>
+          <c-table-header
+            name="language"
+            label="语言"
+            width="48px"
+          ></c-table-header>
           <c-table-header name="verdict" label="结果"></c-table-header>
-          <c-table-header name="score" label="得分"></c-table-header>
+          <c-table-header
+            name="score"
+            label="得分"
+            width="60px"
+          ></c-table-header>
           <c-table-header name="time_used" label="时间"></c-table-header>
           <c-table-header name="memory_used" label="内存"></c-table-header>
         </template>
