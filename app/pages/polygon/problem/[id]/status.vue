@@ -37,7 +37,8 @@ const submissions = ref(data.value?.submissions ?? []);
         >
       </template>
       <template #created="{ row }">
-        <span>{{ formatDateTime(row.created) }}</span>
+        <div>{{ formatDateTimeDay(row.created) }}</div>
+        <div>{{ formatDateTimeTime(row.created) }}</div>
       </template>
       <template #owner="{ row }">
         <user-link :user="row.owner"></user-link>

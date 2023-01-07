@@ -3,6 +3,8 @@ import type { FullPolygonProblem } from '@/composables/types';
 
 const route = useRoute();
 
+const notify = useNotification();
+
 const { data } = await useFetchAPI<{ problem: FullPolygonProblem }>(
   `/api/polygon/${route.params.id}`
 );
@@ -14,6 +16,29 @@ if (data.value === null) {
 const problem = ref(data.value!.problem);
 
 const user = useUser();
+
+const files = ref<File[]>([]);
+
+const onUpdateZip = async () => {
+  if (files.value.length > 0) {
+    const formData = new FormData();
+    const file = files.value[0];
+    formData.append('file', file);
+    try {
+      await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `form-data; filename="${file.name}"`,
+        },
+      });
+      notify.success(`题目 ${problem.value.title} 更新成功`);
+    } catch {
+      notify.danger(`题目 ${problem.value.title} 更新失败`);
+    }
+  }
+};
 </script>
 
 <template>
@@ -26,7 +51,11 @@ const user = useUser();
         <h2 text-2xl font-bold mb4>{{ problem.title }}</h2>
         <div flex-auto></div>
         <div>
-          <c-file-input id="update-zip" accept=".zip"
+          <c-file-input
+            id="update-zip"
+            accept=".zip"
+            v-model="files"
+            @change="onUpdateZip"
             >上传题目包更新</c-file-input
           >
         </div>
