@@ -49,7 +49,7 @@ const submissions = ref(data.value?.submissions ?? []);
           text-sky-700
           text-op-70
           hover:text-op-100
-          >{{ problem.id }}. {{ problem.title }}</nuxt-link
+          >#{{ problem.id }}. {{ problem.title }}</nuxt-link
         >
       </template>
       <template #language="{ row }">{{ row.language }}</template>

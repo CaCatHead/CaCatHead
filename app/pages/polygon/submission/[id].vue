@@ -50,7 +50,13 @@ const submission = ref(data.value!.submission);
           <user-link :user="row.owner"></user-link>
         </template>
         <template #problem="{ row }">
-          <span>{{ row.problem.title }}</span>
+          <nuxt-link
+            :to="`/polygon/problem/${row.problem.id}`"
+            text-sky-700
+            text-op-70
+            hover:text-op-100
+            >#{{ row.problem.id }}. {{ row.problem.title }}</nuxt-link
+          >
         </template>
         <template #language="{ row }">{{ row.language }}</template>
         <template #verdict="{ row }">
