@@ -12,10 +12,7 @@ useHead({
 const route = useRoute();
 const notify = useNotification();
 
-const lastProblem = useLocalStorage(
-  `contest/${route.params.id}/last-problem`,
-  1000
-);
+const lastProblem = useContestLastProblem(route.params.id);
 
 const problem = ref(lastProblem.value);
 const handleSelect = (e: any) => {

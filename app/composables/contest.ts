@@ -1,7 +1,9 @@
 import type { Contest, User } from './types';
 
 import { formatInterval } from './date';
-import { off } from 'process';
+
+export const useContestLastProblem = (id: string | string[]) =>
+  useLocalStorage(`contest/${id}/last-problem`, 1000);
 
 export const isContestStart = (contest: Contest) => {
   const now = new Date();

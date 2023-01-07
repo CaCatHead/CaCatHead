@@ -28,10 +28,7 @@ if (problem.value === undefined) {
   await navigateTo(`/contest/${route.params.id}`);
 }
 
-useLocalStorage(
-  `contest/${route.params.id}/last-problem`,
-  problem.value?.display_id
-).value = problem.value?.display_id;
+useContestLastProblem(route.params.id).value = problem.value?.display_id;
 
 useHead({
   title: `${route.params.pid}. ${problem.value?.title} - ${contest.value.title}`,

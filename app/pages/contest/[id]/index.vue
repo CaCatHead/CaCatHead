@@ -11,6 +11,12 @@ const { contest } = toRefs(props);
 useHead({
   title: `面板 - ${contest.value.title}`,
 });
+
+const lastProblem = useContestLastProblem(route.params.id);
+const goSubmit = async (id: number) => {
+  lastProblem.value = id;
+  await navigateTo(`/contest/${route.params.id}/submit`);
+};
 </script>
 
 <template>
@@ -20,7 +26,7 @@ useHead({
         <template #headers>
           <c-table-header
             name="display_id"
-            width="80"
+            width="60"
             row-class="border-r-1 border-base"
             class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
             >#</c-table-header
@@ -29,10 +35,15 @@ useHead({
             name="title"
             align="left"
             text-left
-            row-class="px4"
-            class="px4 bg-gray-100 dark:bg-dark-100"
-            >标题</c-table-header
+            row-class="px4 border-r-1 border-base"
+            class="border-r-1 border-base px4 bg-gray-100 dark:bg-dark-100"
+            >题目</c-table-header
           >
+          <c-table-header
+            name="operation"
+            class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
+            ><span></span
+          ></c-table-header>
         </template>
         <template #display_id="{ row }">
           <nuxt-link
@@ -44,13 +55,38 @@ useHead({
           ></template
         >
         <template #title="{ row }">
-          <nuxt-link
-            :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
-              row.display_id
-            )}`"
-            class="text-link"
-            >{{ row.title }}</nuxt-link
+          <div
+            flex
+            justify-between
+            items-center
+            lt-md="items-start flex-col gap1"
           >
+            <nuxt-link
+              :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
+                row.display_id
+              )}`"
+              class="text-link"
+              >{{ row.title }}</nuxt-link
+            >
+            <div inline-flex items-end text-sm md="flex-col w-32" lt-md="gap2">
+              <span inline-flex items-center justify-start>
+                <span i-carbon-time text-lg mr1></span>
+                <span>{{ row.time_limit }} ms</span>
+              </span>
+              <span inline-flex items-center justify-start>
+                <span i-carbon-chip text-lg mr1></span>
+                <span>{{ row.memory_limit }} KB</span>
+              </span>
+            </div>
+          </div>
+        </template>
+        <template #operation="{ row }">
+          <c-button
+            variant="text"
+            color="success"
+            icon="i-carbon-upload"
+            @click="goSubmit(row.display_id)"
+          ></c-button>
         </template>
       </c-table>
 
