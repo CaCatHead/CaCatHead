@@ -105,7 +105,13 @@ interface SubmissionDetail {
     stdout: string;
   };
   node: string;
-  results: Array<{ verdict: string; time: number; memory: number }>;
+  results: Array<{
+    verdict: string;
+    time: number;
+    memory: number;
+    score: number;
+    sample?: boolean;
+  }>;
   score: number;
   verdict: string;
 }

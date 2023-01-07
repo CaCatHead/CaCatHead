@@ -32,13 +32,19 @@ const { submission } = toRefs(props);
         justify-between
         font-mono
       >
-        <h4 font-600>测试点 #{{ index }}</h4>
-        <verdict :verdict="testcase.verdict"></verdict>
-        <span inline-flex items-center>
+        <h4 w="1/5" font-600>
+          {{ testcase.sample ? '样例' : '测试点' }} #{{ index + 1 }}
+        </h4>
+        <verdict :verdict="testcase.verdict" w="1/5"></verdict>
+        <span w="1/5" inline-flex items-center v-if="testcase.score">
+          <span i-carbon-checkmark-outline text-lg mr1></span>
+          <span>{{ testcase.score }} pts</span>
+        </span>
+        <span w="1/5" inline-flex items-center>
           <span i-carbon-time text-lg mr1></span>
           <span>{{ testcase.time }} ms</span>
         </span>
-        <span inline-flex items-center>
+        <span w="1/5" inline-flex items-center>
           <span i-carbon-chip text-lg mr1></span>
           <span>{{ testcase.memory }} KB</span>
         </span>

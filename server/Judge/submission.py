@@ -170,7 +170,7 @@ class SubmissionTask:
                 self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
 
             self.run_sandbox()
-            detail = self.read_result()
+            detail = self.read_result(testcase)
 
             if detail['verdict'] == Verdict.Accepted:
                 self.score += testcase['score']
@@ -211,7 +211,7 @@ class SubmissionTask:
         commands = ["catj", "-t", self.time_limit, "-m", self.memory_limit, "-d", self.tmp_dir, "-l", self.language]
         subprocess.call(commands)
 
-    def read_result(self):
+    def read_result(self, testcase):
         logger.info("Read one case result")
         result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
         verdict = Verdict.parse(result_file.readline().strip())
@@ -224,6 +224,10 @@ class SubmissionTask:
             'memory': run_memory,
             'message': others
         }
+        if 'score' in testcase:
+            detail['score'] = testcase['score']
+        if 'sample' in testcase and testcase['sample']:
+            detail['sample'] = True
         self.results.append(detail)
         return detail
 
