@@ -13,6 +13,7 @@ from CaCatHead.problem.views import copy_repo_problem, MAIN_PROBLEM_REPOSITORY
 def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest = Contest()
     contest.title = title
+    contest.description = title
     contest.type = type
     contest.owner = user
     contest.start_time = timezone.now() + timedelta(days=1)
@@ -36,6 +37,8 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
     # payload see CaCatHead.contest.serializers.EditContestPayloadSerializer
     if 'title' in payload:
         contest.title = payload['title']
+    if 'description' in payload and payload['description'] is not None:
+        contest.description = payload['description']
     if 'start_time' in payload:
         contest.start_time = payload['start_time']
     if 'end_time' in payload:

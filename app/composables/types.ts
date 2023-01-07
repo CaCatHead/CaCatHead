@@ -29,6 +29,7 @@ export interface Contest {
 
 export type FullContest = Contest & {
   settings: Record<string, boolean>;
+  description: string;
   problems: Array<FullPolygonProblem>;
 };
 

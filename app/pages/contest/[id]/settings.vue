@@ -35,6 +35,8 @@ const duration = ref(formatDuration());
 
 const problems = ref('');
 
+const description = ref(contest.value.description);
+
 const is_public = ref(contest.value.is_public);
 const view_standings = ref(contest.value?.settings?.view_standings);
 const view_submissions_after_contest = ref(
@@ -54,6 +56,7 @@ const submit = async () => {
         method: 'POST',
         body: {
           title: title.value,
+          description: description.value,
           start_time: start,
           end_time: end,
           is_public: is_public.value,
@@ -73,6 +76,7 @@ const submit = async () => {
     contest.value = newContest;
 
     notify.success(`比赛 ${contest.value.title} 修改成功`);
+    await navigateTo(`/contest/${route.params.id}`);
   } catch (err: any) {
     if ('response' in err) {
       notify.danger(err.data.detail);
@@ -112,6 +116,10 @@ const submit = async () => {
         id="view_submissions_after_contest"
         v-model="view_submissions_after_contest"
       ></c-switch>
+    </div>
+    <div>
+      <h4 mb2>比赛描述</h4>
+      <markdown-editor v-model="description"></markdown-editor>
     </div>
 
     <div>

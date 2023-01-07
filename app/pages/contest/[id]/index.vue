@@ -56,7 +56,17 @@ useHead({
 
       <div mt12>
         <div font-bold text-xl flex items-center>
-          <span i-carbon-information text-2xl></span>
+          <span i-carbon-bullhorn text-3xl></span>
+          <span ml2>比赛公告</span>
+        </div>
+        <div mt4>
+          <c-markdown :content="contest.description"></c-markdown>
+        </div>
+      </div>
+
+      <div mt8>
+        <div font-bold text-xl flex items-center>
+          <span i-carbon-information text-3xl></span>
           <span ml2>比赛信息</span>
         </div>
         <ul mt4 space-y-2>

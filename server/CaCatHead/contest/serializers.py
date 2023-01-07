@@ -14,6 +14,8 @@ class CreateContestPayloadSerializer(serializers.Serializer):
 class EditContestPayloadSerializer(serializers.Serializer):
     title = serializers.CharField(required=False, allow_null=True, max_length=256)
 
+    description = serializers.CharField(required=False, allow_null=True)
+
     start_time = serializers.DateTimeField(required=False, allow_null=True)
 
     freeze_time = serializers.DateTimeField(required=False, allow_null=True)
@@ -60,6 +62,7 @@ class ContestContentSerializer(serializers.BaseSerializer):
             'is_public': contest.is_public,
             'settings': contest.settings,
             'owner': UserSerializer(contest.owner).data,
+            'description': contest.description,
             'problems': ProblemContentSerializer(contest.problem_repository.problems, many=True).data
         }
 

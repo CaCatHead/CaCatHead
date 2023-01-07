@@ -25,6 +25,8 @@ class Contest(BaseModel):
     type = models.CharField(default=ContestType.icpc, choices=ContestType.choices, max_length=64,
                             verbose_name=_(u"比赛类型"))
 
+    description = models.TextField(default=str, blank=True, verbose_name=_(u"比赛描述信息"))
+
     start_time = models.DateTimeField(verbose_name=_(u"开始时间"))
 
     freeze_time = models.DateTimeField(default=None, null=True, verbose_name=_(u"封榜时间"))
