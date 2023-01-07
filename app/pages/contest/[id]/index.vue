@@ -68,7 +68,7 @@ const goSubmit = async (id: number) => {
               class="text-link"
               >{{ row.title }}</nuxt-link
             >
-            <div inline-flex items-end text-sm md="flex-col w-32" lt-md="gap2">
+            <div inline-flex items-end text-xs md="flex-col w-32" lt-md="gap2">
               <span inline-flex items-center justify-start>
                 <span i-carbon-time text-lg mr1></span>
                 <span>{{ row.time_limit }} ms</span>
@@ -84,7 +84,7 @@ const goSubmit = async (id: number) => {
           <c-button
             variant="text"
             color="success"
-            icon="i-carbon-upload"
+            icon="i-carbon-cloud-upload"
             @click="goSubmit(row.display_id)"
           ></c-button>
         </template>
