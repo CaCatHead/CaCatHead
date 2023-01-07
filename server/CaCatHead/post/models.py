@@ -17,7 +17,7 @@ class Post(BaseModel):
 
     owner = models.ForeignKey(User, on_delete=models.RESTRICT, verbose_name=_(u"发布者"))
 
-    sort_time = models.DateTimeField(auto_now_add=True, verbose_name=_(u"排序时间"))
+    sort_time = models.DateTimeField(auto_now_add=False, verbose_name=_(u"排序时间"))
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
@@ -26,7 +26,7 @@ class Post(BaseModel):
     class Meta:
         db_table = 'post'
 
-        ordering = ('sort_time',)
+        ordering = ('-sort_time',)
 
         verbose_name = _("公告")
 
