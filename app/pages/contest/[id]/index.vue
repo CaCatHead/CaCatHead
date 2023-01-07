@@ -68,7 +68,15 @@ const goSubmit = async (id: number) => {
               class="text-link"
               >{{ row.title }}</nuxt-link
             >
-            <div inline-flex items-end text-xs md="flex-col w-32" lt-md="gap2">
+            <div
+              text-xs
+              text-base-800
+              text-op-60
+              inline-flex
+              items-end
+              md="flex-col w-32 gap1"
+              lt-md="gap2"
+            >
               <span inline-flex items-center justify-start>
                 <span i-carbon-time text-lg mr1></span>
                 <span>{{ row.time_limit }} ms</span>
