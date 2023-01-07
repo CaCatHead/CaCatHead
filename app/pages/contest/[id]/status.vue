@@ -41,8 +41,8 @@ const { data } = await useFetchAPI<{ submissions: ContestSubmission[] }>(
           >
         </template>
         <template #created="{ row }">
-          <div>{{ formatDateTimeDay(row.created) }}</div>
-          <div>{{ formatDateTimeTime(row.created) }}</div>
+          <div text-xs>{{ formatDateTimeDay(row.created) }}</div>
+          <div text-xs>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #problem="{ row }">
           <nuxt-link

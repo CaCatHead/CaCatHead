@@ -56,8 +56,8 @@ const handlePageChange = async (toPage: number) => {
           >
         </template>
         <template #created="{ row }">
-          <div>{{ formatDateTimeDay(row.created) }}</div>
-          <div>{{ formatDateTimeTime(row.created) }}</div>
+          <div text-xs>{{ formatDateTimeDay(row.created) }}</div>
+          <div text-xs>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #team="{ row }">
           <team-link :team="row.owner"></team-link>
