@@ -68,14 +68,20 @@ const goPage = async (to: number) => {
         <span>{{ index + first }}</span>
       </c-button>
       <span
+        v-if="pageView + 1 < last"
         class="select-none inline-flex justify-center items-center py-2 md:px-2"
         >...</span
       >
-      <c-button color="info" @click="goPage(last - 1)">{{ last }}</c-button>
+      <c-button color="info" variant="outline" @click="goPage(last - 1)">{{
+        last
+      }}</c-button>
     </template>
     <template v-else-if="last - page <= pageView">
-      <c-button color="info" @click="goPage(first)">{{ first + 1 }}</c-button>
+      <c-button color="info" variant="outline" @click="goPage(first)">{{
+        first + 1
+      }}</c-button>
       <span
+        v-if="last - pageView > 1"
         class="select-none inline-flex justify-center items-center py-2 md:px-2"
         >...</span
       >
@@ -90,7 +96,9 @@ const goPage = async (to: number) => {
       </c-button>
     </template>
     <template v-else>
-      <c-button color="info" @click="goPage(first)">{{ first + 1 }}</c-button>
+      <c-button color="info" variant="outline" @click="goPage(first)">{{
+        first + 1
+      }}</c-button>
       <span
         class="select-none inline-flex justify-center items-center py-2 md:px-2"
         >...</span
@@ -112,7 +120,9 @@ const goPage = async (to: number) => {
         class="select-none inline-flex justify-center items-center py-2 md:px-2"
         >...</span
       >
-      <c-button color="info" @click="goPage(last - 1)">{{ last }}</c-button>
+      <c-button color="info" variant="outline" @click="goPage(last - 1)">{{
+        last
+      }}</c-button>
     </template>
 
     <c-button
