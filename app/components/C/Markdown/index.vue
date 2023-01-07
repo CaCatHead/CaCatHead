@@ -15,7 +15,11 @@ const result = computed(() => render(content.value));
 </script>
 
 <template>
-  <div class="markdown-body">
-    <div v-html="result"></div>
-  </div>
+  <div class="markdown-body" v-html="result"></div>
 </template>
+
+<style>
+.markdown-body > *:last-child {
+  margin-bottom: 0;
+}
+</style>
