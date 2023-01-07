@@ -106,7 +106,8 @@ def list_polygon_problems(request):
     """
     problems = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                   user=request.user,
-                                                  permission=ProblemPermissions.ReadProblem)
+                                                  permission=ProblemPermissions.ReadProblem).order_by(
+        '-updated').order_by('-id')
     return make_response(problems=PolygonProblemSerializer(problems, many=True).data)
 
 

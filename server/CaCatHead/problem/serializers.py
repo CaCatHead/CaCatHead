@@ -73,7 +73,7 @@ class PolygonProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        fields = ['id', 'display_id', 'title', 'problem_type', 'is_public', 'owner']
+        fields = ['id', 'display_id', 'title', 'problem_type', 'is_public', 'owner', 'created', 'updated']
 
 
 class _ProblemContentSerializer(serializers.ModelSerializer):

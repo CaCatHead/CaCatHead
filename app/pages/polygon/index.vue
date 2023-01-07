@@ -77,6 +77,11 @@ const upload = async (ev: Event) => {
           label="创建者"
           row-class="text-center"
         ></c-table-header>
+        <c-table-header name="updated" label="更新时间"></c-table-header>
+      </template>
+
+      <template #updated="{ row }">
+        <div>{{ formatDateTime(row.updated) }}</div>
       </template>
 
       <template #title="{ row }">
