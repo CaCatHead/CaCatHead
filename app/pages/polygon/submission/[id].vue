@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { FullSubmission } from '@/composables/types';
+
 const route = useRoute();
 
 useHead({
   title: 'Submission #' + route.params.id,
 });
 
-const { data } = await useFetchAPI<{ submission: any }>(
+const { data } = await useFetchAPI<{ submission: FullSubmission }>(
   `/api/polygon/submission/${route.params.id}`
 );
 
@@ -28,6 +30,8 @@ const submission = ref(data.value!.submission);
           <c-table-header name="language" label="语言"></c-table-header>
           <c-table-header name="verdict" label="结果"></c-table-header>
           <c-table-header name="score" label="得分"></c-table-header>
+          <c-table-header name="time" label="时间"></c-table-header>
+          <c-table-header name="memory" label="内存"></c-table-header>
         </template>
 
         <template #id="{ row }">
@@ -52,13 +56,10 @@ const submission = ref(data.value!.submission);
         <template #verdict="{ row }">
           <verdict :verdict="row.verdict"></verdict>
         </template>
+        <template #time="{ row }">{{ row.time_used }} ms</template>
+        <template #memory="{ row }">{{ row.memory_used }} KB</template>
       </c-table>
     </div>
-    <pre mt4 font-mono p4 shadow-box rounded overflow-auto>{{
-      submission.code
-    }}</pre>
-    <pre mt4 font-mono p4 shadow-box rounded overflow-auto>{{
-      JSON.stringify(submission.detail, null, 2)
-    }}</pre>
+    <submission-detail :submission="submission"></submission-detail>
   </div>
 </template>

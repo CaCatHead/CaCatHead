@@ -1,5 +1,4 @@
-import { Verdict } from './verdict';
-
+import { SubmissionDetail } from './../.nuxt/components.d';
 export interface User {
   id: number;
 
@@ -101,10 +100,32 @@ export interface FullPolygonProblem {
   };
 }
 
-export interface ContestSubmission {
-  relative_time: number;
+interface SubmissionDetail {
+  compile: {
+    stdout: string;
+  };
+  node: string;
+  results: Array<{ verdict: string; time: number; memory: number }>;
+  score: number;
+  verdict: string;
+}
 
-  verdict: Verdict;
+export interface Submission {
+  id: number;
+
+  language: string;
+
+  code_length: number;
+
+  created: string;
+
+  judged: string;
+
+  time_used: number;
+
+  memory_used: number;
+
+  verdict: string;
 
   problem: {
     display_id: number;
@@ -113,10 +134,27 @@ export interface ContestSubmission {
   };
 }
 
-export interface FullContestSubmission {
+export type BaseFullSubmission = Submission & {
   code: string;
-  detail: any;
-}
+
+  detail: SubmissionDetail;
+};
+
+export type FullSubmission = BaseFullSubmission & {
+  owner: User;
+};
+
+export type ContestSubmission = Submission & {
+  owner: Team;
+
+  relative_time: number;
+};
+
+export type FullContestSubmission = BaseFullSubmission & {
+  owner: Team;
+
+  relative_time: number;
+};
 
 export interface ContestStandings {
   name: string;
