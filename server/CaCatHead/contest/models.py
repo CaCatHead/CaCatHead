@@ -39,9 +39,7 @@ class Contest(BaseModel):
 
     password = models.CharField(default=None, null=True, blank=True, max_length=256, verbose_name=_(u"注册密码"))
 
-    settings = models.JSONField(default=lambda: {ContestSettings.view_standings: True,
-                                                 ContestSettings.view_submissions_after_contest: False},
-                                verbose_name=_(u"比赛设置"))
+    settings = models.JSONField(default={}, verbose_name=_(u"比赛设置"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
