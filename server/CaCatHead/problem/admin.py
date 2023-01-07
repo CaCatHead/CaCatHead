@@ -4,7 +4,7 @@ from CaCatHead.problem.models import Problem, ProblemRepository
 
 
 class ProblemRepositoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'name', 'owner', 'is_public', 'is_contest')
 
     list_display_links = ('id', 'name')
 
@@ -14,7 +14,7 @@ class ProblemRepositoryAdmin(admin.ModelAdmin):
 
 
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'owner', 'is_public')
+    list_display = ('id', 'repository', 'title', 'owner', 'is_public')
 
     list_display_links = ('id', 'title',)
 

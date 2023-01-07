@@ -1,6 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework.exceptions import NotFound
 
 from CaCatHead.contest.models import Contest, ContestType, ContestSettings
@@ -14,13 +15,13 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest.title = title
     contest.type = type
     contest.owner = user
-    contest.start_time = datetime.now() + timedelta(days=1)
+    contest.start_time = timezone.now() + timedelta(days=1)
     contest.end_time = contest.start_time + timedelta(hours=2)
     contest.settings = {ContestSettings.view_standings: True,
                         ContestSettings.view_submissions_after_contest: False}
 
     problem_repository = ProblemRepository()
-    problem_repository.name = f'Contest {title}'
+    problem_repository.name = f'{title} 比赛题库'
     problem_repository.is_public = False
     problem_repository.is_contest = True
     problem_repository.owner = user
