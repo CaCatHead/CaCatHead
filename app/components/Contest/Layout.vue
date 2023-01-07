@@ -95,7 +95,7 @@ const formatProgress = (value: number) => {
     </div>
     <div md:w="1/4" space-y-4>
       <div border="1 base" rounded-2>
-        <h3 p4 border="b-1 base" font-bold>{{ contest.title }}</h3>
+        <h3 px4 py2 border="b-1 base" font-bold>{{ contest.title }}</h3>
         <div p4>
           <div
             border="2 neutral-100 dark:gray-100"
@@ -127,7 +127,7 @@ const formatProgress = (value: number) => {
         </div>
       </div>
       <div border="1 base" rounded-2>
-        <h3 p4 border="b-1 base" font-bold>题目列表</h3>
+        <h3 px4 py2 border="b-1 base" font-bold>题目列表</h3>
         <div p4>
           <div v-for="problem in contest.problems">
             <nuxt-link
@@ -152,7 +152,7 @@ const formatProgress = (value: number) => {
         </div>
       </div>
       <div v-if="problemId >= 0" border="1 base" rounded-2>
-        <h3 p4 border="b-1 base" font-bold>提交代码</h3>
+        <h3 px4 py2 border="b-1 base" font-bold>提交代码</h3>
         <div p4 space-y-4>
           <problem-select-language
             v-model="language"
