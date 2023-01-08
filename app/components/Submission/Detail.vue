@@ -55,5 +55,11 @@ const { submission } = toRefs(props);
         </span>
       </div>
     </div>
+    <div v-if="submission.detail.results" text-sm text-right>
+      <div text-base-800 text-op-60>
+        评测机 {{ submission.detail.node ?? '' }} 运行于
+        {{ formatDateTime(submission.judged) }}
+      </div>
+    </div>
   </div>
 </template>
