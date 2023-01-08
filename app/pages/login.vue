@@ -5,6 +5,8 @@ useHead({
   title: '登录',
 });
 
+const route = useRoute();
+
 const notfiy = useNotification();
 
 const username = ref('');
@@ -24,7 +26,12 @@ const login = async () => {
     const token = resp.token;
     const expiry = resp.expiry;
     await authUser.setToken(token, expiry);
-    await navigateTo('/');
+
+    if (!!route.query.redirect && typeof route.query.redirect === 'string') {
+      await navigateTo(route.query.redirect);
+    } else {
+      await navigateTo('/');
+    }
   } catch (error: any) {
     // show error message
     notfiy.danger(error?.response?._data?.detail ?? '未知错误');

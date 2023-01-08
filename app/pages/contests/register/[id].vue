@@ -15,7 +15,12 @@ useHead({
 const notify = useNotification();
 const user = useUser();
 if (!user || !user.value) {
-  await navigateTo('/login');
+  await navigateTo({
+    path: '/login',
+    query: {
+      redirect: route.fullPath,
+    },
+  });
 }
 
 const name = ref(
