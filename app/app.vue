@@ -40,6 +40,13 @@ html.dark {
   color-scheme: dark;
 }
 
+/* shadow-box in dark mode */
+.dark .shadow-box,
+.dark [shadow-box=''] {
+  box-shadow: none;
+  --at-apply: border border-1 border-gray/40;
+}
+
 .primary {
   --c-color: var(--c-primary);
 }
