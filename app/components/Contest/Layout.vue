@@ -137,11 +137,12 @@ const formatProgress = (value: number) => {
             >
               <span
                 hover:text-gray-800
+                dark:hover:text-light-800
                 :class="[
                   route.path.endsWith(
                     `/problem/${displyaIdToIndex(problem.display_id)}`
                   )
-                    ? 'text-gray-800'
+                    ? 'text-gray-800 dark:text-light-800'
                     : 'text-gray-400',
                 ]"
                 >{{ displyaIdToIndex(problem.display_id) }}.

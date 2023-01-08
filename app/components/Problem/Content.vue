@@ -25,16 +25,18 @@ async function copyToClipboard(text: string) {
       <span>{{ memory }} KB</span>
     </div>
   </div>
-  <div class="!max-w-full !w-full text-base prose prose-truegray">
+  <div
+    class="!max-w-full !w-full text-base prose prose-truegray dark:prose-invert"
+  >
     <c-markdown :content="content.description"></c-markdown>
 
-    <h4 mt0>输入格式</h4>
+    <h4>输入格式</h4>
     <c-markdown :content="content.input"></c-markdown>
 
-    <h4 mt0>输出格式</h4>
+    <h4>输出格式</h4>
     <c-markdown :content="content.output"></c-markdown>
 
-    <h4 v-if="content.sample && content.sample.length > 0" mt0>样例</h4>
+    <h4 v-if="content.sample && content.sample.length > 0">样例</h4>
     <div v-if="content.sample && content.sample.length > 0" w-full>
       <div
         v-for="(sample, index) in content.sample"
@@ -60,9 +62,15 @@ async function copyToClipboard(text: string) {
           >
         </div>
         <div>
-          <pre border="l-1 r-1" my0 p2 bg="[#efefef]" rounded-0>{{
-            sample.input
-          }}</pre>
+          <pre
+            border="l-1 r-1"
+            my0
+            p2
+            bg="[#efefef]"
+            dark:bg="[#101010]"
+            rounded-0
+            >{{ sample.input }}</pre
+          >
         </div>
         <div
           py1
@@ -83,9 +91,15 @@ async function copyToClipboard(text: string) {
           >
         </div>
         <div>
-          <pre border="l-1 r-1 b-1" my0 p2 bg="[#efefef]" rounded-0>{{
-            sample.answer
-          }}</pre>
+          <pre
+            border="l-1 r-1 b-1"
+            my0
+            p2
+            bg="[#efefef]"
+            dark:bg="[#101010]"
+            rounded-0
+            >{{ sample.answer }}</pre
+          >
         </div>
       </div>
     </div>

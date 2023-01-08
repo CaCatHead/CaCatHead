@@ -22,4 +22,9 @@ const result = computed(() => render(content.value));
 .markdown-body > *:last-child {
   margin-bottom: 0;
 }
+
+.markdown-body {
+  color: inherit;
+  background-color: inherit;
+}
 </style>
