@@ -8,7 +8,13 @@ export interface User {
 }
 
 export type FullUser = User & {
-  permissions: { polygon: boolean; add_post: boolean; add_contest: boolean };
+  permissions: {
+    polygon: boolean;
+    add_post: boolean;
+    add_contest: boolean;
+    is_superuser: boolean;
+    is_staff: boolean;
+  };
 };
 
 export interface Team {}

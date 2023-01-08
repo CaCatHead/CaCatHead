@@ -39,6 +39,8 @@ class FullUserSerializer(serializers.BaseSerializer):
             'email': user.email,
             'nickname': user_info.nickname,
             'permissions': {
+                'is_superuser': user.is_superuser,
+                'is_staff': user.is_staff,
                 'polygon': user.has_perm(Permissions.POLYGON),
                 'add_post': user.has_perm('post.add_post'),
                 'add_contest': user.has_perm('contest.add_contest')

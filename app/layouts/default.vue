@@ -137,6 +137,18 @@ const activeTab = computed(() => {
             :href="`https://github.com/XLoJ/CaCatHead`"
             target="_blank"
           ></a>
+          <a
+            i-carbon-gui-management
+            icon-btn
+            text-gray-500
+            hover:text="$c-brand"
+            href="/admin"
+            target="_blank"
+            v-if="
+              user &&
+              (user.permissions.is_superuser || user.permissions.is_staff)
+            "
+          ></a>
         </div>
         <div flex items-center justify-center gap1 align-middle>
           <span i-ic-round-electric-bolt class="text-gray-500/50"></span>
