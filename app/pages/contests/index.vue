@@ -49,7 +49,7 @@ const statusColor = (status: string) => {
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
-        <c-table-header name="duration" width="100">持续时间</c-table-header>
+        <c-table-header name="duration" width="160">持续时间</c-table-header>
         <c-table-header name="status" width="120">权限 / 状态</c-table-header>
         <c-table-header name="operation"><span></span></c-table-header>
       </template>
