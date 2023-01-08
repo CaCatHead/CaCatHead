@@ -36,7 +36,12 @@ const { submission } = toRefs(props);
           {{ testcase.sample ? '样例' : '测试点' }} #{{ index + 1 }}
         </h4>
         <verdict :verdict="testcase.verdict" w="1/5"></verdict>
-        <span w="1/5" inline-flex items-center v-if="testcase.score">
+        <span
+          w="1/5"
+          inline-flex
+          items-center
+          v-if="testcase.score !== undefined && testcase.score !== null"
+        >
           <span i-carbon-checkmark-outline text-lg mr1></span>
           <span>{{ testcase.score }} pts</span>
         </span>

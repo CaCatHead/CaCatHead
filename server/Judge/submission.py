@@ -225,7 +225,10 @@ class SubmissionTask:
             'message': others
         }
         if 'score' in testcase:
-            detail['score'] = testcase['score']
+            if verdict == Verdict.Accepted:
+                detail['score'] = testcase['score']
+            else:
+                detail['score'] = 0
         if 'sample' in testcase and testcase['sample']:
             detail['sample'] = True
         self.results.append(detail)
