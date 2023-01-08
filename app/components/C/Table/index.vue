@@ -25,7 +25,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
           <slot name="headers"></slot>
         </tr>
       </thead>
-      <tbody divide-y>
+      <tbody divide-y dark:divide="gray/40">
         <tr v-for="(row, index) in data">
           <td
             v-for="col in columns"

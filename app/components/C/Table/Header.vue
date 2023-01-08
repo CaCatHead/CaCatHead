@@ -25,7 +25,7 @@ ctx.columns.value.push({
 </script>
 
 <template>
-  <th p2 border="b-2 solid #dbdbdb" :width="props.width">
+  <th p2 border="b-2 solid #dbdbdb dark:gray/40" :width="props.width">
     <slot>{{ props.label }}</slot>
   </th>
 </template>
