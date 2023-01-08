@@ -47,7 +47,7 @@ snapshots['UserAuthTests::test_login 1'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -55,7 +55,7 @@ snapshots['UserAuthTests::test_login 1'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -64,7 +64,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -72,7 +72,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -81,7 +81,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -89,7 +89,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -98,7 +98,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -106,7 +106,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -115,7 +115,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -123,7 +123,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -132,7 +132,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -140,7 +140,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -149,7 +149,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -157,7 +157,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -166,7 +166,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -174,7 +174,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -183,7 +183,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -191,7 +191,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -200,7 +200,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -208,7 +208,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
@@ -217,7 +217,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
+        'nickname': 'cacathead',
         'permissions': {
             'add_contest': True,
             'add_post': True,
@@ -225,7 +225,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
             'is_superuser': True,
             'polygon': True
         },
-        'username': 'root'
+        'username': 'cacathead'
     }
 }
 
