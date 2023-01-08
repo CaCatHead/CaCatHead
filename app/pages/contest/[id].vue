@@ -2,8 +2,6 @@
 import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
-const user = useUser();
-const notify = useNotification();
 
 const { data: contest } = await useFetchAPI<{
   contest: FullContest;
@@ -19,8 +17,7 @@ if (
     title: `${contest.value?.contest.title}`,
   });
 } else {
-  notify.danger('比赛未找到或你无权访问此比赛');
-  await navigateTo('/contests');
+  await navigateTo(`/contests/register/${route.params.value}`);
 }
 </script>
 

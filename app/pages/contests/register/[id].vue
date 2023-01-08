@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Contest, Registration } from '@/composables/types';
 
+const notify = useNotification();
+
 const route = useRoute();
 
 const { data: contest } = await useFetchAPI<{
@@ -8,11 +10,15 @@ const { data: contest } = await useFetchAPI<{
   registration: Registration | null;
 }>(`/api/contest/${route.params.id}/public`);
 
+if (!contest.value) {
+  notify.danger('比赛未找到或你无权访问此比赛');
+  await navigateTo(`/contests`);
+}
+
 useHead({
   title: `注册比赛 ${contest.value?.contest.title}`,
 });
 
-const notify = useNotification();
 const user = useUser();
 if (!user || !user.value) {
   await navigateTo({

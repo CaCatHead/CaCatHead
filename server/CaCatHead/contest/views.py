@@ -84,6 +84,8 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 def get_contest_public(request: Request, contest_id: int):
     contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
                                                  id=contest_id).first()
+    if contest is None:
+        raise NotFound(detail='比赛未找到')
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
     return make_response(contest=ContestSerializer(contest).data,
                          registration=ContestRegistrationSerializer(registration).data)
