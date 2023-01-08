@@ -45,6 +45,18 @@ export default defineConfig({
               text: '开始',
               link: '/deploy/',
             },
+            {
+              text: '本地部署',
+              link: '/deploy/local',
+            },
+            {
+              text: '服务器部署',
+              link: '/deploy/server',
+            },
+            {
+              text: '单独部署判题节点',
+              link: '/deploy/judge',
+            },
           ],
         },
         {
