@@ -13,6 +13,8 @@ snapshots['UserAuthTests::test_flow 1'] = {
     'permissions': {
         'add_contest': False,
         'add_post': False,
+        'is_staff': False,
+        'is_superuser': False,
         'polygon': False
     },
     'username': 'world'
@@ -27,6 +29,8 @@ snapshots['UserAuthTests::test_flow 2'] = {
         'permissions': {
             'add_contest': False,
             'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
             'polygon': False
         },
         'username': 'world'
@@ -47,6 +51,8 @@ snapshots['UserAuthTests::test_login 1'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -62,6 +68,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -77,6 +85,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -92,6 +102,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -107,6 +119,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -122,6 +136,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -137,6 +153,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -152,6 +170,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -167,6 +187,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -182,6 +204,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -197,6 +221,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'permissions': {
             'add_contest': True,
             'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
             'polygon': True
         },
         'username': 'root'
@@ -212,6 +238,8 @@ snapshots['UserRegisterTests::test_register 1'] = {
         'permissions': {
             'add_contest': False,
             'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
             'polygon': False
         },
         'username': 'world'
@@ -227,6 +255,8 @@ snapshots['UserRegisterTests::test_register_error_same_username 1'] = {
         'permissions': {
             'add_contest': False,
             'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
             'polygon': False
         },
         'username': 'world'
@@ -242,6 +272,8 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
         'permissions': {
             'add_contest': False,
             'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
             'polygon': False
         },
         'username': 'world'
