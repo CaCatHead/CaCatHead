@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { FullContestSubmission, FullContest } from '@/composables/types';
 
+const notify = useNotification();
+
 const route = useRoute();
 
-const props = defineProps<{ contest: FullContest }>();
+const props = defineProps<{ contest: FullContest; admin: boolean }>();
 
-const { contest } = toRefs(props);
+const { contest, admin } = toRefs(props);
 
 const { data } = await useFetchAPI<{ submission: FullContestSubmission }>(
   `/api/contest/${route.params.id}/submission/${route.params.sid}`
@@ -22,6 +24,23 @@ if (!submission.value) {
 useHead({
   title: `提交 #${route.params.sid} - ${contest.value.title}`,
 });
+
+const rejudge = async () => {
+  try {
+    await fetchAPI(
+      `/api/contest/${route.params.id}/submission/${submission.value.id}/rejudge`,
+      {
+        method: 'POST',
+      }
+    );
+    notify.success(`提交重测成功`);
+    await navigateTo(
+      `/contest/${route.params.id}/submission/${submission.value.id}`
+    );
+  } catch {
+    notify.danger(`提交重测失败`);
+  }
+};
 </script>
 
 <template>
@@ -38,6 +57,12 @@ useHead({
           <c-table-header name="score" label="得分"></c-table-header>
           <c-table-header name="time" label="时间"></c-table-header>
           <c-table-header name="memory" label="内存"></c-table-header>
+          <c-table-header
+            v-if="admin"
+            name="operation"
+            label=""
+            width="60px"
+          ></c-table-header>
         </template>
 
         <template #id="{ row }">
@@ -74,6 +99,11 @@ useHead({
         </template>
         <template #time="{ row }">{{ row.time_used }} ms</template>
         <template #memory="{ row }">{{ row.memory_used }} KB</template>
+        <template #operation>
+          <c-button variant="text" color="warning" @click="rejudge"
+            >重测</c-button
+          >
+        </template>
       </c-table>
     </div>
     <submission-detail :submission="submission"></submission-detail>

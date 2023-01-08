@@ -23,7 +23,7 @@ const { submission } = toRefs(props);
       }}</pre>
       <pre v-else>未知编译错误</pre>
     </div>
-    <div v-else shadow-box rounded divide-y>
+    <div v-else-if="submission.detail.results" shadow-box rounded divide-y>
       <div
         v-for="(testcase, index) in submission.detail.results"
         px4

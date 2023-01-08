@@ -5,9 +5,10 @@ const route = useRoute();
 const user = useUser();
 const notify = useNotification();
 
-const { data: contest } = await useFetchAPI<{ contest: FullContest }>(
-  `/api/contest/${route.params.id}/content`
-);
+const { data: contest } = await useFetchAPI<{
+  contest: FullContest;
+  is_admin: boolean;
+}>(`/api/contest/${route.params.id}/content`);
 
 if (
   contest !== undefined &&
@@ -33,21 +34,17 @@ if (
       <c-nav-item
         to="submissions"
         v-if="
-          isContestAdmin(contest.contest, user) ||
+          contest.is_admin ||
           (isContestEnd(contest.contest) &&
             contest.contest?.settings?.view_submissions_after_contest)
         "
         >所有提交</c-nav-item
       >
       <c-nav-item to="standings">排行榜</c-nav-item>
-      <c-nav-item to="settings" v-if="isContestAdmin(contest.contest, user)"
-        >比赛设置</c-nav-item
-      >
-      <c-nav-item to="permissions" v-if="isContestAdmin(contest.contest, user)"
-        >权限管理</c-nav-item
-      >
+      <c-nav-item to="settings" v-if="contest.is_admin">比赛设置</c-nav-item>
+      <c-nav-item to="permissions" v-if="contest.is_admin">权限管理</c-nav-item>
     </c-nav>
-    <NuxtPage :contest="contest.contest" />
+    <NuxtPage :contest="contest.contest" :admin="contest.is_admin" />
   </div>
 </template>
 

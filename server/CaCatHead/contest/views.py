@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound, APIException, PermissionDenied
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -14,7 +14,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
     UserRegisterPayloadSerializer, ContestStandingSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
-from CaCatHead.contest.services.submit import user_submit_problem
+from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
@@ -94,7 +94,8 @@ def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
     return make_response(contest=ContestContentSerializer(contest).data,
-                         registration=ContestRegistrationSerializer(registration).data)
+                         registration=ContestRegistrationSerializer(registration).data,
+                         is_admin=contest.has_admin_permission(request.user))
 
 
 @api_view(['POST'])
@@ -238,6 +239,18 @@ def user_view_submission(request: Request, contest_id: int, submission_id: int):
         else:
             # 比赛尚未结束，无法查看其他提交
             raise NotFound(detail='比赛尚未结束，无法查看其他提交')
+
+
+@api_view(['POST'])
+@throttle_classes([SubmitRateThrottle])
+def rejudge_contest_submission(request: Request, contest_id: int, submission_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    submission = ContestSubmission.objects.filter(repository=contest.problem_repository, id=submission_id).first()
+    if contest.has_admin_permission(request.user):
+        submission = rejudge_submission(contest, submission)
+        return make_response(submission=FullContestSubmissionSerializer(submission).data)
+    else:
+        raise PermissionDenied(detail='你无权进行 Rejudge 操作')
 
 
 @api_view()
