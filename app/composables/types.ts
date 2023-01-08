@@ -1,3 +1,4 @@
+import { SubmissionDetail } from './../.nuxt/components.d';
 export interface User {
   id: number;
 
@@ -6,7 +7,47 @@ export interface User {
   nickname: string;
 }
 
-export type FullUser = User & { polygon: boolean };
+export type FullUser = User & {
+  permissions: {
+    polygon: boolean;
+    add_post: boolean;
+    add_contest: boolean;
+    is_superuser: boolean;
+    is_staff: boolean;
+  };
+};
+
+export interface Team {}
+
+export interface Contest {
+  id: number;
+
+  title: string;
+
+  start_time: string;
+
+  end_time: string;
+
+  owner: User;
+
+  is_public: boolean;
+}
+
+export type FullContest = Contest & {
+  settings: Record<string, boolean>;
+  description: string;
+  problems: Array<FullPolygonProblem>;
+};
+
+export interface Registration {
+  name: string;
+  team: {
+    name: string;
+    owner: User;
+    members: User[];
+  };
+  extra_info: Record<string, any>;
+}
 
 export interface Post {
   id: number;
@@ -57,9 +98,89 @@ export interface FullPolygonProblem {
   is_public: boolean;
   owner: User;
   problem_type: 'classic_ac';
+  time_limit: number;
+  memory_limit: number;
 
   problem_info: {
     problem_judge: ProblemJudge;
     problem_content: ProblemContent;
+  };
+}
+
+interface SubmissionDetail {
+  compile: {
+    stdout: string;
+  };
+  node: string;
+  results: Array<{
+    verdict: string;
+    time: number;
+    memory: number;
+    score: number;
+    sample?: boolean;
+  }>;
+  score: number;
+  verdict: string;
+}
+
+export interface Submission {
+  id: number;
+
+  language: string;
+
+  code_length: number;
+
+  created: string;
+
+  judged: string;
+
+  time_used: number;
+
+  memory_used: number;
+
+  verdict: string;
+
+  problem: {
+    display_id: number;
+
+    title: string;
+  };
+}
+
+export type BaseFullSubmission = Submission & {
+  code: string;
+
+  detail: SubmissionDetail;
+};
+
+export type FullSubmission = BaseFullSubmission & {
+  owner: User;
+};
+
+export type ContestSubmission = Submission & {
+  owner: Team;
+
+  relative_time: number;
+};
+
+export type FullContestSubmission = BaseFullSubmission & {
+  owner: Team;
+
+  relative_time: number;
+};
+
+export interface ContestStandings {
+  name: string;
+
+  team: Team;
+
+  created: string;
+
+  score: number;
+
+  dirty: number;
+
+  standings: {
+    submissions: ContestSubmission[];
   };
 }

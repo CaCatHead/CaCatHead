@@ -30,7 +30,7 @@ def list_repos(request):
     """
     repos = ProblemRepository.objects.filter_user_public(user=request.user,
                                                          permission=ProblemRepositoryPermissions.ListProblems).filter(
-        ~Q(id=MAIN_PROBLEM_REPOSITORY.id))
+        ~Q(id=MAIN_PROBLEM_REPOSITORY.id)).filter(is_contest=False)
     return make_response(repos=ProblemRepositorySerializer(repos, many=True).data)
 
 
@@ -38,11 +38,11 @@ def check_repo(request: Request, repo_id: int, permission: str):
     if permission == ProblemRepositoryPermissions.ListProblems:
         repo = ProblemRepository.objects.filter_user_public(user=request.user,
                                                             id=repo_id,
-                                                            permission=permission).first()
+                                                            permission=permission).filter(is_contest=False).first()
     else:
         repo = ProblemRepository.objects.filter_user_permission(user=request.user,
                                                                 id=repo_id,
-                                                                permission=permission).first()
+                                                                permission=permission).filter(is_contest=False).first()
     if repo is None:
         raise NotFound(detail='题库未找到')
     elif repo == MAIN_PROBLEM_REPOSITORY:

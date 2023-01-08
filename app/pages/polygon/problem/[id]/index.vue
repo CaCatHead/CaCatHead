@@ -9,6 +9,8 @@ const { problem } = toRefs(props);
 <template>
   <div>
     <ProblemContent
+      :time="problem.time_limit"
+      :memory="problem.memory_limit"
       :content="problem.problem_info.problem_content"
     ></ProblemContent>
   </div>

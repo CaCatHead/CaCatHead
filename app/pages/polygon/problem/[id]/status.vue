@@ -37,7 +37,8 @@ const submissions = ref(data.value?.submissions ?? []);
         >
       </template>
       <template #created="{ row }">
-        <span>{{ formatDateTime(row.created) }}</span>
+        <div text-sm>{{ formatDateTimeDay(row.created) }}</div>
+        <div text-sm>{{ formatDateTimeTime(row.created) }}</div>
       </template>
       <template #owner="{ row }">
         <user-link :user="row.owner"></user-link>
@@ -48,10 +49,12 @@ const submissions = ref(data.value?.submissions ?? []);
           text-sky-700
           text-op-70
           hover:text-op-100
-          >{{ problem.id }}. {{ problem.title }}</nuxt-link
+          >#{{ problem.id }}. {{ problem.title }}</nuxt-link
         >
       </template>
-      <template #language="{ row }">{{ row.language }}</template>
+      <template #language="{ row }"
+        ><display-language :language="row.language"
+      /></template>
       <template #verdict="{ row }">
         <nuxt-link :to="`/polygon/submission/${row.id}`">
           <verdict :verdict="row.verdict"></verdict>
@@ -61,7 +64,7 @@ const submissions = ref(data.value?.submissions ?? []);
         <span>{{ row.time_used }} ms</span>
       </template>
       <template #memory_used="{ row }">
-        <span>{{ row.memory_used }} KB</span>
+        <display-memory :memory="row.memory_used"></display-memory>
       </template>
     </c-table>
   </div>

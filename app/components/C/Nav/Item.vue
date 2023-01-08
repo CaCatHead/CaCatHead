@@ -10,7 +10,7 @@ const { to } = toRefs(props);
 
 const toPath = computed(() => prefix.value + to.value);
 
-const isActive = computed(() => route.fullPath === toPath.value);
+const isActive = computed(() => route.path === toPath.value);
 </script>
 
 <template>

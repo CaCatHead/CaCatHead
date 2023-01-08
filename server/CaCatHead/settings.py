@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -73,6 +74,10 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/second',
+        'user': '10/second'
+    },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
@@ -120,7 +125,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / cacathead_config.database.name,
     }
-} if cacathead_config.database.engine == 'sqlite' else {
+} if cacathead_config.database.engine == 'sqlite' or 'test' in sys.argv else {
+    # 如果是测试环境，直接使用 sqlite 不使用 postgresql 或者 mysql
     'default': {
         'ENGINE': 'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
         'NAME': cacathead_config.database.name,
@@ -135,8 +141,12 @@ DATABASES = {
 # https://docs.djangoproject.com/zh-hans/4.1/topics/cache/
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': '127.0.0.1:11211',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    },
+    'redis': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
     }
 }
 

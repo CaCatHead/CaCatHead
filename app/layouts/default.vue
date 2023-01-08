@@ -91,7 +91,7 @@ const activeTab = computed(() => {
         <div
           :class="['default-nav-item', activeTab === 'contest' && 'is-active']"
         >
-          <NuxtLink to="/contest/">比赛</NuxtLink>
+          <NuxtLink to="/contests/">比赛</NuxtLink>
         </div>
         <div
           :class="[
@@ -103,7 +103,7 @@ const activeTab = computed(() => {
         </div>
 
         <div
-          v-if="user && user.polygon"
+          v-if="user && user.permissions.polygon"
           :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>
@@ -120,19 +120,15 @@ const activeTab = computed(() => {
 
       <footer block pb8 w-full text-center text-base-500>
         <div border="b-2 base" mb8></div>
-        <div>
-          <span>
-            <button
-              icon-btn
-              i-carbon-sun
-              dark:i-carbon-moon
-              lt-md:text-sm
-              text-base
-              @click="toggleDark()"
-            />
-          </span>
-        </div>
-        <div flex items-center justify-center gap1 align-middle>
+        <div flex="~ gap2" mb2 items-center justify-center text-lg>
+          <button
+            icon-btn
+            i-carbon-sun
+            dark:i-carbon-moon
+            lt-md:text-sm
+            text-base
+            @click="toggleDark()"
+          />
           <a
             i-carbon-logo-github
             icon-btn
@@ -140,10 +136,39 @@ const activeTab = computed(() => {
             hover:text="$c-brand"
             :href="`https://github.com/XLoJ/CaCatHead`"
             target="_blank"
-          ></a
-          ><a :href="`https://github.com/XLoJ/CaCatHead`" target="_blank"
-            >CaCatHead</a
-          >
+          ></a>
+          <a
+            i-carbon-document
+            icon-btn
+            text-gray-500
+            hover:text="$c-brand"
+            :href="`https://oj-docs.onekuma.cn/`"
+            target="_blank"
+          ></a>
+          <a
+            i-carbon-gui-management
+            icon-btn
+            text-gray-500
+            hover:text="$c-brand"
+            href="/admin"
+            target="_blank"
+            v-if="
+              user &&
+              (user.permissions.is_superuser || user.permissions.is_staff)
+            "
+          ></a>
+        </div>
+        <div flex items-center justify-center gap1 align-middle>
+          <span i-ic-round-electric-bolt class="text-gray-500/50"></span>
+          <span
+            >Powered by
+            <a
+              :href="`https://github.com/XLoJ/CaCatHead`"
+              target="_blank"
+              text-link
+              >CaCatHead</a
+            >
+          </span>
         </div>
       </footer>
     </div>

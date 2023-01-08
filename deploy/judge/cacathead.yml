@@ -1,0 +1,44 @@
+server:
+  allowed_host:
+    - '127.0.0.1'
+    - server  # This is docker-compose service name, and is used for nginx
+    # -   # Config your domain here
+  trusted_origin:
+    - http://127.0.0.1
+    # -   # Config your domain here
+  # Root user
+  root:
+    username: !ENV ${CACATHEAD_ROOT_USER:cacathead}
+    password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
+
+judge:
+  name: judge_node_1
+  queue: judge_task
+
+testcase:
+  root: /root/testcases
+  minio:
+    host: localhost
+    port: '9000'
+    username: root
+    password: !ENV ${MINIO_PASS}
+    bucket: testcase
+
+database:
+  engine: postgresql
+  name: cacathead
+  host: localhost
+  port: '5432'
+  username: root
+  password: !ENV ${DB_PASS}
+
+redis:
+  host: localhost
+  port: '6379'
+  password: !ENV ${REDIS_PASS}
+
+rabbitmq:
+  host: localhost
+  port: '5672'
+  username: root
+  password: !ENV ${RMQ_PASS}

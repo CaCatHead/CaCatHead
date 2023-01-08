@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
-from CaCatHead.permission.manager import PermissionManager
+from CaCatHead.permission.managers import PermissionManager
 
 
 @unique
@@ -177,6 +177,8 @@ class ProblemRepository(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u"题目仓库名称"))
 
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
+
+    is_contest = models.BooleanField(default=False, verbose_name=_(u"是否为比赛"))
 
     problems = models.ManyToManyField(Problem, verbose_name=_(u"题目列表"))
 

@@ -8,7 +8,7 @@ server:
     # -   # Config your domain here
   # Root user
   root:
-    username: !ENV ${CACATHEAD_ROOT_USER:root}
+    username: !ENV ${CACATHEAD_ROOT_USER:cacathead}
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
@@ -32,8 +32,13 @@ database:
   username: root
   password: !ENV ${DB_PASS}
 
+redis:
+  host: redis
+  port: '6379'
+  password: !ENV ${REDIS_PASS}
+
 rabbitmq:
   host: rabbitmq
   port: '5672'
-  username: guest
+  username: root
   password: !ENV ${RMQ_PASS}

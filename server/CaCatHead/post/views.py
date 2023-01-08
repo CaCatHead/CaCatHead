@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import permission_required
+from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
@@ -45,8 +46,7 @@ def create_post(request: Request):
     """
     创建公告
     """
-    # TODO: init sort_time and is_public
-    post = Post(title=request.data['title'], owner=request.user)
+    post = Post(title=request.data['title'], sort_time=timezone.now(), is_public=False, owner=request.user)
     post.save()
     post_content = PostContent(post=post, content=request.data['content'])
     post_content.save()

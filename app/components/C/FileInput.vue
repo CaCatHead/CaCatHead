@@ -2,12 +2,14 @@
 const props = withDefaults(
   defineProps<{
     id: string;
+    modelValue?: File[];
     color?: string;
     accept?: string;
     multiple?: boolean;
     variant?: 'fill' | 'outline' | 'light' | 'text';
   }>(),
   {
+    modelValue: () => [],
     multiple: false,
     color: 'success',
     variant: 'fill',
@@ -16,9 +18,25 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: 'change', ev: Event): void;
+  (e: 'update:modelValue', files: File[]): void;
 }>();
 
 const { id, color, variant, accept, multiple } = toRefs(props);
+
+const files = useVModel(props, 'modelValue', emit);
+
+const onFileChange = async (ev: Event) => {
+  const target = ev.target as HTMLInputElement;
+  if (!target.files) return;
+  const uploaded: File[] = [];
+  for (let i = 0; i < target.files.length; i++) {
+    if (target.files[i]) {
+      uploaded.push(target.files[i]);
+    }
+  }
+  files.value.splice(0, files.value.length, ...uploaded);
+  emit('change', ev);
+};
 </script>
 
 <template>
@@ -39,7 +57,7 @@ const { id, color, variant, accept, multiple } = toRefs(props);
       :accept="accept"
       :multiple="multiple"
       hidden
-      @change="ev => emit('change', ev)"
+      @change="onFileChange"
     />
   </div>
 </template>

@@ -15,5 +15,16 @@ const result = computed(() => render(content.value));
 </script>
 
 <template>
-  <div v-html="result"></div>
+  <div class="markdown-body" v-html="result"></div>
 </template>
+
+<style>
+.markdown-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body {
+  color: inherit;
+  background-color: inherit;
+}
+</style>

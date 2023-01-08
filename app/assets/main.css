@@ -20,14 +20,24 @@
 }
 
 /* selection */
+html {
+  --selection-bg-color: #cce2ff;
+  --selection-text-color: inherit;
+}
+html.dark {
+  --selection-text-color: #171717;
+}
 ::-webkit-selection {
-  background-color: #cce2ff;
+  background-color: var(--selection-bg-color);
+  color:  var(--selection-text-color);
 }
 ::-moz-selection {
-  background-color: #cce2ff;
+  background-color: var(--selection-bg-color);
+  color:  var(--selection-text-color);
 }
 ::selection {
-  background-color: #cce2ff;
+  background-color: var(--selection-bg-color);
+  color:  var(--selection-text-color);
 }
 input::-webkit-selection,
 textarea::-webkit-selection {

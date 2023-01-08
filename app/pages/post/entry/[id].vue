@@ -6,10 +6,14 @@ const route = useRoute();
 const { data: post } = await useFetchAPI<{ post: Post }>(
   `/api/post/${route.params.id}`
 );
+
+if (!post.value) {
+  await navigateTo('/');
+}
 </script>
 
 <template>
-  <div>
+  <div v-if="post">
     <Head>
       <Title>{{ post.post.title }}</Title>
     </Head>
@@ -24,6 +28,8 @@ const { data: post } = await useFetchAPI<{ post: Post }>(
         ></time-interval
       ></span>
     </p>
-    <div mt4 pl4 py2 border="l-4 base">{{ post.post.content }}</div>
+    <div mt4 pl4 py2 border="l-4 base">
+      <c-markdown :content="post.post.content"></c-markdown>
+    </div>
   </div>
 </template>

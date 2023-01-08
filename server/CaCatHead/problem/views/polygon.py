@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.exceptions import NotFound
@@ -12,10 +13,11 @@ from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading
 from CaCatHead.problem.views.submit import submit_problem_code
+from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
     FullPolygonSubmissionSerializer
@@ -100,18 +102,36 @@ def get_polygon_problem(request: Request, problem_id: int):
 
 @api_view()
 @permission_classes([HasPolygonPermission])
+def export_polygon_problem_zip(request: Request, problem_id: int):
+    """
+    导出题目 zip
+    """
+    problem = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                 id=problem_id,
+                                                 user=request.user,
+                                                 permission=ProblemPermissions.ReadProblem).first()
+    problem_directory = ProblemDirectory.make(problem)
+    response = HttpResponse(problem_directory.generate_zip(), content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={problem.title}.zip'
+    return response
+
+
+@api_view()
+@permission_classes([HasPolygonPermission])
 def list_polygon_problems(request):
     """
     列出自己可见的题目
     """
     problems = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                   user=request.user,
-                                                  permission=ProblemPermissions.ReadProblem)
+                                                  permission=ProblemPermissions.ReadProblem).order_by(
+        '-updated').order_by('-id')
     return make_response(problems=PolygonProblemSerializer(problems, many=True).data)
 
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
+@func_validate_request(SubmitCodePayload)
 def submit_polygon_problem(request: Request, problem_id: int):
     """
     向自己创建的题目，或者被授予提交权限的题目，提交代码

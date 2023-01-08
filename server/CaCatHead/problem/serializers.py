@@ -15,12 +15,12 @@ class EditProblemPayload(serializers.Serializer):
     display_id = serializers.IntegerField(required=False)
     time_limit = serializers.IntegerField(required=False)
     memory_limit = serializers.IntegerField(required=False)
-    description = serializers.CharField(allow_blank=True, required=False)
-    input = serializers.CharField(allow_blank=True, required=False)
-    output = serializers.CharField(allow_blank=True, required=False)
+    description = serializers.CharField(allow_null=True, allow_blank=True, required=False)
+    input = serializers.CharField(allow_null=True, allow_blank=True, required=False)
+    output = serializers.CharField(allow_null=True, allow_blank=True, required=False)
     sample = serializers.JSONField(required=False)
-    hint = serializers.CharField(allow_blank=True, required=False)
-    source = serializers.CharField(allow_blank=True, required=False)
+    hint = serializers.CharField(allow_null=True, allow_blank=True, required=False)
+    source = serializers.CharField(allow_null=True, allow_blank=True, required=False)
     extra_content = serializers.JSONField(required=False)
     extra_judge = serializers.JSONField(required=False)
 
@@ -38,6 +38,11 @@ class EditPermissionPayload(serializers.Serializer):
     group_id = serializers.IntegerField(required=False)
     grant = serializers.CharField(max_length=32, required=False)
     revoke = serializers.CharField(max_length=32, required=False)
+
+
+class SubmitCodePayload(serializers.Serializer):
+    code = serializers.CharField(required=True)
+    language = serializers.ChoiceField(choices=('c', 'cpp', 'java'), required=True)
 
 
 class ProblemRepositorySerializer(serializers.ModelSerializer):
@@ -68,7 +73,7 @@ class PolygonProblemSerializer(BaseProblemSerializer):
 
     class Meta:
         model = Problem
-        fields = ['id', 'display_id', 'title', 'problem_type', 'is_public', 'owner']
+        fields = ['id', 'display_id', 'title', 'problem_type', 'is_public', 'owner', 'created', 'updated']
 
 
 class _ProblemContentSerializer(serializers.ModelSerializer):

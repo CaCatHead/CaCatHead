@@ -56,7 +56,7 @@ server {
 
 You should change the `<server domain>` to the domain of your website.
 
-If you want to enable HTTPS, you should use the following config, and create the SSL key at `./.cert/ssl.pem` and `./.cert/ssl.key` (at the root directory of this project in your host machine).
+If you want to enable HTTPS, you should add the following config (they are commented in the config file), and create the SSL key at the `./deploy/nginx/cert/ssl.pem` and `./deploy/nginx/cert/ssl.key`.
 
 ```nginx
     # SSL
@@ -64,7 +64,7 @@ If you want to enable HTTPS, you should use the following config, and create the
     ssl_certificate_key /root/cert/ssl.key;
 ```
 
-Then, modify the server config at [./deploy/server/cacathead.yml](./deploy/server/cacathead.yml). Add your site domain to the `server.allowed_host` and your site url to the `server.trusted_origin`, like this.
+Then, modify the server config at [./deploy/server/cacathead.yml](./deploy/server/cacathead.yml). Add your site domain to the `server.allowed_host` and your site url to the `server.trusted_origin`, like this:
 
 ```yaml
 server:
@@ -76,6 +76,30 @@ server:
     - http://127.0.0.1
     - https://oj.xlorpaste.cn  # Config your domain here
   # ...
+```
+
+Then, create password files at [./deploy/pass/](./deploy/pass/). You should create 4 password files:
+
++ `./deploy/pass/db_pass.txt`
++ `./deploy/pass/redis_pass.txt`
++ `./deploy/pass/minio_pass.txt`
++ `./deploy/pass/rmq_pass.txt`
+
+You need to make sure your password is strong enough.
+
+Then, create RabbitMQ config file at `./deploy/rabbitmq.conf` to specify the default user is `root` and the default password is the same as the `./deploy/pass/rmq_pass.txt`:
+
+```conf
+default_user = root
+default_pass = <same as ./deploy/pass/rmq_pass.txt>
+```
+
+Finally, docker compose up.
+
+```bash
+$ docker compose up --build -d
+# or
+$ ./manage.sh up
 ```
 
 ## License

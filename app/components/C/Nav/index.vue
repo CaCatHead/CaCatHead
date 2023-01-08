@@ -9,7 +9,7 @@ provide(CNAV, { prefix });
 </script>
 
 <template>
-  <div flex items-center gap2 select-none class="c-nav">
+  <div flex items-center gap2 select-none overflow-y-auto class="c-nav">
     <slot></slot>
   </div>
 </template>

@@ -49,6 +49,7 @@ urlpatterns = [
     path('api/polygon/create', problem_views.create_problem),  # 手动创建题目
     path('api/polygon/<int:problem_id>', problem_views.get_polygon_problem),  # 手动创建题目
     path('api/polygon/<int:problem_id>/edit', problem_views.edit_polygon_problem),  # 编辑题目
+    path('api/polygon/<int:problem_id>/export', problem_views.export_polygon_problem_zip),  # 导出题目 zip
     path('api/polygon/<int:problem_id>/upload', problem_views.edit_polygon_problem_by_upload),  # 上压缩包编辑题目
     path('api/polygon/<int:problem_id>/submit', problem_views.submit_polygon_problem),  # 提交题目代码
     path('api/polygon/<int:problem_id>/submissions', problem_views.list_polygon_problem_submissions),  # 提交题目代码
@@ -71,15 +72,20 @@ urlpatterns = [
     path('api/contests', contest_views.list_contests),  # 列出所有比赛
     path('api/contest', contest_views.create_contest),  # 创建比赛
     path('api/contest/<int:contest_id>/edit', contest_views.edit_contest),  # 编辑比赛信息
-    # path('api/contest/<int:contest_id>/problems/edit'),  # 编辑比赛题目列表
-    # path('api/contest/<int:contest_id>/contestants/edit'),  # 编辑比赛人员列表
+    path('api/contest/<int:contest_id>/registrations', contest_views.ContestRegistrationView.as_view()),  # 编辑比赛人员列表
     # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
-    # path('api/contest/<int:contest_id>/register'),  # 参加比赛
-    # path('api/contest/<int:contest_id>/content'),  # 查看比赛详情, 包括题目内容
-    # path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit'),  # 提交代码
-    # path('api/contest/<int:contest_id>/submissions'),  # 查看比赛所有提交
-    # path('api/contest/<int:contest_id>/submission/<int:submission_id>'),  # 获取比赛提交状态详情
-    # path('api/contest/<int:contest_id>/standings'),  # 查看比赛排行榜
+    path('api/contest/<int:contest_id>/register', contest_views.user_register_contest),  # 参加比赛
+    path('api/contest/<int:contest_id>/unregister', contest_views.user_unregister_contest),  # 取消注册比赛
+    path('api/contest/<int:contest_id>/public', contest_views.get_contest_public),  # 查看比赛详情, 包括题目内容
+    path('api/contest/<int:contest_id>/content', contest_views.get_contest),  # 查看比赛详情, 包括题目内容
+    path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit', contest_views.user_submit_code),  # 提交代码
+    path('api/contest/<int:contest_id>/status', contest_views.user_list_own_submissions),  # 查看比赛个人提交
+    path('api/contest/<int:contest_id>/submission/<int:submission_id>',
+         contest_views.user_view_submission),  # 获取比赛提交状态详情
+    path('api/contest/<int:contest_id>/submission/<int:submission_id>/rejudge',
+         contest_views.rejudge_contest_submission),  # Rejudge 某个提交
+    path('api/contest/<int:contest_id>/submissions', contest_views.user_view_all_submissions),  # 查看比赛所有提交
+    path('api/contest/<int:contest_id>/standings', contest_views.user_view_standings),  # 查看比赛排行榜
     # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
     # team
     # path('api/teams'),  # 列出自己参加的团队

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type { ProblemContent } from '@/composables/types';
 
-const props = defineProps<{ content: ProblemContent }>();
+const props = defineProps<{
+  content: ProblemContent;
+  time: number;
+  memory: number;
+}>();
 
 const { content } = toRefs(props);
 
@@ -11,8 +15,19 @@ async function copyToClipboard(text: string) {
 </script>
 
 <template>
-  <div class="!max-w-full !w-full text-base prose prose-truegray">
-    <h4>题目描述</h4>
+  <div space-y-2 mb8>
+    <div>
+      <span font-600 mr2>时间限制</span>
+      <span>{{ time }} ms</span>
+    </div>
+    <div>
+      <span font-600 mr2>空间限制</span>
+      <span>{{ memory }} KB</span>
+    </div>
+  </div>
+  <div
+    class="!max-w-full !w-full text-base prose prose-truegray dark:prose-invert"
+  >
     <c-markdown :content="content.description"></c-markdown>
 
     <h4>输入格式</h4>
@@ -21,8 +36,8 @@ async function copyToClipboard(text: string) {
     <h4>输出格式</h4>
     <c-markdown :content="content.output"></c-markdown>
 
-    <h4>样例</h4>
-    <div w-full>
+    <h4 v-if="content.sample && content.sample.length > 0">样例</h4>
+    <div v-if="content.sample && content.sample.length > 0" w-full>
       <div
         v-for="(sample, index) in content.sample"
         :key="index"
@@ -47,9 +62,15 @@ async function copyToClipboard(text: string) {
           >
         </div>
         <div>
-          <pre border="l-1 r-1" my0 p2 bg="[#efefef]" rounded-0>{{
-            sample.input
-          }}</pre>
+          <pre
+            border="l-1 r-1"
+            my0
+            p2
+            bg="[#efefef]"
+            dark:bg="[#101010]"
+            rounded-0
+            >{{ sample.input }}</pre
+          >
         </div>
         <div
           py1
@@ -70,9 +91,15 @@ async function copyToClipboard(text: string) {
           >
         </div>
         <div>
-          <pre border="l-1 r-1 b-1" my0 p2 bg="[#efefef]" rounded-0>{{
-            sample.answer
-          }}</pre>
+          <pre
+            border="l-1 r-1 b-1"
+            my0
+            p2
+            bg="[#efefef]"
+            dark:bg="[#101010]"
+            rounded-0
+            >{{ sample.answer }}</pre
+          >
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ html {
   font-weight: 400;
 }
 
-.text-link:hover {
+.text-link:hover, [text-link=""]:hover {
   --at-apply: text-sky-700 dark:text-sky-200;
 }
 
@@ -38,6 +38,13 @@ html.dark {
   --at-apply: text-light-500;
   background: #222;
   color-scheme: dark;
+}
+
+/* shadow-box in dark mode */
+.dark .shadow-box,
+.dark [shadow-box=''] {
+  box-shadow: none;
+  --at-apply: border border-1 border-gray/40;
 }
 
 .primary {
@@ -56,16 +63,29 @@ html.dark {
   --c-color: var(--c-danger);
 }
 
-.text-success {
+.text-success, [text-success=""] {
   color: hsla(var(--c-success), var(--un-text-opacity));
 }
-.text-info {
+.text-info, [text-info=""] {
   color: hsla(var(--c-info), var(--un-text-opacity));
 }
-.text-warning {
+.text-warning, [text-warning=""] {
   color: hsla(var(--c-warning), var(--un-text-opacity));
 }
-.text-danger {
+.text-danger, [text-danger=""] {
   color: hsla(var(--c-danger), var(--un-text-opacity));
+}
+
+.bg-success, [bg-success=""] {
+  background-color: hsla(var(--c-success), var(--un-bg-opacity));
+}
+.bg-info, [bg-info=""] {
+  background-color: hsla(var(--c-info), var(--un-bg-opacity));
+}
+.bg-warning, [bg-warning=""] {
+  background-color: hsla(var(--c-warning), var(--un-bg-opacity));
+}
+.bg-danger, [bg-danger=""] {
+  background-color: hsla(var(--c-danger), var(--un-bg-opacity));
 }
 </style>

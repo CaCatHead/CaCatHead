@@ -3,6 +3,8 @@ import type { FullPolygonProblem } from '@/composables/types';
 
 const route = useRoute();
 
+const notify = useNotification();
+
 const { data } = await useFetchAPI<{ problem: FullPolygonProblem }>(
   `/api/polygon/${route.params.id}`
 );
@@ -14,6 +16,46 @@ if (data.value === null) {
 const problem = ref(data.value!.problem);
 
 const user = useUser();
+
+const files = ref<File[]>([]);
+
+const downloadZip = async () => {
+  const result = await fetchAPI(`/api/polygon/${problem.value.id}/export`, {
+    responseType: 'blob',
+  });
+  const data = window.URL.createObjectURL(result as Blob);
+  const el = document.createElement('a');
+  el.setAttribute('href', data);
+  el.setAttribute('download', `${problem.value.title}.zip`);
+  el.style.display = 'none';
+  document.body.appendChild(el);
+  el.click();
+  document.body.removeChild(el);
+};
+
+const onUpdateZip = async () => {
+  if (files.value.length > 0) {
+    const formData = new FormData();
+    const file = files.value[0];
+    formData.append('file', file);
+    try {
+      await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `form-data; filename="${encodeURIComponent(
+            file.name
+          )}"`,
+        },
+      });
+      notify.success(`题目 ${problem.value.title} 更新成功`);
+    } catch (err: unknown) {
+      console.error(err);
+      notify.danger(`题目 ${problem.value.title} 更新失败`);
+    }
+  }
+};
 </script>
 
 <template>
@@ -23,10 +65,17 @@ const user = useUser();
     </Head>
     <div>
       <div flex pl2>
-        <h2 text-2xl font-bold mb4>{{ problem.title }}</h2>
+        <h2 text-2xl font-bold mb4>#{{ problem.id }}. {{ problem.title }}</h2>
         <div flex-auto></div>
         <div>
-          <c-file-input id="update-zip" accept=".zip"
+          <c-button mr2 variant="outline" color="info" @click="downloadZip"
+            >下载题目包</c-button
+          >
+          <c-file-input
+            id="update-zip"
+            accept=".zip"
+            v-model="files"
+            @change="onUpdateZip"
             >上传题目包更新</c-file-input
           >
         </div>

@@ -10,7 +10,13 @@ snapshots['UserAuthTests::test_flow 1'] = {
     'email': 'world@example.com',
     'id': 2,
     'nickname': 'world',
-    'polygon': False,
+    'permissions': {
+        'add_contest': False,
+        'add_post': False,
+        'is_staff': False,
+        'is_superuser': False,
+        'polygon': False
+    },
     'username': 'world'
 }
 
@@ -20,7 +26,13 @@ snapshots['UserAuthTests::test_flow 2'] = {
         'email': 'world@example.com',
         'id': 2,
         'nickname': 'world',
-        'polygon': False,
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
+            'polygon': False
+        },
         'username': 'world'
     }
 }
@@ -35,9 +47,15 @@ snapshots['UserAuthTests::test_login 1'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -46,9 +64,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -57,9 +81,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -68,9 +98,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -79,9 +115,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -90,9 +132,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -101,9 +149,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -112,9 +166,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -123,9 +183,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -134,9 +200,15 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
     }
 }
 
@@ -145,9 +217,49 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
     'user': {
         'email': 'root@example.com',
         'id': 1,
-        'nickname': 'root',
-        'polygon': True,
-        'username': 'root'
+        'nickname': 'cacathead',
+        'permissions': {
+            'add_contest': True,
+            'add_post': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'polygon': True
+        },
+        'username': 'cacathead'
+    }
+}
+
+snapshots['UserRegisterTests::test_register 1'] = {
+    'status': 'ok',
+    'user': {
+        'email': 'world@example.com',
+        'id': 2,
+        'nickname': 'world',
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
+            'polygon': False
+        },
+        'username': 'world'
+    }
+}
+
+snapshots['UserRegisterTests::test_register_error_same_username 1'] = {
+    'status': 'ok',
+    'user': {
+        'email': 'world@example.com',
+        'id': 2,
+        'nickname': 'world',
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
+            'polygon': False
+        },
+        'username': 'world'
     }
 }
 
@@ -157,7 +269,13 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
         'email': 'world@example.com',
         'id': 2,
         'nickname': 'world',
-        'polygon': False,
+        'permissions': {
+            'add_contest': False,
+            'add_post': False,
+            'is_staff': False,
+            'is_superuser': False,
+            'polygon': False
+        },
         'username': 'world'
     }
 }

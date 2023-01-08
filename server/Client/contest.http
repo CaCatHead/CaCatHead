@@ -1,0 +1,85 @@
+### List contests
+GET http://127.0.0.1:8000/api/contests
+Authorization: Token {{auth_token}}
+
+### Create a new contest
+POST http://127.0.0.1:8000/api/contest
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "CaCatHead Round 1",
+  "type": "icpc"
+}
+
+### Get contest content
+GET http://127.0.0.1:8000/api/contest/5/content
+Authorization: Token {{auth_token}}
+
+### Get contest public
+GET http://127.0.0.1:8000/api/contest/5/public
+Authorization: Token {{auth_token}}
+
+### Edit contest
+POST http://127.0.0.1:8000/api/contest/5/edit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "title": "CaCatHead Round 1",
+  "is_public": true
+}
+
+### Edit contest problems
+POST http://127.0.0.1:8000/api/contest/5/edit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "problems": [
+    1
+  ]
+}
+
+### List contest registrations
+GET http://127.0.0.1:8000/api/contest/5/registrations
+Authorization: Token {{auth_token}}
+
+### Register contest
+POST http://127.0.0.1:8000/api/contest/5/register
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "gdx",
+  "extra_info": {
+    "student_number": "12345678"
+  }
+}
+
+### Submit contest code
+POST http://127.0.0.1:8000/api/contest/5/problem/1000/submit
+Authorization: Token {{auth_token}}
+Content-Type: application/json
+
+{
+  "language": "cpp",
+  "code": "#include <iostream>\n\nusing namespace std;\n\nint main() {\n  int a = 1, b = 1;\n  cin >> a >> b;\n  cout << a + b << '\\n';\n  return 0;\n}"
+}
+
+### List own submissions
+GET http://127.0.0.1:8000/api/contest/6/status
+Authorization: Token {{auth_token}}
+
+### List all submissions
+GET http://127.0.0.1:8000/api/contest/5/submissions
+Authorization: Token {{auth_token}}
+
+### List all submissions with page
+GET http://127.0.0.1:8000/api/contest/5/submissions?page=1
+Authorization: Token {{auth_token}}
+
+### Get standings
+GET http://127.0.0.1:8000/api/contest/5/standings
+Authorization: Token {{auth_token}}
+

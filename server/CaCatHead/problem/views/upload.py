@@ -2,6 +2,8 @@ import json
 import os
 import shutil
 import tempfile
+import zipfile
+from io import BytesIO
 from pathlib import Path
 
 from django.conf import settings
@@ -20,15 +22,15 @@ class ProblemDirectory:
         config_path = root / 'config.json'
         if not config_path.exists():
             json.dump({'problem': {}, 'testcases': []}, open(config_path, 'w'))
-        self.config = json.load(open(config_path))
+        self.config = json.load(open(config_path, encoding='UTF-8'))
 
     @classmethod
     def make(cls, problem: Problem):
-        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.id))
+        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.problem_info.problem_judge.id))
 
     @classmethod
-    def make_from_id(cls, problem_id: int | str):
-        root = Path(settings.TESTCASE_ROOT) / str(problem_id)
+    def make_from_id(cls, problem_id: int | str, problem_judge_id: int | str):
+        root = Path(settings.TESTCASE_ROOT) / str(problem_judge_id)
         if not root.exists():
             problem_directory = ProblemDirectory(root=root)
             problem = Problem.objects.filter(id=int(problem_id)).first()
@@ -92,6 +94,16 @@ class ProblemDirectory:
             if not answer_file.exists():
                 download_minio_testcase(directory, answer_file)
 
+    def generate_zip(self):
+        mem_zip = BytesIO()
+        with zipfile.ZipFile(mem_zip, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+            root_length = len(str(self.root))
+            for root, dirs, files in os.walk(self.root):
+                folder = root[root_length:]
+                for file in files:
+                    zf.write(os.path.join(root, file), os.path.join(folder, file))
+        return mem_zip.getvalue()
+
 
 def find_config_root(root: Path) -> Path | None:
     # TODO: not init a list
@@ -140,10 +152,11 @@ def try_unzip_problem_arch(problem_root: Path, file_name: str, zip_content: InMe
     return valid
 
 
-def upload_problem_arch(pid: int, file: InMemoryUploadedFile) -> ProblemDirectory:
-    problem_root = settings.TESTCASE_ROOT / str(pid)
+def upload_problem_arch(problem: Problem, file: InMemoryUploadedFile) -> ProblemDirectory:
+    problem_judge_id = problem.problem_info.problem_judge.id
+    problem_root = settings.TESTCASE_ROOT / str(problem_judge_id)
     problem_root.mkdir(parents=True, exist_ok=True)
-    zip_file_name = 'p' + str(pid) + '_' + str(timezone.now().timestamp()) + '.zip'
+    zip_file_name = 'p' + str(problem_judge_id) + '_' + str(timezone.now().timestamp()) + '.zip'
     try:
         if try_unzip_problem_arch(problem_root, zip_file_name, file):
             problem_directory = ProblemDirectory(problem_root)

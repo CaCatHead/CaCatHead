@@ -13,7 +13,7 @@ const { data: problems } = await useFetchAPI<{ problems: any[] }>(
 <template>
   <div w-full flex="~ gap8 lt-md:col-reverse">
     <div w="4/5 lt-md:full">
-      <c-table :data="problems.problems">
+      <c-table :data="problems?.problems ?? []">
         <template #headers>
           <c-table-header
             name="id"
@@ -40,7 +40,7 @@ const { data: problems } = await useFetchAPI<{ problems: any[] }>(
     </div>
 
     <div w="1/5 lt-md:full" overflow-auto pb2 shadow-box rounded p4>
-      <div v-for="repo in repos.repos">
+      <div v-for="repo in repos?.repos ?? []">
         <c-button
           variant="text"
           color="info"

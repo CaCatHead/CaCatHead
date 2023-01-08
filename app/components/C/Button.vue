@@ -4,15 +4,19 @@ const props = withDefaults(
     variant?: 'fill' | 'outline' | 'light' | 'text';
     color?: string;
     tag?: string;
+    disabled?: boolean;
+    icon?: string | undefined;
   }>(),
   {
     variant: 'fill',
     color: 'primary',
     tag: 'button',
+    disabled: false,
+    icon: undefined,
   }
 );
 
-const { color, variant: _variant, tag } = toRefs(props);
+const { color, variant: _variant, tag, disabled, icon } = toRefs(props);
 
 const variant = computed(() => 'c-' + _variant.value);
 </script>
@@ -20,8 +24,16 @@ const variant = computed(() => 'c-' + _variant.value);
 <template>
   <component
     :is="tag"
-    :class="['c-button', 'whitespace-nowrap', variant, color]"
+    :class="[
+      'c-button',
+      'whitespace-nowrap',
+      disabled ? 'disabled' : undefined,
+      icon ? 'has-icon' : undefined,
+      variant,
+      color,
+    ]"
   >
+    <slot name="icon"><span :class="[icon, 'text-xl']"></span></slot>
     <slot></slot>
   </component>
 </template>
@@ -40,6 +52,13 @@ const variant = computed(() => 'c-' + _variant.value);
   --c-bg: hsla(var(--c-color), var(--un-bg-opacity));
   background-color: var(--c-bg);
 }
+.c-button.has-icon {
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+.c-button.disabled {
+  --at-apply: cursor-not-allowed;
+}
 
 .c-button.c-fill {
   --at-apply: text-white bg-op-80;
@@ -52,7 +71,7 @@ const variant = computed(() => 'c-' + _variant.value);
   color: hsl(var(--c-color));
   --at-apply: bg-op-0;
 }
-.c-button.c-text:hover {
+.c-button.c-text:not(.disabled):hover {
   --at-apply: bg-op-10;
 }
 
@@ -61,7 +80,12 @@ const variant = computed(() => 'c-' + _variant.value);
   color: hsl(var(--c-color));
   --at-apply: bg-op-0 border-1;
 }
-.c-button.c-outline:hover {
+.c-button.c-outline.disabled {
+  /* border-color: hsl(var(--c-color)); */
+  /* color: hsl(var(--c-color)); */
+  --at-apply: border-gray-400 text-gray-400 bg-op-0 border-1;
+}
+.c-button.c-outline:not(.disabled):hover {
   --at-apply: bg-op-20;
 }
 </style>

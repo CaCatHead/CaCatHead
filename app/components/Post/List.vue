@@ -21,19 +21,16 @@ defineProps<{ posts: Post[] }>();
         ></span>
       </p>
       <p v-if="post.content" mt4 pl4 py2 border="l-4 base">
-        {{ post.content }}
+        <client-only>
+          <!-- SSR 渲染的结果有问题，所以强制 CSR -->
+          <c-markdown :content="post.content"></c-markdown>
+        </client-only>
       </p>
+
       <div
         v-if="post.content"
-        mt4
-        px4
-        py2
         border="1 base"
-        rounded
-        flex
-        gap2
-        text-sm
-        font-light
+        class="mt4 px4 py2 rounded flex gap2 text-sm font-light select-none"
       >
         <div flex-auto></div>
         <div>用户 <user-link :user="post.owner" /></div>

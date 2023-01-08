@@ -33,3 +33,13 @@ class ProblemPermissions(str, Enum):
     Submit = 'submit'
     Edit = 'edit'
     Copy = 'copy'  # 将该题目从主题库复制到其他题库
+
+
+@unique
+class ContestPermissions(str, Enum):
+    """
+    比赛系统使用的权限字符串常量
+    """
+    ReadContest = 'read_contest'
+    EditContest = 'edit_contest'
+    RegisterContest = 'register_contest'

@@ -1,8 +1,9 @@
 import type { FetchOptions } from 'ohmyfetch';
+import type { Ref } from 'vue';
 
 import { defineStore } from 'pinia';
 
-import type { User, FullUser } from './types';
+import type { FullUser } from './types';
 
 // Use cookie to store auth token
 export const useToken = () => useCookie('token');
@@ -16,7 +17,7 @@ export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
       ...options?.headers,
-      Authorization: useToken().value,
+      Authorization: useToken().value ?? '',
     },
   });
 };
@@ -45,7 +46,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
 export const AuthUserKey = Symbol('cacathead-auth-user');
 
 export const useUser = () => {
-  return inject<FullUser>(AuthUserKey);
+  return inject<Ref<FullUser>>(AuthUserKey);
 };
 
 // Store auth user
