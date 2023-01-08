@@ -10,6 +10,8 @@ case "$1" in
   "logs")
     if [ -z "$2" ] ; then
       docker compose logs -f
+    elif [ "$2" = "node" ] ; then 
+      docker logs "catjudge_node" -f
     else
       docker logs "cacathead_$2" -f
     fi
