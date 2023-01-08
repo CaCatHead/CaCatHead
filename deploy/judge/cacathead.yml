@@ -8,17 +8,17 @@ server:
     # -   # Config your domain here
   # Root user
   root:
-    username: !ENV ${CACATHEAD_ROOT_USER:cacathead}
+    username: !ENV ${CACATHEAD_ROOT_USER:root}
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
-  name: main_node
+  name: judge_node_1
   queue: judge_task
 
 testcase:
   root: /root/testcases
   minio:
-    host: minio
+    host: localhost
     port: '9000'
     username: root
     password: !ENV ${MINIO_PASS}
@@ -27,18 +27,18 @@ testcase:
 database:
   engine: postgresql
   name: cacathead
-  host: postgresql
+  host: localhost
   port: '5432'
   username: root
   password: !ENV ${DB_PASS}
 
 redis:
-  host: redis
+  host: localhost
   port: '6379'
   password: !ENV ${REDIS_PASS}
 
 rabbitmq:
-  host: rabbitmq
+  host: localhost
   port: '5672'
   username: root
   password: !ENV ${RMQ_PASS}

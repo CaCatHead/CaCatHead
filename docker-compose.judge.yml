@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  judge:
+    build:
+      context: ./
+      dockerfile: ./deploy/server/Dockerfile
+    container_name: catjudge_node
+    privileged: true
+    restart: on-failure
+    entrypoint: ./docker-entrypoint.sh
+    command:
+      - judge
+    networks:
+      - catjudge_net
+    volumes:
+      - ./deploy/judge/cacathead.yml:/root/CaCatHead/cacathead.yml
+      - ./.cacathead/testcases:/root/testcases
+      - ./.cacathead/logs/catj:/root/catj/logs
+    secrets:
+      - db_pass
+      - redis_pass
+      - minio_pass
+      - rmq_pass
+    env_file:
+      - ./deploy/server/.env
+
+networks:
+  catjudge_net:
+
+secrets:
+  db_pass:
+    file: ./deploy/password/db_pass.txt
+  redis_pass:
+    file: ./deploy/password/redis_pass.txt
+  minio_pass:
+    file: ./deploy/password/minio_pass.txt
+  rmq_pass:
+    file: ./deploy/password/rmq_pass.txt
