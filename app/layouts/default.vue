@@ -138,6 +138,14 @@ const activeTab = computed(() => {
             target="_blank"
           ></a>
           <a
+            i-carbon-document
+            icon-btn
+            text-gray-500
+            hover:text="$c-brand"
+            :href="`https://oj-docs.onekuma.cn/`"
+            target="_blank"
+          ></a>
+          <a
             i-carbon-gui-management
             icon-btn
             text-gray-500
