@@ -58,12 +58,16 @@ const submission = ref(data.value!.submission);
             >#{{ row.problem.id }}. {{ row.problem.title }}</nuxt-link
           >
         </template>
-        <template #language="{ row }">{{ row.language }}</template>
+        <template #language="{ row }"
+          ><display-language :language="row.language"
+        /></template>
         <template #verdict="{ row }">
           <verdict :verdict="row.verdict"></verdict>
         </template>
         <template #time="{ row }">{{ row.time_used }} ms</template>
-        <template #memory="{ row }">{{ row.memory_used }} KB</template>
+        <template #memory="{ row }"
+          ><display-memory :memory="row.memory_used"></display-memory
+        ></template>
       </c-table>
     </div>
     <submission-detail :submission="submission"></submission-detail>

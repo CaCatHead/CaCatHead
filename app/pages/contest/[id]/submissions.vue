@@ -86,7 +86,9 @@ const handlePageChange = async (toPage: number) => {
             {{ row.problem.title }}</nuxt-link
           >
         </template>
-        <template #language="{ row }">{{ row.language }}</template>
+        <template #language="{ row }"
+          ><display-language :language="row.language"
+        /></template>
         <template #verdict="{ row }">
           <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`">
             <verdict :verdict="row.verdict"></verdict>
@@ -96,7 +98,7 @@ const handlePageChange = async (toPage: number) => {
           <span>{{ row.time_used }} ms</span>
         </template>
         <template #memory_used="{ row }">
-          <span>{{ row.memory_used }} KB</span>
+          <display-memory :memory="row.memory_used"></display-memory>
         </template>
       </c-table>
 
