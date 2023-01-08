@@ -6,7 +6,7 @@ import { defineStore } from 'pinia';
 import type { FullUser } from './types';
 
 // Use cookie to store auth token
-export const useToken = () => useCookie('token');
+export const useToken = () => useCookie('token', { maxAge: 30 * 24 * 60 * 60 });
 
 export const clearCookie = () => {};
 
