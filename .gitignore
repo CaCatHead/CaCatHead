@@ -1,7 +1,14 @@
-# config
-pass.txt
+# Config
+db_pass.txt
+redis_pass.txt
+rmq_pass.txt
+minio_pass.txt
+rabbitmq.conf
+*.key
+*.pem
+
+# CaCatHead Storage
 .cacathead
-.cert
 
 # nuxt
 node_modules

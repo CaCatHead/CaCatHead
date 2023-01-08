@@ -13,7 +13,7 @@ services:
     volumes:
       - ./.cacathead/logs/nginx:/var/log/nginx
       - ./.cacathead/static:/var/www/cacathead/static
-      - ./.cert:/root/cert
+      - ./deploy/nginx/cert:/root/cert
     ports:
       - 80:80
       - 443:443
@@ -138,12 +138,13 @@ services:
     image: minio/minio:RELEASE.2022-12-12T19-27-27Z
     container_name: cacathead_minio
     command: server /data
+    # command: server --console-address ":9090" /data
     restart: always
     networks:
       - cat_net
     ports:
       - '9000:9000'
-      - '9090:9090'
+      # - '9090:9090'
     volumes:
       - ./.cacathead/minio:/data
     secrets:
@@ -166,23 +167,26 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.11.0
+    # image: rabbitmq:management
     container_name: cacathead_rabbitmq
     restart: always
-    # ports:
-    #   - '5672:5672'
-    #   - '15672:15672'
+    ports:
+      - '5672:5672'
+      # - '15672:15672'
     networks:
       - cat_net
+    volumes:
+      - ./deploy/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
 networks:
   cat_net:
 
 secrets:
   db_pass:
-    file: ./pass.txt
+    file: ./deploy/password/db_pass.txt
   redis_pass:
-    file: ./pass.txt
+    file: ./deploy/password/redis_pass.txt
   minio_pass:
-    file: ./pass.txt
+    file: ./deploy/password/minio_pass.txt
   rmq_pass:
-    file: ./pass.txt
+    file: ./deploy/password/rmq_pass.txt

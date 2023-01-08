@@ -6,6 +6,7 @@ from pika import BasicProperties
 from pika.channel import Channel
 from pika.spec import Basic
 
+from CaCatHead.config import cacathead_config
 from Judge.submission import SubmissionTask
 
 logger = logging.getLogger('Judge.service')
@@ -13,8 +14,10 @@ logger = logging.getLogger('Judge.service')
 
 class JudgeService:
     def __init__(self):
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=settings.RMQ_HOST, port=settings.RMQ_PORT))
+        credentials = pika.PlainCredentials(username=cacathead_config.rabbitmq.username,
+                                            password=cacathead_config.rabbitmq.password)
+        parameters = pika.ConnectionParameters(host=settings.RMQ_HOST, port=settings.RMQ_PORT, credentials=credentials)
+        self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
         queue_name = settings.DEFAULT_JUDGE_QUEUE
         self.channel.queue_declare(queue=queue_name, durable=True)

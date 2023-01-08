@@ -40,5 +40,5 @@ redis:
 rabbitmq:
   host: rabbitmq
   port: '5672'
-  username: guest
+  username: root
   password: !ENV ${RMQ_PASS}

@@ -11,9 +11,7 @@ export REDIS_PASS=$(cat $REDIS_PASS_FILE)
 
 export MINIO_PASS=$(cat $MINIO_PASS_FILE)
 
-# TODO
-# export RMQ_PASS=$(cat $RMQ_PASS_FILE)
-export RMQ_PASS=guest
+export RMQ_PASS=$(cat $RMQ_PASS_FILE)
 
 if [ "$1" = "server" ] ; then
   # wait postgresql bootstrap
