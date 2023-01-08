@@ -8,7 +8,7 @@ snapshots = Snapshot()
 
 snapshots['UserAuthTests::test_flow 1'] = {
     'email': 'world@example.com',
-    'id': 5,
+    'id': 2,
     'nickname': 'world',
     'permissions': {
         'add_contest': False,
@@ -24,7 +24,7 @@ snapshots['UserAuthTests::test_flow 2'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 5,
+        'id': 2,
         'nickname': 'world',
         'permissions': {
             'add_contest': False,
@@ -233,7 +233,7 @@ snapshots['UserRegisterTests::test_register 1'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 6,
+        'id': 2,
         'nickname': 'world',
         'permissions': {
             'add_contest': False,
@@ -250,7 +250,7 @@ snapshots['UserRegisterTests::test_register_error_same_username 1'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 7,
+        'id': 2,
         'nickname': 'world',
         'permissions': {
             'add_contest': False,
@@ -267,7 +267,7 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
     'status': 'ok',
     'user': {
         'email': 'world@example.com',
-        'id': 9,
+        'id': 2,
         'nickname': 'world',
         'permissions': {
             'add_contest': False,

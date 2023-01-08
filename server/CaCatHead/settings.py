@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -124,7 +125,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / cacathead_config.database.name,
     }
-} if cacathead_config.database.engine == 'sqlite' else {
+} if cacathead_config.database.engine == 'sqlite' or 'test' in sys.argv else {
+    # 如果是测试环境，直接使用 sqlite 不使用 postgresql 或者 mysql
     'default': {
         'ENGINE': 'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
         'NAME': cacathead_config.database.name,
