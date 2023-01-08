@@ -8,7 +8,7 @@ server:
     # -   # Config your domain here
   # Root user
   root:
-    username: !ENV ${CACATHEAD_ROOT_USER:root}
+    username: !ENV ${CACATHEAD_ROOT_USER:cacathead}
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
