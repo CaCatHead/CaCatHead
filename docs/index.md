@@ -24,8 +24,8 @@ hero:
       link: https://github.com/XLoJ/CaCatHead
 
 features:
-  - title: Django
-    details: Django makes it easier to build better web apps more quickly and with less code.
-  - title: Nuxt3
-    details: Build your next Vue.js application with confidence using Nuxt. An open source framework under MIT license that makes web development simple and powerful.
+  - title: 比赛
+    details: 你可以自己举办算法竞赛。
+  - title: Polygon
+    details: 一个简易的 Polygon。
 ---
