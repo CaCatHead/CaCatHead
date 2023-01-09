@@ -16,7 +16,21 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'CaCatHead',
+      htmlAttrs: {
+        lang: 'zh-Hans-CN',
+      },
       link: [{ rel: 'icon', href: '/favicon.png' }],
+      meta: [
+        {
+          name: 'description',
+          content: '猫猫头 CaCatHead 是一个开源的在线评测系统。',
+        },
+      ],
+    },
+  },
+  image: {
+    ipx: {
+      maxAge: 2592000,
     },
   },
   css: ['@/assets/main.css'],
@@ -57,7 +71,6 @@ export default defineNuxtConfig({
     '@nuxt/image-edge',
     // '@nuxtjs/fontaine', // TODO: not work with katex
   ],
-  image: {},
   unocss: {
     preflight: true,
     presets: [
