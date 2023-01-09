@@ -30,6 +30,16 @@ export default defineNuxtConfig({
       },
     },
   },
+  routeRules: {
+    // Cache 30 days
+    // See https://github.com/nuxt/framework/issues/9318
+    '/_nuxt/**': {
+      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+    },
+    '/favicon.png': {
+      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+    },
+  },
   experimental: {
     // See https://github.com/nuxt/framework/issues/8306
     // Make it works with nginx
@@ -41,11 +51,13 @@ export default defineNuxtConfig({
   },
   modules: [
     'nuxt-proxy',
-    // '@nuxtjs/fontaine', // TODO: not work with katex
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@nuxt/image-edge',
+    // '@nuxtjs/fontaine', // TODO: not work with katex
   ],
+  image: {},
   unocss: {
     preflight: true,
     presets: [

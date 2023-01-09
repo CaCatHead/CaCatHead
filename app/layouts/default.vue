@@ -41,7 +41,7 @@ const activeTab = computed(() => {
       <div h="64px">
         <div h-full flex items-center>
           <NuxtLink to="/" h-full flex items-center select-none cursor-pointer>
-            <img src="/favicon.png" alt="CaCatHead Icon" h-full />
+            <nuxt-img src="/favicon.png" alt="CaCatHead Icon" h-full />
             <span ml4 text-2xl font-bold>CaCatHead</span>
           </NuxtLink>
           <div flex-auto></div>
