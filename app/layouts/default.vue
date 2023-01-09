@@ -129,6 +129,13 @@ const activeTab = computed(() => {
             text-base
             @click="toggleDark()"
           />
+          <nuxt-link
+            i-carbon-bare-metal-server
+            icon-btn
+            text-gray-500
+            hover:text="$c-brand"
+            to="/nodes"
+          ></nuxt-link>
           <a
             i-carbon-logo-github
             icon-btn

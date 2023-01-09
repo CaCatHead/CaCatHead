@@ -21,7 +21,12 @@ const handleSelect = (e: any) => {
 
 <template>
   <div :class="[inline ? 'inline-select-language' : 'select-language']">
-    <label for="language" font-600 inline-block>语言</label>
+    <label for="language" font-600 inline-block
+      ><span>语言</span
+      ><span ml2
+        >(查看<nuxt-link to="/nodes" text-link>编译器版本</nuxt-link>)</span
+      ></label
+    >
     <c-select id="language" @click="handleSelect">
       <option value="c" :selected="language === 'c'">C</option>
       <option value="cpp" :selected="language === 'cpp'">C++</option>

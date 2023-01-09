@@ -49,8 +49,8 @@ const compiler = [
 </script>
 
 <template>
-  <div !max-w-full !w-full>
-    <div !max-w-full !w-full prose prose-truegray dark:prose-invert>
+  <div>
+    <div class="!max-w-full !w-full prose prose-truegray dark:prose-invert">
       <h2 text-center>常见问题及解答</h2>
     </div>
     <div space-y-4>
