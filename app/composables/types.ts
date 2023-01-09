@@ -1,4 +1,27 @@
-import { SubmissionDetail } from './../.nuxt/components.d';
+export interface JudgeNode {
+  name: string;
+
+  active: boolean;
+
+  updated: string;
+
+  information: {
+    compiler: {
+      'g++': string;
+      gcc: string;
+      java: string;
+    };
+    platform: {
+      system: string;
+      machine: string;
+      release: string;
+      version: string;
+      processor: string;
+      architecture: [string, string];
+    };
+  };
+}
+
 export interface User {
   id: number;
 

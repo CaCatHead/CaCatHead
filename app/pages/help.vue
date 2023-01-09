@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import type { JudgeNode } from '@/composables/types';
+
 useHead({
   title: '帮助',
 });
+
+const { data } = await useFetchAPI<{ nodes: JudgeNode[] }>(`/api/judge/nodes`);
 
 const compiler = [
   {
@@ -45,8 +49,10 @@ const compiler = [
 </script>
 
 <template>
-  <div !max-w-full !w-full prose prose-truegray dark:prose-invert>
-    <h2 text-center>常见问题及解答</h2>
+  <div !max-w-full !w-full>
+    <div !max-w-full !w-full prose prose-truegray dark:prose-invert>
+      <h2 text-center>常见问题及解答</h2>
+    </div>
     <div space-y-4>
       <q-a>
         <template #q>这是什么网站？</template>
@@ -58,23 +64,36 @@ const compiler = [
       <q-a>
         <template #q>CaCatHead Online Judge 支持哪些语言？</template>
         <template #a>
-          <div>目前为止，你可以使用 C, C++, Java。</div>
-          <p>相应的编译程序和运行命令：</p>
-          <c-table :data="compiler" w-full>
-            <template #headers>
-              <c-table-header name="language" width="72px">语言</c-table-header>
-              <c-table-header name="compile">编译命令</c-table-header>
-              <c-table-header name="run">运行命令</c-table-header>
-            </template>
+          <div space-y-2 w-full>
+            <div>目前为止，你可以使用 C, C++, Java。</div>
+            <p>相应的编译程序和运行命令：</p>
+            <c-table :data="compiler" w-full>
+              <template #headers>
+                <c-table-header name="language" width="72px"
+                  >语言</c-table-header
+                >
+                <c-table-header name="compile">编译命令</c-table-header>
+                <c-table-header name="run">运行命令</c-table-header>
+              </template>
 
-            <template #language="{ row }">{{ row.language }}</template>
-            <template #compile="{ row }">
-              <span text-sm font-mono mx2>{{ row.compile.join(' ') }}</span>
-            </template>
-            <template #run="{ row }">
-              <span text-sm font-mono mx2>{{ row.run.join(' ') }}</span>
-            </template>
-          </c-table>
+              <template #language="{ row }">{{ row.language }}</template>
+              <template #compile="{ row }">
+                <span text-sm font-mono mx2>{{ row.compile.join(' ') }}</span>
+              </template>
+              <template #run="{ row }">
+                <span text-sm font-mono mx2>{{ row.run.join(' ') }}</span>
+              </template>
+            </c-table>
+          </div>
+        </template>
+      </q-a>
+      <q-a v-if="!!data?.nodes">
+        <template #q>评测机的运行情况？</template>
+        <template #a>
+          <div space-y-2>
+            <div>共有 {{ data.nodes.length }} 台评测机正在运行。</div>
+            <judge-nodes :nodes="data?.nodes"></judge-nodes>
+          </div>
         </template>
       </q-a>
     </div>
