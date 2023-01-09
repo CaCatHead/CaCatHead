@@ -22,8 +22,13 @@ const goSubmit = async (id: number) => {
 <template>
   <div>
     <contest-layout :contest="contest">
-      <c-table :data="contest.problems" border="1 base" rounded-2>
-        <template #headers>
+      <c-table
+        :data="contest.problems"
+        border="1 base"
+        rounded-2
+        :mobile="false"
+      >
+        <template #headers="{ smallScreen }">
           <c-table-header
             name="display_id"
             width="60"
@@ -39,12 +44,15 @@ const goSubmit = async (id: number) => {
             class="border-r-1 border-base px4 bg-gray-100 dark:bg-dark-100"
             >题目</c-table-header
           >
-          <c-table-header
-            name="operation"
-            class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
-            width="60px"
-            ><span></span
-          ></c-table-header>
+          <client-only>
+            <c-table-header
+              v-if="!smallScreen"
+              name="operation"
+              class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
+              width="60px"
+              ><span></span
+            ></c-table-header>
+          </client-only>
         </template>
         <template #display_id="{ row }">
           <nuxt-link

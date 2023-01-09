@@ -93,7 +93,7 @@ const statusColor = (status: string) => {
         </div>
       </template>
       <template #operation="{ row }">
-        <div inline-flex>
+        <div inline-flex lt-md:mr="-4">
           <c-button
             variant="text"
             color="success"
