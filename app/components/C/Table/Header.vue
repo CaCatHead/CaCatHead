@@ -13,15 +13,21 @@ const props = withDefaults(
     label: p => p.name,
     align: 'center',
     rowClass: () => [],
+    hiddenOnMobile: false,
   }
 );
 
 const ctx = useCTableContext();
-ctx.columns.value.push({
-  name: props.name,
-  class: props.rowClass,
-  align: props.align,
-});
+
+if (ctx.columns.value.findIndex(c => c.name === props.name) === -1) {
+  ctx.columns.value.push({
+    name: props.name,
+    label: props.label,
+    class: props.rowClass,
+    align: props.align,
+    slots: useSlots(),
+  });
+}
 </script>
 
 <template>

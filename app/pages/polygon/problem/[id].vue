@@ -64,7 +64,7 @@ const onUpdateZip = async () => {
       <Title>Polygon #{{ problem.id }}. {{ problem.title }}</Title>
     </Head>
     <div>
-      <div flex pl2>
+      <div flex pl2 lt-md="flex-col mb4">
         <h2 text-2xl font-bold mb4>#{{ problem.id }}. {{ problem.title }}</h2>
         <div flex-auto></div>
         <div>
@@ -80,7 +80,7 @@ const onUpdateZip = async () => {
           >
         </div>
       </div>
-      <c-nav :prefix="`/polygon/problem/${route.params.id}/`" mb4>
+      <c-nav :prefix="`/polygon/problem/${route.params.id}/`" mb4 lt-md:pb2>
         <c-nav-item to="">预览</c-nav-item>
         <c-nav-item to="edit">编辑题面</c-nav-item>
         <c-nav-item to="testcase">测试数据</c-nav-item>

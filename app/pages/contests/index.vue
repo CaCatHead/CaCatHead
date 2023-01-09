@@ -75,8 +75,13 @@ const statusColor = (status: string) => {
       <template #duration="{ row }">
         <span>{{ formatContestDuration(row) }}</span>
       </template>
-      <template #status="{ row }">
-        <div flex items-center gap2>
+      <template #status="{ row, smallScreen }">
+        <div
+          flex
+          items-center
+          gap2
+          :class="smallScreen ? 'justify-end' : 'justify-center'"
+        >
           <span block>
             <span
               v-if="row.is_public"
@@ -93,7 +98,7 @@ const statusColor = (status: string) => {
         </div>
       </template>
       <template #operation="{ row }">
-        <div inline-flex>
+        <div inline-flex lt-md:mr="-4">
           <c-button
             variant="text"
             color="success"

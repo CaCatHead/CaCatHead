@@ -104,9 +104,11 @@ const rejudge = async () => {
           ><display-memory :memory="row.memory_used"></display-memory
         ></template>
         <template #operation>
-          <c-button variant="text" color="warning" @click="rejudge"
-            >重测</c-button
-          >
+          <div lt-md:mr="-4">
+            <c-button variant="text" color="warning" @click="rejudge"
+              >重测</c-button
+            >
+          </div>
         </template>
       </c-table>
     </div>

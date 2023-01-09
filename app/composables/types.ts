@@ -40,7 +40,13 @@ export type FullUser = User & {
   };
 };
 
-export interface Team {}
+export interface Team {
+  name: string;
+
+  owner: User;
+
+  members: User[];
+}
 
 export interface Contest {
   id: number;
