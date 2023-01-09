@@ -51,7 +51,7 @@ RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/source
   && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
-  && apt-get install -y gcc g++ default-jdk default-jre
+  && apt-get install -y cron gcc g++ default-jdk default-jre
 
 RUN mkdir -v /usr/src/.venv \
   && mkdir -p /root/catj/logs
@@ -69,6 +69,10 @@ ADD ./server /root/CaCatHead
 
 ADD ./deploy/server/docker-entrypoint.sh /root/CaCatHead
 
+ADD ./deploy/server/ping.cron /root/CaCatHead
+
+ADD ./deploy/server/ping.sh /root/CaCatHead
+
 # See https://github.com/ufoscout/docker-compose-wait
 ADD ./deploy/server/wait /root/CaCatHead
 
@@ -77,6 +81,10 @@ WORKDIR /root/CaCatHead
 RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)" \
   && /usr/src/.venv/bin/python ./manage.py collectstatic --no-input \
   && chmod +x ./docker-entrypoint.sh \
-  && chmod +x ./wait
+  && chmod +x ./ping.sh \
+  && chmod +x ./wait \
+  && chmod 0644 ./ping.cron \
+  && crontab ./ping.cron \
+  && touch /var/log/cron.log
 
 EXPOSE 80

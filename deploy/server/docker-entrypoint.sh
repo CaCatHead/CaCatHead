@@ -18,7 +18,9 @@ if [ "$1" = "server" ] ; then
   ./wait
   /usr/src/.venv/bin/python ./manage.py migrate
   /usr/src/.venv/bin/python ./manage.py collectstatic --no-input
-  /usr/src/.venv/bin/python ./manage.py runcrons
+  # start cron jobs
+  cron
+  # start server
   /usr/src/.venv/bin/uvicorn CaCatHead.asgi:application --workers 4 --host 0.0.0.0 --port 8000
 elif [ "$1" = "judge" ] ; then
   /usr/src/.venv/bin/python ./judge.py
