@@ -16,7 +16,7 @@ class JudgeNode(models.Model):
     class Meta:
         db_table = 'judge_node'
 
-        ordering = ('-active',  'name',)
+        ordering = ('-active', 'name',)
 
         verbose_name = _("判题节点")
 

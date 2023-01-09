@@ -3,8 +3,8 @@ import subprocess
 
 from django.utils import timezone
 
-from CaCatHead.judge.models import JudgeNode
 from CaCatHead.config import cacathead_config
+from CaCatHead.judge.models import JudgeNode
 
 
 def get_judge_node(name: str):
