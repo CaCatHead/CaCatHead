@@ -5,6 +5,9 @@ useHead({
       ? `${title} - CaCatHead`
       : 'CaCatHead';
   },
+  htmlAttrs: {
+    lang: 'zh-Hans',
+  },
 });
 </script>
 
