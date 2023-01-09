@@ -9,7 +9,7 @@ const { nodes } = toRefs(props);
 
 const parseGCC = (text: string) => {
   const first = text.split('\n')[0];
-  return /(\d\.\d\.\d)/.exec(first)![1];
+  return /(\d+\.\d+\.\d+)/.exec(first)![1];
 };
 
 const parseJava = (text: string) => {
