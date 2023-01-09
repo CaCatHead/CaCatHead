@@ -76,7 +76,7 @@ const activeTab = computed(() => {
       <nav
         h="16"
         mt4
-        px4
+        pl4
         flex
         gap4
         lt-md:gap0
