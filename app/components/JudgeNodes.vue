@@ -44,13 +44,13 @@ const parseJava = (text: string) => {
 
       <template #compiler="{ row }">
         <div space-x-2 m2>
-          <span class="p2 bg-gray-100 rounded select-none"
+          <span class="p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
             >gcc {{ parseGCC(row.information.compiler.gcc) }}</span
           >
-          <span class="p2 bg-gray-100 rounded select-none"
+          <span class="p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
             >g++ {{ parseGCC(row.information.compiler['g++']) }}</span
           >
-          <span class="p2 bg-gray-100 rounded select-none"
+          <span class="p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
             >Java {{ parseJava(row.information.compiler.java) }}</span
           >
         </div>
