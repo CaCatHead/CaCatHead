@@ -89,7 +89,8 @@ class SubmissionTask:
         logger.info(f'Run submission {self.submission.id}')
 
         self.verdict = Verdict.Compiling
-        self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling)
+        self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling,
+                               detail={'node': cacathead_config.judge.name})
 
         try:
             self.dump_code()
