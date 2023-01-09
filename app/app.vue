@@ -6,7 +6,7 @@ useHead({
       : 'CaCatHead';
   },
   htmlAttrs: {
-    lang: 'zh-Hans',
+    lang: 'zh-Hans-CN',
   },
 });
 </script>
