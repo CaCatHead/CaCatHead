@@ -103,6 +103,7 @@ const handlePageChange = async (toPage: number) => {
       </c-table>
 
       <c-table-page
+        mt4
         v-if="(data?.num_pages ?? 1) > 1"
         :count="data!.count"
         :page="page - 1"
