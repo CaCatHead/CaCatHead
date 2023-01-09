@@ -11,23 +11,32 @@ const duration = computed(() => {
     new Date(right?.value ?? new Date())
   );
 });
+
+const text = computed(() => {
+  const arr: string[] = [];
+  if (duration.value.years) {
+    arr.push(`${duration.value.years} 年`);
+  }
+  if (duration.value.months) {
+    arr.push(`${duration.value.months} 个月`);
+  }
+  if (duration.value.days) {
+    arr.push(`${duration.value.days} 天`);
+  }
+  if (duration.value.hours) {
+    arr.push(`${duration.value.hours} 小时`);
+  }
+  if (duration.value.minutes) {
+    arr.push(`${duration.value.minutes} 分钟`);
+  }
+  if (arr.length > 0) {
+    return ' ' + arr.join(' ') + '前';
+  } else {
+    return '刚刚';
+  }
+});
 </script>
 
 <template>
-  <span>
-    <span v-if="!!duration.years">&nbsp;{{ duration.years }} 年</span>
-    <span v-if="!!duration.months">&nbsp;{{ duration.months }} 月</span>
-    <span v-if="!!duration.days">&nbsp;{{ duration.days }} 天</span>
-    <span v-if="!!duration.hours">&nbsp;{{ duration.hours }} 小时</span>
-    <span
-      v-if="
-        duration.years || duration.months || duration.days || duration.hours
-      "
-      >前</span
-    >
-    <span v-else>
-      <span v-if="!!duration.minutes">&nbsp;{{ duration.minutes }} 分钟前</span>
-      <span v-else>刚刚</span>
-    </span>
-  </span>
+  <span>{{ text }}</span>
 </template>
