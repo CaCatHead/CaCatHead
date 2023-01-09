@@ -23,7 +23,7 @@ const handleSelect = (e: any) => {
   <div :class="[inline ? 'inline-select-language' : 'select-language']">
     <label for="language" font-600 inline-block
       ><span>语言</span
-      ><span ml2
+      ><span ml2 v-if="!inline"
         >(查看<nuxt-link to="/nodes" text-link>编译器版本</nuxt-link>)</span
       ></label
     >
