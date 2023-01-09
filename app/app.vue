@@ -28,6 +28,7 @@ useHead({
 html {
   --at-apply: text-dark-500 font-sans;
   font-weight: 400;
+  background-color: white;
 }
 
 .text-link:hover, [text-link=""]:hover {
