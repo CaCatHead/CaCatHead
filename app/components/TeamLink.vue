@@ -1,7 +1,15 @@
 <script setup lang="ts">
-defineProps<{ team: { name: string; owner: {}; members: [] } }>();
+const props = withDefaults(
+  defineProps<{
+    team: { name: string; owner: {}; members: [] };
+    name?: string;
+  }>(),
+  {
+    name: p => p.team.name,
+  }
+);
 </script>
 
 <template>
-  <nuxt-link to="/" class="user-link">{{ team.name }}</nuxt-link>
+  <nuxt-link to="/" class="user-link">{{ name }}</nuxt-link>
 </template>

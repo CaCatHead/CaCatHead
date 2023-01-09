@@ -93,7 +93,7 @@ const registrations = computed(() => {
         <span font-bold>{{ index + 1 }}</span></template
       >
       <template #name="{ row }">
-        <team-link :team="row.team"></team-link>
+        <team-link :team="row.team" :name="row.name"></team-link>
       </template>
       <template #penalty="{ row }">{{ toNumDuration(row.dirty) }}</template>
 
