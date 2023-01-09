@@ -11,6 +11,7 @@ useHead({
 <template>
   <c-notification-provider>
     <NuxtLayout>
+      <NuxtLoadingIndicator />
       <NuxtPage />
     </NuxtLayout>
   </c-notification-provider>
