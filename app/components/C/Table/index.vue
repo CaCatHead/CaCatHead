@@ -50,10 +50,20 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
         divide-y
         dark:divide="gray/40"
       >
-        <div v-for="col in columns" flex items-center justify-between px4 py2>
-          <div font-bold><mobile-header :column="col"></mobile-header></div>
-          <div>
-            <slot :name="col.name" v-bind="{ row, index }">{{
+        <div
+          v-for="col in columns"
+          flex
+          gap1
+          items-center
+          justify-between
+          px4
+          py2
+        >
+          <div font-bold>
+            <mobile-header :column="col"></mobile-header>
+          </div>
+          <div text-right flex-1>
+            <slot :name="col.name" v-bind="{ row, index, smallScreen }">{{
               row[col.name]
             }}</slot>
           </div>
@@ -76,7 +86,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
             v-for="col in columns"
             :class="['p2', 'text-' + col.align, col.class]"
           >
-            <slot :name="col.name" v-bind="{ row, index }">{{
+            <slot :name="col.name" v-bind="{ row, index, smallScreen }">{{
               row[col.name]
             }}</slot>
           </td>

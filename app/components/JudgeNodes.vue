@@ -26,8 +26,12 @@ const parseJava = (text: string) => {
       <c-table-header name="system">操作系统</c-table-header>
     </template>
 
-    <template #active="{ row }">
-      <div flex items-center justify-center>
+    <template #active="{ row, smallScreen }">
+      <div
+        flex
+        items-center
+        :class="smallScreen ? 'justify-end' : 'justify-center'"
+      >
         <span
           inline-block
           h-4
@@ -42,7 +46,7 @@ const parseJava = (text: string) => {
     </template>
 
     <template #compiler="{ row }">
-      <div space-x-2 m2>
+      <div space-x-2 lt-md:space-y-2 m2 text-sm>
         <span
           class="inline-block p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
           >gcc {{ parseGCC(row.information.compiler.gcc) }}</span
