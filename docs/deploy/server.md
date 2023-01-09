@@ -45,13 +45,13 @@ echo '12345678' > ./deploy/password/minio_pass.txt
 echo '12345678' > ./deploy/password/rmq_pass.txt
 ```
 
-然后，对于 RabbitMQ 还需要单独配置其密码，创建一个 `./deploy/rabbitmq.conf` 文件。
+然后，对于 RabbitMQ 还需要单独配置其密码，创建一个 `./deploy/rabbitmq.conf` 文件。这个配置文件用于启动 RabbitMQ 服务的容器，如果你是单独部署评测节点，不需要配置 `./deploy/rabbitmq.conf`。
 
 **注意**：密码需要与 `./deploy/password/rmq_pass.txt` 里的内容**相同**。
 
 ```bash
-echo 'default_user = root' >> ./deploy/rabbitmq.conf
-echo 'default_pass = $(cat ./deploy/password/rmq_pass.txt)' >> ./deploy/password/rmq_pass.txt
+echo "default_user = root" >> ./deploy/rabbitmq.conf
+echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
 ```
 
 > **注意**
