@@ -13,6 +13,7 @@ server:
 
 judge:
   name: local_dev
+  ping: ping
   queue: !ENV ${JUDGE_QUEUE:judge_task}
 
 testcase:

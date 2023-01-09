@@ -13,6 +13,7 @@ server:
 
 judge:
   name: judge_node_1
+  ping: ping
   queue: judge_task
 
 testcase:

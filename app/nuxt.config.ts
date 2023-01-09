@@ -16,7 +16,21 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'CaCatHead',
+      htmlAttrs: {
+        lang: 'zh-Hans-CN',
+      },
       link: [{ rel: 'icon', href: '/favicon.png' }],
+      meta: [
+        {
+          name: 'description',
+          content: '猫猫头 CaCatHead 是一个开源的在线评测系统。',
+        },
+      ],
+    },
+  },
+  image: {
+    ipx: {
+      maxAge: 2592000,
     },
   },
   css: ['@/assets/main.css'],
@@ -30,6 +44,16 @@ export default defineNuxtConfig({
       },
     },
   },
+  routeRules: {
+    // Cache 30 days
+    // See https://github.com/nuxt/framework/issues/9318
+    '/_nuxt/**': {
+      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+    },
+    '/favicon.png': {
+      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+    },
+  },
   experimental: {
     // See https://github.com/nuxt/framework/issues/8306
     // Make it works with nginx
@@ -41,10 +65,11 @@ export default defineNuxtConfig({
   },
   modules: [
     'nuxt-proxy',
-    // '@nuxtjs/fontaine', // TODO: not work with katex
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+    '@nuxt/image-edge',
+    // '@nuxtjs/fontaine', // TODO: not work with katex
   ],
   unocss: {
     preflight: true,

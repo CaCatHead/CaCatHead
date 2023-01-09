@@ -1,6 +1,9 @@
 ### Hello world
 GET http://127.0.0.1:8000/api/ping
 
+### List judge nodes
+GET http://127.0.0.1:8000/api/judge/nodes
+
 ### Register
 POST http://127.0.0.1:8000/api/auth/register
 Content-Type: application/json
