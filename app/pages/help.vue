@@ -90,9 +90,14 @@ const compiler = [
       <q-a v-if="!!data?.nodes">
         <template #q>评测机的运行情况？</template>
         <template #a>
-          <div space-y-2>
+          <div space-y-2 w-full>
             <div>共有 {{ data.nodes.length }} 台评测机正在运行。</div>
-            <judge-nodes :nodes="data?.nodes"></judge-nodes>
+            <judge-nodes
+              w-full
+              max-w-full
+              overflow-auto
+              :nodes="data?.nodes"
+            ></judge-nodes>
           </div>
         </template>
       </q-a>

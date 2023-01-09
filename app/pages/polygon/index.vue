@@ -43,7 +43,7 @@ const upload = async () => {
 
 <template>
   <div>
-    <div flex mb8 items-center>
+    <div flex mb8 items-center lt-md="flex-col items-start gap2">
       <div>
         <h2 text-2xl font-bold mb4>Polygon</h2>
         <h3 text-lg font-500>程序设计竞赛试题创建系统</h3>
