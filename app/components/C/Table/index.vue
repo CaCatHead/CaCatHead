@@ -1,6 +1,4 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-
 import { CTABLE, CTableColumn } from './context';
 
 const props = withDefaults(defineProps<{ data?: T[]; mobile?: boolean }>(), {
@@ -15,8 +13,6 @@ const columns = ref<CTableColumn[]>([]);
 provide(CTABLE, {
   columns,
 });
-
-// const breakpoints = useBreakpoints(breakpointsTailwind);
 
 // used for generate style class
 const alignClasses = ['text-left', 'text-right', 'text-center'];
