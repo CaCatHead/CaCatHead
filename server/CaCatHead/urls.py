@@ -18,6 +18,7 @@ from django.urls import path
 from knox import views as knox_views
 
 from CaCatHead.contest import views as contest_views
+from CaCatHead.judge import views as judge_views
 from CaCatHead.post import views as post_views
 from CaCatHead.problem import views as problem_views
 from CaCatHead.user import views as user_views
@@ -37,6 +38,9 @@ urlpatterns = [
     path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
     # user profile
     path('api/user/profile', user_views.current_user_profile),
+    # judge node
+    path('api/judge/node', judge_views.list_judge_nodes),
+    path('api/judge/nodes', judge_views.list_judge_nodes),
     # post
     path('api/posts', post_views.list_post),
     path('api/posts/public', post_views.list_public_post),
