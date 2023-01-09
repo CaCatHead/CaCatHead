@@ -60,13 +60,16 @@ INSTALLED_APPS = [
     # Authentication Module for django rest auth
     # See: https://github.com/James1345/django-rest-knox
     'knox',
+    # See: https://django-cron.readthedocs.io/en/latest/introduction.html
+    'django_cron',
     # Custom apps
     'CaCatHead.user.apps.UserConfig',
     'CaCatHead.permission.apps.PermissionConfig',
     'CaCatHead.problem.apps.ProblemConfig',
     'CaCatHead.post.apps.PostConfig',
     'CaCatHead.submission.apps.SubmissionConfig',
-    'CaCatHead.contest.apps.ContestConfig'
+    'CaCatHead.contest.apps.ContestConfig',
+    'CaCatHead.judge.apps.JudgeConfig'
 ]
 
 # Django REST framework config
@@ -86,6 +89,11 @@ REST_KNOX = {
     'TOKEN_TTL': timedelta(days=30),
     'AUTO_REFRESH': True
 }
+
+# django cron tasks
+CRON_CLASSES = [
+    'CaCatHead.judge.cron.PingJudgeNode'
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
