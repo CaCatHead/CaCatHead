@@ -49,7 +49,6 @@ if (
 .c-contest .c-nav-item {
   --at-apply: py2 px2 rounded text-sm;
   --at-apply: hover:bg-gray-200/50;
-  --at-apply: lt-md:w-16;
 }
 .c-contest .c-nav-item.active {
   --at-apply: bg-gray-200/50;

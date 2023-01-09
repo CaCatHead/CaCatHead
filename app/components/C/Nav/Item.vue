@@ -15,7 +15,12 @@ const isActive = computed(() => route.path === toPath.value);
 
 <template>
   <div
-    :class="['c-nav-item', isActive && 'active', 'cursor-pointer']"
+    :class="[
+      'c-nav-item',
+      isActive && 'active',
+      'inline-block',
+      'cursor-pointer',
+    ]"
     @click="navigateTo(toPath)"
   >
     <slot></slot>
