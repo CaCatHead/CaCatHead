@@ -13,10 +13,18 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     owner = UserSerializer(read_only=True)
 
+    judge_node = serializers.SerializerMethodField(method_name='get_judge_node')
+
     class Meta:
         model = Submission
         fields = ['id', 'repository', 'problem', 'code_length', 'language', 'created', 'judged', 'verdict',
-                  'score', 'time_used', 'memory_used', 'owner']
+                  'score', 'time_used', 'memory_used', 'judge_node', 'owner']
+
+    def get_judge_node(self, obj: Submission):
+        if 'node' in obj.detail:
+            return obj.detail['node']
+        else:
+            return None
 
 
 class ContestSubmissionSerializer(serializers.ModelSerializer):

@@ -25,6 +25,7 @@ const submissions = ref(data.value?.submissions ?? []);
         <c-table-header name="score" label="得分"></c-table-header>
         <c-table-header name="time_used" label="时间"></c-table-header>
         <c-table-header name="memory_used" label="内存"></c-table-header>
+        <c-table-header name="node" label="评测机"></c-table-header>
       </template>
 
       <template #id="{ row }">
@@ -65,6 +66,9 @@ const submissions = ref(data.value?.submissions ?? []);
       </template>
       <template #memory_used="{ row }">
         <display-memory :memory="row.memory_used"></display-memory>
+      </template>
+      <template #node="{ row }">
+        <span>{{ row.judge_node }}</span>
       </template>
     </c-table>
   </div>
