@@ -1,8 +1,11 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Record<string, any>">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
+
 import { CTABLE, CTableColumn } from './context';
 
-const props = withDefaults(defineProps<{ data?: any[] }>(), {
+const props = withDefaults(defineProps<{ data?: T[]; mobile?: boolean }>(), {
   data: () => [],
+  mobile: true,
 });
 
 const { data } = toRefs(props);
@@ -13,12 +16,26 @@ provide(CTABLE, {
   columns,
 });
 
+// const breakpoints = useBreakpoints(breakpointsTailwind);
+
 // used for generate style class
 const alignClasses = ['text-left', 'text-right', 'text-center'];
 </script>
 
 <template>
   <div w-full>
+    <!-- <div v-if="breakpoints.smallerOrEqual('md') && mobile">
+      <div v-for="(row, index) in data">
+        <div v-for="col in columns">
+          <div>{{ col.name }}</div>
+          <div>
+            <slot :name="col.name" v-bind="{ row, index }">{{
+              row[col.name]
+            }}</slot>
+          </div>
+        </div>
+      </div>
+    </div> -->
     <table class="table w-full table-auto rounded">
       <thead select-none font-600>
         <tr>

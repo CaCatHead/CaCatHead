@@ -13,10 +13,6 @@ const notifications = ref<INotification[]>([]);
 provide(NotificationProviderSymbol, {
   notifications,
 });
-
-const handleEvent = (ev: Event) => {
-  console.log(ev);
-};
 </script>
 
 <template>
