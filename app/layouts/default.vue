@@ -42,28 +42,30 @@ const activeTab = computed(() => {
         <div h-full flex items-center>
           <NuxtLink to="/" h-full flex items-center select-none cursor-pointer>
             <nuxt-img src="/favicon.png" alt="CaCatHead Icon" h-full />
-            <span ml4 text-2xl font-bold>CaCatHead</span>
+            <span ml4 lt-md:ml1 text-2xl font-bold>CaCatHead</span>
           </NuxtLink>
           <div flex-auto></div>
           <div>
-            <div v-if="authUser.isLogin" flex items-center justify-center>
+            <div
+              v-if="authUser.isLogin"
+              flex
+              items-center
+              justify-center
+              gap4
+              lt-md:gap1
+            >
               <c-button color="info" variant="text">{{
                 user.nickname
               }}</c-button>
-              <c-button
-                color="danger"
-                variant="outline"
-                ml4
-                text-sm
-                @click="logout"
+              <c-button color="danger" variant="outline" text-sm @click="logout"
                 >退出</c-button
               >
             </div>
-            <div v-else>
+            <div v-else space-x-4 lt-md:space-x-1>
               <c-button color="info" variant="fill">
                 <NuxtLink block to="/login">登录</NuxtLink>
               </c-button>
-              <c-button ml4 color="success" variant="outline" lt-md:hidden>
+              <c-button color="success" variant="outline" lt-md:hidden>
                 <NuxtLink block to="/register">注册</NuxtLink>
               </c-button>
             </div>
@@ -72,15 +74,17 @@ const activeTab = computed(() => {
       </div>
 
       <nav
-        mt4
         h="16"
+        mt4
+        px4
         flex
         gap4
+        lt-md:gap0
         items-center
         shadow-box
         rounded
-        p="x4"
         select-none
+        overflow-x-auto
       >
         <div :class="['default-nav-item', activeTab === 'home' && 'is-active']">
           <NuxtLink to="/">主页</NuxtLink>
@@ -104,7 +108,11 @@ const activeTab = computed(() => {
 
         <div
           v-if="user && user.permissions.polygon"
-          :class="['default-nav-item', activeTab === 'polygon' && 'is-active']"
+          :class="[
+            'default-nav-item',
+            'lt-md:!min-w-16',
+            activeTab === 'polygon' && 'is-active',
+          ]"
         >
           <NuxtLink to="/polygon">Polygon</NuxtLink>
         </div>
@@ -188,10 +196,18 @@ const activeTab = computed(() => {
   --main-max-width: 64rem;
 }
 
+@media (max-width: 767px) {
+  :root {
+    --main-padding-y: 0rem;
+    --main-max-width: calc(100vw - 2rem);
+  }
+}
+
 .default-nav-item {
   --at-apply: px1 py1 flex items-center;
   --at-apply: border-b border-b-3 border-transparent;
   --at-apply: text-base-500;
+  --at-apply: lt-md:min-w-12 lt-md:w-auto;
 }
 
 .default-nav-item > a {
