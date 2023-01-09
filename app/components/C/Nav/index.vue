@@ -9,7 +9,7 @@ provide(CNAV, { prefix });
 </script>
 
 <template>
-  <div select-none overflow-y-hidden whitespace-nowrap class="c-nav">
+  <div select-none overflow-y-hidden whitespace-nowrap space-x-2 class="c-nav">
     <slot></slot>
   </div>
 </template>

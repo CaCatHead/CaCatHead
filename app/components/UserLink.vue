@@ -1,5 +1,7 @@
 <script setup lang="ts">
-defineProps<{ user: { id: number; username: string; nickname: string } }>();
+import type { User } from '@/composables/types';
+
+defineProps<{ user: User }>();
 </script>
 
 <template>

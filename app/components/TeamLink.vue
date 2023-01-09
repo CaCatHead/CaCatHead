@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { Team } from '@/composables/types';
+
 const props = withDefaults(
   defineProps<{
-    team: { name: string; owner: {}; members: [] };
+    team: Team;
     name?: string;
   }>(),
   {
