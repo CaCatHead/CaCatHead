@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Contest } from '@/composables/types';
 
+useHead({
+  title: '创建比赛',
+});
+
 const title = ref('');
 
 const submit = async () => {
