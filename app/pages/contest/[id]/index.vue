@@ -101,7 +101,7 @@ const goSubmit = async (id: number) => {
           <c-button
             variant="text"
             color="success"
-            icon="i-carbon-cloud-upload"
+            icon="i-akar-icons-paper-airplane"
             @click="goSubmit(row.display_id)"
           ></c-button>
         </template>
