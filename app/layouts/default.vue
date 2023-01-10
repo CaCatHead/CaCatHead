@@ -33,6 +33,8 @@ const activeTab = computed(() => {
     return '';
   }
 });
+
+const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
 </script>
 
 <template>
@@ -89,7 +91,6 @@ const activeTab = computed(() => {
         shadow-box
         rounded
         select-none
-        overflow-x-auto
       >
         <div :class="['default-nav-item', activeTab === 'home' && 'is-active']">
           <NuxtLink to="/">主页</NuxtLink>
@@ -108,7 +109,25 @@ const activeTab = computed(() => {
             activeTab === 'repository' && 'is-active',
           ]"
         >
-          <NuxtLink to="/repository/">题库</NuxtLink>
+          <NuxtLink to="/repository/" relative class="[&:hover>div]:block">
+            <span>题库</span>
+            <div hidden absolute top-full left="-1" w-36 pt3 font-normal>
+              <div
+                rounded
+                border="1 base"
+                divide-y
+                dark:divide="gray/40"
+                bg-white
+                dark:bg-dark
+              >
+                <div v-for="repo in repos?.repos" p2>
+                  <nuxt-link :to="`/repository/${repo.id}`" text-link>{{
+                    repo.name
+                  }}</nuxt-link>
+                </div>
+              </div>
+            </div>
+          </NuxtLink>
         </div>
 
         <div

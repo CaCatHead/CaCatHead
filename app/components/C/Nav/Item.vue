@@ -10,7 +10,14 @@ const { to } = toRefs(props);
 
 const toPath = computed(() => prefix.value + to.value);
 
-const isActive = computed(() => route.path === toPath.value);
+const trimEnd = (p: string) => {
+  if (p.endsWith('/')) return p.substring(0, p.length - 1);
+  else return p;
+};
+
+const isActive = computed(() => {
+  return trimEnd(route.path) === trimEnd(toPath.value);
+});
 </script>
 
 <template>

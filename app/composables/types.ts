@@ -92,6 +92,12 @@ export interface Post {
   updated: string;
 }
 
+export interface ProblemRepository {
+  id: number;
+
+  name: string;
+}
+
 export interface PolygonProblem {
   id: number;
   display_id: number;

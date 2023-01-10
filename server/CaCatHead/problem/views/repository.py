@@ -71,6 +71,12 @@ def check_repo_problem(request: Request, repo_id: int, problem_display_id: int, 
 
 
 @api_view()
+def get_repo_info(request: Request, repo_id: int):
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ListProblems)
+    return make_response(repo=ProblemRepositorySerializer(repo).data)
+
+
+@api_view()
 def list_repo_problems(request: Request, repo_id: int):
     """
     列出题库中的所有题目
@@ -79,7 +85,8 @@ def list_repo_problems(request: Request, repo_id: int):
     problems = Problem.objects.filter_user_public(user=request.user,
                                                   problemrepository=repo,
                                                   permission=ProblemPermissions.ReadProblem)
-    return make_response(problems=ProblemSerializer(problems, many=True).data)
+    return make_response(repo=ProblemRepositorySerializer(repo).data,
+                         problems=ProblemSerializer(problems, many=True).data)
 
 
 @api_view()
