@@ -3,17 +3,25 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
 import { CTABLE, CTableColumn } from './context';
 
-const props = withDefaults(defineProps<{ data?: T[]; mobile?: boolean }>(), {
-  data: () => [],
-  mobile: true,
-});
+const props = withDefaults(
+  defineProps<{ data?: T[]; mobile?: boolean; border?: boolean }>(),
+  {
+    data: () => [],
+    mobile: true,
+    border: false,
+  }
+);
 
-const { data } = toRefs(props);
+const { data, mobile, border } = toRefs(props);
 
 const columns = ref<CTableColumn[]>([]);
 
+const enabledColumns = computed(() => columns.value.filter(c => !c.disabled));
+
 provide(CTABLE, {
   columns,
+  mobile,
+  border,
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
@@ -34,14 +42,10 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
 </script>
 
 <template>
-  <div w-full>
+  <div w-ful :class="border && 'border-1 border-base rounded-2'">
     <div v-if="smallScreen && mobile" space-y-4>
       <div hidden>
-        <slot
-          name="headers"
-          :breakpoints="breakpoints"
-          :small-screen="smallScreen"
-        ></slot>
+        <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
       </div>
       <div
         v-for="(row, index) in data"
@@ -51,7 +55,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
         dark:divide="gray/40"
       >
         <div
-          v-for="col in columns"
+          v-for="col in enabledColumns"
           flex
           gap1
           items-center
@@ -70,21 +74,25 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
         </div>
       </div>
     </div>
-    <table v-else class="table w-full table-auto rounded">
+    <table
+      v-else
+      :class="['c-table', 'table', 'w-full', 'table-auto', 'border-collapse']"
+    >
       <thead select-none font-600>
-        <tr>
-          <slot
-            name="headers"
-            :breakpoints="breakpoints"
-            :small-screen="smallScreen"
-          ></slot>
+        <tr divide-x-1>
+          <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
         </tr>
       </thead>
       <tbody divide-y dark:divide="gray/40">
         <tr v-for="(row, index) in data">
           <td
-            v-for="col in columns"
-            :class="['p2', 'text-' + col.align, col.class]"
+            v-for="(col, idx) in enabledColumns"
+            :class="[
+              idx > 0 && border && 'border-l-1 border-base',
+              'p2',
+              'text-' + col.align,
+              col.class,
+            ]"
           >
             <slot :name="col.name" v-bind="{ row, index, smallScreen }">{{
               row[col.name]
@@ -102,3 +110,18 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
     </div>
   </div>
 </template>
+
+<style>
+.c-table th:first-of-type {
+  border-top-left-radius: 0.5rem;
+}
+.c-table th:last-of-type {
+  border-top-right-radius: 0.5rem;
+}
+.c-table tr:last-of-type td:first-of-type {
+  border-bottom-left-radius: 0.5rem;
+}
+.c-table tr:last-of-type td:last-of-type {
+  border-bottom-right-radius: 0.5rem;
+}
+</style>

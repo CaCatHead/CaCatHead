@@ -2,6 +2,7 @@ import type { Ref } from 'vue';
 
 export interface CTableColumn {
   name: string;
+  disabled: Ref<boolean>;
   label: string;
   width?: number | string;
   class: string | string[];
@@ -11,6 +12,8 @@ export interface CTableColumn {
 
 export interface CTableContext {
   columns: Ref<CTableColumn[]>;
+  mobile: Ref<boolean>;
+  border: Ref<boolean>;
 }
 
 export const CTABLE = Symbol('c-table');
