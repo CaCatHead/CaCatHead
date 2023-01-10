@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 patchedDependencies:
   '@nuxt/image-edge@1.0.0-27840416.dc1ed65':
     hash: hriulszuce5amvnyytahlvw3pe
-    path: patches/@nuxt__image-edge@1.0.0-27840416.dc1ed65.patch
+    path: app/patches/@nuxt__image-edge@1.0.0-27840416.dc1ed65.patch
 
 importers:
 
@@ -50,7 +50,7 @@ importers:
       '@iconify-json/carbon': 1.1.13
       '@iconify-json/ic': 1.1.12
       '@iconify-json/mdi': 1.1.41
-      '@nuxt/image-edge': 1.0.0-27840416.dc1ed65
+      '@nuxt/image-edge': 1.0.0-27840416.dc1ed65_hriulszuce5amvnyytahlvw3pe
       '@nuxtjs/fontaine': 0.2.4
       '@types/katex': 0.16.0
       '@types/node': 18.8.0
@@ -1822,7 +1822,7 @@ packages:
   /@nuxt/devalue/2.0.0:
     resolution: {integrity: sha512-YBI/6o2EBz02tdEJRBK8xkt3zvOFOWlLBf7WKYGBsSYSRtjjgrqPe2skp6VLLmKx5WbHHDNcW+6oACaurxGzeA==}
 
-  /@nuxt/image-edge/1.0.0-27840416.dc1ed65:
+  /@nuxt/image-edge/1.0.0-27840416.dc1ed65_hriulszuce5amvnyytahlvw3pe:
     resolution: {integrity: sha512-r+lRkdAeB49wCpYmZAHWrhXNtjTSt3kz8MuPoVPpZB40FOVEpPCIQF8dBI5tXM19YOg76yFCdvpt1TFq3irA7g==}
     engines: {node: ^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0}
     dependencies:
@@ -1841,6 +1841,7 @@ packages:
       - rollup
       - supports-color
     dev: true
+    patched: true
 
   /@nuxt/kit/3.0.0:
     resolution: {integrity: sha512-7ZsOLt5s9a0ZleAIzmoD70JwkZf5ti6bDdxl6f8ew7Huxz+ni/oRfTPTX9TrORXsgW5CvDt6Q9M7IJNPkAN/Iw==}
