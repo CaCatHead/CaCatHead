@@ -11,7 +11,7 @@ const { data, refresh } = await useFetchAPI<{ submissions: Submission[] }>(
   `/api/polygon/${problem.value.id}/submissions`
 );
 
-const submissions = ref(data.value?.submissions ?? []);
+const submissions = computed(() => data.value?.submissions ?? []);
 
 const rejudge = async (submission: Submission) => {
   try {

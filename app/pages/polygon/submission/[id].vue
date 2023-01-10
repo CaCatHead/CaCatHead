@@ -17,7 +17,7 @@ if (data.value === null) {
   await navigateTo(`/polygon`);
 }
 
-const submission = ref(data.value!.submission);
+const submission = computed(() => data.value!.submission);
 
 const rejudge = async () => {
   try {
