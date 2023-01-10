@@ -236,6 +236,21 @@ def list_repo_submissions(request: Request, repo_id: int):
 
 @api_view()
 def get_repo_submission(request: Request, repo_id: int, submission_id: int):
-    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ReadSubmission)
-    submission = Submission.objects.filter(repository=repo, id=submission_id).first()
-    return make_response(submission=FullSubmissionSerializer(submission).data)
+    repo = ProblemRepository.objects.filter_user_permission(user=request.user,
+                                                            id=repo_id,
+                                                            permission=ProblemRepositoryPermissions.ReadSubmission).filter(
+        is_contest=False).first()
+    if repo is not None:
+        submission = Submission.objects.filter(repository=repo, id=submission_id).first()
+        return make_response(submission=FullSubmissionSerializer(submission).data)
+    else:
+        # 如果没有权限，只能查看自己的提交
+        repo = ProblemRepository.objects.filter(id=repo_id).first()
+        if repo is not None:
+            submission = Submission.objects.filter(repository=repo, id=submission_id).first()
+            if submission is not None and submission.owner == request.user:
+                return make_response(submission=FullSubmissionSerializer(submission).data)
+            else:
+                raise NotFound(detail='提交未找到')
+        else:
+            raise NotFound(detail='题库未找到')
