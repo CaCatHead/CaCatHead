@@ -22,7 +22,7 @@ async function copyToClipboard(text: string) {
     </div>
     <div>
       <span font-600 mr2>空间限制</span>
-      <span>{{ memory }} KB</span>
+      <display-memory :memory="memory"></display-memory>
     </div>
   </div>
   <div

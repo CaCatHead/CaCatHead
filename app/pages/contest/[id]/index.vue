@@ -70,7 +70,7 @@ const goSubmit = async (id: number) => {
               </span>
               <span inline-flex items-center justify-start>
                 <span i-carbon-chip text-lg mr1></span>
-                <span>{{ row.memory_limit }} KB</span>
+                <display-memory :memory="row.memory_limit"></display-memory>
               </span>
             </div>
           </div>
