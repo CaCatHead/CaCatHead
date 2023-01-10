@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/polygon/own', problem_views.list_polygon_problems),  # 用户上传的题目列表
     path('api/polygon/submissions', problem_views.list_polygon_submissions),  # 获取所有提交状态
     path('api/polygon/submission/<int:submission_id>', problem_views.get_polygon_submission),  # 获取提交状态详情
+    path('api/polygon/submission/<int:submission_id>/rejudge', problem_views.rejudge_polygon_problem),  # 重测提交
     # problem
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
     path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
