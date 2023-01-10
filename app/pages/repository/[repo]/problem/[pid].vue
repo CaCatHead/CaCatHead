@@ -4,22 +4,24 @@ import type { FullProblem } from '@/composables/types';
 const route = useRoute();
 
 const { data } = await useFetchAPI<{ problem: FullProblem }>(
-  `/api/repo/${route.params.repo}/problem/${route.params.problem}`
+  `/api/repo/${route.params.repo}/problem/${route.params.pid}`
 );
 
 if (!data) {
   await navigateTo('/repository');
 }
 
-const problem = ref(data.value!.problem);
+const problem = computed(() => data.value!.problem);
+
+useHead({
+  title: `#${problem.value.display_id}. ${problem.value.title}`,
+});
+
+useRepoLastProblem(route.params.repo).value = problem.value.display_id;
 </script>
 
 <template>
-  <div class="w-full">
-    <Head>
-      <Title>{{ problem.title }}</Title>
-    </Head>
-
+  <div v-if="problem" class="w-full">
     <div prose prose-truegray>
       <h2 mt0>{{ problem.display_id }}. {{ problem.title }}</h2>
     </div>

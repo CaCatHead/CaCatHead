@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, Group
+from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -224,8 +225,12 @@ def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
 @api_view()
 def list_repo_submissions(request: Request, repo_id: int):
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ReadSubmission)
-    submissions = Submission.objects.filter(repository=repo)
-    return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
+    submissions = Submission.objects.filter(repository=repo).all()
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 30))
+    paginator = Paginator(submissions, page_size)
+    return make_response(count=paginator.count, page=page, page_size=page_size, num_pages=paginator.num_pages,
+                         submissions=SubmissionSerializer(paginator.page(page).object_list, many=True).data)
 
 
 @api_view()

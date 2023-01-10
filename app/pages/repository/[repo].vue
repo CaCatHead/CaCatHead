@@ -30,7 +30,7 @@ useHead({
     >
       <c-nav-item to="">题目集</c-nav-item>
       <c-nav-item to="submit">提交代码</c-nav-item>
-      <c-nav-item to="status">我的提交</c-nav-item>
+      <!-- <c-nav-item to="status">我的提交</c-nav-item> -->
       <c-nav-item to="submissions">所有提交</c-nav-item>
       <c-nav-item
         to="settings"

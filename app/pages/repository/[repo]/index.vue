@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProblemRepository } from '@/composables/types';
+import type { ProblemRepository, Problem } from '@/composables/types';
 
 const props = defineProps<{ repo: ProblemRepository }>();
 
@@ -16,6 +16,13 @@ const { data } = await useFetchAPI<{
 }>(`/api/repo/${route.params.repo}/problems`);
 
 const problems = computed(() => data.value?.problems ?? []);
+
+const lastProblem = useRepoLastProblem(route.params.repo);
+
+const goSubmit = async (problem: Problem) => {
+  lastProblem.value = problem.display_id;
+  await navigateTo(`/repository/${route.params.repo}/submit`);
+};
 </script>
 
 <template>
@@ -25,6 +32,7 @@ const problems = computed(() => data.value?.problems ?? []);
       :problem-link="
         row => `/repository/${route.params.repo}/problem/${row.display_id}`
       "
+      @submit="goSubmit"
     ></problem-list>
   </div>
 </template>

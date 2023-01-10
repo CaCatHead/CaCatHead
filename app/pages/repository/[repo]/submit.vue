@@ -9,9 +9,31 @@ useHead({
   title: `提交代码 - ${repo.value.name}`,
 });
 
-const pid = ref(1000);
+const notify = useNotification();
 
 const route = useRoute();
+
+const pid = ref(useRepoLastProblem(route.params.repo).value);
+
+const submit = async (payload: { code: string; language: string }) => {
+  const { code, language } = payload;
+  try {
+    await fetchAPI(
+      `/api/repo/${route.params.repo}/problem/${pid.value}/submit`,
+      {
+        method: 'POST',
+        body: {
+          code,
+          language,
+        },
+      }
+    );
+    notify.success('代码提交成功');
+    await navigateTo(`/repository/${route.params.repo}/submissions`);
+  } catch (error) {
+    notify.danger('代码提交失败');
+  }
+};
 </script>
 
 <template>
@@ -21,6 +43,6 @@ const route = useRoute();
         <span font-bold>题目编号</span>
       </template>
     </c-input>
-    <problem-submit></problem-submit>
+    <problem-submit @submit="submit"></problem-submit>
   </div>
 </template>
