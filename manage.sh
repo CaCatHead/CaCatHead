@@ -20,7 +20,7 @@ case "$1" in
     docker exec -it "cacathead_$2" /bin/bash 
     ;;
   *)
-    echo "Usage: ./manage.sh [up|logs|exec]"
+    echo "Usage: ./manage.sh [up|judge|logs|exec]"
     exit 1
     ;;
 esac
