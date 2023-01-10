@@ -79,7 +79,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
       :class="['c-table', 'table', 'w-full', 'table-auto', 'border-collapse']"
     >
       <thead select-none font-600>
-        <tr divide-x-1>
+        <tr :class="border && 'divide-x-1'">
           <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
         </tr>
       </thead>
