@@ -46,7 +46,7 @@ class JudgeService:
             pass
         finally:
             channel.basic_ack(delivery_tag=method.delivery_tag)
-            logger.info(f'Handle ping task OK')
+            logger.info(f'Judge node {cacathead_config.judge.name} handles ping task OK')
 
     @staticmethod
     def consume(channel: Channel, method: Basic.Deliver, _properties: BasicProperties, body: bytes):
