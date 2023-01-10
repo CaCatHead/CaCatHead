@@ -21,7 +21,7 @@ First, clone this repo and its submodules.
 
 ```bash
 # Clone this repo
-$ git clone https://github.com/XLoJ/CaCatHead.git
+$ git clone https://github.com/XLoJ/CaCatHead.git --depth 1
 
 # Go to the root directory of this repo
 $ cd CaCatHead

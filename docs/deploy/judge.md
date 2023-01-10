@@ -87,3 +87,25 @@ $ docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
 # or
 $ ./manage.sh judge
 ```
+
+## 查看判题节点日志
+
+```bash
+$ docker logs catjudge_node
+# or
+$ ./manage.sh logs node
+```
+
+## 常见问题
+
+### Postgresql / MinIO / RabbitMQ 连接失败
+
+检查是否正确按照 [配置数据库密码](/deploy/server.html#配置数据库密码) 内的说明，配置 4 个中间件密码。
+
+检查密码文件的文件编码（UTF-8），是否只包含密码内容（不包含额外的换行符等）。
+
+向主服务器管理员确认，服务是否允许外部访问，是否开启了相关端口。
+
+### CaCatHead.config 解析失败
+
+检查 [./deploy/judge/cacathead.yml](https://github.com/XLoJ/CaCatHead/blob/main/deploy/judge/cacathead.yml) 是否为合法的 yml 格式文件。检查 field 名称是否正确，缩进是否正确，是否缺失某些配置。也可能因为 `git pull` (`git merge`) 遇到冲突，导致格式损坏。

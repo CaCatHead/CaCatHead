@@ -16,7 +16,7 @@
 
 ```bash
 # 克隆本仓库到本地
-$ git clone https://github.com/XLoJ/CaCatHead.git
+$ git clone https://github.com/XLoJ/CaCatHead.git --depth 1
 
 # 进入仓库根目录
 $ cd CaCatHead
@@ -142,4 +142,14 @@ server:
 $ docker compose up --build -d
 # or
 $ ./manage.sh up
+```
+
+## 查看容器日志
+
+```bash
+# 查看服务器日志
+$ ./manage.sh logs server
+
+# 查看评测机日志
+$ ./manage.sh logs judge
 ```
