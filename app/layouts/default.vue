@@ -45,7 +45,7 @@ const activeTab = computed(() => {
               src="/favicon.png"
               alt="CaCatHead Icon"
               h-full
-              format="webp"
+              preset="default"
             />
             <span ml4 lt-md:ml1 text-2xl font-bold>CaCatHead</span>
           </NuxtLink>

@@ -21,7 +21,7 @@ const posts = ref(data.value?.posts ?? []);
         <div p4>
           <p>CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。</p>
           <p mt4>
-            <nuxt-img src="/ccpc.png" alt="Cat CPC" format="webp" />
+            <nuxt-img src="/ccpc.png" alt="Cat CPC" preset="default" />
           </p>
         </div>
       </div>

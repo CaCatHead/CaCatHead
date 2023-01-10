@@ -11,5 +11,10 @@
   "packageManager": "pnpm@7.13.6",
   "engines": {
     "node": ">=v16.0.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@nuxt/image-edge@1.0.0-27840416.dc1ed65": "app/patches/@nuxt__image-edge@1.0.0-27840416.dc1ed65.patch"
+    }
   }
 }

@@ -30,6 +30,14 @@ export default defineNuxtConfig({
   },
   image: {
     provider: 'ipx',
+    presets: {
+      default: {
+        modifiers: {
+          format: 'webp',
+          maxAge: 2592000,
+        },
+      },
+    },
     ipx: {
       maxAge: 2592000,
     },

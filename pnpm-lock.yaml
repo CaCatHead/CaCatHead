@@ -1,5 +1,10 @@
 lockfileVersion: 5.4
 
+patchedDependencies:
+  '@nuxt/image-edge@1.0.0-27840416.dc1ed65':
+    hash: hriulszuce5amvnyytahlvw3pe
+    path: patches/@nuxt__image-edge@1.0.0-27840416.dc1ed65.patch
+
 importers:
 
   .:
