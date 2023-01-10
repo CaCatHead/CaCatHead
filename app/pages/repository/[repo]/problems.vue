@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProblemRepository } from '@/composables/types';
+import type { ProblemRepository, Problem } from '@/composables/types';
 
 const props = defineProps<{ repo: ProblemRepository }>();
 
@@ -33,15 +33,37 @@ const addProblem = async () => {
   }
 };
 
-const removeProblem = async (pid: number) => {
+const removeProblem = async (problem: Problem) => {
   try {
-    await fetchAPI<{}>(`/api/repo/${repo.value.id}/problems/delete/${pid}`, {
-      method: 'POST',
-    });
+    await fetchAPI<{}>(
+      `/api/repo/${repo.value.id}/problems/delete/${problem.display_id}`,
+      {
+        method: 'POST',
+      }
+    );
     notify.success(`题目删除成功`);
     await refresh();
   } catch (error) {
     notify.danger(`题目删除失败`);
+  }
+};
+
+const toggleProblemPublic = async (problem: Problem) => {
+  const mode = problem.is_public ? '隐藏' : '公开';
+  try {
+    await fetchAPI<{}>(
+      `/api/repo/${repo.value.id}/problem/${problem.display_id}/edit`,
+      {
+        method: 'POST',
+        body: {
+          is_public: !problem.is_public,
+        },
+      }
+    );
+    notify.success(`题目${mode}成功`);
+    await refresh();
+  } catch (error) {
+    notify.danger(`题目${mode}失败`);
   }
 };
 </script>
@@ -63,13 +85,20 @@ const removeProblem = async (pid: number) => {
       :problem-link="
         row => `/repository/${route.params.repo}/problem/${row.display_id}`
       "
+      operation-width="100px"
     >
       <template #operation="{ row }">
+        <c-button
+          color="info"
+          variant="text"
+          :icon="row.is_public ? 'i-carbon-view' : 'i-carbon-view-off'"
+          @click="toggleProblemPublic(row)"
+        ></c-button>
         <c-button
           color="danger"
           variant="text"
           icon="i-carbon-delete"
-          @click="removeProblem(row.display_id)"
+          @click="removeProblem(row)"
         ></c-button>
       </template>
     </problem-list>

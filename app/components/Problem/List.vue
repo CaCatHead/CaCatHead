@@ -6,9 +6,11 @@ const props = withDefaults(
     problems: Problem[];
     problemLink: (problem: Problem) => string;
     problemIndex?: (problem: Problem) => string;
+    operationWidth?: string;
   }>(),
   {
     problemIndex: (p: Problem) => String(p.display_id),
+    operationWidth: '60px',
   }
 );
 
@@ -24,7 +26,10 @@ const emit = defineEmits<{
     <template #headers="{ smallScreen }">
       <c-table-header name="display_id" width="60">#</c-table-header>
       <c-table-header name="title" align="left" text-left>题目</c-table-header>
-      <c-table-header :disabled="smallScreen" name="operation" width="60px"
+      <c-table-header
+        :disabled="smallScreen"
+        name="operation"
+        :width="operationWidth"
         ><span></span
       ></c-table-header>
     </template>

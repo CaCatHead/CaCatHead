@@ -103,6 +103,7 @@ export interface Problem {
   title: string;
   time_limit: number;
   memory_limit: number;
+  is_public: boolean;
 }
 
 export type FullProblem = Problem & {

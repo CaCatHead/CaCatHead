@@ -176,6 +176,9 @@ def add_repo_problem(request: Request, repo_id: int, problem_id: int):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_repo_problem(request: Request, repo_id: int, problem_id: int):
+    """
+    从当前题库中删除编号为 display_id 的题目
+    """
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.DeleteProblem)
     problem = Problem.objects.filter(problemrepository=repo, display_id=problem_id).first()
     if problem is None:
@@ -183,6 +186,23 @@ def delete_repo_problem(request: Request, repo_id: int, problem_id: int):
     else:
         problem.delete()
         return make_response()
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_repo_problem(request: Request, repo_id: int, problem_id: int):
+    """
+    更新当前题库中的题目信息
+    """
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.EditProblem)
+    problem = Problem.objects.filter(problemrepository=repo, display_id=problem_id).first()
+    if problem is None:
+        return make_error_response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        if 'is_public' in request.data and isinstance(request.data['is_public'], bool):
+            problem.is_public = request.data['is_public']
+        problem.save()
+        return make_response(problem=FullProblemSerializer(problem).data)
 
 
 @api_view(['POST'])

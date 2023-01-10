@@ -164,6 +164,8 @@ class Problem(BaseModel):
     class Meta:
         db_table = 'problem'
 
+        ordering = ('repository', 'display_id')
+
         indexes = [
             models.Index(fields=['repository', 'display_id'], name='repo_display_id_index')
         ]

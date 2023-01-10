@@ -71,7 +71,7 @@ urlpatterns = [
     path('api/repo/<int:repo_id>/problems/delete/<int:problem_id>', problem_views.delete_repo_problem),  # 编辑题库中的题目列表
     path('api/repo/<int:repo_id>/problem/<int:problem_id>', problem_views.get_repo_problem_content),  # 查看题目内容
     path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit', problem_views.submit_repo_problem_code),  # 提交代码
-    # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
+    path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit', problem_views.edit_repo_problem),  # 编辑题目
     path('api/repo/<int:repo_id>/submissions', problem_views.list_repo_submissions),  # 获取所有提交状态
     path('api/repo/<int:repo_id>/submission/<int:submission_id>', problem_views.get_repo_submission),  # 获取提交状态详情
     # contest
