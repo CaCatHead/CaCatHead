@@ -4,7 +4,7 @@
 
 # CaCatHead
 
-[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml)
+[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml) [![Demo](https://img.shields.io/badge/CaCatHead-Demo-brightgreen)](https://oj.xlorpaste.cn/)
 
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
