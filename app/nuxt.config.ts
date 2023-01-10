@@ -34,7 +34,6 @@ export default defineNuxtConfig({
       default: {
         modifiers: {
           format: 'webp',
-          maxAge: 2592000,
         },
       },
     },
