@@ -1,15 +1,29 @@
 <script setup lang="ts">
-import type { FullPolygonProblem } from '@/composables/types';
+import type { FullPolygonProblem, Submission } from '@/composables/types';
+
+const notify = useNotification();
 
 const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
-const { data } = await useFetchAPI<{ submissions: any[] }>(
+const { data, refresh } = await useFetchAPI<{ submissions: Submission[] }>(
   `/api/polygon/${problem.value.id}/submissions`
 );
 
 const submissions = ref(data.value?.submissions ?? []);
+
+const rejudge = async (submission: Submission) => {
+  try {
+    await fetchAPI(`/api/polygon/submission/${submission.id}/rejudge`, {
+      method: 'POST',
+    });
+    notify.success(`提交 #${submission.id}. 发起重测成功`);
+    await refresh();
+  } catch {
+    notify.danger(`提交 #${submission.id}. 发起重测失败`);
+  }
+};
 </script>
 
 <template>
@@ -26,6 +40,7 @@ const submissions = ref(data.value?.submissions ?? []);
         <c-table-header name="time_used" label="时间"></c-table-header>
         <c-table-header name="memory_used" label="内存"></c-table-header>
         <c-table-header name="node" label="评测机"></c-table-header>
+        <c-table-header name="operation" label="" width="60px"></c-table-header>
       </template>
 
       <template #id="{ row }">
@@ -69,6 +84,13 @@ const submissions = ref(data.value?.submissions ?? []);
       </template>
       <template #node="{ row }">
         <span>{{ row.judge_node }}</span>
+      </template>
+      <template #operation="{ row }">
+        <div inline-flex lt-md:mr="-4">
+          <c-button variant="text" color="warning" @click="rejudge(row)"
+            >重测</c-button
+          >
+        </div>
       </template>
     </c-table>
   </div>

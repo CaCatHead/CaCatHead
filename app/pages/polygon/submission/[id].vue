@@ -3,11 +3,13 @@ import type { FullSubmission } from '@/composables/types';
 
 const route = useRoute();
 
+const notify = useNotification();
+
 useHead({
   title: 'Submission #' + route.params.id,
 });
 
-const { data } = await useFetchAPI<{ submission: FullSubmission }>(
+const { data, refresh } = await useFetchAPI<{ submission: FullSubmission }>(
   `/api/polygon/submission/${route.params.id}`
 );
 
@@ -16,6 +18,18 @@ if (data.value === null) {
 }
 
 const submission = ref(data.value!.submission);
+
+const rejudge = async () => {
+  try {
+    await fetchAPI(`/api/polygon/submission/${submission.value.id}/rejudge`, {
+      method: 'POST',
+    });
+    notify.success(`提交 #${submission.value.id}. 发起重测成功`);
+    await refresh();
+  } catch {
+    notify.danger(`提交 #${submission.value.id}. 发起重测失败`);
+  }
+};
 </script>
 
 <template>
@@ -32,6 +46,11 @@ const submission = ref(data.value!.submission);
           <c-table-header name="score" label="得分"></c-table-header>
           <c-table-header name="time" label="时间"></c-table-header>
           <c-table-header name="memory" label="内存"></c-table-header>
+          <c-table-header
+            name="operation"
+            label=""
+            width="60px"
+          ></c-table-header>
         </template>
 
         <template #id="{ row }">
@@ -68,6 +87,13 @@ const submission = ref(data.value!.submission);
         <template #memory="{ row }"
           ><display-memory :memory="row.memory_used"></display-memory
         ></template>
+        <template #operation>
+          <div lt-md:mr="-4">
+            <c-button variant="text" color="warning" @click="rejudge"
+              >重测</c-button
+            >
+          </div>
+        </template>
       </c-table>
     </div>
     <submission-detail :submission="submission"></submission-detail>
