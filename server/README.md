@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/XLoJ/CaCatHead/branch/main/graph/badge.svg?token=PEALBR8V0B)](https://codecov.io/gh/XLoJ/CaCatHead)
 
-CaCatHead server sub-project is based on [Django](https://www.djangoproject.com/) web framework.
+CaCatHead server subproject is based on [Django](https://www.djangoproject.com/) web framework.
 
 ## Usage
 

@@ -1,42 +1,18 @@
-# Nuxt 3 Minimal Starter
+# CaCatHead - Nuxt APP
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml)
 
-## Setup
+CaCatHead app subproject is based on [Nuxt](https://nuxt.com/) intuitive web framework.
 
-Make sure to install the dependencies:
+## Usage
 
-```bash
-# yarn
-yarn install
+You should start django server first.
 
-# npm
-npm install
-
-# pnpm
-pnpm install --shamefully-hoist
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
+Start the app web server.
 
 ```bash
-npm run dev
+# At the root directory, not this sub directory
+$ pnpm install
+
+$ pnpm dev:app
 ```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
