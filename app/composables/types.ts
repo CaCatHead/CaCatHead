@@ -209,6 +209,8 @@ export interface ContestStandings {
 
   dirty: number;
 
+  is_participate: boolean;
+
   standings: {
     submissions: ContestSubmission[];
   };

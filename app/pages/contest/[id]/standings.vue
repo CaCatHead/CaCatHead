@@ -71,6 +71,9 @@ const registrations = computed(() => {
   });
 
   for (let i = 0; i < items.length; i++) {
+    if (!items[i].is_participate) {
+      continue;
+    }
     if (i === 0) {
       items[i].rank = 1;
     } else {

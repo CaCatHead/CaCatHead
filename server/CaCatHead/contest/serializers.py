@@ -92,4 +92,4 @@ class ContestStandingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContestRegistration
-        fields = ['name', 'team', 'created', 'score', 'dirty', 'standings', 'extra_info']
+        fields = ['name', 'team', 'created', 'score', 'dirty', 'standings', 'is_participate', 'extra_info']
