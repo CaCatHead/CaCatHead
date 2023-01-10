@@ -32,7 +32,7 @@ function toNumDuration(seconds: number) {
 const registrations = computed(() => {
   const list = data?.value?.registrations ?? [];
 
-  return list.map(r => {
+  const items = list.map(r => {
     const problems: Record<
       string,
       { ok: boolean; time: number; dirty: number }
@@ -62,12 +62,37 @@ const registrations = computed(() => {
 
     return {
       ...r,
+      rank: -1,
       standings: {
         submissions: r.standings.submissions,
         problems,
       },
     };
   });
+
+  for (let i = 0; i < items.length; i++) {
+    if (i === 0) {
+      items[i].rank = 1;
+    } else {
+      if (
+        items[i].score === items[i - 1].score &&
+        items[i].dirty === items[i - 1].dirty
+      ) {
+        items[i].rank = items[i - 1].rank;
+      } else {
+        items[i].rank = i + 1;
+      }
+    }
+    if (
+      items[i].score === 0 &&
+      (!items[i].standings.submissions ||
+        items[i].standings.submissions.length === 0)
+    ) {
+      items[i].rank = -1;
+    }
+  }
+
+  return items;
 });
 </script>
 
@@ -89,8 +114,8 @@ const registrations = computed(() => {
         >
       </template>
 
-      <template #rank="{ index }">
-        <span font-bold>{{ index + 1 }}</span></template
+      <template #rank="{ row }">
+        <span font-bold>{{ row.rank === -1 ? '-' : row.rank }}</span></template
       >
       <template #name="{ row }">
         <team-link :team="row.team" :name="row.name"></team-link>
