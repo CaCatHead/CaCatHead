@@ -36,7 +36,8 @@ def list_repos(request):
 
 
 def check_repo(request: Request, repo_id: int, permission: str):
-    if permission == ProblemRepositoryPermissions.ListProblems:
+    if permission in [ProblemRepositoryPermissions.ListProblems, ProblemRepositoryPermissions.Submit,
+                      ProblemRepositoryPermissions.ListSubmissions]:
         repo = ProblemRepository.objects.filter_user_public(user=request.user,
                                                             id=repo_id,
                                                             permission=permission).filter(is_contest=False).first()
@@ -224,7 +225,7 @@ def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
 
 @api_view()
 def list_repo_submissions(request: Request, repo_id: int):
-    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ReadSubmission)
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ListSubmissions)
     submissions = Submission.objects.filter(repository=repo).all()
     page = int(request.query_params.get('page', 1))
     page_size = int(request.query_params.get('page_size', 30))
