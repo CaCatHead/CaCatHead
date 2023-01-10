@@ -98,6 +98,16 @@ export interface ProblemRepository {
   name: string;
 }
 
+export interface FullProblem {
+  display_id: number;
+  title: string;
+  time_limit: number;
+  memory_limit: number;
+  problem_info: {
+    problem_content: ProblemContent;
+  };
+}
+
 export interface PolygonProblem {
   id: number;
   display_id: number;

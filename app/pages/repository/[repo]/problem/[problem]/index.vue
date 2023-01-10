@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import type { ProblemContent } from '@/composables/types';
+import type { FullProblem } from '@/composables/types';
 
 const route = useRoute();
 
-interface Problem {
-  display_id: number;
-  title: string;
-  problem_info: {
-    problem_content: ProblemContent;
-  };
-}
-
-const { data } = await useFetchAPI<{ problem: Problem }>(
+const { data } = await useFetchAPI<{ problem: FullProblem }>(
   `/api/repo/${route.params.repo}/problem/${route.params.problem}`
 );
 
@@ -34,6 +26,8 @@ const problem = ref(data.value!.problem);
 
     <problem-content
       :content="problem.problem_info.problem_content"
+      :time="problem.time_limit"
+      :memory="problem.memory_limit"
     ></problem-content>
   </div>
 </template>

@@ -9,7 +9,18 @@ useHead({
   title: `提交代码 - ${repo.value.name}`,
 });
 
+const pid = ref(1000);
+
 const route = useRoute();
 </script>
 
-<template></template>
+<template>
+  <div>
+    <c-input type="number" id="pid" v-model="pid">
+      <template #label>
+        <span font-bold>题目编号</span>
+      </template>
+    </c-input>
+    <problem-submit></problem-submit>
+  </div>
+</template>
