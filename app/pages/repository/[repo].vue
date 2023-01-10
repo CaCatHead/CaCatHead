@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type { ProblemRepository } from '@/composables/types';
 
-useHead({
-  title: '题库',
-});
-
 const route = useRoute();
 
 const user = useUser();

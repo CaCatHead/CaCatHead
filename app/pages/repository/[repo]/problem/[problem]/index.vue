@@ -21,7 +21,7 @@ const problem = ref(data.value!.problem);
     </Head>
 
     <div prose prose-truegray>
-      <h2>{{ problem.display_id }}. {{ problem.title }}</h2>
+      <h2 mt0>{{ problem.display_id }}. {{ problem.title }}</h2>
     </div>
 
     <problem-content

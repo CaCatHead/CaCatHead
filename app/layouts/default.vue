@@ -81,9 +81,10 @@ const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
       </div>
 
       <nav
-        h="16"
+        h16
         mt4
         pl4
+        z10
         flex
         gap4
         lt-md:gap0
@@ -109,7 +110,7 @@ const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
             activeTab === 'repository' && 'is-active',
           ]"
         >
-          <NuxtLink to="/repository/" relative class="[&:hover>div]:block">
+          <NuxtLink to="/repository/" relative z10 class="[&:hover>div]:block">
             <span>题库</span>
             <div hidden absolute top-full left="-1" w-36 pt3 font-normal>
               <div
@@ -120,7 +121,7 @@ const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
                 bg-white
                 dark:bg-dark
               >
-                <div v-for="repo in repos?.repos" p2>
+                <div v-for="repo in repos?.repos" p2 z10>
                   <nuxt-link :to="`/repository/${repo.id}`" text-link>{{
                     repo.name
                   }}</nuxt-link>

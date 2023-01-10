@@ -65,10 +65,10 @@ urlpatterns = [
     # problem
     path('api/repos', problem_views.list_repos),  # 列出所有公开的题库
     path('api/repo/<int:repo_id>', problem_views.list_repo_problems),  # 获取题库信息
-    path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
     path('api/repo/<int:repo_id>/permission', problem_views.RepoPermission.as_view()),  # 将题库向他人授权
-    path('api/repo/<int:repo_id>/add/<int:problem_id>', problem_views.add_repo_problem),  # 编辑题库中的题目列表
-    path('api/repo/<int:repo_id>/delete/<int:problem_id>', problem_views.delete_repo_problem),  # 编辑题库中的题目列表
+    path('api/repo/<int:repo_id>/problems', problem_views.list_repo_problems),  # 查看题库中的题目列表
+    path('api/repo/<int:repo_id>/problems/add/<int:problem_id>', problem_views.add_repo_problem),  # 编辑题库中的题目列表
+    path('api/repo/<int:repo_id>/problems/delete/<int:problem_id>', problem_views.delete_repo_problem),  # 编辑题库中的题目列表
     path('api/repo/<int:repo_id>/problem/<int:problem_id>', problem_views.get_repo_problem_content),  # 查看题目内容
     path('api/repo/<int:repo_id>/problem/<int:problem_id>/submit', problem_views.submit_repo_problem_code),  # 提交代码
     # path('api/repo/<int:repo_id>/problem/<int:problem_id>/edit'),  # 编辑题目
