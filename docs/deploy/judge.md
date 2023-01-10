@@ -88,7 +88,7 @@ $ docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
 $ ./manage.sh judge
 ```
 
-## 查看判题节点日志
+## 查看判题节点容器日志
 
 ```bash
 $ docker logs catjudge_node
@@ -97,6 +97,8 @@ $ ./manage.sh logs node
 ```
 
 ## 常见问题
+
+**先检查判题节点容器内的日志**。
 
 ### Postgresql / MinIO / RabbitMQ 连接失败
 
