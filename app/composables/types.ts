@@ -152,7 +152,7 @@ interface SubmissionDetail {
   verdict: string;
 }
 
-export interface Submission {
+interface BaseSubmission {
   id: number;
 
   language: string;
@@ -170,13 +170,21 @@ export interface Submission {
   verdict: string;
 
   problem: {
+    id?: number;
+
     display_id: number;
 
     title: string;
   };
 }
 
-export type BaseFullSubmission = Submission & {
+export type Submission = BaseSubmission & {
+  owner: User;
+
+  judge_node?: string;
+};
+
+export type BaseFullSubmission = BaseSubmission & {
   code: string;
 
   detail: SubmissionDetail;
@@ -186,7 +194,7 @@ export type FullSubmission = BaseFullSubmission & {
   owner: User;
 };
 
-export type ContestSubmission = Submission & {
+export type ContestSubmission = BaseSubmission & {
   owner: Team;
 
   relative_time: number;
@@ -208,6 +216,8 @@ export interface ContestStandings {
   score: number;
 
   dirty: number;
+
+  is_participate: boolean;
 
   standings: {
     submissions: ContestSubmission[];

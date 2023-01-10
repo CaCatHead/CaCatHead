@@ -22,37 +22,15 @@ const goSubmit = async (id: number) => {
 <template>
   <div>
     <contest-layout :contest="contest">
-      <c-table
-        :data="contest.problems"
-        border="1 base"
-        rounded-2
-        :mobile="false"
-      >
+      <c-table :data="contest.problems" border :mobile="false">
         <template #headers="{ smallScreen }">
-          <c-table-header
-            name="display_id"
-            width="60"
-            row-class="border-r-1 border-base"
-            class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
-            >#</c-table-header
-          >
-          <c-table-header
-            name="title"
-            align="left"
-            text-left
-            row-class="px4 border-r-1 border-base"
-            class="border-r-1 border-base px4 bg-gray-100 dark:bg-dark-100"
+          <c-table-header name="display_id" width="60">#</c-table-header>
+          <c-table-header name="title" align="left" text-left
             >题目</c-table-header
           >
-          <client-only>
-            <c-table-header
-              v-if="!smallScreen"
-              name="operation"
-              class="border-r-1 border-base bg-gray-100 dark:bg-dark-100"
-              width="60px"
-              ><span></span
-            ></c-table-header>
-          </client-only>
+          <c-table-header :disabled="smallScreen" name="operation" width="60px"
+            ><span></span
+          ></c-table-header>
         </template>
         <template #display_id="{ row }">
           <nuxt-link
@@ -92,7 +70,7 @@ const goSubmit = async (id: number) => {
               </span>
               <span inline-flex items-center justify-start>
                 <span i-carbon-chip text-lg mr1></span>
-                <span>{{ row.memory_limit }} KB</span>
+                <display-memory :memory="row.memory_limit"></display-memory>
               </span>
             </div>
           </div>
@@ -101,7 +79,7 @@ const goSubmit = async (id: number) => {
           <c-button
             variant="text"
             color="success"
-            icon="i-carbon-cloud-upload"
+            icon="i-akar-icons-paper-airplane"
             @click="goSubmit(row.display_id)"
           ></c-button>
         </template>

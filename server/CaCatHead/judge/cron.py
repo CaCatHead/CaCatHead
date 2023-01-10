@@ -17,8 +17,9 @@ class PingJudgeNode(CronJobBase):
         now = timezone.now()
         for node in JudgeNode.objects.all():
             delta = (now - node.updated).total_seconds()
-            if delta > 5 * 60:
-                node.active = False
-            elif delta > 60 * 60:
+            if delta >= 60 * 60:
                 node.delete()
+            elif delta >= 90:
+                node.active = False
+                node.save()
         send_ping_message({})

@@ -42,11 +42,11 @@ class JudgeService:
         logger.info(f'Receive a new ping task from exchange "{method.exchange}"')
         try:
             handle_ping()
+            logger.info(f'Judge node {cacathead_config.judge.name} handles ping task OK')
         except Exception:
-            pass
+            logger.info(f'Judge node {cacathead_config.judge.name} fails handling ping task')
         finally:
             channel.basic_ack(delivery_tag=method.delivery_tag)
-            logger.info(f'Handle ping task OK')
 
     @staticmethod
     def consume(channel: Channel, method: Basic.Deliver, _properties: BasicProperties, body: bytes):

@@ -9,7 +9,7 @@
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
 + 📺 [Online Demo | 在线 Demo](https://oj.xlorpaste.cn/)
-+ 📖 [Document | 文档](https://oj-docs.onekuma.cn/)
++ 📖 [Chinese Document | 中文文档](https://oj-docs.onekuma.cn/)
 
 ## Deploy
 
@@ -17,31 +17,64 @@ CaCatHead is the fully rewritten open-source successor of Cat (used internally b
 >
 > Install latest [docker](https://www.docker.com/) and [docker-compose](https://docs.docker.com/compose/).
 
-Create `pass.txt` to set the password of the database root user. (If you are using Windows and Powershell, note that the stdout of `echo` command may be encoded by UTF-16)
+First, clone this repo and its submodules.
 
 ```bash
-$ echo 'xxxyyy' > pass.txt
+# Clone this repo
+$ git clone https://github.com/XLoJ/CaCatHead.git
+
+# Go to the root directory of this repo
+$ cd CaCatHead
+
+# Clone submodules
+$ git submodule update --init --recursive
+```
+
+Then, create password files at [./deploy/pass/](./deploy/pass/). You should create 4 password files:
+
++ `./deploy/pass/db_pass.txt`: Postgresql database root user password
++ `./deploy/pass/redis_pass.txt`: Redis password
++ `./deploy/pass/minio_pass.txt`: MinIO password
++ `./deploy/pass/rmq_pass.txt`: RabbitMQ password
+
+For example (If you are using Windows and Powershell, note that the stdout of `echo` command may be encoded by UTF-16):
+
+```bash
+$ echo "12345678" > ./deploy/password/db_pass.txt
+$ echo "12345678" > ./deploy/password/redis_pass.txt
+$ echo "12345678" > ./deploy/password/minio_pass.txt
+$ echo "12345678" > ./deploy/password/rmq_pass.txt
+```
+
+Then, create RabbitMQ config file at `./deploy/rabbitmq.conf` to specify the default user is `root` and the default password is the same as the `./deploy/pass/rmq_pass.txt`. For example:
+
+```bash
+$ echo "default_user = root" >> ./deploy/rabbitmq.conf
+$ echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
 ```
 
 ### Deploy locally
 
 ```bash
-# Clone submodule CatJudge
-$ git submodule update --init --recursive
-
 # Deploy docker
 $ docker compose up -d
+# or
+$ ./manage.sh up
 
 # See container logs
 $ docker compose logs -f
+# or
+$ ./manage.sh logs
 
 # Rebuild and Restart service
 $ docker compose up --build -d
+# or
+$ ./manage.sh up
 ```
 
 ### Deploy on your server
 
-First modify the nginx config at [./deploy/nginx/sites-enabled/cacathead.conf](./deploy/nginx/sites-enabled/cacathead.conf).
+Modify the nginx config at [./deploy/nginx/sites-enabled/cacathead.conf](./deploy/nginx/sites-enabled/cacathead.conf).
 
 ```nginx
 server {
@@ -76,22 +109,6 @@ server:
     - http://127.0.0.1
     - https://oj.xlorpaste.cn  # Config your domain here
   # ...
-```
-
-Then, create password files at [./deploy/pass/](./deploy/pass/). You should create 4 password files:
-
-+ `./deploy/pass/db_pass.txt`
-+ `./deploy/pass/redis_pass.txt`
-+ `./deploy/pass/minio_pass.txt`
-+ `./deploy/pass/rmq_pass.txt`
-
-You need to make sure your password is strong enough.
-
-Then, create RabbitMQ config file at `./deploy/rabbitmq.conf` to specify the default user is `root` and the default password is the same as the `./deploy/pass/rmq_pass.txt`:
-
-```conf
-default_user = root
-default_pass = <same as ./deploy/pass/rmq_pass.txt>
 ```
 
 Finally, docker compose up.

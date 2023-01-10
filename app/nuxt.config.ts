@@ -29,6 +29,14 @@ export default defineNuxtConfig({
     },
   },
   image: {
+    provider: 'ipx',
+    presets: {
+      default: {
+        modifiers: {
+          format: 'webp',
+        },
+      },
+    },
     ipx: {
       maxAge: 2592000,
     },
@@ -48,10 +56,14 @@ export default defineNuxtConfig({
     // Cache 30 days
     // See https://github.com/nuxt/framework/issues/9318
     '/_nuxt/**': {
-      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+      headers: {
+        'Cache-Control': 'max-age=2592000, immutable, public, s-maxage=2592000',
+      },
     },
     '/favicon.png': {
-      headers: { 'Cache-Control': 'max-age=2592000, immutable' },
+      headers: {
+        'Cache-Control': 'max-age=2592000, immutable, public, s-maxage=2592000',
+      },
     },
   },
   experimental: {

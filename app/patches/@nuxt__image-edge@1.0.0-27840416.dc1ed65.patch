@@ -1,0 +1,12 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index dbaac3436f3aaa83e4cbb309ba62754f7b382f0b..c7fcf5a7255bb5de638d5aaa803d3df248afefe4 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -13,6 +13,7 @@ const ipxSetup = async (_providerOptions, moduleOptions) => {
+   }
+   const ipxOptions = {
+     dir: resolve(nuxt.options.srcDir, moduleOptions.dir || nuxt.options.dir.public),
++    maxAge: 2592000,
+     domains: moduleOptions.domains,
+     sharp: moduleOptions.sharp,
+     alias: moduleOptions.alias

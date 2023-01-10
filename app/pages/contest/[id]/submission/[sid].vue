@@ -9,9 +9,9 @@ const props = defineProps<{ contest: FullContest; admin: boolean }>();
 
 const { contest, admin } = toRefs(props);
 
-const { data } = await useFetchAPI<{ submission: FullContestSubmission }>(
-  `/api/contest/${route.params.id}/submission/${route.params.sid}`
-);
+const { data, refresh } = await useFetchAPI<{
+  submission: FullContestSubmission;
+}>(`/api/contest/${route.params.id}/submission/${route.params.sid}`);
 
 const submission = computed(() => {
   return data.value?.submission!;
@@ -34,9 +34,7 @@ const rejudge = async () => {
       }
     );
     notify.success(`提交重测成功`);
-    await navigateTo(
-      `/contest/${route.params.id}/submission/${submission.value.id}`
-    );
+    await refresh();
   } catch {
     notify.danger(`提交重测失败`);
   }

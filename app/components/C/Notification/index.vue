@@ -16,7 +16,7 @@ const variant = computed(() => 'c-' + _variant.value);
 </script>
 
 <template>
-  <div rounded px4 py2 h-10 :class="['c-notification', variant, color]">
+  <div inline-block rounded px4 py2 :class="['c-notification', variant, color]">
     <slot></slot>
   </div>
 </template>
