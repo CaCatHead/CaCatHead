@@ -7,6 +7,8 @@ useHead({
 
 const route = useRoute();
 
+const user = useUser();
+
 const { data } = await useFetchAPI<{
   repo: ProblemRepository;
 }>(`/api/repo/${route.params.repo}`);
@@ -34,6 +36,16 @@ useHead({
       <c-nav-item to="submit">提交代码</c-nav-item>
       <c-nav-item to="status">我的提交</c-nav-item>
       <c-nav-item to="submissions">所有提交</c-nav-item>
+      <c-nav-item
+        to="settings"
+        v-if="user?.permissions.is_staff || user?.permissions.is_superuser"
+        >题库设置</c-nav-item
+      >
+      <c-nav-item
+        to="problems"
+        v-if="user?.permissions.is_staff || user?.permissions.is_superuser"
+        >题目设置</c-nav-item
+      >
     </c-nav>
     <NuxtPage :repo="repo" />
   </div>
