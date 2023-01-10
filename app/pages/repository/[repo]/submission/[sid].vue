@@ -70,8 +70,7 @@ const rejudge = async () => {};
             text-sky-700
             text-op-70
             hover:text-op-100
-            >{{ displyaIdToIndex(row.problem.display_id) }}.
-            {{ row.problem.title }}</nuxt-link
+            >{{ row.problem.display_id }}. {{ row.problem.title }}</nuxt-link
           >
         </template>
         <template #language="{ row }"
