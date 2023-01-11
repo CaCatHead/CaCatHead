@@ -108,3 +108,10 @@ async function copyToClipboard(text: string) {
     <c-markdown v-if="content.hint" :content="content.hint"></c-markdown>
   </div>
 </template>
+
+<style>
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::before,
+.prose :where(:not(pre) > code):not(:where(.not-prose, .not-prose *))::after {
+  content: '' !important;
+}
+</style>
