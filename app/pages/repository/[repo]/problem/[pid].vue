@@ -22,8 +22,8 @@ useRepoLastProblem(route.params.repo).value = problem.value.display_id;
 
 <template>
   <div v-if="problem" class="w-full">
-    <div prose prose-truegray>
-      <h2 mt0>{{ problem.display_id }}. {{ problem.title }}</h2>
+    <div text-left mb4>
+      <h3 font-bold text-2xl>{{ problem.display_id }}. {{ problem.title }}</h3>
     </div>
 
     <problem-content
