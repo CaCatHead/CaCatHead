@@ -224,6 +224,11 @@ LOGGING = {
         },
     },
     'handlers': {
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -260,6 +265,10 @@ LOGGING = {
         },
         'django.template': {
             'handlers': ['null'],
+        },
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['debug'],
         },
         'CaCatHead': {
             'handlers': ['console'],

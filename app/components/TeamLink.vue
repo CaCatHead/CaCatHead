@@ -6,12 +6,14 @@ const props = withDefaults(
     team: Team;
     name?: string;
   }>(),
-  {
-    name: p => p.team.name,
-  }
+  {}
 );
 
-const { team, name } = toRefs(props);
+const { team, name: _name } = toRefs(props);
+
+const name = computed(() => {
+  return _name?.value ?? team.value.name;
+});
 </script>
 
 <template>

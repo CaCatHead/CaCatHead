@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound, APIException, PermissionDenied
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -193,6 +194,7 @@ def user_list_own_submissions(request: Request, contest_id: int):
 
 
 @api_view()
+@cache_page(5)
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
@@ -256,6 +258,7 @@ def rejudge_contest_submission(request: Request, contest_id: int, submission_id:
 
 
 @api_view()
+@cache_page(5)
 def user_view_standings(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     registrations = ContestRegistration.objects.filter(contest=contest)
