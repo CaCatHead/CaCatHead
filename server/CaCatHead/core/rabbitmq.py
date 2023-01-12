@@ -1,9 +1,13 @@
+import logging
+
 import pika
 import ujson as json
 from django.conf import settings
 
 from CaCatHead.config import cacathead_config
 from CaCatHead.core.pool import QueuedPool
+
+logger = logging.getLogger(__name__)
 
 
 def get_connection():
@@ -47,5 +51,6 @@ def send_judge_message(message):
                     )
                 )
                 return True
-            except pika.exceptions.UnroutableError:
+            except pika.exceptions.UnroutableError as ex:
+                logger.error(ex)
                 return False
