@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # test ping
     path('api/ping', user_views.ping),
+    path('api/sync', user_views.sync_timestamp),
     # user auth
     path('api/auth/register', user_views.user_register),
     path('api/auth/login', user_views.UserLoginView.as_view()),

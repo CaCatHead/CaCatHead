@@ -35,6 +35,33 @@ const activeTab = computed(() => {
 });
 
 const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
+
+const clientTimestamp = new Date();
+const timestamp = process.server
+  ? useTimestamp()
+  : await fetchAPI<{ diff: number; timestamp: number }>(`/api/sync`, {
+      method: 'GET',
+      query: {
+        timestamp: (clientTimestamp.getTime() / 1000).toFixed(0),
+      },
+    }).then(resp => {
+      const nowTimeStamp = new Date().valueOf();
+      const serverClientRequestDiffTime = resp.diff;
+      const serverTimestamp = resp.timestamp;
+      const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
+      const responseTime =
+        (serverClientRequestDiffTime -
+          nowTimeStamp +
+          clientTimestamp.valueOf() -
+          serverClientResponseDiffTime) /
+        2;
+
+      return useTimestamp({
+        offset: Math.round(serverClientResponseDiffTime - responseTime),
+      });
+    });
+
+provide(ServerTimestamp, timestamp);
 </script>
 
 <template>
