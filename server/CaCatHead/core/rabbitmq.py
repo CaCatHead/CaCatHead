@@ -3,6 +3,8 @@ import logging
 import pika
 import ujson as json
 from django.conf import settings
+from pika.adapters.blocking_connection import BlockingChannel
+from pika.exceptions import UnroutableError
 
 from CaCatHead.config import cacathead_config
 from CaCatHead.core.pool import QueuedPool
@@ -18,8 +20,16 @@ def get_connection():
     return connection
 
 
+def init_channel(channel: BlockingChannel):
+    # set confirm_delivery
+    channel.confirm_delivery()
+    # declare queue
+    channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+
+
 pool = QueuedPool(
     create=lambda: get_connection(),
+    init_channel=init_channel,
     max_size=10,
     max_overflow=10,
     timeout=10,
@@ -51,6 +61,9 @@ def send_judge_message(message):
                     )
                 )
                 return True
-            except pika.exceptions.UnroutableError as ex:
+            except UnroutableError as ex:
+                logger.error(ex)
+                return False
+            except Exception as ex:
                 logger.error(ex)
                 return False

@@ -9,8 +9,6 @@ from datetime import datetime
 import pika.exceptions
 import select
 
-from CaCatHead import settings
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +20,6 @@ class Overflow(Error):
     """
     Raised when a `Pool.acquire` cannot allocate anymore connections.
     """
-
     pass
 
 
@@ -30,7 +27,6 @@ class Timeout(Error):
     """
     Raised when an attempt to `Pool.acquire` a connection has timedout.
     """
-
     pass
 
 
@@ -69,10 +65,7 @@ class Connection(object):
     def channel(self):
         if self.fairy.channel is None:
             channel = self.fairy.cxn.channel()
-            # set confirm_delivery
-            channel.confirm_delivery()
-            # declare queue
-            channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+            self.fairy.init_channel(channel)
             self.fairy.channel = channel
         return self.fairy.channel
 
@@ -109,11 +102,12 @@ class Pool(object):
     #: Acquired connection type.
     Connection = Connection
 
-    def __init__(self, create):
+    def __init__(self, create, init_channel):
         """
         :param create: Callable creating a new connection.
         """
         self.create = create
+        self.init_channel = init_channel
 
     def acquire(self, timeout=None):
         """
@@ -138,8 +132,9 @@ class Pool(object):
         Connection wrapper for tracking its associated state.
         """
 
-        def __init__(self, cxn):
+        def __init__(self, cxn, init_channel):
             self.cxn = cxn
+            self.init_channel = init_channel
             self.channel = None
 
         def close(self):
@@ -179,7 +174,7 @@ class Pool(object):
         """
         All fairy creates go through here.
         """
-        return self.Fairy(self.create())
+        return self.Fairy(self.create(), self.init_channel)
 
 
 class NullPool(Pool):
@@ -201,6 +196,7 @@ class QueuedPool(Pool):
 
     def __init__(self,
                  create,
+                 init_channel=lambda _: None,
                  max_size=10,
                  max_overflow=10,
                  timeout=30,
@@ -230,7 +226,7 @@ class QueuedPool(Pool):
         self._queue = queue.Queue(maxsize=self.max_size)
         self._avail_lock = threading.Lock()
         self._avail = self.max_size + self.max_overflow
-        super(QueuedPool, self).__init__(create)
+        super(QueuedPool, self).__init__(create, init_channel)
 
     def acquire(self, timeout=None):
         try:
@@ -286,8 +282,8 @@ class QueuedPool(Pool):
 
     class Fairy(Pool.Fairy):
 
-        def __init__(self, cxn):
-            super(QueuedPool.Fairy, self).__init__(cxn)
+        def __init__(self, cxn, init_channel):
+            super(QueuedPool.Fairy, self).__init__(cxn, init_channel)
             self.released_at = self.created_at = time.time()
 
         def __str__(self):
