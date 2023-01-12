@@ -28,6 +28,8 @@ services:
       - server
     networks:
       - cat_net
+    environment:
+      TZ: Asia/Shanghai
     # ports:
     #   - '3333:3333'
 
