@@ -45,14 +45,14 @@ const timestamp = process.server
         timestamp: (clientTimestamp.getTime() / 1000).toFixed(0),
       },
     }).then(resp => {
-      const nowTimeStamp = new Date().valueOf();
+      const nowTimeStamp = new Date().getTime();
       const serverClientRequestDiffTime = resp.diff;
       const serverTimestamp = resp.timestamp;
       const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
       const responseTime =
         (serverClientRequestDiffTime -
           nowTimeStamp +
-          clientTimestamp.valueOf() -
+          clientTimestamp.getTime() -
           serverClientResponseDiffTime) /
         2;
 
