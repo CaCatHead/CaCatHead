@@ -334,7 +334,8 @@ class SubmissionTask:
                 'stdout': ''
             },
             'node': cacathead_config.judge.name,
-            'results': self.results
+            'results': self.results,
+            'timestamp': timezone.now().isoformat()
         }
 
         if self.verdict == Verdict.CompileError:
