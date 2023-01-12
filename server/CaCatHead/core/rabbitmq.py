@@ -3,6 +3,7 @@ import ujson as json
 from django.conf import settings
 
 from CaCatHead.config import cacathead_config
+from CaCatHead.core.pool import QueuedPool
 
 
 def get_connection():
@@ -11,6 +12,16 @@ def get_connection():
     parameters = pika.ConnectionParameters(host=settings.RMQ_HOST, port=settings.RMQ_PORT, credentials=credentials)
     connection = pika.BlockingConnection(parameters)
     return connection
+
+
+pool = QueuedPool(
+    create=lambda: get_connection(),
+    max_size=10,
+    max_overflow=10,
+    timeout=10,
+    recycle=3600,
+    stale=45,
+)
 
 
 def send_ping_message(message):
@@ -22,21 +33,22 @@ def send_ping_message(message):
 
 
 def send_judge_message(message):
-    connection = get_connection()
-    channel = connection.channel()
-    channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
-    channel.confirm_delivery()
+    with pool.acquire() as connection:
+        # channel = connection.channel()
+        channel = connection.channel
+        channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+        channel.confirm_delivery()
 
-    for i in range(5):
-        try:
-            channel.basic_publish(
-                exchange='',
-                routing_key=settings.DEFAULT_JUDGE_QUEUE,
-                body=json.dumps(message),
-                properties=pika.BasicProperties(
-                    delivery_mode=2,  # make message persistent
+        for i in range(5):
+            try:
+                channel.basic_publish(
+                    exchange='',
+                    routing_key=settings.DEFAULT_JUDGE_QUEUE,
+                    body=json.dumps(message),
+                    properties=pika.BasicProperties(
+                        delivery_mode=2,  # make message persistent
+                    )
                 )
-            )
-            return True
-        except pika.exceptions.UnroutableError:
-            return False
+                return True
+            except pika.exceptions.UnroutableError:
+                return False
