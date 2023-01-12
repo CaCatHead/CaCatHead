@@ -9,6 +9,8 @@ from datetime import datetime
 import pika.exceptions
 import select
 
+from CaCatHead import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -66,7 +68,12 @@ class Connection(object):
     @property
     def channel(self):
         if self.fairy.channel is None:
-            self.fairy.channel = self.fairy.cxn.channel()
+            channel = self.fairy.cxn.channel()
+            # set confirm_delivery
+            channel.confirm_delivery()
+            # declare queue
+            channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+            self.fairy.channel = channel
         return self.fairy.channel
 
     def close(self):

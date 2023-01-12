@@ -34,10 +34,7 @@ def send_ping_message(message):
 
 def send_judge_message(message):
     with pool.acquire() as connection:
-        # channel = connection.channel()
         channel = connection.channel
-        channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
-        channel.confirm_delivery()
 
         for i in range(5):
             try:
