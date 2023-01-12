@@ -49,15 +49,11 @@ const timestamp = process.server
       const serverClientRequestDiffTime = resp.diff;
       const serverTimestamp = resp.timestamp;
       const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
-      const responseTime =
-        (serverClientRequestDiffTime -
-          nowTimeStamp +
-          clientTimestamp.getTime() -
-          serverClientResponseDiffTime) /
-        2;
+      const diffTime =
+        (serverClientRequestDiffTime + serverClientResponseDiffTime) / 2;
 
       return useTimestamp({
-        offset: Math.round(serverClientResponseDiffTime - responseTime),
+        offset: resp.timestamp - clientTimestamp.getTime() - diffTime,
       });
     });
 
