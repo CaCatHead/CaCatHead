@@ -17,7 +17,7 @@ from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission, ContestSubmission, ContestSubmissionType
 
-logger = logging.getLogger('Judge.service')
+logger = logging.getLogger('Judge.submission')
 
 MAX_COMPILE_OUTPUT_SIZE = 1024
 MAX_OUTPUT_SIZE = 512
@@ -32,6 +32,9 @@ class NoLanguageException(Exception):
 
 
 class SubmissionTask:
+    def log(self, message):
+        logger.info(message, extra={'type': self.type, 'submission': self.submission})
+
     def __init__(self, message: bytes):
         data = json.loads(message)
 
@@ -45,8 +48,12 @@ class SubmissionTask:
             # This is unreachable
             assert False
 
+        self.log('Start initializing SubmissionTask')
+
         if 'registration_id' in data:
             self.registration = ContestRegistration.objects.get(id=int(data['registration_id']))
+            self.log(
+                f'Registration {{ id={self.registration.id}, team = {self.registration.team.id}, contest={self.registration.contest.id} }}')
         else:
             self.registration = None
 
@@ -59,16 +66,13 @@ class SubmissionTask:
         self.memory_limit = str(data["memory_limit"])
         self.testcase_detail = data["testcase_detail"]
 
-        logger.info(f'{self.type} ID: {self.submission.id}')
-        logger.info(f'Language: {self.language}')
-        logger.info(f'Problem ID: {self.problem_id}')
-        logger.info(f'Problem Judge ID: {self.problem_judge_id}')
-        logger.info(f'Problem type: {self.problem_type}')
-        logger.info(f'Time limit: {self.time_limit}')
-        logger.info(f'Memory limit: {self.memory_limit}')
-
-        logger.info(self.testcase_detail)
-        logger.info(data["extra_info"])
+        self.log(f'Language: {self.language}')
+        self.log(f'Problem ID: {self.problem_id}')
+        self.log(f'Problem Judge ID: {self.problem_judge_id}')
+        self.log(f'Problem type: {self.problem_type}')
+        self.log(f'Time limit: {self.time_limit}')
+        self.log(f'Memory limit: {self.memory_limit}')
+        self.log(f'Extra info: {data["extra_info"]}')
 
         # 保存编译输出
         self.compile_stdout = None
@@ -82,11 +86,13 @@ class SubmissionTask:
         self.code_file = self.tmp_dir / ("Main." + self.language)
 
         if settings.DEBUG_JUDGE:
-            logger.info(f'Tmp dir        {self.tmp_dir}')
-            logger.info(f'Code file      {self.code_file}')
+            self.log(f'Tmp dir: {self.tmp_dir}')
+            self.log(f'Code file: {self.code_file}')
+
+        self.log('SubmissionTask has been initialized')
 
     def run(self):
-        logger.info(f'Run submission {self.submission.id}')
+        self.log('Start running SubmissionTask')
 
         self.verdict = Verdict.Compiling
         self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling,
@@ -108,14 +114,16 @@ class SubmissionTask:
             self.save_final_result()
             self.clean_temp()
 
+        self.log('Running SubmissionTask finished')
+
     def dump_code(self):
-        logger.info(f'Dump code of submission {self.submission.id}')
+        self.log(f'Dump code to {self.code_file}')
         code_file = io.open(self.code_file, 'w', encoding='utf8')
         code_file.write(self.code)
         code_file.close()
 
     def compile_code(self):
-        logger.info(f'Start compiling code of submission {self.submission.id}')
+        self.log(f'Compile code {self.code_file}')
         if self.language == 'cpp':
             commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
                         "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE"]
@@ -134,14 +142,16 @@ class SubmissionTask:
             subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
             self.prepare_exec_file(cwd)
         except subprocess.CalledProcessError as e:
+            self.log(f'Compile Error')
             self.verdict = Verdict.CompileError
             self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
         except OSError as e:
             self.verdict = Verdict.CompileError
-            logger.error(e)
+            self.log(f'Compile OS Error {e}')
         finally:
             if not settings.DEBUG_JUDGE:
                 shutil.rmtree(cwd)
+            self.log(f'Compile code {self.code_file} OK')
 
     def prepare_exec_file(self, tmp_dir: Path):
         if self.language in ['cpp', 'c']:
@@ -150,28 +160,32 @@ class SubmissionTask:
         else:
             exec_file_name_src = 'Main.class'
             exec_file_name_dst = 'Main.class'
-        logger.info(f"Copy exec file {exec_file_name_src} -> {exec_file_name_dst}")
+        self.log(f"Copy exec file {exec_file_name_src} -> {exec_file_name_dst}")
         exec_file_src = os.path.join(tmp_dir, exec_file_name_src)
         exec_file_dst = os.path.join(self.tmp_dir, exec_file_name_dst)
         shutil.copyfile(exec_file_src, exec_file_dst)
         os.chmod(exec_file_dst, 0o775)
 
     def judge(self):
-        logger.info(f"Start judging submission {self.submission.id}")
+        self.log(f"Start judging")
 
         verdict = Verdict.Accepted
-        for testcase in self.testcase_detail:
+        for (index, testcase) in enumerate(self.testcase_detail):
             try:
-                self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
+                self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
             except NoTestDataException:
                 # Try downloading testcases from minio
+                self.log(f'Downloading Problem Judge #{self.problem_judge_id}. testcases from minio')
                 problem_directory = ProblemDirectory.make_from_id(problem_id=self.problem_id,
                                                                   problem_judge_id=self.problem_judge_id)
                 problem_directory.download_testcases()
-                self.prepare_testcase_file(in_file=testcase['input'], ans_file=testcase['answer'])
+                self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
 
+            self.log(f'Run code on the testcase #{index}. in the sandbox')
             self.run_sandbox()
+            self.log(f'Read testcase #{index}. running result')
             detail = self.read_result(testcase)
+            self.log(f'Run code on the testcase #{index}. finished')
 
             if detail['verdict'] == Verdict.Accepted:
                 self.score += testcase['score']
@@ -193,11 +207,11 @@ class SubmissionTask:
                         verdict = Verdict.PartiallyCorrect
 
         self.verdict = verdict
-        logger.info(f'Finish judging, verdict is {self.verdict}')
+        self.log(f'Finish judging, verdict is {self.verdict}')
 
-    def prepare_testcase_file(self, in_file: str, ans_file: str):
+    def prepare_testcase_file(self, index: int, in_file: str, ans_file: str):
         # TODO: extract these logic
-        logger.info(f'Prepare testcase (in = {in_file}, ans = {ans_file})')
+        self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')
         in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, in_file)
         ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, ans_file)
         in_file_dst = os.path.join(self.tmp_dir, "in.in")
@@ -208,12 +222,10 @@ class SubmissionTask:
         shutil.copyfile(ans_file_src, ans_file_dst)
 
     def run_sandbox(self):
-        logger.info("Run catj")
         commands = ["catj", "-t", self.time_limit, "-m", self.memory_limit, "-d", self.tmp_dir, "-l", self.language]
         subprocess.call(commands)
 
     def read_result(self, testcase):
-        logger.info("Read one case result")
         result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
         verdict = Verdict.parse(result_file.readline().strip())
         run_time = int(result_file.readline().strip())
@@ -252,6 +264,8 @@ class SubmissionTask:
     def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
         if self.registration is None:
             return
+
+        self.log(f"Save contest submission result of registration #{self.registration.id}")
         self.registration.is_participate = True
         contest = self.registration.contest
         if contest.type == ContestType.icpc:
@@ -311,7 +325,7 @@ class SubmissionTask:
         self.registration.save()
 
     def save_final_result(self):
-        logger.info(f"Save result of submission {self.submission.id}")
+        self.log(f"Save submission final result")
 
         detail = {
             'verdict': Verdict.Accepted,
@@ -332,12 +346,12 @@ class SubmissionTask:
             detail['verdict'] = self.verdict
 
         if settings.DEBUG_JUDGE:
-            logger.info(detail)
+            self.log(detail)
 
         self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
         self.save_contest_result(verdict=detail['verdict'], score=detail['score'], detail=detail)
 
     def clean_temp(self):
         if not settings.DEBUG_JUDGE:
-            logger.info(f'Clean running directory of submission {self.submission.id}')
+            self.log(f'Clean running directory')
             shutil.rmtree(self.tmp_dir)

@@ -24,7 +24,9 @@ class StudentInfoInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     inlines = [UserInfoInline, StudentInfoInline]
 
-    actions = ('grant_create_contest', 'revoke_create_contest', 'grant_create_post', 'revoke_create_post', 'grant_polygon', 'revoke_polygon')
+    actions = (
+        'grant_create_contest', 'revoke_create_contest', 'grant_create_post', 'revoke_create_post', 'grant_polygon',
+        'revoke_polygon')
 
     @admin.action(description='授予创建比赛权限')
     def grant_create_contest(self, _request, queryset):
