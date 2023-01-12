@@ -2,13 +2,13 @@ from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from CaCatHead.core.decorators import class_validate_request
+from CaCatHead.core.decorators import class_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ProblemRepositoryPermissions, ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import ProblemRepository, Problem
@@ -208,6 +208,7 @@ def edit_repo_problem(request: Request, repo_id: int, problem_id: int):
 
 
 @api_view(['POST'])
+@throttle_classes([SubmitRateThrottle])
 @permission_classes([IsAuthenticated])
 def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
     """
