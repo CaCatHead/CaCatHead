@@ -25,6 +25,7 @@ from CaCatHead.utils import make_response
 
 
 @api_view()
+@cache_page(5)
 def list_contests(request: Request):
     contests = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest)
     return make_response(contests=ContestSerializer(contests, many=True).data)
@@ -82,6 +83,7 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 
 
 @api_view()
+@cache_page(5)
 def get_contest_public(request: Request, contest_id: int):
     contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
                                                  id=contest_id).first()
@@ -93,6 +95,7 @@ def get_contest_public(request: Request, contest_id: int):
 
 
 @api_view()
+@cache_page(5)
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
