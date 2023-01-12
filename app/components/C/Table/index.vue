@@ -42,7 +42,13 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
 </script>
 
 <template>
-  <div w-ful :class="border && 'border-1 border-base rounded-2'">
+  <div
+    w-full
+    :class="[
+      border && 'border-1 border-base rounded-2',
+      smallScreen && mobile && data.length > 0 && 'border-0',
+    ]"
+  >
     <div v-if="smallScreen && mobile" space-y-4>
       <div hidden>
         <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
