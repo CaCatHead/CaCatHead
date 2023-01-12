@@ -31,7 +31,7 @@ const { id, name, placeholder, type, color } = toRefs(props);
         ><label :for="id">{{ name }}</label></slot
       >
     </div>
-    <div :class="['c-input-container', 'py2']">
+    <div :class="['c-input-container', 'py2']" flex items-center>
       <input
         v-if="type !== 'textarea'"
         :id="id"
@@ -58,6 +58,9 @@ const { id, name, placeholder, type, color } = toRefs(props);
         rows="10"
         v-model="data"
       ></textarea>
+      <div flex-1>
+        <slot name="end"></slot>
+      </div>
     </div>
   </div>
 </template>

@@ -53,17 +53,40 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    // Cache 30 days
     // See https://github.com/nuxt/framework/issues/9318
+    // Cache 30 days
     '/_nuxt/**': {
-      headers: {
-        'Cache-Control': 'max-age=2592000, immutable, public, s-maxage=2592000',
-      },
+      headers: cacheControlHeader(2592000),
     },
+    // Cache 30 days
     '/favicon.png': {
-      headers: {
-        'Cache-Control': 'max-age=2592000, immutable, public, s-maxage=2592000',
-      },
+      headers: cacheControlHeader(2592000),
+    },
+    // Contest pages cache policy
+    '/contest/*/problem/**': {
+      headers: cacheControlHeader(60),
+    },
+    '/contest/*/': {
+      headers: cacheControlHeader(5),
+    },
+    '/contest/*/submit': {
+      headers: cacheControlHeader(5),
+    },
+    '/contest/*/status': {
+      headers: cacheControlHeader(5),
+    },
+    '/contest/*/submissions': {
+      headers: cacheControlHeader(5),
+    },
+    '/contest/*/standings': {
+      headers: cacheControlHeader(5),
+    },
+    // Repository pages cache policy
+    '/repository/*/problem/**': {
+      headers: cacheControlHeader(24 * 60 * 60),
+    },
+    '/repository/*/submissions': {
+      headers: cacheControlHeader(5),
     },
   },
   experimental: {
@@ -138,3 +161,9 @@ export default defineNuxtConfig({
     },
   },
 });
+
+function cacheControlHeader(time: number) {
+  return {
+    'Cache-Control': `max-age=${time}, immutable, public, s-maxage=${time}`,
+  };
+}

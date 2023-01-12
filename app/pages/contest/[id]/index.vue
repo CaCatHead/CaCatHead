@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { FullContest } from '@/composables/types';
+import type { FullContest, Problem } from '@/composables/types';
+
 import { displyaIdToIndex } from '@/composables/contest';
 
 const route = useRoute();
@@ -13,8 +14,8 @@ useHead({
 });
 
 const lastProblem = useContestLastProblem(route.params.id);
-const goSubmit = async (id: number) => {
-  lastProblem.value = id;
+const goSubmit = async (problem: Problem) => {
+  lastProblem.value = problem.display_id;
   await navigateTo(`/contest/${route.params.id}/submit`);
 };
 </script>
@@ -22,68 +23,17 @@ const goSubmit = async (id: number) => {
 <template>
   <div>
     <contest-layout :contest="contest">
-      <c-table :data="contest.problems" border :mobile="false">
-        <template #headers="{ smallScreen }">
-          <c-table-header name="display_id" width="60">#</c-table-header>
-          <c-table-header name="title" align="left" text-left
-            >题目</c-table-header
-          >
-          <c-table-header :disabled="smallScreen" name="operation" width="60px"
-            ><span></span
-          ></c-table-header>
-        </template>
-        <template #display_id="{ row }">
-          <nuxt-link
-            :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
+      <problem-list
+        :problems="contest.problems"
+        :problem-index="row => displyaIdToIndex(row.display_id)"
+        :problem-link="
+          row =>
+            `/contest/${route.params.id}/problem/${displyaIdToIndex(
               row.display_id
-            )}`"
-            class="text-link"
-            >{{ displyaIdToIndex(row.display_id) }}</nuxt-link
-          ></template
-        >
-        <template #title="{ row }">
-          <div
-            flex
-            justify-between
-            items-center
-            lt-md="items-start flex-col gap1"
-          >
-            <nuxt-link
-              :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
-                row.display_id
-              )}`"
-              class="text-link"
-              >{{ row.title }}</nuxt-link
-            >
-            <div
-              text-xs
-              text-base-800
-              text-op-60
-              inline-flex
-              items-end
-              md="flex-col w-32 gap1"
-              lt-md="gap2"
-            >
-              <span inline-flex items-center justify-start>
-                <span i-carbon-time text-lg mr1></span>
-                <span>{{ row.time_limit }} ms</span>
-              </span>
-              <span inline-flex items-center justify-start>
-                <span i-carbon-chip text-lg mr1></span>
-                <display-memory :memory="row.memory_limit"></display-memory>
-              </span>
-            </div>
-          </div>
-        </template>
-        <template #operation="{ row }">
-          <c-button
-            variant="text"
-            color="success"
-            icon="i-akar-icons-paper-airplane"
-            @click="goSubmit(row.display_id)"
-          ></c-button>
-        </template>
-      </c-table>
+            )}`
+        "
+        @submit="goSubmit"
+      ></problem-list>
 
       <div mt12>
         <div font-bold text-xl flex items-center>

@@ -19,8 +19,10 @@ const historyContests = computed(() => {
   return data.value?.contests.filter(c => new Date(c.end_time).getTime() < now);
 });
 
+const timestamp = useServerTimestamp();
+
 const contestStatus = (contest: Contest) => {
-  const now = new Date();
+  const now = new Date(timestamp.value);
   const start_time = new Date(contest.start_time);
   const end_time = new Date(contest.end_time);
   if (now.getTime() >= end_time.getTime()) {
@@ -44,8 +46,18 @@ const statusColor = (status: string) => {
 
 <template>
   <div space-y-4>
-    <h3 font-bold text-xl>正在进行或即将开始的比赛</h3>
-    <c-table :data="currentContests">
+    <div flex items-center justify-between lt-sm="flex-col gap2 items-start">
+      <h3 font-bold text-xl>正在进行或即将开始的比赛</h3>
+      <div v-if="user?.permissions.add_contest">
+        <c-button
+          color="success"
+          variant="outline"
+          @click="navigateTo('/contests/new')"
+          >新建比赛</c-button
+        >
+      </div>
+    </div>
+    <c-table :data="currentContests" border>
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
@@ -121,9 +133,12 @@ const statusColor = (status: string) => {
         </div>
       </template>
     </c-table>
+    <div>
+      <display-server-timestamp justify-end></display-server-timestamp>
+    </div>
 
     <h3 font-bold text-xl>比赛历史</h3>
-    <c-table :data="historyContests">
+    <c-table :data="historyContests" border>
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
@@ -151,14 +166,7 @@ const statusColor = (status: string) => {
     <div flex items-center v-if="user?.permissions.add_contest">
       <div></div>
       <div flex-auto></div>
-      <div flex items-center>
-        <c-button
-          color="success"
-          variant="outline"
-          @click="navigateTo('/contests/new')"
-          >新建比赛</c-button
-        >
-      </div>
+      <div flex items-center></div>
     </div>
   </div>
 </template>

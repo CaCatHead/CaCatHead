@@ -1,4 +1,8 @@
+from datetime import datetime
+
+import pytz
 from django.contrib.auth import authenticate, login
+from django.utils import timezone
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
@@ -13,13 +17,20 @@ from CaCatHead.utils import make_response
 
 
 @api_view()
-def ping(_request):
+def ping(_request: Request):
     return make_response(message="Hello, world!")
 
 
 @api_view()
+def sync_timestamp(request: Request):
+    client = datetime.utcfromtimestamp(int(request.query_params.get('timestamp'))).replace(tzinfo=pytz.UTC)
+    server = timezone.now()
+    return make_response(diff=round((server-client).total_seconds() * 1000), timestamp=round(server.timestamp() * 1000))
+
+
+@api_view()
 @permission_classes([IsAuthenticated])
-def current_user_profile(request):
+def current_user_profile(request: Request):
     """
     获取当前用户信息
     """
@@ -29,7 +40,7 @@ def current_user_profile(request):
 
 @api_view(['POST'])
 @func_validate_request(RegisterPayloadSerializer)
-def user_register(request):
+def user_register(request: Request):
     """
     注册新用户
     """

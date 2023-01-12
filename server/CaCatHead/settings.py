@@ -210,26 +210,79 @@ LOGGING = {
             'format': '{asctime}  {levelname} {process:d} --- {module} ({thread:d}): {message}',
             'style': '{',
         },
+        'request': {
+            'format': '{asctime}: {message}',
+            'style': '{'
+        },
+        'judge': {
+            'format': '{asctime}  [{type} #{submission.id}]: {message}',
+            'style': '{'
+        },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '{asctime}  [{levelname}]: {message}',
             'style': '{',
         },
     },
     'handlers': {
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'simple'
         },
+        'request': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'request'
+        },
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+        'judge': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'judge'
+        }
     },
     'root': {
         'handlers': ['console'],
         'level': 'INFO',
     },
     'loggers': {
+        'django.request': {
+            'handlers': ['request'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['request'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['null'],
+        },
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['debug'],
+        },
+        'CaCatHead': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
         'Judge.service': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'Judge.submission': {
+            'handlers': ['judge'],
+            'level': 'INFO',
             'propagate': False,
         },
     },

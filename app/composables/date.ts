@@ -1,3 +1,5 @@
+import type { InjectionKey, Ref } from 'vue';
+
 import { format, intervalToDuration } from 'date-fns';
 
 export const formatDateTime = (date: string | Date) =>
@@ -15,4 +17,12 @@ export const formatInterval = (left: Date, right: Date) => {
     end: right,
   });
   return duration;
+};
+
+export const ServerTimestamp = Symbol('server-timestamp') as InjectionKey<
+  Ref<number>
+>;
+
+export const useServerTimestamp = () => {
+  return inject(ServerTimestamp)!;
 };

@@ -33,6 +33,31 @@ const activeTab = computed(() => {
     return '';
   }
 });
+
+const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
+
+const clientTimestamp = new Date();
+const timestamp = process.server
+  ? useTimestamp()
+  : await fetchAPI<{ diff: number; timestamp: number }>(`/api/sync`, {
+      method: 'GET',
+      query: {
+        timestamp: (clientTimestamp.getTime() / 1000).toFixed(0),
+      },
+    }).then(resp => {
+      const nowTimeStamp = new Date().getTime();
+      const serverClientRequestDiffTime = resp.diff;
+      const serverTimestamp = resp.timestamp;
+      const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
+      const diffTime =
+        (serverClientRequestDiffTime + serverClientResponseDiffTime) / 2;
+
+      return useTimestamp({
+        offset: resp.timestamp - clientTimestamp.getTime() - diffTime,
+      });
+    });
+
+provide(ServerTimestamp, timestamp);
 </script>
 
 <template>
@@ -79,9 +104,10 @@ const activeTab = computed(() => {
       </div>
 
       <nav
-        h="16"
+        h16
         mt4
         pl4
+        z10
         flex
         gap4
         lt-md:gap0
@@ -89,7 +115,6 @@ const activeTab = computed(() => {
         shadow-box
         rounded
         select-none
-        overflow-x-auto
       >
         <div :class="['default-nav-item', activeTab === 'home' && 'is-active']">
           <NuxtLink to="/">主页</NuxtLink>
@@ -108,7 +133,25 @@ const activeTab = computed(() => {
             activeTab === 'repository' && 'is-active',
           ]"
         >
-          <NuxtLink to="/repository/">题库</NuxtLink>
+          <NuxtLink to="/repository/" relative z10 class="[&:hover>div]:block">
+            <span>题库</span>
+            <div hidden absolute top-full left="-1" w-36 pt3 font-normal>
+              <div
+                rounded
+                border="1 base"
+                divide-y
+                dark:divide="gray/40"
+                bg-white
+                dark:bg-dark
+              >
+                <div v-for="repo in repos?.repos" p2 z10>
+                  <nuxt-link :to="`/repository/${repo.id}`" text-link>{{
+                    repo.name
+                  }}</nuxt-link>
+                </div>
+              </div>
+            </div>
+          </NuxtLink>
         </div>
 
         <div

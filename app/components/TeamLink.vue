@@ -6,12 +6,18 @@ const props = withDefaults(
     team: Team;
     name?: string;
   }>(),
-  {
-    name: p => p.team.name,
-  }
+  {}
 );
+
+const { team, name: _name } = toRefs(props);
+
+const name = computed(() => {
+  return _name?.value ?? team.value.name;
+});
 </script>
 
 <template>
-  <nuxt-link to="/" class="user-link">{{ name }}</nuxt-link>
+  <nuxt-link :to="`/user/${team.owner.id}`" class="user-link">{{
+    name
+  }}</nuxt-link>
 </template>

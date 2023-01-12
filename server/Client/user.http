@@ -1,6 +1,9 @@
 ### Hello world
 GET http://127.0.0.1:8000/api/ping
 
+### Sync server time
+GET http://127.0.0.1:8000/api/sync?timestamp={{$timestamp}}
+
 ### List judge nodes
 GET http://127.0.0.1:8000/api/judge/nodes
 

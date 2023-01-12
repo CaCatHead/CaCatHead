@@ -7,6 +7,13 @@ case "$1" in
   "judge")
     docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
     ;;
+  "restart")
+    if [ -z "$2" ] ; then
+      docker compose restart
+    else
+      docker compose restart "$2"
+    fi
+    ;;
   "logs")
     if [ -z "$2" ] ; then
       docker compose logs -f
@@ -20,7 +27,6 @@ case "$1" in
     docker exec -it "cacathead_$2" /bin/bash 
     ;;
   *)
-    echo "Usage: ./manage.sh [up|judge|logs|exec]"
-    exit 1
+    echo "Usage: ./manage.sh [up|judge|restart|logs|exec]"
     ;;
 esac

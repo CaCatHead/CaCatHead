@@ -56,8 +56,12 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
 
         message['contest_submission_id'] = contest_submission.id
 
-    send_judge_message(message)
-    return contest_submission
+    send_ok = send_judge_message(message)
+    if send_ok:
+        return contest_submission
+    else:
+        contest_submission.delete()
+        raise APIException(detail='提交代码失败', code=400)
 
 
 def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
@@ -90,5 +94,8 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
     contest_submission.detail = {}
     contest_submission.save()
 
-    send_judge_message(message)
-    return contest_submission
+    send_ok = send_judge_message(message)
+    if send_ok:
+        return contest_submission
+    else:
+        raise APIException(detail='重测代码失败', code=400)

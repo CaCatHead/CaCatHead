@@ -1,5 +1,5 @@
 ### Add problem
-POST http://127.0.0.1:8000/api/repo/2/add/1
+POST http://127.0.0.1:8000/api/repo/2/problems/add/1
 Authorization: Token {{auth_token}}
 
 ### List problems

@@ -2,13 +2,14 @@ from django.contrib.auth.models import User, Group
 from django.db.models import Subquery
 from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, parser_classes
+from rest_framework.decorators import api_view, permission_classes, parser_classes, throttle_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request, class_validate_request
+from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request, class_validate_request, \
+    SubmitRateThrottle
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem
@@ -131,6 +132,7 @@ def list_polygon_problems(request):
 
 @api_view(['POST'])
 @permission_classes([HasPolygonPermission])
+@throttle_classes([SubmitRateThrottle])
 @func_validate_request(SubmitCodePayload)
 def submit_polygon_problem(request: Request, problem_id: int):
     """

@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 
+from CaCatHead.contest.models import Contest
 from CaCatHead.post.models import Post
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.user import models
@@ -23,7 +24,23 @@ class StudentInfoInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     inlines = [UserInfoInline, StudentInfoInline]
 
-    actions = ('grant_create_post', 'revoke_create_post', 'grant_polygon', 'revoke_polygon')
+    actions = (
+        'grant_create_contest', 'revoke_create_contest', 'grant_create_post', 'revoke_create_post', 'grant_polygon',
+        'revoke_polygon')
+
+    @admin.action(description='授予创建比赛权限')
+    def grant_create_contest(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(Contest)
+        add_contest_perm = Permission.objects.get(codename='add_contest', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.add(add_contest_perm)
+
+    @admin.action(description='收回创建比赛权限')
+    def revoke_create_contest(self, _request, queryset):
+        content_type = ContentType.objects.get_for_model(Contest)
+        add_contest_perm = Permission.objects.get(codename='add_contest', content_type=content_type)
+        for user in queryset.all():
+            user.user_permissions.remove(add_contest_perm)
 
     @admin.action(description='授予创建公告权限')
     def grant_create_post(self, _request, queryset):

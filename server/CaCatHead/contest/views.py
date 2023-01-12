@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound, APIException, PermissionDenied
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -24,6 +26,8 @@ from CaCatHead.utils import make_response
 
 
 @api_view()
+@cache_page(5)
+@vary_on_headers("Authorization", )
 def list_contests(request: Request):
     contests = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest)
     return make_response(contests=ContestSerializer(contests, many=True).data)
@@ -81,6 +85,8 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 
 
 @api_view()
+@cache_page(5)
+@vary_on_headers("Authorization", )
 def get_contest_public(request: Request, contest_id: int):
     contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
                                                  id=contest_id).first()
@@ -92,6 +98,8 @@ def get_contest_public(request: Request, contest_id: int):
 
 
 @api_view()
+@cache_page(5)
+@vary_on_headers("Authorization", )
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
@@ -193,6 +201,8 @@ def user_list_own_submissions(request: Request, contest_id: int):
 
 
 @api_view()
+@cache_page(5)
+@vary_on_headers("Authorization", )
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
@@ -256,6 +266,8 @@ def rejudge_contest_submission(request: Request, contest_id: int, submission_id:
 
 
 @api_view()
+@cache_page(5)
+@vary_on_headers("Authorization", )
 def user_view_standings(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     registrations = ContestRegistration.objects.filter(contest=contest)

@@ -58,7 +58,7 @@ const submit = async () => {
   }
 };
 
-const timestamp = useTimestamp({ offset: 1000 });
+const timestamp = useServerTimestamp();
 const duration = getContestDuration(contest.value) * 60;
 const startTime = new Date(contest.value.start_time!).getTime();
 const endTime = new Date(contest.value.end_time!).getTime();

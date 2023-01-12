@@ -65,7 +65,7 @@ class BaseProblemSerializer(serializers.ModelSerializer):
 class ProblemSerializer(BaseProblemSerializer):
     class Meta:
         model = Problem
-        fields = ['display_id', 'title', 'problem_type', 'is_public']
+        fields = ['display_id', 'title', 'problem_type', 'is_public', 'time_limit', 'memory_limit']
 
 
 class PolygonProblemSerializer(BaseProblemSerializer):

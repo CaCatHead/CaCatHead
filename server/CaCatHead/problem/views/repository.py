@@ -1,13 +1,14 @@
 from django.contrib.auth.models import User, Group
+from django.core.paginator import Paginator
 from django.db.models import Q
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from CaCatHead.core.decorators import class_validate_request
+from CaCatHead.core.decorators import class_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ProblemRepositoryPermissions, ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import ProblemRepository, Problem
@@ -35,7 +36,8 @@ def list_repos(request):
 
 
 def check_repo(request: Request, repo_id: int, permission: str):
-    if permission == ProblemRepositoryPermissions.ListProblems:
+    if permission in [ProblemRepositoryPermissions.ListProblems, ProblemRepositoryPermissions.Submit,
+                      ProblemRepositoryPermissions.ListSubmissions]:
         repo = ProblemRepository.objects.filter_user_public(user=request.user,
                                                             id=repo_id,
                                                             permission=permission).filter(is_contest=False).first()
@@ -71,6 +73,12 @@ def check_repo_problem(request: Request, repo_id: int, problem_display_id: int, 
 
 
 @api_view()
+def get_repo_info(request: Request, repo_id: int):
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ListProblems)
+    return make_response(repo=ProblemRepositorySerializer(repo).data)
+
+
+@api_view()
 def list_repo_problems(request: Request, repo_id: int):
     """
     列出题库中的所有题目
@@ -79,7 +87,8 @@ def list_repo_problems(request: Request, repo_id: int):
     problems = Problem.objects.filter_user_public(user=request.user,
                                                   problemrepository=repo,
                                                   permission=ProblemPermissions.ReadProblem)
-    return make_response(problems=ProblemSerializer(problems, many=True).data)
+    return make_response(repo=ProblemRepositorySerializer(repo).data,
+                         problems=ProblemSerializer(problems, many=True).data)
 
 
 @api_view()
@@ -169,6 +178,9 @@ def add_repo_problem(request: Request, repo_id: int, problem_id: int):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def delete_repo_problem(request: Request, repo_id: int, problem_id: int):
+    """
+    从当前题库中删除编号为 display_id 的题目
+    """
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.DeleteProblem)
     problem = Problem.objects.filter(problemrepository=repo, display_id=problem_id).first()
     if problem is None:
@@ -179,6 +191,24 @@ def delete_repo_problem(request: Request, repo_id: int, problem_id: int):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_repo_problem(request: Request, repo_id: int, problem_id: int):
+    """
+    更新当前题库中的题目信息
+    """
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.EditProblem)
+    problem = Problem.objects.filter(problemrepository=repo, display_id=problem_id).first()
+    if problem is None:
+        return make_error_response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        if 'is_public' in request.data and isinstance(request.data['is_public'], bool):
+            problem.is_public = request.data['is_public']
+        problem.save()
+        return make_response(problem=FullProblemSerializer(problem).data)
+
+
+@api_view(['POST'])
+@throttle_classes([SubmitRateThrottle])
 @permission_classes([IsAuthenticated])
 def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
     """
@@ -196,13 +226,32 @@ def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
 
 @api_view()
 def list_repo_submissions(request: Request, repo_id: int):
-    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ReadSubmission)
-    submissions = Submission.objects.filter(repository=repo)
-    return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
+    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ListSubmissions)
+    submissions = Submission.objects.filter(repository=repo).all()
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 30))
+    paginator = Paginator(submissions, page_size)
+    return make_response(count=paginator.count, page=page, page_size=page_size, num_pages=paginator.num_pages,
+                         submissions=SubmissionSerializer(paginator.page(page).object_list, many=True).data)
 
 
 @api_view()
 def get_repo_submission(request: Request, repo_id: int, submission_id: int):
-    repo = check_repo(request, repo_id, ProblemRepositoryPermissions.ReadSubmission)
-    submission = Submission.objects.filter(repository=repo, id=submission_id).first()
-    return make_response(submission=FullSubmissionSerializer(submission).data)
+    repo = ProblemRepository.objects.filter_user_permission(user=request.user,
+                                                            id=repo_id,
+                                                            permission=ProblemRepositoryPermissions.ReadSubmission).filter(
+        is_contest=False).first()
+    if repo is not None:
+        submission = Submission.objects.filter(repository=repo, id=submission_id).first()
+        return make_response(submission=FullSubmissionSerializer(submission).data)
+    else:
+        # 如果没有权限，只能查看自己的提交
+        repo = ProblemRepository.objects.filter(id=repo_id).first()
+        if repo is not None:
+            submission = Submission.objects.filter(repository=repo, id=submission_id).first()
+            if submission is not None and submission.owner == request.user:
+                return make_response(submission=FullSubmissionSerializer(submission).data)
+            else:
+                raise NotFound(detail='提交未找到')
+        else:
+            raise NotFound(detail='题库未找到')

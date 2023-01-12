@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from rest_framework.exceptions import APIException
 
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.rabbitmq import send_judge_message
@@ -30,8 +31,13 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         'testcase_detail': problem.problem_info.problem_judge.testcase_detail,
         'extra_info': problem.problem_info.problem_judge.extra_info
     }
-    send_judge_message(message)
-    return submission
+
+    send_ok = send_judge_message(message)
+    if send_ok:
+        return submission
+    else:
+        submission.delete()
+        raise APIException(detail='提交代码失败', code=400)
 
 
 def rejudge_problem_code(submission: Submission):
@@ -56,6 +62,9 @@ def rejudge_problem_code(submission: Submission):
         'testcase_detail': problem.problem_info.problem_judge.testcase_detail,
         'extra_info': problem.problem_info.problem_judge.extra_info
     }
-    send_judge_message(message)
 
-    return submission
+    send_ok = send_judge_message(message)
+    if send_ok:
+        return submission
+    else:
+        raise APIException(detail='重测代码失败', code=400)

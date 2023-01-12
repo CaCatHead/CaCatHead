@@ -16,6 +16,7 @@ class ProblemRepositoryPermissions(str, Enum):
     题库系统使用的权限字符串常量
     """
     ListProblems = 'list_problems'  # 列出所有题目
+    ListSubmissions = 'list_submissions'  # 列出所有提交
     ReadSubmission = 'read_submission'  # 获取所有人的提交
     Submit = 'submit'  # 提交代码
     AddProblem = 'add_problem'  # 向题库中添加题目
