@@ -25,11 +25,18 @@ def send_judge_message(message):
     connection = get_connection()
     channel = connection.channel()
     channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
-    channel.basic_publish(
-        exchange='',
-        routing_key=settings.DEFAULT_JUDGE_QUEUE,
-        body=json.dumps(message),
-        properties=pika.BasicProperties(
-            delivery_mode=2,  # make message persistent
-        )
-    )
+    channel.confirm_delivery()
+
+    for i in range(5):
+        try:
+            channel.basic_publish(
+                exchange='',
+                routing_key=settings.DEFAULT_JUDGE_QUEUE,
+                body=json.dumps(message),
+                properties=pika.BasicProperties(
+                    delivery_mode=2,  # make message persistent
+                )
+            )
+            return True
+        except pika.exceptions.UnroutableError:
+            return False
