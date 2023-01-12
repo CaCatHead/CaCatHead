@@ -10,8 +10,12 @@ const props = withDefaults(
     name: p => p.team.name,
   }
 );
+
+const { team, name } = toRefs(props);
 </script>
 
 <template>
-  <nuxt-link to="/" class="user-link">{{ name }}</nuxt-link>
+  <nuxt-link :to="`/user/${team.owner.id}`" class="user-link">{{
+    name
+  }}</nuxt-link>
 </template>

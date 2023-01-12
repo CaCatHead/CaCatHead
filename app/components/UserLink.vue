@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { User } from '@/composables/types';
 
-defineProps<{ user: User }>();
+const props = defineProps<{ user: User }>();
+
+const { user } = toRefs(props);
 </script>
 
 <template>
-  <nuxt-link to="/" class="user-link">{{ user.nickname }}</nuxt-link>
+  <nuxt-link :to="`/user/${user.id}`" class="user-link">{{
+    user.nickname
+  }}</nuxt-link>
 </template>
 
 <style>
