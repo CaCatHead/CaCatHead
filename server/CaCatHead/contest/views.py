@@ -117,7 +117,7 @@ def get_contest(request: Request, contest_id: int):
     for r in submissions.values_list('problem__display_id', 'verdict'):
         pid = r[0]
         verdict = r[1]
-        if pid in solved:
+        if pid in solved and solved[pid]:
             continue
         if verdict == Verdict.Accepted:
             solved[pid] = True
