@@ -3,6 +3,8 @@ import type { FullContest, ContestStanding } from '@/composables/types';
 
 const route = useRoute();
 
+const user = useUser();
+
 const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
@@ -28,6 +30,12 @@ function toNumDuration(seconds: number) {
   const sec = seconds % 60;
   return `${hour}:${alignNumber(minute)}:${alignNumber(sec)}`;
 }
+
+const checkMyself = (standing: ContestStanding) => {
+  const me =
+    user?.value && standing.team.members.some(m => m.id === user.value.id);
+  return me ? 'bg-[#ddeeff]' : '';
+};
 
 const registrations = computed(() => {
   const list = data?.value?.registrations ?? [];
@@ -102,7 +110,7 @@ const registrations = computed(() => {
 <template>
   <div>
     <h3 text-center text-2xl font-bold>{{ contest.title }} 排行榜</h3>
-    <c-table :data="registrations" mt8>
+    <c-table :data="registrations" mt8 :row-class="checkMyself">
       <template #headers>
         <c-table-header name="rank" width="80">#</c-table-header>
         <c-table-header name="name" align="left" text-left>队名</c-table-header>
