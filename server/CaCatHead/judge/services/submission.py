@@ -92,7 +92,11 @@ class SubmissionTask:
         self.log('SubmissionTask has been initialized')
 
     def run(self):
-        self.log('Start running SubmissionTask')
+        if self.submission.verdict != Verdict.Waiting:
+            self.log('Fail starting running SubmissionTask for the submission may have been judge')
+            return
+        else:
+            self.log('Start running SubmissionTask')
 
         self.verdict = Verdict.Compiling
         self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling,
