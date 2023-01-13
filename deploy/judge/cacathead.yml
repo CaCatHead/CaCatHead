@@ -13,8 +13,14 @@ server:
 
 judge:
   name: judge_node_1
-  ping: ping
-  queue: judge_task
+  tasks: 1
+  broadcast:
+    ping: ping
+    polygon: broadcast.polygon
+  queue:
+    repository: judge.repository
+    contest: judge.contest
+    polygon: judge.polygon
 
 testcase:
   root: /root/testcases

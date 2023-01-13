@@ -16,11 +16,11 @@ judge:
   tasks: 1  # worker_max_tasks_per_child
   broadcast:
     ping: ping
-    polygon: ${JUDGE_QUEUE:judge_task}.polygon.broadcast
+    polygon: !ENV ${JUDGE_QUEUE:judge}.polygon
   queue:
-    repository: !ENV ${JUDGE_QUEUE:judge_task}.repository
-    contest: !ENV ${JUDGE_QUEUE:judge_task}.contest
-    polygon: !ENV ${JUDGE_QUEUE:judge_task}.polygon
+    repository: !ENV ${JUDGE_QUEUE:judge}.repository
+    contest: !ENV ${JUDGE_QUEUE:judge}.contest
+    polygon: !ENV ${JUDGE_QUEUE:judge}.polygon
 
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}
