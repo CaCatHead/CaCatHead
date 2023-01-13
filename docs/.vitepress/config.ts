@@ -46,6 +46,10 @@ export default defineConfig({
               link: '/deploy/',
             },
             {
+              text: '本地开发',
+              link: '/deploy/development',
+            },
+            {
               text: '本地部署',
               link: '/deploy/local',
             },
@@ -54,7 +58,7 @@ export default defineConfig({
               link: '/deploy/server',
             },
             {
-              text: '单独部署判题节点',
+              text: '单独部署评测机',
               link: '/deploy/judge',
             },
           ],

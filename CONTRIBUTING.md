@@ -18,7 +18,7 @@ Then, make sure you have installed it globally. (Your version should be greater 
 
 ```bash
 $ node --version
-v16.9.0
+v16.19.0
 
 $ npm --version
 8.19.3
@@ -37,7 +37,7 @@ $ npm i -g pnpm
 # ...
 
 $ pnpm --version
-7.19.0
+7.24.3
 ```
 
 ### [python](https://www.python.org/)
@@ -132,6 +132,8 @@ services:
       - cat_net
     ports:
       - '6379:6379'
+    environment:
+      TZ: Asia/Shanghai
 
   rabbitmq:
     image: rabbitmq:management
@@ -142,6 +144,8 @@ services:
       - '15672:15672'
     networks:
       - cat_net
+    environment:
+      TZ: Asia/Shanghai
 
 networks:
   cat_net:
@@ -325,13 +329,14 @@ rabbitmq:
   port: '5672'
   username: guest
   password: guest
-  judge_queue: local_judge_test
 
 # ...
 ```
 
-Finally, start the judge node and django server
+Finally, start the judge celery worker:
 
 ```bash
-$ pipenv run python ./judge.py
+$ export C_FORCE_ROOT=true
+$ export NODE_NAME=local_dev
+$ pipenv run celery -A CaCatHead.core worker -l INFO
 ```

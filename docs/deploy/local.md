@@ -8,24 +8,37 @@
 >
 > 保证你的网络能够正常访问 [Github](https://github.com/)。
 
-首先, 你需要克隆本仓库到本地, 并克隆子模块.
+## 克隆仓库
 
-```bash
-# 克隆本仓库到本地
-$ git clone https://github.com/XLoJ/CaCatHead.git
+参考 [克隆仓库](/deploy/server.html#克隆仓库)。
 
-# 进入仓库根目录
-$ cd CaCatHead
+## 配置数据库密码
 
-# 克隆子模块
-$ git submodule update --init --recursive
-```
-
-在项目根目录创建一个名为 `pass.txt` 的文本文件, 并往里面写入一个随机字符串，这将被设置为你的数据库密码。
+参考 [配置数据库密码](/deploy/server.html#配置数据库密码)。
 
 随后运行 `docker compose` 的相关命令:
 
 ```bash
 # 在后台启动猫猫头服务
 $ docker compose up -d
+```
+
+## 启动服务
+
+完成以上所有配置后，你可以启动服务了。
+
+```bash
+$ docker compose up --build -d
+# or
+$ ./manage.sh up
+```
+
+## 查看容器日志
+
+```bash
+# 查看服务器日志
+$ ./manage.sh logs server
+
+# 查看评测机日志
+$ ./manage.sh logs judge
 ```
