@@ -46,7 +46,7 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
         contest_submission.save()
 
     try:
-        judge_contest_submission.delay(contest_submission.id, registration_id)
+        judge_contest_submission.apply_async((contest_submission.id, registration_id), priority=8)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
@@ -72,7 +72,7 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
     contest_submission.save()
 
     try:
-        judge_contest_submission.delay(contest_submission.id, registration_id)
+        judge_contest_submission.apply_async((contest_submission.id, registration_id), priority=9)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)

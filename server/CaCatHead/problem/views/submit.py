@@ -26,7 +26,7 @@ def submit_problem_code(is_repo: bool, user: User, repo: ProblemRepository, prob
 
     if is_repo:
         try:
-            judge_repository_submission.delay(submission.id)
+            judge_repository_submission.apply_async((submission.id,), priority=6)
             return submission
         except judge_repository_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
@@ -59,7 +59,7 @@ def rejudge_problem_code(is_repo: bool, submission: Submission):
 
     if is_repo:
         try:
-            judge_repository_submission.delay(submission.id)
+            judge_repository_submission.apply_async((submission.id,), priority=7)
             return submission
         except judge_repository_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
