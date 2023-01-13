@@ -198,7 +198,7 @@ const formatProgress = (value: number) => {
             <option
               v-for="p in contest.problems"
               :value="p.display_id"
-              :selected="filter.problem === displyaIdToIndex(p.display_id)"
+              :selected="filter.problem === p.display_id"
             >
               {{ displyaIdToIndex(p.display_id) }}. {{ p.title }}
             </option>
