@@ -56,7 +56,11 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
                                                      id=contest_id).first()
         if contest is not None:
             if contest.is_started():
-                if ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
+                if contest.is_ended():
+                    # 比赛已经结束
+                    return contest
+                elif ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
+                    # 比赛正在进行
                     return contest
                 else:
                     raise NotFound(detail='你尚未注册该比赛')
