@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 
 @app.task(ignore_result=True)
 def ping(timestamp: datetime):
-    logger.info(f'Receive a new ping task from exchange')
+    logger.info(f'Receive a new ping task')
     try:
         handle_ping(timestamp)
         logger.info(f'Judge node {cacathead_config.judge.name} handles ping task OK')
-    except Exception:
-        logger.info(f'Judge node {cacathead_config.judge.name} fails handling ping task')
+    except Exception as ex:
+        logger.info(f'Judge node {cacathead_config.judge.name} fails handling ping task: %r', ex)
 
 
 @app.task()
