@@ -4,47 +4,32 @@ import type {
   ContestStanding,
   ContestSubmission,
   Problem,
+  Registration,
 } from '@/composables/types';
 
 import { displyaIdToIndex } from '@/composables/contest';
-import { Verdict } from '~~/composables/verdict';
 
 const route = useRoute();
 
 const props = defineProps<{
   contest: FullContest;
-  standing: ContestStanding | null;
+  solved: Record<string, boolean>;
+  registration: Registration | null;
 }>();
 
-const { contest, standing } = toRefs(props);
+const { contest, solved } = toRefs(props);
 
 useHead({
   title: `面板 - ${contest.value.title}`,
 });
 
-const verdicts = computed(() => {
-  if (standing.value) {
-    const map: Record<string, ContestSubmission> = {};
-    for (const sub of standing.value.standings?.submissions ?? []) {
-      const pid = String(sub.problem.display_id);
-      if (map[pid] && map[pid].verdict === Verdict.Accepted) {
-        continue;
-      }
-      if (sub.verdict === Verdict.Accepted) {
-        map[pid] = sub;
-      } else {
-        map[pid] = sub;
-      }
-    }
-    return map;
-  } else {
-    return {};
-  }
-});
-
 const getProblemVerdict = (problem: Problem) => {
   const pid = String(problem.display_id);
-  return verdicts.value[pid]?.verdict as Verdict | undefined;
+  if (pid in solved.value) {
+    return solved.value[pid] ? Verdict.Accepted : Verdict.WrongAnswer;
+  } else {
+    return undefined;
+  }
 };
 
 const lastProblem = useContestLastProblem(route.params.id);

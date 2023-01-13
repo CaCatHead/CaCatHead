@@ -17,6 +17,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission
+from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
@@ -107,8 +108,27 @@ def get_contest_public(request: Request, contest_id: int):
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
+
+    teams = [make_single_user_team(request.user).id]
+    if registration is not None:
+        teams.append(registration.team.id)
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
+    solved = {}
+    for r in submissions.values_list('problem__display_id', 'verdict'):
+        pid = r[0]
+        verdict = r[1]
+        if pid in solved:
+            continue
+        if verdict == Verdict.Accepted:
+            solved[pid] = True
+        elif verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
+                         Verdict.IdlenessLimitExceeded,
+                         Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+            solved[pid] = False
+
     return make_response(contest=ContestContentSerializer(contest).data,
-                         registration=ContestStandingSerializer(registration).data,
+                         solved=solved,
+                         registration=ContestRegistrationSerializer(registration).data,
                          is_admin=contest.has_admin_permission(request.user))
 
 

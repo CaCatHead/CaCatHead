@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { FullContest, ContestStanding } from '@/composables/types';
+import type { FullContest, Registration } from '@/composables/types';
 
 const route = useRoute();
 
 const { data: contest } = await useFetchAPI<{
   contest: FullContest;
-  registration: ContestStanding | null;
+  solved: Record<string, boolean>;
+  registration: Registration | null;
   is_admin: boolean;
 }>(`/api/contest/${route.params.id}/content`);
 
@@ -44,7 +45,8 @@ if (
     </c-nav>
     <NuxtPage
       :contest="contest.contest"
-      :standing="contest.registration"
+      :solved="contest.solved"
+      :registration="contest.registration"
       :admin="contest.is_admin"
     />
   </div>
