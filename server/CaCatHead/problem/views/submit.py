@@ -1,10 +1,14 @@
+import logging
+
 from django.contrib.auth.models import User
 from rest_framework.exceptions import APIException
 
 from CaCatHead.core.constants import Verdict
-from CaCatHead.core.rabbitmq import send_judge_message
+from CaCatHead.judge.tasks import judge_polygon_submission
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.submission.models import Submission
+
+logger = logging.getLogger(__name__)
 
 
 def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, payload: dict):
@@ -32,12 +36,19 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         'extra_info': problem.problem_info.problem_judge.extra_info
     }
 
-    send_ok = send_judge_message(message)
-    if send_ok:
+    try:
+        judge_polygon_submission.delay(submission.id)
         return submission
-    else:
-        submission.delete()
+    except judge_polygon_submission.OperationalError as ex:
+        logger.exception('Sending task raised: %r', ex)
         raise APIException(detail='提交代码失败', code=400)
+
+    # send_ok = send_judge_message(message)
+    # if send_ok:
+    #     return submission
+    # else:
+    #     submission.delete()
+    #     raise APIException(detail='提交代码失败', code=400)
 
 
 def rejudge_problem_code(submission: Submission):
@@ -63,8 +74,15 @@ def rejudge_problem_code(submission: Submission):
         'extra_info': problem.problem_info.problem_judge.extra_info
     }
 
-    send_ok = send_judge_message(message)
-    if send_ok:
+    try:
+        judge_polygon_submission.delay(submission.id)
         return submission
-    else:
+    except judge_polygon_submission.OperationalError as ex:
+        logger.exception('Sending task raised: %r', ex)
         raise APIException(detail='重测代码失败', code=400)
+
+    # send_ok = send_judge_message(message)
+    # if send_ok:
+    #     return submission
+    # else:
+    #     raise APIException(detail='重测代码失败', code=400)

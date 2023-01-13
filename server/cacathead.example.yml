@@ -13,8 +13,13 @@ server:
 
 judge:
   name: local_dev
-  ping: ping
-  queue: !ENV ${JUDGE_QUEUE:judge_task}
+  broadcast:
+    ping: ping
+    polygon: ${JUDGE_QUEUE:judge_task}.polygon.broadcast
+  queue:
+    repository: !ENV ${JUDGE_QUEUE:judge_task}.repository
+    contest: !ENV ${JUDGE_QUEUE:judge_task}.contest
+    polygon: !ENV ${JUDGE_QUEUE:judge_task}.polygon
 
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}

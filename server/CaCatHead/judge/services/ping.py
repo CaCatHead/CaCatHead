@@ -1,5 +1,6 @@
 import platform
 import subprocess
+from datetime import datetime
 
 from django.utils import timezone
 
@@ -39,7 +40,7 @@ def get_compiler_version():
     }
 
 
-def handle_ping():
+def handle_ping(timestamp: datetime):
     node_name = cacathead_config.judge.name
     node = get_judge_node(node_name)
     node.active = True

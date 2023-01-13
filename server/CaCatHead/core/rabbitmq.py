@@ -24,9 +24,9 @@ def init_channel(channel: BlockingChannel):
     # set confirm_delivery
     channel.confirm_delivery()
     # declare judge queue
-    channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+    channel.queue_declare(queue=cacathead_config.judge.queue.repository, durable=True)
     # ping task
-    exchange_name = cacathead_config.judge.ping
+    exchange_name = cacathead_config.judge.broadcast.ping
     # declare ping exchange
     channel.exchange_declare(exchange=exchange_name, exchange_type='fanout')
 
@@ -45,7 +45,7 @@ pool = QueuedPool(
 def send_ping_message(message):
     with pool.acquire() as connection:
         channel = connection.channel
-        channel.basic_publish(exchange=cacathead_config.judge.ping, routing_key='', body=json.dumps(message))
+        channel.basic_publish(exchange=cacathead_config.judge.broadcast.ping, routing_key='', body=json.dumps(message))
 
 
 def send_judge_message(message):
@@ -56,7 +56,7 @@ def send_judge_message(message):
             try:
                 channel.basic_publish(
                     exchange='',
-                    routing_key=settings.DEFAULT_JUDGE_QUEUE,
+                    routing_key=cacathead_config.judge.queue.repository,
                     body=json.dumps(message),
                     properties=pika.BasicProperties(
                         delivery_mode=2,  # make message persistent

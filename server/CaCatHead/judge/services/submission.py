@@ -1,5 +1,4 @@
 import io
-import json
 import logging
 import os
 import shutil
@@ -35,36 +34,37 @@ class SubmissionTask:
     def log(self, message):
         logger.info(message, extra={'type': self.type, 'submission': self.submission})
 
-    def __init__(self, message: bytes):
-        data = json.loads(message)
-
-        if 'submission_id' in data:
+    def __init__(self, submission: Submission = None,
+                 contest_submission: ContestSubmission = None,
+                 registration: ContestRegistration = None):
+        if submission is not None:
             self.type = 'Submission'
-            self.submission = Submission.objects.get(id=data['submission_id'])
-        elif 'contest_submission_id' in data:
+            self.submission = submission
+        elif contest_submission is not None:
             self.type = 'Contest Submission'
-            self.submission = ContestSubmission.objects.get(id=data['contest_submission_id'])
+            self.submission = contest_submission
         else:
             # This is unreachable
             assert False
 
         self.log('Start initializing SubmissionTask')
 
-        if 'registration_id' in data:
-            self.registration = ContestRegistration.objects.get(id=int(data['registration_id']))
+        if registration is not None:
+            self.registration = registration
             self.log(
                 f'Registration {{ id={self.registration.id}, team = {self.registration.team.id}, contest={self.registration.contest.id} }}')
         else:
             self.registration = None
 
-        self.code = data["code"]
-        self.language = data["language"]
-        self.problem_id = str(data["problem_id"])
-        self.problem_judge_id = str(data["problem_judge_id"])
-        self.problem_type = data['problem_type']
-        self.time_limit = str(data["time_limit"])
-        self.memory_limit = str(data["memory_limit"])
-        self.testcase_detail = data["testcase_detail"]
+        self.code = self.submission.code
+        self.language = self.submission.language
+        problem = self.submission.problem
+        self.problem_id = str(problem.id)
+        self.problem_judge_id = str(problem.problem_info.problem_judge.id)
+        self.problem_type = problem.problem_info.problem_judge.problem_type
+        self.time_limit = problem.time_limit
+        self.memory_limit = problem.memory_limit
+        self.testcase_detail = problem.problem_info.problem_judge.testcase_detail
 
         self.log(f'Language: {self.language}')
         self.log(f'Problem ID: {self.problem_id}')
@@ -72,7 +72,7 @@ class SubmissionTask:
         self.log(f'Problem type: {self.problem_type}')
         self.log(f'Time limit: {self.time_limit}')
         self.log(f'Memory limit: {self.memory_limit}')
-        self.log(f'Extra info: {data["extra_info"]}')
+        self.log(f'Extra info: {problem.problem_info.problem_judge.extra_info}')
 
         # 保存编译输出
         self.compile_stdout = None
@@ -222,7 +222,8 @@ class SubmissionTask:
         shutil.copyfile(ans_file_src, ans_file_dst)
 
     def run_sandbox(self):
-        commands = ["catj", "-t", self.time_limit, "-m", self.memory_limit, "-d", self.tmp_dir, "-l", self.language]
+        commands = ["catj", "-t", str(self.time_limit), "-m", str(self.memory_limit),
+                    "-d", self.tmp_dir, "-l", self.language]
         subprocess.call(commands)
 
     def read_result(self, testcase):
