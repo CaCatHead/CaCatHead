@@ -12,7 +12,7 @@ server:
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
-  name: local_dev
+  name: !ENV ${NODE_NAME:local_dev}
   tasks: 1  # worker_max_tasks_per_child
   broadcast:
     ping: ping
