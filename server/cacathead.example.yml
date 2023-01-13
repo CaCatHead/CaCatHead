@@ -13,6 +13,7 @@ server:
 
 judge:
   name: local_dev
+  tasks: 1  # worker_max_tasks_per_child
   broadcast:
     ping: ping
     polygon: ${JUDGE_QUEUE:judge_task}.polygon.broadcast

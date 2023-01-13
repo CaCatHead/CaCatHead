@@ -9,7 +9,7 @@ timezone = settings.TIME_ZONE
 
 task_track_started = True
 
-worker_max_tasks_per_child = 1
+worker_max_tasks_per_child = cacathead_config.judge.tasks
 
 ping_exchange_name = cacathead_config.judge.broadcast.ping
 ping_queue_name = f'{ping_exchange_name}.{cacathead_config.judge.name}'
