@@ -18,7 +18,7 @@
 
 > **注意**
 >
-> 此时你部署的判题节点，应该使用与主服务器相同的密码配置。
+> 此时你部署的判题节点，应该使用**与主服务器相同的密码配置**。
 >
 > 你应该自己知道密码是什么，或者向服务器管理员索要密码。
 
@@ -31,13 +31,15 @@ $ vim ./deploy/judge/cacathead.yml
 # or vi, code, and so on
 ```
 
-首先，修改你的判题节点名称 `judge.name`，最好保证所有判题节点的名称不同。然后，修改使用判题节点 RabbitMQ 队列，这应该与主服务器的配置相同。例如：
+首先，修改你的判题节点名称 `judge.name`，你需要**保证集群内所有判题节点的名称互不相同**。
+
+然后，修改使用使用的主服务器 RabbitMQ 的 Exchange 和队列名称配置，对应 `judge.broadcast.*` 和 `judge.queue.*`，这些配置应该**与主服务器的配置相同**（以下为生产环境默认配置）。例如：
 
 ```yaml
 # ...
 judge:
-  name: xxxxxx
-  tasks: 1
+  name: <替换为你的评测节点名称>
+  tasks: 1  # worker_max_tasks_per_child
   broadcast:
     ping: ping
     polygon: broadcast.polygon
