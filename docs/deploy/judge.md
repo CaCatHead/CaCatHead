@@ -1,4 +1,4 @@
-# 单独部署判题节点
+# 单独部署评测机
 
 > **环境要求**
 >
@@ -18,7 +18,7 @@
 
 > **注意**
 >
-> 此时你部署的判题节点，应该使用**与主服务器相同的密码配置**。
+> 此时你部署的评测机，应该使用**与主服务器相同的密码配置**。
 >
 > 你应该自己知道密码是什么，或者向服务器管理员索要密码。
 
@@ -31,7 +31,7 @@ $ vim ./deploy/judge/cacathead.yml
 # or vi, code, and so on
 ```
 
-首先，修改你的判题节点名称 `judge.name`，你需要**保证集群内所有判题节点的名称互不相同**。
+首先，修改你的评测机名称 `judge.name`，你需要**保证集群内所有评测机的名称互不相同**。
 
 然后，修改使用使用的主服务器 RabbitMQ 的 Exchange 和队列名称配置，对应 `judge.broadcast.*` 和 `judge.queue.*`，这些配置应该**与主服务器的配置相同**（以下为生产环境默认配置）。例如：
 
@@ -87,9 +87,9 @@ rabbitmq:
   password: !ENV ${RMQ_PASS}
 ```
 
-## 启动判题节点容器
+## 启动评测机容器
 
-完成以上所有配置后，你可以判题节点容器了。
+完成以上所有配置后，你可以评测机容器了。
 
 ```bash
 $ docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
@@ -97,7 +97,7 @@ $ docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
 $ ./manage.sh judge
 ```
 
-## 查看判题节点容器日志
+## 查看评测机容器日志
 
 ```bash
 $ docker logs catjudge_node
@@ -107,7 +107,7 @@ $ ./manage.sh logs node
 
 ## 常见问题
 
-**先检查判题节点容器内的日志**。
+**先检查评测机容器内的日志**。
 
 ### Postgresql / MinIO / RabbitMQ 连接失败
 

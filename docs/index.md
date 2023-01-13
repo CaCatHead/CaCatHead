@@ -28,4 +28,6 @@ features:
     details: 你可以自己举办算法竞赛。
   - title: Polygon
     details: 一个简易的 Polygon。
+  - title: 权限
+    details: 精细到每个对象的权限控制。
 ---
