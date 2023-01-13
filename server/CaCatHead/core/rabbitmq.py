@@ -23,8 +23,12 @@ def get_connection():
 def init_channel(channel: BlockingChannel):
     # set confirm_delivery
     channel.confirm_delivery()
-    # declare queue
+    # declare judge queue
     channel.queue_declare(queue=settings.DEFAULT_JUDGE_QUEUE, durable=True)
+    # ping task
+    exchange_name = cacathead_config.judge.ping
+    # declare ping exchange
+    channel.exchange_declare(exchange=exchange_name, exchange_type='fanout')
 
 
 pool = QueuedPool(
@@ -39,11 +43,9 @@ pool = QueuedPool(
 
 
 def send_ping_message(message):
-    connection = get_connection()
-    channel = connection.channel()
-    exchange_name = cacathead_config.judge.ping
-    channel.exchange_declare(exchange=exchange_name, exchange_type='fanout')
-    channel.basic_publish(exchange=exchange_name, routing_key='', body=json.dumps(message))
+    with pool.acquire() as connection:
+        channel = connection.channel
+        channel.basic_publish(exchange=cacathead_config.judge.ping, routing_key='', body=json.dumps(message))
 
 
 def send_judge_message(message):
