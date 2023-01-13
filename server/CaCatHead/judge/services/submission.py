@@ -31,8 +31,8 @@ class NoLanguageException(Exception):
 
 
 class SubmissionTask:
-    def log(self, message):
-        logger.info(message, extra={'type': self.type, 'submission': self.submission})
+    def log(self, message, *args):
+        logger.info(message, *args, extra={'type': self.type, 'submission': self.submission})
 
     def __init__(self, submission: Submission = None,
                  contest_submission: ContestSubmission = None,
@@ -182,8 +182,18 @@ class SubmissionTask:
                 self.log(f'Downloading Problem Judge #{self.problem_judge_id}. testcases from minio')
                 problem_directory = ProblemDirectory.make_from_id(problem_id=self.problem_id,
                                                                   problem_judge_id=self.problem_judge_id)
-                problem_directory.download_testcases()
-                self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
+                # 处理 MinIO 下载失败
+                download_ok = False
+                try:
+                    download_ok = problem_directory.download_testcases()
+                except Exception as ex:
+                    self.log(f'Download testcase error: %r', ex)
+                    download_ok = False
+                finally:
+                    if download_ok:
+                        self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
+                    else:
+                        raise NoTestDataException
 
             self.log(f'Run code on the testcase #{index}. in the sandbox')
             self.run_sandbox()

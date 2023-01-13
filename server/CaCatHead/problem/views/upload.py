@@ -84,15 +84,18 @@ class ProblemDirectory:
             upload_minio_testcase(directory, self.root / testcase['input'])
             upload_minio_testcase(directory, self.root / testcase['answer'])
 
-    def download_testcases(self):
+    def download_testcases(self) -> bool:
         directory = self.root.name
         for testcase in self.config['testcases']:
             input_file = self.root / testcase['input']
             if not input_file.exists():
-                download_minio_testcase(directory, input_file)
+                if not download_minio_testcase(directory, input_file):
+                    return False
             answer_file = self.root / testcase['answer']
             if not answer_file.exists():
-                download_minio_testcase(directory, answer_file)
+                if not download_minio_testcase(directory, answer_file):
+                    return False
+        return True
 
     def generate_zip(self):
         mem_zip = BytesIO()
