@@ -19,6 +19,8 @@ class Post(BaseModel):
 
     sort_time = models.DateTimeField(auto_now_add=False, verbose_name=_(u"排序时间"))
 
+    is_home = models.BooleanField(default=False, verbose_name=_(u"是否在首页"))
+
     is_public = models.BooleanField(default=False, verbose_name=_(u"是否公开"))
 
     objects = PermissionManager()

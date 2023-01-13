@@ -30,6 +30,15 @@ def list_public_post(request: Request):
 
 
 @api_view()
+def list_public_home_post(request: Request):
+    """
+    列出首页的公告
+    """
+    posts = Post.objects.filter_public().filter(is_home=True)
+    return make_response(posts=PostContentSerializer(posts, many=True).data)
+
+
+@api_view()
 def get_post_content(request: Request, post_id):
     """
     查看公告内容
