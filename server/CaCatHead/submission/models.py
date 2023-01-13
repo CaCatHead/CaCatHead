@@ -62,11 +62,16 @@ class Submission(models.Model):
     class Meta:
         db_table = 'submission'
 
-        ordering = ('-created', '-judged', '-score', '-id')
+        ordering = ('-created', '-score')
 
         verbose_name = _(u"提交信息")
 
         verbose_name_plural = _(u"提交信息列表")
+
+        indexes = [
+            models.Index(fields=['repository'], name='sub__repo_index'),
+            models.Index(fields=['repository', 'owner'], name='sub__repo_owner_index'),
+        ]
 
 
 class ContestSubmissionType(models.TextChoices):
@@ -122,11 +127,16 @@ class ContestSubmission(models.Model):
     class Meta:
         db_table = 'contest_submission'
 
-        ordering = ('-relative_time', '-judged', '-score', '-created', '-id')
+        ordering = ('-created', '-relative_time', '-score')
 
         verbose_name = _(u"比赛提交信息")
 
         verbose_name_plural = _(u"比赛提交信息列表")
+
+        indexes = [
+            models.Index(fields=['repository'], name='contest_sub__repo_index'),
+            models.Index(fields=['repository', 'owner'], name='contest_sub__repo_owner_index'),
+        ]
 
     def has_user(self, user: User):
         members = self.owner.members.all()
