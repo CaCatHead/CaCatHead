@@ -16,7 +16,7 @@ from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSe
     EditPermissionPayload, ProblemContentSerializer
 from CaCatHead.problem.views.services import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.problem.views.services import copy_repo_problem
-from CaCatHead.problem.views.submit import submit_problem_code
+from CaCatHead.problem.views.submit import submit_repository_problem_code
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
 from CaCatHead.user.serializers import UserSerializer
@@ -217,10 +217,10 @@ def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
     repo, problem = check_repo_problem(request, repo_id, problem_id,
                                        ProblemRepositoryPermissions.Submit,
                                        ProblemPermissions.Submit)
-    submission = submit_problem_code(user=request.user,
-                                     repo=repo,
-                                     problem=problem,
-                                     payload=request.data)
+    submission = submit_repository_problem_code(user=request.user,
+                                                repo=repo,
+                                                problem=problem,
+                                                payload=request.data)
     return make_response(submission=FullSubmissionSerializer(submission).data)
 
 

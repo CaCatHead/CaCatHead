@@ -25,7 +25,8 @@ def ping(_request: Request):
 def sync_timestamp(request: Request):
     client = datetime.utcfromtimestamp(int(request.query_params.get('timestamp'))).replace(tzinfo=pytz.UTC)
     server = timezone.now()
-    return make_response(diff=round((server-client).total_seconds() * 1000), timestamp=round(server.timestamp() * 1000))
+    return make_response(diff=round((server - client).total_seconds() * 1000),
+                         timestamp=round(server.timestamp() * 1000))
 
 
 @api_view()

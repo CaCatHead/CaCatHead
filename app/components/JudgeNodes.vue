@@ -48,14 +48,17 @@ const parseJava = (text: string) => {
     <template #compiler="{ row }">
       <div space-x-2 lt-md:space-y-2 m2 text-sm>
         <span
+          v-if="row?.information?.compiler?.gcc"
           class="inline-block p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
           >gcc {{ parseGCC(row.information.compiler.gcc) }}</span
         >
         <span
+          v-if="row?.information?.compiler?.['g++']"
           class="inline-block p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
           >g++ {{ parseGCC(row.information.compiler['g++']) }}</span
         >
         <span
+          v-if="row?.information?.compiler?.java"
           class="inline-block p2 bg-gray-100 dark:bg-gray-800 rounded select-none"
           >Java {{ parseJava(row.information.compiler.java) }}</span
         >
@@ -63,7 +66,7 @@ const parseJava = (text: string) => {
     </template>
 
     <template #system="{ row }">
-      <span
+      <span v-if="row?.information?.platform"
         >{{ row.information.platform.system }}
         {{ row.information.platform.release }}</span
       >

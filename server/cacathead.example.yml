@@ -12,9 +12,15 @@ server:
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
-  name: local_dev
-  ping: ping
-  queue: !ENV ${JUDGE_QUEUE:judge_task}
+  name: !ENV ${NODE_NAME:local_dev}
+  tasks: 1  # worker_max_tasks_per_child
+  broadcast:
+    ping: ping
+    polygon: !ENV ${JUDGE_QUEUE:judge}.polygon
+  queue:
+    repository: !ENV ${JUDGE_QUEUE:judge}.repository
+    contest: !ENV ${JUDGE_QUEUE:judge}.contest
+    polygon: !ENV ${JUDGE_QUEUE:judge}.polygon
 
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}

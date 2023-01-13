@@ -6,6 +6,8 @@ CaCatHead server subproject is based on [Django](https://www.djangoproject.com/)
 
 ## Usage
 
+### API Server
+
 Start the api web server.
 
 ```bash
@@ -17,7 +19,16 @@ $ pipenv run python manage.py runserver  # start dev server
 Open `Client/user.http` to try the api endpoints.
 
 > We recommend you use
-> the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the api.
+> the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the
+> api.
+
+### Judge Server
+
+```bash
+$ export C_FORCE_ROOT=true
+$ export NODE_NAME=local_dev
+$ pipenv run celery -A CaCatHead.core worker -l INFO
+```
 
 ## Config
 

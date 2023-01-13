@@ -17,7 +17,8 @@ from CaCatHead.problem.serializers import CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading
-from CaCatHead.problem.views.submit import submit_problem_code, rejudge_problem_code
+from CaCatHead.problem.views.submit import submit_polygon_problem_code, \
+    rejudge_polygon_problem_code
 from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
@@ -145,10 +146,10 @@ def submit_polygon_problem(request: Request, problem_id: int):
     if problem is None:
         raise NotFound('题目未找到')
     else:
-        submission = submit_problem_code(user=request.user,
-                                         repo=MAIN_PROBLEM_REPOSITORY,
-                                         problem=problem,
-                                         payload=request.data)
+        submission = submit_polygon_problem_code(user=request.user,
+                                                 repo=MAIN_PROBLEM_REPOSITORY,
+                                                 problem=problem,
+                                                 payload=request.data)
         return make_response(submission=FullSubmissionSerializer(submission).data)
 
 
@@ -167,7 +168,7 @@ def rejudge_polygon_problem(request: Request, submission_id: int):
     if submission is None:
         raise NotFound('提交未找到')
     else:
-        submission = rejudge_problem_code(submission)
+        submission = rejudge_polygon_problem_code(submission)
         return make_response(submission=FullPolygonSubmissionSerializer(submission).data)
 
 

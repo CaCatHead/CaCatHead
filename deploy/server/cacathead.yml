@@ -12,9 +12,15 @@ server:
     password: !ENV ${CACATHEAD_ROOT_PASS:12345678}
 
 judge:
-  name: main_node
-  ping: ping
-  queue: judge_task
+  name: main
+  tasks: 1
+  broadcast:
+    ping: ping
+    polygon: broadcast.polygon
+  queue:
+    repository: judge.repository
+    contest: judge.contest
+    polygon: judge.polygon
 
 testcase:
   root: /root/testcases

@@ -17,6 +17,8 @@ services:
     ports:
       - 80:80
       - 443:443
+    environment:
+      TZ: Asia/Shanghai
 
   app:
     build:
@@ -93,6 +95,8 @@ services:
       - redis_pass
       - minio_pass
       - rmq_pass
+    environment:
+      WAIT_HOSTS: rabbitmq:5672  # See https://github.com/ufoscout/docker-compose-wait
     env_file:
       - ./deploy/server/.env
 
@@ -112,6 +116,7 @@ services:
     secrets:
       - db_pass
     environment:
+      TZ: Asia/Shanghai
       WAIT_HOSTS: postgresql:5432  # See https://github.com/ufoscout/docker-compose-wait
     env_file:
       - ./deploy/server/.env
@@ -166,19 +171,23 @@ services:
       - redis_pass
     volumes:
       - ./.cacathead/redis:/data
+    environment:
+      TZ: Asia/Shanghai
 
   rabbitmq:
-    image: rabbitmq:3.11.0
-    # image: rabbitmq:management
+    # image: rabbitmq:3.11.0
+    image: rabbitmq:management
     container_name: cacathead_rabbitmq
     restart: always
     ports:
       - '5672:5672'
-      # - '15672:15672'
+      - '15672:15672'
     networks:
       - cat_net
     volumes:
       - ./deploy/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    environment:
+      TZ: Asia/Shanghai
 
 networks:
   cat_net:

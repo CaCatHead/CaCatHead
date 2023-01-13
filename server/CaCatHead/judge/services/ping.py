@@ -39,13 +39,23 @@ def get_compiler_version():
     }
 
 
-def handle_ping():
+def handle_ping(timestamp: str):
     node_name = cacathead_config.judge.name
     node = get_judge_node(node_name)
-    node.active = True
-    node.information = {
-        'platform': get_system_info(),
-        'compiler': get_compiler_version()
+
+    platform_info = get_system_info()
+    compiler_info = get_compiler_version()
+    now = timezone.now()
+    information = {
+        'timestamp': {
+            'request': timestamp,
+            'response': now.isoformat()
+        },
+        'platform': platform_info,
+        'compiler': compiler_info
     }
-    node.updated = timezone.now()
+
+    node.active = True
+    node.information = information
+    node.updated = now
     node.save()

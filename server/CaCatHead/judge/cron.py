@@ -1,8 +1,13 @@
+import logging
+
 from django.utils import timezone
 from django_cron import CronJobBase, Schedule
 
-from CaCatHead.core.rabbitmq import send_ping_message
+from CaCatHead.config import cacathead_config
 from CaCatHead.judge.models import JudgeNode
+from CaCatHead.judge.tasks import ping
+
+logger = logging.getLogger(__name__)
 
 
 class PingJudgeNode(CronJobBase):
@@ -13,13 +18,13 @@ class PingJudgeNode(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
 
     def do(self):
-        print('Ping judge nodes...')
+        logger.info('Start sending ping judge nodes messages')
         now = timezone.now()
-        for node in JudgeNode.objects.all():
+        for node in JudgeNode.objects.filter():
             delta = (now - node.updated).total_seconds()
             if delta >= 60 * 60:
                 node.delete()
             elif delta >= 90:
-                node.active = False
-                node.save()
-        send_ping_message({})
+                JudgeNode.objects.filter(id=node.id).update(active=False)
+        ping.apply_async((timezone.now(),), queue='', exchange=cacathead_config.judge.broadcast.ping, priority=10)
+        logger.info('Sending ping judge nodes messages OK ')

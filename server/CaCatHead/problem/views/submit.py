@@ -1,13 +1,17 @@
+import logging
+
 from django.contrib.auth.models import User
 from rest_framework.exceptions import APIException
 
 from CaCatHead.core.constants import Verdict
-from CaCatHead.core.rabbitmq import send_judge_message
+from CaCatHead.judge.tasks import judge_polygon_submission, judge_repository_submission
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.submission.models import Submission
 
+logger = logging.getLogger(__name__)
 
-def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, payload: dict):
+
+def submit_problem_code(is_repo: bool, user: User, repo: ProblemRepository, problem: Problem, payload: dict):
     code = payload['code']
     language = payload['language']
     submission = Submission(
@@ -19,28 +23,32 @@ def submit_problem_code(user: User, repo: ProblemRepository, problem: Problem, p
         language=language,
     )
     submission.save()
-    message = {
-        'submission_id': submission.id,
-        'code': code,
-        'language': language,
-        'problem_id': problem.id,
-        'problem_judge_id': problem.problem_info.problem_judge.id,
-        'problem_type': problem.problem_type,
-        'time_limit': problem.time_limit,
-        'memory_limit': problem.memory_limit,
-        'testcase_detail': problem.problem_info.problem_judge.testcase_detail,
-        'extra_info': problem.problem_info.problem_judge.extra_info
-    }
 
-    send_ok = send_judge_message(message)
-    if send_ok:
-        return submission
+    if is_repo:
+        try:
+            judge_repository_submission.apply_async((submission.id,), priority=6)
+            return submission
+        except judge_repository_submission.OperationalError as ex:
+            logger.exception('Sending task raised: %r', ex)
+            raise APIException(detail='提交题库代码失败', code=400)
     else:
-        submission.delete()
-        raise APIException(detail='提交代码失败', code=400)
+        try:
+            judge_polygon_submission.delay(submission.id)
+            return submission
+        except judge_polygon_submission.OperationalError as ex:
+            logger.exception('Sending task raised: %r', ex)
+            raise APIException(detail='提交 Polygon 代码失败', code=400)
 
 
-def rejudge_problem_code(submission: Submission):
+def submit_repository_problem_code(user: User, repo: ProblemRepository, problem: Problem, payload: dict):
+    return submit_problem_code(True, user, repo, problem, payload)
+
+
+def submit_polygon_problem_code(user: User, repo: ProblemRepository, problem: Problem, payload: dict):
+    return submit_problem_code(False, user, repo, problem, payload)
+
+
+def rejudge_problem_code(is_repo: bool, submission: Submission):
     submission.judged = None
     submission.verdict = Verdict.Waiting
     submission.score = 0
@@ -49,22 +57,25 @@ def rejudge_problem_code(submission: Submission):
     submission.detail = {}
     submission.save()
 
-    problem = submission.problem
-    message = {
-        'submission_id': submission.id,
-        'code': submission.code,
-        'language': submission.language,
-        'problem_id': problem.id,
-        'problem_judge_id': problem.problem_info.problem_judge.id,
-        'problem_type': problem.problem_type,
-        'time_limit': problem.time_limit,
-        'memory_limit': problem.memory_limit,
-        'testcase_detail': problem.problem_info.problem_judge.testcase_detail,
-        'extra_info': problem.problem_info.problem_judge.extra_info
-    }
-
-    send_ok = send_judge_message(message)
-    if send_ok:
-        return submission
+    if is_repo:
+        try:
+            judge_repository_submission.apply_async((submission.id,), priority=7)
+            return submission
+        except judge_repository_submission.OperationalError as ex:
+            logger.exception('Sending task raised: %r', ex)
+            raise APIException(detail='重测题库代码失败', code=400)
     else:
-        raise APIException(detail='重测代码失败', code=400)
+        try:
+            judge_polygon_submission.delay(submission.id)
+            return submission
+        except judge_polygon_submission.OperationalError as ex:
+            logger.exception('Sending task raised: %r', ex)
+            raise APIException(detail='重测 Polygon 代码失败', code=400)
+
+
+def rejudge_repository_problem_code(submission: Submission):
+    return rejudge_problem_code(True, submission)
+
+
+def rejudge_polygon_problem_code(submission: Submission):
+    return rejudge_problem_code(False, submission)
