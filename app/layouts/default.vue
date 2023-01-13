@@ -36,9 +36,14 @@ const activeTab = computed(() => {
 
 const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
 
+const lastSync = ref(useLocalStorage('global/last-sync-time', 0));
+const cacheSync = ref(useLocalStorage('global/sync-time', 0));
 const clientTimestamp = new Date();
+const Expire = 60 * 60 * 1000;
 const timestamp = process.server
   ? useTimestamp()
+  : clientTimestamp.getTime() - lastSync.value <= Expire
+  ? useTimestamp({ offset: cacheSync.value })
   : await fetchAPI<{ diff: number; timestamp: number }>(`/api/sync`, {
       method: 'GET',
       query: {
@@ -51,6 +56,9 @@ const timestamp = process.server
       const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
       const diffTime =
         (serverClientRequestDiffTime + serverClientResponseDiffTime) / 2;
+
+      lastSync.value = nowTimeStamp;
+      cacheSync.value = resp.timestamp - clientTimestamp.getTime() - diffTime;
 
       return useTimestamp({
         offset: resp.timestamp - clientTimestamp.getTime() - diffTime,
