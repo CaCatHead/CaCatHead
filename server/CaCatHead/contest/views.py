@@ -190,6 +190,8 @@ def user_submit_code(request: Request, contest_id: int, problem_id: int):
 
 
 @api_view()
+@cache_page(1)
+@vary_on_headers("Authorization", )
 def user_list_own_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     teams = [make_single_user_team(request.user).id]
@@ -197,7 +199,12 @@ def user_list_own_submissions(request: Request, contest_id: int):
     if registration is not None:
         teams.append(registration.team.id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
-    return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 30))
+    paginator = Paginator(submissions, page_size)
+    return make_response(count=paginator.count, page=page, page_size=page_size, num_pages=paginator.num_pages,
+                         submissions=ContestSubmissionSerializer(paginator.page(page).object_list, many=True).data)
 
 
 @api_view()
@@ -206,6 +213,16 @@ def user_list_own_submissions(request: Request, contest_id: int):
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
+
+    problem_id = request.query_params.get('problem', None)
+    if problem_id is not None:
+        problem_id = int(problem_id)
+        problem = contest.get_problem(problem_id)
+        submissions = submissions.filter(id=problem.id)
+
+    verdict = request.query_params.get('verdict', None)
+    if verdict is not None:
+        submissions = submissions.filter(verdict=verdict)
 
     def get_response():
         page = int(request.query_params.get('page', 1))
