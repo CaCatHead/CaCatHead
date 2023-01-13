@@ -37,7 +37,14 @@ $ vim ./deploy/judge/cacathead.yml
 # ...
 judge:
   name: xxxxxx
-  queue: judge_task
+  tasks: 1
+  broadcast:
+    ping: ping
+    polygon: broadcast.polygon
+  queue:
+    repository: judge.repository
+    contest: judge.contest
+    polygon: judge.polygon
 # ...
 ```
 
