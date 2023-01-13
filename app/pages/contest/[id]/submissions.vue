@@ -12,6 +12,19 @@ useHead({
 });
 
 const page = computed(() => +(route.query.page ?? 1));
+const verdict = computed(() => route.query.verdict as string);
+const problem = computed(() => {
+  if (!route.query.problem) {
+    return undefined;
+  }
+  const id = indexToDisplayId(route.query.problem as string);
+  if (!id) {
+    navigateTo(route.path);
+    return undefined;
+  } else {
+    return id;
+  }
+});
 
 const { data } = await useFetchAPI<{
   submissions: ContestSubmission[];
@@ -22,11 +35,16 @@ const { data } = await useFetchAPI<{
 }>(`/api/contest/${route.params.id}/submissions`, {
   query: {
     page,
+    verdict,
+    problem,
   },
 });
 
 const handlePageChange = async (toPage: number) => {
-  await navigateTo({ path: route.path, query: { page: toPage + 1 } });
+  await navigateTo({
+    path: route.path,
+    query: { page: toPage + 1, verdict: verdict.value, problem: problem.value },
+  });
 };
 </script>
 
@@ -91,7 +109,7 @@ const handlePageChange = async (toPage: number) => {
         /></template>
         <template #verdict="{ row }">
           <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`">
-            <verdict :verdict="row.verdict"></verdict>
+            <display-verdict :verdict="row.verdict"></display-verdict>
           </nuxt-link>
         </template>
         <template #time_used="{ row }">

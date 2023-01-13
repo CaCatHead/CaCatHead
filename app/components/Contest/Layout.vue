@@ -9,6 +9,43 @@ const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
 
+const isAllSubmissions = computed(() => {
+  return route.path.indexOf('/submissions') !== -1;
+});
+
+const Verdicts = [
+  Verdict.Waiting,
+  Verdict.Running,
+  Verdict.Compiling,
+  Verdict.Accepted,
+  Verdict.WrongAnswer,
+  Verdict.TimeLimitExceeded,
+  Verdict.IdlenessLimitExceeded,
+  Verdict.MemoryLimitExceeded,
+  Verdict.OutputLimitExceeded,
+  Verdict.RuntimeError,
+  Verdict.CompileError,
+  Verdict.SystemError,
+  Verdict.JudgeError,
+  Verdict.TestCaseError,
+];
+
+const filter = reactive({
+  verdict: route.query.verdict as string | undefined,
+  problem: route.query.problem
+    ? indexToDisplayId(route.query.problem as string)
+    : undefined,
+});
+const goSubmissions = async () => {
+  await navigateTo({
+    path: route.path,
+    query: {
+      verdict: filter.verdict,
+      problem: filter.problem ? displyaIdToIndex(+filter.problem) : undefined,
+    },
+  });
+};
+
 const problemId = computed(() => {
   const path = route.path;
   const match = /\/problem\/([a-zA-Z])\/?$/.exec(path);
@@ -150,6 +187,28 @@ const formatProgress = (value: number) => {
               >
             </nuxt-link>
           </div>
+        </div>
+      </div>
+      <div v-if="isAllSubmissions" border="1 base" rounded-2>
+        <h3 px4 py2 border="b-1 base" font-bold>筛选提交</h3>
+        <div p4 space-y-2>
+          <div font-bold>题目</div>
+          <c-select id="problem" v-model="filter.problem">
+            <option :value="undefined"></option>
+            <option
+              v-for="p in contest.problems"
+              :value="p.display_id"
+              :selected="filter.problem === displyaIdToIndex(p.display_id)"
+            >
+              {{ displyaIdToIndex(p.display_id) }}. {{ p.title }}
+            </option>
+          </c-select>
+          <div font-bold>结果</div>
+          <c-select id="language" v-model="filter.verdict" :options="Verdicts">
+          </c-select>
+          <c-button w-full mt4 color="success" @click="goSubmissions"
+            >筛选</c-button
+          >
         </div>
       </div>
       <div v-if="problemId >= 0" border="1 base" rounded-2>

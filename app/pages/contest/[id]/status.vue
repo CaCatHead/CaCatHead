@@ -83,7 +83,7 @@ const handlePageChange = async (toPage: number) => {
         /></template>
         <template #verdict="{ row }">
           <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`">
-            <verdict :verdict="row.verdict"></verdict>
+            <display-verdict :verdict="row.verdict"></display-verdict>
           </nuxt-link>
         </template>
         <template #time_used="{ row }">

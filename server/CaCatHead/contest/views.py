@@ -242,7 +242,7 @@ def user_view_all_submissions(request: Request, contest_id: int):
     if problem_id is not None:
         problem_id = int(problem_id)
         problem = contest.get_problem(problem_id)
-        submissions = submissions.filter(id=problem.id)
+        submissions = submissions.filter(problem__display_id=problem.display_id)
 
     verdict = request.query_params.get('verdict', None)
     if verdict is not None:

@@ -42,11 +42,11 @@ const { submission } = toRefs(props);
           <h4 w="1/2" font-600>
             {{ testcase.sample ? '样例' : '测试点' }} #{{ index + 1 }}
           </h4>
-          <verdict
+          <display-verdict
             :verdict="testcase.verdict"
             w="1/2"
             lt-sm="text-right"
-          ></verdict>
+          ></display-verdict>
         </div>
         <div
           w="3/5"
