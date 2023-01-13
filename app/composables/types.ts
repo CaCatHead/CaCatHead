@@ -6,6 +6,10 @@ export interface JudgeNode {
   updated: string;
 
   information: {
+    timestamp: {
+      request: string;
+      response: string;
+    };
     compiler: {
       'g++': string;
       gcc: string;

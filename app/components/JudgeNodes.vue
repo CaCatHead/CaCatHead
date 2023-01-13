@@ -30,7 +30,12 @@ const parseJava = (text: string) => {
       <div
         flex
         items-center
-        :class="smallScreen ? 'justify-end' : 'justify-center'"
+        select-none
+        relative
+        :class="[
+          smallScreen ? 'justify-end' : 'justify-center',
+          'md:[&:hover>div]:flex',
+        ]"
       >
         <span
           inline-block
@@ -42,6 +47,28 @@ const parseJava = (text: string) => {
         ></span>
         <span v-if="row.active">在线</span>
         <span v-else>离线</span>
+        <div
+          absolute
+          hidden
+          left-0
+          top="100%"
+          rounded
+          border="1 base"
+          p2
+          bg-white
+          dark:bg-dark
+          w-44
+          justify-between
+        >
+          <span font-bold>通讯时延</span>
+          <span ml1
+            >{{
+              new Date(row.information.timestamp.response).getTime() -
+              new Date(row.information.timestamp.request).getTime()
+            }}
+            毫秒</span
+          >
+        </div>
       </div>
     </template>
 
