@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FullContest, ContestStandings } from '@/composables/types';
+import type { FullContest, ContestStanding } from '@/composables/types';
 
 const route = useRoute();
 
@@ -11,7 +11,7 @@ useHead({
   title: `排行榜 - ${contest.value.title}`,
 });
 
-const { data } = await useFetchAPI<{ registrations: ContestStandings[] }>(
+const { data } = await useFetchAPI<{ registrations: ContestStanding[] }>(
   `/api/contest/${route.params.id}/standings`
 );
 

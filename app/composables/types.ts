@@ -226,7 +226,7 @@ export type FullContestSubmission = BaseFullSubmission & {
   relative_time: number;
 };
 
-export interface ContestStandings {
+export interface ContestStanding {
   name: string;
 
   team: Team;

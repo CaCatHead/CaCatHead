@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { Problem } from '@/composables/types';
 
+import { Verdict } from '@/composables/verdict';
+
 const props = withDefaults(
   defineProps<{
     problems: Problem[];
     problemLink: (problem: Problem) => string;
     problemIndex?: (problem: Problem) => string;
+    problemVerdict?: (problem: Problem) => Verdict | undefined;
     operationWidth?: string;
   }>(),
   {
@@ -14,7 +17,22 @@ const props = withDefaults(
   }
 );
 
-const { problems } = toRefs(props);
+const { problems, problemVerdict } = toRefs(props);
+
+const getBg = (row: Problem) => {
+  if (problemVerdict?.value) {
+    const verdict = problemVerdict.value(row);
+    if (verdict) {
+      return verdict === Verdict.Accepted
+        ? '[&>td:last-child]:bg-[#e0ffe4]'
+        : '[&>td:last-child]:bg-[#ffe3e3]';
+    } else {
+      return '';
+    }
+  } else {
+    return '';
+  }
+};
 
 const emit = defineEmits<{
   (e: 'submit', problem: Problem): Promise<void>;
@@ -22,7 +40,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <c-table :data="problems" border :mobile="false">
+  <c-table :data="problems" border :mobile="false" :row-class="getBg">
     <template #headers="{ smallScreen }">
       <c-table-header name="display_id" width="60">#</c-table-header>
       <c-table-header name="title" align="left" text-left>题目</c-table-header>
@@ -34,10 +52,10 @@ const emit = defineEmits<{
       ></c-table-header>
     </template>
     <template #display_id="{ row }">
-      <nuxt-link :to="problemLink(row)" class="text-link">{{
+      <nuxt-link :to="problemLink(row)" class="text-link font-bold">{{
         problemIndex(row)
-      }}</nuxt-link></template
-    >
+      }}</nuxt-link>
+    </template>
     <template #title="{ row }">
       <div flex justify-between items-center lt-md="items-start flex-col gap1">
         <nuxt-link :to="problemLink(row)" class="text-link">{{

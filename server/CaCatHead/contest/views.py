@@ -104,7 +104,7 @@ def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
     return make_response(contest=ContestContentSerializer(contest).data,
-                         registration=ContestRegistrationSerializer(registration).data,
+                         registration=ContestStandingSerializer(registration).data,
                          is_admin=contest.has_admin_permission(request.user))
 
 

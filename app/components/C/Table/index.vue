@@ -1,12 +1,23 @@
-<script setup lang="ts" generic="T extends Record<string, any>">
+<script setup lang="ts" generic="T extends any">
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
 import { CTABLE, CTableColumn } from './context';
 
 const props = withDefaults(
-  defineProps<{ data?: T[]; mobile?: boolean; border?: boolean }>(),
+  defineProps<{
+    data?: T[];
+    rowKey?: (row: any, index: number) => string;
+    rowClass?: (
+      row: any,
+      index: number
+    ) => undefined | string | Array<undefined | string>;
+    mobile?: boolean;
+    border?: boolean;
+  }>(),
   {
     data: () => [],
+    rowKey: (_row, index) => '' + index,
+    rowClass: (_row, _index) => '',
     mobile: true,
     border: false,
   }
@@ -15,6 +26,11 @@ const props = withDefaults(
 const { data, mobile, border } = toRefs(props);
 
 const columns = ref<CTableColumn[]>([]);
+
+const getValue = (row: T, name: string) => {
+  // @ts-ignore
+  return row[name];
+};
 
 const enabledColumns = computed(() => columns.value.filter(c => !c.disabled));
 
@@ -74,7 +90,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
           </div>
           <div text-right flex-1>
             <slot :name="col.name" v-bind="{ row, index, smallScreen }">{{
-              row[col.name]
+              getValue(row, col.name)
             }}</slot>
           </div>
         </div>
@@ -90,7 +106,11 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
         </tr>
       </thead>
       <tbody divide-y dark:divide="gray/40">
-        <tr v-for="(row, index) in data">
+        <tr
+          v-for="(row, index) in data"
+          :key="rowKey(row, index)"
+          :class="rowClass(row, index)"
+        >
           <td
             v-for="(col, idx) in enabledColumns"
             :class="[
@@ -101,7 +121,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
             ]"
           >
             <slot :name="col.name" v-bind="{ row, index, smallScreen }">{{
-              row[col.name]
+              getValue(row, col.name)
             }}</slot>
           </td>
         </tr>
