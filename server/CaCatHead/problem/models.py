@@ -166,8 +166,11 @@ class Problem(BaseModel):
 
         ordering = ('repository', 'display_id')
 
+        unique_together = ('repository', 'display_id')
+
         indexes = [
-            models.Index(fields=['repository', 'display_id'], name='repo_display_id_index')
+            models.Index(fields=['repository'], name='problem__repo_index'),
+            models.Index(fields=['repository', 'display_id'], name='problem__repo_display_id_index')
         ]
 
         verbose_name = _(u"题目信息")

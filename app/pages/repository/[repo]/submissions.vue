@@ -90,7 +90,7 @@ const handlePageChange = async (toPage: number) => {
           <nuxt-link
             :to="`/repository/${route.params.repo}/submission/${row.id}`"
           >
-            <verdict :verdict="row.verdict"></verdict>
+            <display-verdict :verdict="row.verdict"></display-verdict>
           </nuxt-link>
         </template>
         <template #time_used="{ row }">

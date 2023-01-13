@@ -6,6 +6,10 @@ export interface JudgeNode {
   updated: string;
 
   information: {
+    timestamp: {
+      request: string;
+      response: string;
+    };
     compiler: {
       'g++': string;
       gcc: string;
@@ -226,7 +230,7 @@ export type FullContestSubmission = BaseFullSubmission & {
   relative_time: number;
 };
 
-export interface ContestStandings {
+export interface ContestStanding {
   name: string;
 
   team: Team;

@@ -7,6 +7,7 @@ from CaCatHead.core.constants import Verdict
 from CaCatHead.judge.tasks import judge_polygon_submission, judge_repository_submission
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.submission.models import Submission
+from CaCatHead.submission.utils import can_rejudge_submission
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +50,11 @@ def submit_polygon_problem_code(user: User, repo: ProblemRepository, problem: Pr
 
 
 def rejudge_problem_code(is_repo: bool, submission: Submission):
-    submission.judged = None
+    if not can_rejudge_submission(submission):
+        raise APIException(detail='Rejudge 失败，请勿频繁 Rejudge', code=400)
+
     submission.verdict = Verdict.Waiting
+    submission.judged = None
     submission.score = 0
     submission.time_used = 0
     submission.memory_used = 0

@@ -10,6 +10,7 @@ from CaCatHead.core.constants import Verdict
 from CaCatHead.judge.tasks import judge_contest_submission
 from CaCatHead.problem.models import Problem
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
+from CaCatHead.submission.utils import can_rejudge_submission
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +64,9 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
             raise APIException(detail='Rejudge 失败，未找到注册信息', code=400)
     else:
         pass
+
+    if not can_rejudge_submission(contest_submission):
+        raise APIException(detail='Rejudge 失败，请勿频繁 Rejudge', code=400)
 
     contest_submission.verdict = Verdict.Waiting
     contest_submission.score = 0

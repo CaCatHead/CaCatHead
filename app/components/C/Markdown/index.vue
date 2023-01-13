@@ -27,4 +27,12 @@ const result = computed(() => render(content.value));
   color: inherit;
   background-color: inherit;
 }
+
+.markdown-body ul {
+  list-style-type: circle;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
 </style>

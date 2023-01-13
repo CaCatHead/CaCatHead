@@ -8,7 +8,8 @@
       "title": "系统公告",
       "owner": 1,
       "sort_time": "2022-10-26T18:20:03.089Z",
-      "is_public": true
+      "is_public": true,
+      "is_home": true
     }
   },
   {
@@ -28,7 +29,8 @@
       "title": "公告测试",
       "owner": 1,
       "sort_time": "2022-10-26T18:20:03.089Z",
-      "is_public": false
+      "is_public": false,
+      "is_home": false
     }
   },
   {

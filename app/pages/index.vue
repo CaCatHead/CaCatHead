@@ -5,7 +5,7 @@ useHead({
   title: '主页',
 });
 
-const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/public');
+const { data } = await useFetchAPI<{ posts: Post[] }>('/api/posts/home');
 
 const posts = ref(data.value?.posts ?? []);
 </script>

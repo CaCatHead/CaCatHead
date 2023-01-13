@@ -1,17 +1,36 @@
 <script setup lang="ts">
-import type { FullContest, Problem } from '@/composables/types';
+import type {
+  FullContest,
+  ContestStanding,
+  ContestSubmission,
+  Problem,
+  Registration,
+} from '@/composables/types';
 
 import { displyaIdToIndex } from '@/composables/contest';
 
 const route = useRoute();
 
-const props = defineProps<{ contest: FullContest }>();
+const props = defineProps<{
+  contest: FullContest;
+  solved: Record<string, boolean>;
+  registration: Registration | null;
+}>();
 
-const { contest } = toRefs(props);
+const { contest, solved } = toRefs(props);
 
 useHead({
   title: `面板 - ${contest.value.title}`,
 });
+
+const getProblemVerdict = (problem: Problem) => {
+  const pid = String(problem.display_id);
+  if (pid in solved.value) {
+    return solved.value[pid] ? Verdict.Accepted : Verdict.WrongAnswer;
+  } else {
+    return undefined;
+  }
+};
 
 const lastProblem = useContestLastProblem(route.params.id);
 const goSubmit = async (problem: Problem) => {
@@ -32,6 +51,7 @@ const goSubmit = async (problem: Problem) => {
               row.display_id
             )}`
         "
+        :problem-verdict="getProblemVerdict"
         @submit="goSubmit"
       ></problem-list>
 

@@ -17,6 +17,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission
+from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
@@ -56,7 +57,11 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
                                                      id=contest_id).first()
         if contest is not None:
             if contest.is_started():
-                if ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
+                if contest.is_ended():
+                    # 比赛已经结束
+                    return contest
+                elif ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
+                    # 比赛正在进行
                     return contest
                 else:
                     raise NotFound(detail='你尚未注册该比赛')
@@ -103,7 +108,26 @@ def get_contest_public(request: Request, contest_id: int):
 def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
+
+    teams = [make_single_user_team(request.user).id]
+    if registration is not None:
+        teams.append(registration.team.id)
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
+    solved = {}
+    for r in submissions.values_list('problem__display_id', 'verdict'):
+        pid = r[0]
+        verdict = r[1]
+        if pid in solved and solved[pid]:
+            continue
+        if verdict == Verdict.Accepted:
+            solved[pid] = True
+        elif verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
+                         Verdict.IdlenessLimitExceeded,
+                         Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+            solved[pid] = False
+
     return make_response(contest=ContestContentSerializer(contest).data,
+                         solved=solved,
                          registration=ContestRegistrationSerializer(registration).data,
                          is_admin=contest.has_admin_permission(request.user))
 
@@ -190,6 +214,8 @@ def user_submit_code(request: Request, contest_id: int, problem_id: int):
 
 
 @api_view()
+@cache_page(1)
+@vary_on_headers("Authorization", )
 def user_list_own_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     teams = [make_single_user_team(request.user).id]
@@ -197,7 +223,12 @@ def user_list_own_submissions(request: Request, contest_id: int):
     if registration is not None:
         teams.append(registration.team.id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
-    return make_response(submissions=ContestSubmissionSerializer(submissions, many=True).data)
+
+    page = int(request.query_params.get('page', 1))
+    page_size = int(request.query_params.get('page_size', 30))
+    paginator = Paginator(submissions, page_size)
+    return make_response(count=paginator.count, page=page, page_size=page_size, num_pages=paginator.num_pages,
+                         submissions=ContestSubmissionSerializer(paginator.page(page).object_list, many=True).data)
 
 
 @api_view()
@@ -206,6 +237,16 @@ def user_list_own_submissions(request: Request, contest_id: int):
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
+
+    problem_id = request.query_params.get('problem', None)
+    if problem_id is not None:
+        problem_id = int(problem_id)
+        problem = contest.get_problem(problem_id)
+        submissions = submissions.filter(problem__display_id=problem.display_id)
+
+    verdict = request.query_params.get('verdict', None)
+    if verdict is not None:
+        submissions = submissions.filter(verdict=verdict)
 
     def get_response():
         page = int(request.query_params.get('page', 1))

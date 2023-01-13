@@ -27,7 +27,7 @@ const handleSelect = (e: any) => {
         >(查看<nuxt-link to="/nodes" text-link>编译器版本</nuxt-link>)</span
       ></label
     >
-    <c-select id="language" @click="handleSelect">
+    <c-select id="language" @click="handleSelect" v-model="language">
       <option value="c" :selected="language === 'c'">C</option>
       <option value="cpp" :selected="language === 'cpp'">C++</option>
       <option value="java" :selected="language === 'java'">Java</option>

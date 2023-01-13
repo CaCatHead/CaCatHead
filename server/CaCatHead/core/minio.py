@@ -6,19 +6,26 @@ from CaCatHead.config import cacathead_config
 
 TESTCASE_BUCKET = cacathead_config.testcase.minio.bucket
 
-# MinIO
-MINIO_PATH = f'{cacathead_config.testcase.minio.host}:{cacathead_config.testcase.minio.port}'
-MINIO_CLIENT = Minio(MINIO_PATH,
-                     access_key=cacathead_config.testcase.minio.username,
-                     secret_key=cacathead_config.testcase.minio.password,
-                     secure=False) if cacathead_config.testcase.minio.host != 'N/A' else None
 
-if MINIO_CLIENT is not None:
-    print(f'Connecting to MinIO at {MINIO_PATH}...')
-    if not MINIO_CLIENT.bucket_exists(TESTCASE_BUCKET):
-        MINIO_CLIENT.make_bucket(TESTCASE_BUCKET)
-else:
-    print(f'Fail connecting MinIO')
+# Get MinIO Client
+def get_minio_client():
+    minio_url = f'{cacathead_config.testcase.minio.host}:{cacathead_config.testcase.minio.port}'
+    minio_client = Minio(minio_url,
+                         access_key=cacathead_config.testcase.minio.username,
+                         secret_key=cacathead_config.testcase.minio.password,
+                         secure=False) if cacathead_config.testcase.minio.host != 'N/A' else None
+
+    if minio_client is not None:
+        print(f'Connecting to MinIO at {minio_url}...')
+        if not minio_client.bucket_exists(TESTCASE_BUCKET):
+            minio_client.make_bucket(TESTCASE_BUCKET)
+    else:
+        print(f'Fail connecting MinIO')
+
+    return minio_client
+
+
+MINIO_CLIENT = get_minio_client()
 
 
 def upload_minio_testcase(problem_dir: str, file: Path):

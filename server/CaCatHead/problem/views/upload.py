@@ -78,21 +78,27 @@ class ProblemDirectory:
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
         json.dump(self.config, open(self.root / 'config.json', 'w', encoding='UTF-8'), indent=2, ensure_ascii=False)
 
-    def upload_testcases(self):
+    def upload_testcases(self) -> bool:
         directory = self.root.name
         for testcase in self.config['testcases']:
-            upload_minio_testcase(directory, self.root / testcase['input'])
-            upload_minio_testcase(directory, self.root / testcase['answer'])
+            if not upload_minio_testcase(directory, self.root / testcase['input']):
+                return False
+            if not upload_minio_testcase(directory, self.root / testcase['answer']):
+                return False
+        return True
 
-    def download_testcases(self):
+    def download_testcases(self) -> bool:
         directory = self.root.name
         for testcase in self.config['testcases']:
             input_file = self.root / testcase['input']
             if not input_file.exists():
-                download_minio_testcase(directory, input_file)
+                if not download_minio_testcase(directory, input_file):
+                    return False
             answer_file = self.root / testcase['answer']
             if not answer_file.exists():
-                download_minio_testcase(directory, answer_file)
+                if not download_minio_testcase(directory, answer_file):
+                    return False
+        return True
 
     def generate_zip(self):
         mem_zip = BytesIO()
@@ -160,7 +166,8 @@ def upload_problem_arch(problem: Problem, file: InMemoryUploadedFile) -> Problem
     try:
         if try_unzip_problem_arch(problem_root, zip_file_name, file):
             problem_directory = ProblemDirectory(problem_root)
-            problem_directory.upload_testcases()
+            if not problem_directory.upload_testcases():
+                return None
             return problem_directory
         else:
             return None

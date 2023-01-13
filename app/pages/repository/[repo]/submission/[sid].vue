@@ -80,7 +80,7 @@ const rejudge = async () => {};
           ><display-language :language="row.language"
         /></template>
         <template #verdict="{ row }">
-          <verdict :verdict="row.verdict"></verdict>
+          <display-verdict :verdict="row.verdict"></display-verdict>
         </template>
         <template #time="{ row }">{{ row.time_used }} ms</template>
         <template #memory="{ row }"

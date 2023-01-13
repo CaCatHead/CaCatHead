@@ -16,7 +16,7 @@ const lastProblem = useContestLastProblem(route.params.id);
 
 const problem = ref(lastProblem.value);
 const handleSelect = (e: any) => {
-  problem.value = e?.target?.value ?? 1000;
+  problem.value = +(e?.target?.value ?? 1000);
 };
 
 const submit = async (payload: { code: string; language: string }) => {
@@ -46,7 +46,7 @@ const submit = async (payload: { code: string; language: string }) => {
       <problem-submit @submit="submit">
         <div>
           <label for="problem" font-600 mb2 inline-block>题目</label>
-          <c-select id="problem" @click="handleSelect">
+          <c-select id="problem" @click="handleSelect" v-model="problem">
             <option
               v-for="p in contest.problems"
               :value="p.display_id"
