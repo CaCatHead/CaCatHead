@@ -3,12 +3,17 @@ useHead({
   title: '注册',
 });
 
+const notify = useNotification();
+
+const route = useRoute();
+
 const username = ref('');
 const email = ref('');
 const password = ref('');
+
 const register = async () => {
   try {
-    await $fetch<{ token: string; expiry: string }>('api/auth/register', {
+    await $fetch<{ token: string; expiry: string }>('/api/auth/register', {
       method: 'POST',
       body: {
         username: username.value,
@@ -16,9 +21,18 @@ const register = async () => {
         password: password.value,
       },
     });
-    await navigateTo('/login');
-  } catch (error) {
+
+    notify.success(`用户 ${username.value} 注册成功`);
+
+    await navigateTo({
+      path: '/login',
+      query: {
+        redirect: route.query.redirect,
+      },
+    });
+  } catch (error: any) {
     // show error message
+    notify.danger(error?.response?._data?.detail ?? '未知错误');
   }
 };
 </script>

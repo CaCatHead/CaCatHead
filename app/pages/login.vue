@@ -7,14 +7,14 @@ useHead({
 
 const route = useRoute();
 
-const notfiy = useNotification();
+const notify = useNotification();
 
 const username = ref('');
 const password = ref('');
 const login = async () => {
   try {
     const resp = await $fetch<{ token: string; expiry: string }>(
-      'api/auth/login',
+      '/api/auth/login',
       {
         method: 'POST',
         body: {
@@ -34,7 +34,7 @@ const login = async () => {
     }
   } catch (error: any) {
     // show error message
-    notfiy.danger(error?.response?._data?.detail ?? '未知错误');
+    notify.danger(error?.response?._data?.detail ?? '未知错误');
   }
 };
 </script>
