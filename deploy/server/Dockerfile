@@ -33,7 +33,6 @@ RUN cd /usr/src/CatJudge \
   && cmake -DCMAKE_BUILD_TYPE:STRING=Release -B ./build -G "Unix Makefiles" \
   && cmake --build ./build --config Release --target all \
   && cd ./build \
-  && ctest --verbose \
   && cp ./main /usr/bin/catj \
   && cp ./fcmp /root/checkers/fcmp \
   && cp ./hcmp /root/checkers/hcmp \
@@ -44,7 +43,8 @@ RUN cd /usr/src/CatJudge \
   && cp ./rcmp6 /root/checkers/rcmp6 \
   && cp ./rcmp9 /root/checkers/rcmp9 \
   && cp ./wcmp /root/checkers/wcmp \
-  && cp ./yesno /root/checkers/yesno
+  && cp ./yesno /root/checkers/yesno \
+  && ctest --verbose
 
 FROM python:3.10 AS runtime
 
@@ -56,16 +56,18 @@ RUN apt-get update \
   && apt-get install -y cron gcc g++ default-jdk default-jre
 
 RUN mkdir -v /usr/src/.venv \
-  && mkdir -p /root/catj/logs
+  && mkdir -p /root/catj/logs \
+  && mkdir -p /root/checkers
 
 COPY --from=builder /usr/src/.venv/ /usr/src/.venv/
 
 COPY --from=builder /usr/local/include/testlib.h /usr/local/include/testlib.h
 
-COPY --from=builder /usr/bin/catj \
-    /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp /root/checkers/ncmp /root/checkers/nyesno \
-    /root/checkers/rcmp4 /root/checkers/rcmp6 /root/checkers/rcmp9 /root/checkers/wcmp /root/checkers/yesno \
-    /root/checkers/
+COPY --from=builder /usr/bin/catj /usr/bin/catj
+
+COPY --from=builder /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp /root/checkers/ncmp /root/checkers/nyesno \
+                    /root/checkers/rcmp4 /root/checkers/rcmp6 /root/checkers/rcmp9 /root/checkers/wcmp /root/checkers/yesno \
+                    /root/checkers/
 
 ADD ./server /root/CaCatHead
 
