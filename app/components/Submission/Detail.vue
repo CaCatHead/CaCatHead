@@ -103,8 +103,18 @@ watch(
         </div>
 
         <div v-show="expand[index]" mt4>
-          <div>
-            <div text-sm font-bold>Checker 运行信息</div>
+          <div flex items-center lt-sm="flex-col items-start">
+            <div text-sm font-bold sm:w="1/5">Checker 运行信息</div>
+            <div space-x-4 sm:w="1/5">
+              <span inline-flex items-center lt-sm="justify-center">
+                <span i-carbon-time text-lg mr1></span>
+                <span>{{ testcase.checker?.time }} ms</span>
+              </span>
+              <span inline-flex items-center lt-sm="justify-end">
+                <span i-carbon-chip text-lg mr1></span>
+                <span>{{ testcase.checker?.memory }} KB</span>
+              </span>
+            </div>
           </div>
           <div shadow-box rounded p2 mt2 v-if="testcase.message">
             <pre whitespace-normal>{{ testcase.message }}</pre>

@@ -176,6 +176,10 @@ interface SubmissionDetail {
     time: number;
     memory: number;
     score: number;
+    checker?: {
+      time: number;
+      memory: number;
+    };
     sample?: boolean;
     message?: string;
   }>;
