@@ -177,6 +177,7 @@ interface SubmissionDetail {
     memory: number;
     score: number;
     sample?: boolean;
+    message?: string;
   }>;
   score: number;
   verdict: string;
