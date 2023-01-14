@@ -24,8 +24,8 @@ const getBg = (row: Problem) => {
     const verdict = problemVerdict.value(row);
     if (verdict) {
       return verdict === Verdict.Accepted
-        ? '[&>td:last-child]:bg-[#e0ffe4]'
-        : '[&>td:last-child]:bg-[#ffe3e3]';
+        ? '[&>td:first-child]:bg-[#e0ffe4]'
+        : '[&>td:first-child]:bg-[#ffe3e3]';
     } else {
       return '';
     }

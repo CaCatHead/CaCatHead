@@ -6,13 +6,13 @@ from CaCatHead.user.serializers import UserSerializer
 
 
 class CreateContestPayloadSerializer(serializers.Serializer):
-    title = serializers.CharField(max_length=256)
+    title = serializers.CharField(max_length=64)
 
     type = serializers.CharField(max_length=64)
 
 
 class EditContestPayloadSerializer(serializers.Serializer):
-    title = serializers.CharField(required=False, allow_null=True, max_length=256)
+    title = serializers.CharField(required=False, allow_null=True, max_length=64)
 
     description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
@@ -35,7 +35,7 @@ class EditContestPayloadSerializer(serializers.Serializer):
 
 
 class UserRegisterPayloadSerializer(serializers.Serializer):
-    name = serializers.CharField(required=False, allow_null=True, max_length=256)
+    name = serializers.CharField(required=False, allow_null=True, max_length=32)
 
     password = serializers.CharField(required=False, allow_null=True, max_length=256)
 

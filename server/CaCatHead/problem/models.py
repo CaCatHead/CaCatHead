@@ -1,5 +1,3 @@
-from enum import Enum, unique
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -8,8 +6,7 @@ from CaCatHead.core.models import BaseModel
 from CaCatHead.permission.managers import PermissionManager
 
 
-@unique
-class ProblemTypes(str, Enum):
+class ProblemTypes(models.TextChoices):
     # OI 赛制, 计算得分
     Score = 'classic_score'
     # XCPC 赛制, 返回是否正确
@@ -20,7 +17,25 @@ class ProblemTypes(str, Enum):
     Custom = 'custom'
 
 
-ProblemTypeChoices = [(member.name, member.value) for member in ProblemTypes]
+class DefaultCheckers(models.TextChoices):
+    custom = 'custom'
+    fcmp = 'fcmp'
+    hcmp = 'hcmp'
+    lcmp = 'lcmp'
+    ncmp = 'ncmp'
+    nyesno = 'nyesno'
+    rcmp4 = 'rcmp4'
+    rcmp6 = 'rcmp6'
+    rcmp9 = 'rcmp9'
+    wcmp = 'wcmp'
+    yesno = 'yesno'
+
+
+class SourceCodeTypes(models.TextChoices):
+    checker = 'checker'
+    generator = 'generator'
+    validator = 'validator'
+    solution = 'solution'
 
 
 class ProblemContent(BaseModel):
@@ -47,10 +62,27 @@ class ProblemContent(BaseModel):
         verbose_name_plural = _(u"题目内容列表")
 
 
+class SourceCode(BaseModel):
+    type = models.CharField(choices=SourceCodeTypes.choices, max_length=32, verbose_name=_(u"代码类型"))
+
+    code = models.TextField(blank=True, verbose_name=_(u"代码"))
+
+    code_length = models.IntegerField(default=0, verbose_name=_(u"代码长度"))
+
+    language = models.CharField(max_length=32, verbose_name=_(u"程序语言"))
+
+    extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
+
+    class Meta:
+        db_table = 'source_code'
+        verbose_name = _(u"题目代码")
+        verbose_name_plural = _(u"题目代码列表")
+
+
 class ProblemJudge(models.Model):
     problem_type = models.CharField(default=ProblemTypes.AC,
                                     max_length=32,
-                                    choices=ProblemTypeChoices,
+                                    choices=ProblemTypes.choices,
                                     verbose_name=_(u"题目类型"))
 
     time_limit = models.IntegerField(default=1000, verbose_name=_(u"时间限制"))
@@ -62,6 +94,14 @@ class ProblemJudge(models.Model):
     testcase_count = models.IntegerField(default=0, verbose_name=_(u"测试用例总数"))
 
     testcase_detail = models.JSONField(default=list, verbose_name=_(u"测试用例配置"))
+
+    checker = models.CharField(default=DefaultCheckers.lcmp, choices=DefaultCheckers.choices, max_length=64,
+                               verbose_name=_(u"checker"))
+
+    custom_checker = models.ForeignKey(SourceCode, default=None, null=True,
+                                       on_delete=models.CASCADE,
+                                       related_name='problem_judge_custom_checker',
+                                       verbose_name=_(u"自定义 Checker"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
@@ -133,7 +173,7 @@ class Problem(BaseModel):
 
     problem_type = models.CharField(default=ProblemTypes.AC,
                                     max_length=32,
-                                    choices=ProblemTypeChoices,
+                                    choices=ProblemTypes.choices,
                                     verbose_name=_(u"题目类型"))
 
     time_limit = models.IntegerField(default=1000, verbose_name=_(u"时间限制"))
