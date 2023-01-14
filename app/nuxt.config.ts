@@ -104,6 +104,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@nuxt/image-edge',
+    '@nuxtjs/device',
     // '@nuxtjs/fontaine', // TODO: not work with katex
   ],
   unocss: {
