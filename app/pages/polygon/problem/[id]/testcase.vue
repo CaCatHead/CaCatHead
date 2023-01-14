@@ -156,10 +156,10 @@ const save = async () => {
       'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
     },
     onUploadProgress(ev) {
-      if (ev.total) {
-        progress.value = ev.loaded / ev.total;
+      if (ev.progress !== undefined) {
+        progress.value = ev.progress * 100;
       } else {
-        progress.value = ev.loaded / arch.length;
+        progress.value = (ev.loaded / arch.length) * 100.0;
       }
     },
   });
