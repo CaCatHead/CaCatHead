@@ -1,9 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from rest_framework import status
-from rest_framework.exceptions import APIException
 
 from .models import UserInfo, StudentInfo
+from ..core.exceptions import BadRequest
 
 
 def register_student_user(username: str, email: str, password: str):
@@ -30,4 +29,4 @@ def register_student_user(username: str, email: str, password: str):
         if type(error.args) == tuple and len(error.args) > 0:
             if error.args[0] == 'UNIQUE constraint failed: auth_user.username':
                 message = f'用户名 {username} 已经被注册'
-        raise APIException(detail=message, code=status.HTTP_400_BAD_REQUEST)
+        raise BadRequest(detail=message)

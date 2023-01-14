@@ -2,11 +2,11 @@ import logging
 
 from django.contrib.auth.models import User
 from django.utils import timezone
-from rest_framework.exceptions import APIException
 
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.services.registration import make_single_user_team
 from CaCatHead.core.constants import Verdict
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.judge.tasks import judge_contest_submission
 from CaCatHead.problem.models import Problem
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
@@ -51,7 +51,7 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
-        raise APIException(detail='提交代码失败', code=400)
+        raise BadRequest(detail='提交代码失败')
 
 
 def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
@@ -61,12 +61,12 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
         if registration is not None:
             registration_id = registration.id
         else:
-            raise APIException(detail='Rejudge 失败，未找到注册信息', code=400)
+            raise BadRequest(detail='Rejudge 失败，未找到注册信息')
     else:
         pass
 
     if not can_rejudge_submission(contest_submission):
-        raise APIException(detail='Rejudge 失败，请勿频繁 Rejudge', code=400)
+        raise BadRequest(detail='Rejudge 失败，请勿频繁 Rejudge')
 
     contest_submission.verdict = Verdict.Waiting
     contest_submission.score = 0
@@ -80,4 +80,4 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
-        raise APIException(detail='提交代码失败', code=400)
+        raise BadRequest(detail='提交代码失败')

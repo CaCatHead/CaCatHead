@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.exceptions import NotFound, APIException, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.request import Request
 from rest_framework.views import APIView
@@ -19,6 +19,7 @@ from CaCatHead.contest.services.registration import single_user_register, make_s
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.problem.serializers import SubmitCodePayload
 from CaCatHead.submission.models import ContestSubmission
@@ -162,15 +163,15 @@ def user_register_contest(request: Request, contest_id: int):
     contest = check_register_contest(user=request.user, contest_id=contest_id)
     # 比赛结束后，无法注册
     if timezone.now() > contest.end_time:
-        raise APIException(detail='比赛已结束', code=400)
+        raise BadRequest(detail='比赛已结束')
     # 检查比赛邀请码是否输入正确
     if contest.password is not None and len(contest.password) > 0:
         if 'password' in request.data:
             password = request.data['password']
             if password != contest.password:
-                raise APIException(detail='比赛邀请码错误', code=400)
+                raise BadRequest(detail='比赛邀请码错误')
         else:
-            raise APIException(detail='请填写比赛邀请码', code=400)
+            raise BadRequest(detail='请填写比赛邀请码')
     # TODO: 检查用户是否已经注册该比赛
     registration = single_user_register(user=request.user, contest=contest,
                                         name=request.data['name'],
@@ -190,14 +191,14 @@ def user_unregister_contest(request: Request, contest_id: int):
 
     # 比赛开始后，无法取消注册
     if timezone.now() >= contest.start_time:
-        raise APIException(detail='比赛已开始', code=400)
+        raise BadRequest(detail='比赛已开始')
 
     # 只有队长可以取消注册
     if registration.team.owner == request.user:
         registration.delete()
         return make_response()
     else:
-        raise APIException(detail='只有队伍的队长可以取消比赛注册', code=400)
+        raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
 
 
 @api_view(['POST'])
@@ -322,9 +323,9 @@ def user_view_standings(request: Request, contest_id: int):
         if contest.enable_settings(ContestSettings.view_standings):
             return response
         else:
-            raise APIException(detail='您无权访问比赛榜单', code=400)
+            raise BadRequest(detail='您无权访问比赛榜单')
     elif contest.is_ended():
         # 比赛结束，可以查看榜单
         return response
     else:
-        raise APIException(detail='您无权访问比赛榜单', code=400)
+        raise BadRequest(detail='您无权访问比赛榜单')
