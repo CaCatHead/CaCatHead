@@ -1,13 +1,19 @@
+import logging
+import random
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.db.models import RestrictedError
 from django.utils import timezone
 from rest_framework.exceptions import NotFound
 
 from CaCatHead.contest.models import Contest, ContestType, ContestSettings
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.views import copy_repo_problem, MAIN_PROBLEM_REPOSITORY
+
+logger = logging.getLogger(__name__)
 
 
 def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
@@ -71,22 +77,70 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
 
 
 def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
-    # 删除之前的题目
-    old_problems = map(lambda p: p.id, contest.problem_repository.problems.all())
-    contest.problem_repository.problems.clear()
-    for pid in old_problems:
-        problem = Problem.objects.get(id=pid)
+    """
+    更新比赛的题目列表:
+    user: 操作比赛列表的当前用户
+    contest: 比赛
+    problems: Polygon Problem ID 列表
+    """
+    # 准备加入题库的 Polygon Problem 列表
+    polygon_problems = []
+    # Polygon Problem Info 信息 -> 新的 display_id 映射
+    problem_info_display_id = {}
+    # 查找对应的 Polygon Problems，检查是否拥有加入题库的权限
+    for (display_id, polygon_id) in enumerate(problems):
+        problem: Problem = Problem.objects.filter_user_permission(user=user,
+                                                                  problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                                  id=polygon_id,
+                                                                  permission=ProblemPermissions.Copy).first()
         if problem is not None:
-            problem.delete()
-
-    # 复制新的题目
-    for p in problems:
-        problem = Problem.objects.filter_user_permission(user=user,
-                                                         problemrepository=MAIN_PROBLEM_REPOSITORY,
-                                                         id=p,
-                                                         permission=ProblemPermissions.Copy).first()
-        if problem is not None:
-            copy_repo_problem(user=contest.owner, repo=contest.problem_repository, problem=problem)
+            if problem.problem_info_id in problem_info_display_id:
+                raise BadRequest(detail=f'你不能重复添加 Polygon 题目 #{polygon_id}.')
+            else:
+                problem_info_display_id[problem.problem_info_id] = display_id
+                polygon_problems.append(problem)
         else:
-            raise NotFound(detail=f'未找到题目{p}，或者权限不足')
+            raise NotFound(detail=f'未找到 Polygon 题目 #{polygon_id}.，或者权限不足')
+
+    # Polygon Problem Info 信息 -> 旧 Contest Problem 映射
+    problem_info_contest_problem = {}
+    # 复用旧题目时，先将旧题目的 display_id 移动到临时的地方，避免 display_id 冲突
+    temp_base_display_id = random.randint(1000000, 1000000000)
+    # 尝试删除之前比赛使用的题目
+    for old_problem in Problem.objects.filter(repository_id=contest.problem_repository_id).all():
+        # 旧的题目已经被加入过了比赛，直接使用旧题目，不删除它
+        if old_problem.problem_info_id in problem_info_display_id:
+            if old_problem.problem_info_id not in problem_info_contest_problem:
+                problem_info_contest_problem[old_problem.problem_info_id] = old_problem
+                # 移动旧题目的 display_id 到临时的地方
+                old_problem.display_id = temp_base_display_id + old_problem.display_id
+                old_problem.save()
+            else:
+                # 该 Polygon Problem 对应了该 Contest 的很多 Problem，疑似旧的 Problem 未被删除
+                raise BadRequest(detail=f'#{old_problem.display_id}. {old_problem.title} 重复存在')
+        else:
+            # 尝试删除旧题目
+            try:
+                old_problem.delete()
+            except RestrictedError as ex:
+                # 有 ContestSubmission 引用这个题目
+                logger.error('Delete old contest problem fails: %r', ex)
+                raise BadRequest(detail=f'#{old_problem.display_id}. {old_problem.title} 有提交存在，删除失败')
+
+    # 清空旧的题库
+    contest.problem_repository.problems.clear()
+
+    # 向题库中添加题目
+    for (display_id, polygon_problem) in enumerate(polygon_problems):
+        if polygon_problem.problem_info_id in problem_info_contest_problem:
+            # 复用比赛中的旧题目
+            new_problem = problem_info_contest_problem[polygon_problem.problem_info_id]
+            new_problem.display_id = display_id
+            new_problem.save()
+            contest.problem_repository.problems.add(new_problem)
+        else:
+            # 添加新的比赛题目
+            copy_repo_problem(user=contest.owner, repo=contest.problem_repository,
+                              problem=polygon_problem, display_id=display_id)
+
     return contest

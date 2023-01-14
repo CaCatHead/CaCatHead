@@ -230,6 +230,18 @@ export type FullContestSubmission = BaseFullSubmission & {
   relative_time: number;
 };
 
+export interface ContestStandingSubmission {
+  i: number;
+
+  p: number;
+
+  v: string;
+
+  c: string;
+
+  r: number;
+}
+
 export interface ContestStanding {
   name: string;
 
@@ -244,6 +256,6 @@ export interface ContestStanding {
   is_participate: boolean;
 
   standings: {
-    submissions: ContestSubmission[];
+    submissions?: ContestStandingSubmission[];
   };
 }

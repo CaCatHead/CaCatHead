@@ -47,19 +47,19 @@ const registrations = computed(() => {
     > = {};
 
     for (const sub of r.standings?.submissions ?? []) {
-      const pid = displyaIdToIndex(sub.problem.display_id);
-      if (sub.verdict === Verdict.Accepted) {
+      const pid = displyaIdToIndex(sub.p);
+      if (sub.v === Verdict.Accepted) {
         if (!problems[pid]?.ok) {
           if (!problems[pid]) {
-            problems[pid] = { ok: true, time: sub.relative_time, dirty: 0 };
+            problems[pid] = { ok: true, time: sub.r, dirty: 0 };
           } else {
             problems[pid].ok = true;
-            problems[pid].time = sub.relative_time;
+            problems[pid].time = sub.r;
           }
         }
       } else {
         if (!problems[pid]) {
-          problems[pid] = { ok: false, time: sub.relative_time, dirty: 1 };
+          problems[pid] = { ok: false, time: sub.r, dirty: 1 };
         } else {
           if (!problems[pid].ok) {
             problems[pid].dirty += 1;
@@ -93,13 +93,6 @@ const registrations = computed(() => {
       } else {
         items[i].rank = i + 1;
       }
-    }
-    if (
-      items[i].score === 0 &&
-      (!items[i].standings.submissions ||
-        items[i].standings.submissions.length === 0)
-    ) {
-      items[i].rank = -1;
     }
   }
 

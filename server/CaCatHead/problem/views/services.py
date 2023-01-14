@@ -160,12 +160,16 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             raise APIException(detail={'detail': serializer.errors}, code=400)
 
 
-def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem):
-    display_id = repo.problems.aggregate(models.Max('display_id'))['display_id__max']
+def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):
+    """
+    移动 Polygon Problem 到 repo
+    """
     if display_id is None:
-        display_id = DEFAULT_DISPLAY_ID
-    else:
-        display_id += 1
+        display_id = repo.problems.aggregate(models.Max('display_id'))['display_id__max']
+        if display_id is None:
+            display_id = DEFAULT_DISPLAY_ID
+        else:
+            display_id += 1
 
     new_problem = Problem(repository=repo,
                           display_id=display_id,

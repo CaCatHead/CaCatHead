@@ -7,21 +7,19 @@ const props = defineProps<{ contest: FullContest }>();
 
 const { contest } = toRefs(props);
 
-const getPid = () => {
+const pid = computed(() => {
   const pid = route.params.pid as string;
-  const value = indexToOffset(pid);
+  const value = parseProblemIndex(pid);
   if (value !== undefined) {
     return value;
   } else {
     navigateTo(`/contest/${route.params.id}`);
     return 0;
   }
-};
+});
 
 const problem = computed(() => {
-  const pid = getPid();
-  const offset = 1000;
-  return contest.value.problems.find(p => p.display_id === pid + offset);
+  return contest.value.problems.find(p => p.display_id === pid.value);
 });
 
 if (problem.value === undefined) {
