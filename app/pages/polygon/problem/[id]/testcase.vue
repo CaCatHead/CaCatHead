@@ -70,6 +70,11 @@ const testcases = computed(() => {
   return testcases;
 });
 
+const API_BASE = useRuntimeConfig().API_BASE;
+const token = useToken();
+const loading = ref(false);
+const progress = ref(0);
+
 const save = async () => {
   if (files.value.length === 0) {
     notify.warning('没有上传测试用例');
@@ -137,16 +142,29 @@ const save = async () => {
   );
 
   notify.info('开始上传测试用例');
+
+  progress.value = 0;
+  loading.value = true;
+  const { default: axios } = await import('axios');
   const formData = new FormData();
   formData.append('file', new Blob([arch]));
-  await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
-    method: 'POST',
-    body: formData,
+  await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
+    baseURL: API_BASE,
     headers: {
+      Authorization: token.value,
       'Content-Type': 'application/zip',
       'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
     },
+    onUploadProgress(ev) {
+      if (ev.total) {
+        progress.value = ev.loaded / ev.total;
+      } else {
+        progress.value = ev.loaded / arch.length;
+      }
+    },
   });
+  progress.value = 100;
+  loading.value = false;
 
   notify.success(`题目 ${problem.value.title} 测试数据保存成功`);
 
@@ -157,6 +175,11 @@ const save = async () => {
 
 <template>
   <div>
+    <loading-indicator
+      :progress="progress"
+      :loading="loading"
+    ></loading-indicator>
+
     <div space-x-4>
       <c-file-input
         id="testcase"
