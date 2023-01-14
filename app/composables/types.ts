@@ -136,6 +136,10 @@ export interface ProblemContent {
 }
 
 export interface ProblemJudge {
+  checker: string;
+
+  custom_checker: {};
+
   testcase_detail: Array<{
     input: string;
     answer: string;

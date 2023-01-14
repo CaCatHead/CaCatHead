@@ -84,6 +84,7 @@ const onUpdateZip = async () => {
         <c-nav-item to="">预览</c-nav-item>
         <c-nav-item to="edit">编辑题面</c-nav-item>
         <c-nav-item to="testcase">测试数据</c-nav-item>
+        <c-nav-item to="checker">Checker</c-nav-item>
         <c-nav-item to="submit">提交代码</c-nav-item>
         <c-nav-item to="status">所有提交</c-nav-item>
         <c-nav-item to="permission" v-if="problem.owner.id === user?.id"
