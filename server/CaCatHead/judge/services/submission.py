@@ -315,22 +315,30 @@ class SubmissionTask:
                 if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
                                    Verdict.IdlenessLimitExceeded,
                                    Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+                    # 压缩榜单需要记录的信息
                     standings.append({
-                        'id': sub.id,
-                        'problem': {
-                            'display_id': sub.problem.display_id,
-                            'title': sub.problem.title
-                        },
-                        'code_length': sub.code_length,
-                        'language': sub.language,
-                        'created': sub.created.isoformat(),
-                        'judged': sub.judged.isoformat(),
-                        'relative_time': sub.relative_time,
-                        'verdict': sub.verdict,
-                        'score': sub.score,
-                        'time_used': sub.time_used,
-                        'memory_used': sub.memory_used
+                        'i': sub.id,
+                        'p': sub.problem.display_id,
+                        'v': sub.verdict,
+                        'c': sub.created.isoformat(),
+                        'r': sub.relative_time
                     })
+                    # standings.append({
+                    #     'id': sub.id,
+                    #     'problem': {
+                    #         'display_id': sub.problem.display_id,
+                    #         'title': sub.problem.title
+                    #     },
+                    #     'code_length': sub.code_length,
+                    #     'language': sub.language,
+                    #     'created': sub.created.isoformat(),
+                    #     'judged': sub.judged.isoformat(),
+                    #     'relative_time': sub.relative_time,
+                    #     'verdict': sub.verdict,
+                    #     'score': sub.score,
+                    #     'time_used': sub.time_used,
+                    #     'memory_used': sub.memory_used
+                    # })
 
             self.registration.score = score
             self.registration.dirty = dirty
