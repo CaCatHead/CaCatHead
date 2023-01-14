@@ -294,8 +294,8 @@ class SubmissionTask:
         self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')
         in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, in_file)
         ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, ans_file)
-        in_file_dst = os.path.join(self.tmp_dir, "in.in")
-        ans_file_dst = os.path.join(self.tmp_dir, "out.out")
+        in_file_dst = os.path.join(self.tmp_dir, "in.txt")
+        ans_file_dst = os.path.join(self.tmp_dir, "ans.txt")
         if not os.path.exists(in_file_src) or not os.path.exists(ans_file_src):
             raise NoTestDataException
         shutil.copyfile(in_file_src, in_file_dst)
@@ -308,14 +308,20 @@ class SubmissionTask:
 
     def read_result(self, testcase):
         result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
-        verdict = Verdict.parse(result_file.readline().strip())
-        run_time = int(result_file.readline().strip())
-        run_memory = int(result_file.readline().strip())
-        others = result_file.readline().strip()
+        verdict = Verdict.parse(result_file.readline().strip().split()[1])
+        run_time = int(result_file.readline().strip().split()[1])
+        run_memory = int(result_file.readline().strip().split()[1])
+        checker_time = int(result_file.readline().strip().split()[1])
+        checker_memory = int(result_file.readline().strip().split()[1])
+        others = result_file.read().strip()
         detail = {
             'verdict': verdict,
             'time': run_time,
             'memory': run_memory,
+            'checker': {
+                'time': checker_time,
+                'memory': checker_memory
+            },
             'message': others
         }
         if 'score' in testcase:
