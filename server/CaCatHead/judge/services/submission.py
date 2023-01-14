@@ -65,6 +65,7 @@ class SubmissionTask:
         self.problem_type = problem.problem_info.problem_judge.problem_type
         self.time_limit = problem.time_limit
         self.memory_limit = problem.memory_limit
+        self.checker = problem.problem_info.problem_judge.checker
         self.testcase_detail = problem.problem_info.problem_judge.testcase_detail
 
         self.log(f'Language: {self.language}')
@@ -238,7 +239,7 @@ class SubmissionTask:
 
     def run_sandbox(self):
         commands = ["catj", "-t", str(self.time_limit), "-m", str(self.memory_limit),
-                    "-d", self.tmp_dir, "-l", self.language]
+                    "-d", self.tmp_dir, "-l", self.language, "-s", self.checker]
         subprocess.call(commands)
 
     def read_result(self, testcase):
