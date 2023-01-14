@@ -142,7 +142,7 @@ class UserAuthTests(TestCase):
             "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
         assert resp.status_code == 400
-        assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
+        assert resp.data['username'][0] == "请确保这个字段不能超过 32 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
 
     def test_logout_token_fail(self):
@@ -182,7 +182,7 @@ class UserRegisterTests(TestCase):
             "password": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
         assert resp.status_code == 400
-        assert resp.data['username'][0] == "请确保这个字段不能超过 64 个字符。"
+        assert resp.data['username'][0] == "请确保这个字段不能超过 32 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
 
     def test_register_error_same_username(self):
