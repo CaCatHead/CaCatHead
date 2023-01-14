@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import ace, { type Ace } from 'ace-builds';
-
-// @ts-ignore
-import CppUrl from 'ace-builds/src-noconflict/mode-c_cpp?url';
-// @ts-ignore
-import JavaUrl from 'ace-builds/src-noconflict/mode-java?url';
-
-ace.config.setModuleUrl('ace/mode/c_cpp', CppUrl);
-ace.config.setModuleUrl('ace/mode/java', JavaUrl);
+// import ace, { type Ace } from 'ace-builds';
+import type { Ace } from 'ace-builds';
 
 const props = withDefaults(
   defineProps<{
@@ -71,17 +64,26 @@ watch(data, data => {
     }
   }
 });
-watch(language, language => {
+
+watch(language, async language => {
   if (editor.value && language) {
     editor.value.session.setMode('ace/mode/' + language);
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (process.server) {
     return;
   }
   if (element.value) {
+    const ace = await import('ace-builds');
+    // @ts-ignore
+    const ModeCppUrl = await import('ace-builds/src-noconflict/mode-c_cpp?url');
+    // @ts-ignore
+    const ModeJavaUrl = await import('ace-builds/src-noconflict/mode-java?url');
+    ace.config.setModuleUrl('ace/mode/c_cpp', ModeCppUrl.default);
+    ace.config.setModuleUrl('ace/mode/java', ModeJavaUrl.default);
+
     editor.value = ace.edit(element.value, {
       placeholder: placeholder.value,
       readOnly: readonly.value,

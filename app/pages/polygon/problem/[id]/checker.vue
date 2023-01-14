@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import type { FullPolygonProblem } from '@/composables/types';
 
+const route = useRoute();
+
+const notify = useNotification();
+
 const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
 const code = ref('');
 
+const CUSTOM = 'custom';
+
+const handleSelect = () => {
+  if (problem.value.problem_info.problem_judge.checker === CUSTOM) {
+    code.value = '';
+  }
+};
+
 watch(
   () => problem.value.problem_info.problem_judge.checker,
   checker => {
-    if (checker === 'custom') {
-      code.value = '';
+    if (checker === CUSTOM) {
       return;
     }
     for (const c of DefaultCheckers) {
@@ -33,10 +44,28 @@ watch(code, code => {
       return;
     }
   }
-  problem.value.problem_info.problem_judge.checker = 'custom';
+  problem.value.problem_info.problem_judge.checker = CUSTOM;
 });
 
-const save = async () => {};
+const save = async () => {
+  try {
+    await fetchAPI(`/api/polygon/${route.params.id}/checker`, {
+      method: 'POST',
+      body: {
+        type: problem.value.problem_info.problem_judge.checker,
+        ...(problem.value.problem_info.problem_judge.checker === 'custom'
+          ? {
+              code: code.value,
+              language: 'cpp',
+            }
+          : {}),
+      },
+    });
+    notify.success('Checker 设置成功');
+  } catch (error: any) {
+    notify.success('Checker 设置失败');
+  }
+};
 </script>
 
 <template>
@@ -46,6 +75,7 @@ const save = async () => {};
         <c-select
           id="checker"
           v-model="problem.problem_info.problem_judge.checker"
+          @click="handleSelect"
         >
           <option
             value="custom"
@@ -70,6 +100,13 @@ const save = async () => {};
 
     <client-only>
       <code-editor w-full h="500px" v-model="code"></code-editor>
+      <div text-right text-sm text-base-400>
+        <span
+          >你只能使用 C++ 语言，使用
+          <a href="https://oi-wiki.org/tools/testlib/checker/">testlib</a> 编写
+          Checker</span
+        >
+      </div>
       <template #fallback>
         <div w-full shadow-box p4 rounded>
           <pre w-full overflow-auto>{{ code }}</pre>
