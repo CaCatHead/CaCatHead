@@ -239,13 +239,13 @@ def user_view_all_submissions(request: Request, contest_id: int):
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
 
     problem_id = request.query_params.get('problem', None)
-    if problem_id is not None:
+    if problem_id is not None and len(problem_id) > 0:
         problem_id = int(problem_id)
         problem = contest.get_problem(problem_id)
         submissions = submissions.filter(problem__display_id=problem.display_id)
 
     verdict = request.query_params.get('verdict', None)
-    if verdict is not None:
+    if verdict is not None and len(verdict) > 0:
         submissions = submissions.filter(verdict=verdict)
 
     def get_response():

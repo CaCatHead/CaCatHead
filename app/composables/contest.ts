@@ -3,7 +3,7 @@ import type { Contest, User } from './types';
 import { formatInterval } from './date';
 
 export const useContestLastProblem = (id: string | string[]) =>
-  useLocalStorage(`contest/${id}/last-problem`, 1000);
+  useLocalStorage(`contest/${id}/last-problem`, 0);
 
 export const isContestStart = (contest: Contest) => {
   const now = new Date();
@@ -50,27 +50,27 @@ export const isContestAdmin = (contest: Contest, user: User | undefined) => {
   return user && contest.owner.id === user.id;
 };
 
-export function indexToOffset(pid: string) {
+export function parseProblemIndex(pid: string) {
   if (/^[A-Z]$/.test(pid)) {
     return pid.charCodeAt(0) - 65;
   } else if (/^[a-z]$/.test(pid)) {
     return pid.charCodeAt(0) - 97;
+  } else if (/^[0-9]+$/.test(pid)) {
+    return +pid;
   } else {
     return undefined;
   }
 }
 
-const OFFSET = 0;
-
 export function indexToDisplayId(pid: string) {
-  const v = indexToOffset(pid);
+  const v = parseProblemIndex(pid);
   if (v !== undefined) {
-    return v + OFFSET;
+    return v;
   } else {
     return undefined;
   }
 }
 
 export function displyaIdToIndex(display_id: number) {
-  return String.fromCharCode(65 + (display_id - OFFSET));
+  return String.fromCharCode(65 + display_id);
 }

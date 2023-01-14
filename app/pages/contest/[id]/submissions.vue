@@ -12,17 +12,17 @@ useHead({
 });
 
 const page = computed(() => +(route.query.page ?? 1));
-const verdict = computed(() => route.query.verdict as string);
+const verdict = computed(() => route.query.verdict ?? undefined);
 const problem = computed(() => {
-  if (!route.query.problem) {
+  if (route.query.problem === undefined || route.query.problem === null) {
     return undefined;
   }
   const id = indexToDisplayId(route.query.problem as string);
-  if (!id) {
+  if (id !== undefined) {
+    return id;
+  } else {
     navigateTo(route.path);
     return undefined;
-  } else {
-    return id;
   }
 });
 
@@ -40,6 +40,24 @@ const { data } = await useFetchAPI<{
   },
 });
 
+const handleFilter = async (payload: {
+  verdict?: string | undefined;
+  problem?: string | undefined;
+}) => {
+  const query: Record<string, string> = {};
+  if (payload.verdict) {
+    query['verdict'] = payload.verdict;
+  }
+  if (payload.problem) {
+    query['problem'] = payload.problem;
+  }
+
+  await navigateTo({
+    path: route.path,
+    query,
+  });
+};
+
 const handlePageChange = async (toPage: number) => {
   await navigateTo({
     path: route.path,
@@ -49,7 +67,7 @@ const handlePageChange = async (toPage: number) => {
 </script>
 
 <template>
-  <contest-layout :contest="contest">
+  <contest-layout :contest="contest" @filter="handleFilter">
     <div text-sm>
       <c-table :data="data?.submissions ?? []">
         <template #headers>

@@ -7,6 +7,13 @@ const notify = useNotification();
 
 const props = defineProps<{ contest: FullContest }>();
 
+const emit = defineEmits<{
+  (
+    e: 'filter',
+    payload: { verdict?: string | undefined; problem?: string | undefined }
+  ): Promise<void>;
+}>();
+
 const { contest } = toRefs(props);
 
 const isAllSubmissions = computed(() => {
@@ -37,12 +44,14 @@ const filter = reactive({
     : undefined,
 });
 const goSubmissions = async () => {
-  await navigateTo({
-    path: route.path,
-    query: {
-      verdict: filter.verdict,
-      problem: filter.problem ? displyaIdToIndex(+filter.problem) : undefined,
-    },
+  await emit('filter', {
+    verdict: filter.verdict,
+    problem:
+      filter.problem !== undefined &&
+      filter.problem !== null &&
+      !Number.isNaN(filter.problem)
+        ? displyaIdToIndex(+filter.problem)
+        : '',
   });
 };
 
