@@ -60,7 +60,7 @@ export function indexToOffset(pid: string) {
   }
 }
 
-const OFFSET = 1000;
+const OFFSET = 0;
 
 export function indexToDisplayId(pid: string) {
   const v = indexToOffset(pid);
