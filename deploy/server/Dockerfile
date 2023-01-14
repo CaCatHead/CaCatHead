@@ -26,23 +26,25 @@ ADD ./CatJudge /usr/src/CatJudge/
 RUN cd /usr/src/CatJudge \
   && cp ./testlib/testlib.h /usr/local/include/testlib.h \
   && mkdir -p /root/catj/logs \
+  && mkdir -p /root/checkers \
   && export LOG_PATH="/root/catj/logs" \
-  && export DEFAULT_CHECKER="/usr/bin/lcmp" \
+  && export CHECKER_ROOT="/root/checkers" \
+  && export DEFAULT_CHECKER="lcmp" \
   && cmake -DCMAKE_BUILD_TYPE:STRING=Release -B ./build -G "Unix Makefiles" \
   && cmake --build ./build --config Release --target all \
   && cd ./build \
-  && ctest --verbose \
   && cp ./main /usr/bin/catj \
-  && cp ./fcmp /usr/bin/fcmp \
-  && cp ./hcmp /usr/bin/hcmp \
-  && cp ./lcmp /usr/bin/lcmp \
-  && cp ./ncmp /usr/bin/ncmp \
-  && cp ./nyesno /usr/bin/nyesno \
-  && cp ./rcmp4 /usr/bin/rcmp4 \
-  && cp ./rcmp6 /usr/bin/rcmp6 \
-  && cp ./rcmp9 /usr/bin/rcmp9 \
-  && cp ./wcmp /usr/bin/wcmp \
-  && cp ./yesno /usr/bin/yesno
+  && cp ./fcmp /root/checkers/fcmp \
+  && cp ./hcmp /root/checkers/hcmp \
+  && cp ./lcmp /root/checkers/lcmp \
+  && cp ./ncmp /root/checkers/ncmp \
+  && cp ./nyesno /root/checkers/nyesno \
+  && cp ./rcmp4 /root/checkers/rcmp4 \
+  && cp ./rcmp6 /root/checkers/rcmp6 \
+  && cp ./rcmp9 /root/checkers/rcmp9 \
+  && cp ./wcmp /root/checkers/wcmp \
+  && cp ./yesno /root/checkers/yesno \
+  && ctest --verbose
 
 FROM python:3.10 AS runtime
 
@@ -54,16 +56,18 @@ RUN apt-get update \
   && apt-get install -y cron gcc g++ default-jdk default-jre
 
 RUN mkdir -v /usr/src/.venv \
-  && mkdir -p /root/catj/logs
+  && mkdir -p /root/catj/logs \
+  && mkdir -p /root/checkers
 
 COPY --from=builder /usr/src/.venv/ /usr/src/.venv/
 
 COPY --from=builder /usr/local/include/testlib.h /usr/local/include/testlib.h
 
-COPY --from=builder /usr/bin/catj \
-    /usr/bin/fcmp /usr/bin/hcmp /usr/bin/lcmp /usr/bin/ncmp /usr/bin/nyesno \
-    /usr/bin/rcmp4 /usr/bin/rcmp6 /usr/bin/rcmp9 /usr/bin/wcmp /usr/bin/yesno \
-    /usr/bin/
+COPY --from=builder /usr/bin/catj /usr/bin/catj
+
+COPY --from=builder /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp /root/checkers/ncmp /root/checkers/nyesno \
+                    /root/checkers/rcmp4 /root/checkers/rcmp6 /root/checkers/rcmp9 /root/checkers/wcmp /root/checkers/yesno \
+                    /root/checkers/
 
 ADD ./server /root/CaCatHead
 

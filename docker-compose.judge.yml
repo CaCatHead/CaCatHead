@@ -15,6 +15,7 @@ services:
       - catjudge_net
     volumes:
       - ./deploy/judge/cacathead.yml:/root/CaCatHead/cacathead.yml
+      - ./.cacathead/checkers:/root/checkers
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/logs/catj:/root/catj/logs
     secrets:

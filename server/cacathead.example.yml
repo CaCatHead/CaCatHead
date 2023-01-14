@@ -21,6 +21,8 @@ judge:
     repository: !ENV ${JUDGE_QUEUE:judge}.repository
     contest: !ENV ${JUDGE_QUEUE:judge}.contest
     polygon: !ENV ${JUDGE_QUEUE:judge}.polygon
+  checker:
+    root: !ENV ${CHECKER_ROOT:./.checker}
 
 testcase:
   root: !ENV ${TESTCASE_ROOT:./.testcase}

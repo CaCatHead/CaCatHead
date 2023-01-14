@@ -1,12 +1,11 @@
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-from rest_framework import status
-from rest_framework.exceptions import APIException
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
-    ProblemRepository
+    ProblemRepository, SourceCode, SourceCodeTypes, DefaultCheckers
 from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
 from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
@@ -52,7 +51,7 @@ def make_problem(title: str, user: User, display_id=None):
         problem_info.delete()
         problem_content.delete()
         problem_judge.delete()
-        raise APIException(detail='创建题目失败', code=status.HTTP_400_BAD_REQUEST)
+        raise BadRequest(detail='创建题目失败')
 
 
 def edit_problem(problem: Problem, payload: dict):
@@ -92,6 +91,25 @@ def edit_problem(problem: Problem, payload: dict):
     return problem
 
 
+def upload_custom_checker(problem: Problem, code: str, language: str):
+    old_checker = problem.problem_info.problem_judge.custom_checker
+
+    source = SourceCode(
+        type=SourceCodeTypes.checker,
+        code=code,
+        code_length=len(code),
+        language=language,
+    )
+    source.save()
+
+    problem.problem_info.problem_judge.checker = DefaultCheckers.custom
+    problem.problem_info.problem_judge.custom_checker = source
+    problem.problem_info.problem_judge.save()
+
+    if old_checker is not None:
+        old_checker.delete()
+
+
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
     problem = make_problem('unknown', user=user)
     problem_directory = upload_problem_arch(problem, zip_content)
@@ -108,7 +126,7 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
 
     if problem_directory is None:
         clear()
-        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+        raise BadRequest(detail='题目压缩包上传失败')
     else:
         try:
             save_arch_to_database(problem, problem_directory)
@@ -122,7 +140,7 @@ def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Proble
     problem_directory = upload_problem_arch(problem, zip_content)
 
     if problem_directory is None:
-        raise APIException(detail='题目压缩包上传失败', code=status.HTTP_400_BAD_REQUEST)
+        raise BadRequest(detail='题目压缩包上传失败')
     else:
         save_arch_to_database(problem, problem_directory)
         problem_directory.save_config(problem)
@@ -150,14 +168,14 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
                 problem_judge.score += testcase['score']
             problem_judge.save()
         if not valid:
-            raise APIException(detail='测试用例格式非法', code=status.HTTP_400_BAD_REQUEST)
+            raise BadRequest(detail='测试用例格式非法')
     if 'problem' in config_json:
         problem_config = config_json['problem']
         serializer = EditProblemPayload(data=problem_config)
         if serializer.is_valid():
             edit_problem(problem, problem_config)
         else:
-            raise APIException(detail={'detail': serializer.errors}, code=400)
+            raise BadRequest(detail={'detail': serializer.errors})
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):

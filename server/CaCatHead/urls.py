@@ -59,6 +59,7 @@ urlpatterns = [
     path('api/polygon/<int:problem_id>/upload', problem_views.edit_polygon_problem_by_upload),  # 上压缩包编辑题目
     path('api/polygon/<int:problem_id>/submit', problem_views.submit_polygon_problem),  # 提交题目代码
     path('api/polygon/<int:problem_id>/submissions', problem_views.list_polygon_problem_submissions),  # 提交题目代码
+    path('api/polygon/<int:problem_id>/checker', problem_views.upload_polygon_problem_checker),  # 更新题目 checker
     path('api/polygon/<int:problem_id>/permission', problem_views.PolygonPermission.as_view()),  # 将创建的题目向他人授权
     path('api/polygon/own', problem_views.list_polygon_problems),  # 用户上传的题目列表
     path('api/polygon/submissions', problem_views.list_polygon_submissions),  # 获取所有提交状态

@@ -19,6 +19,7 @@ importers:
       '@iconify-json/ic': ^1.1.12
       '@iconify-json/mdi': ^1.1.41
       '@nuxt/image-edge': 1.0.0-27840416.dc1ed65
+      '@nuxtjs/device': ^3.0.0
       '@nuxtjs/fontaine': ^0.2.4
       '@pinia/nuxt': ^0.4.6
       '@types/katex': ^0.16.0
@@ -26,6 +27,7 @@ importers:
       '@unocss/nuxt': ^0.48.0
       '@vueuse/core': ^9.10.0
       '@vueuse/nuxt': ^9.10.0
+      ace-builds: ^1.14.0
       date-fns: ^2.29.3
       fflate: ^0.7.4
       github-markdown-css: ^5.1.0
@@ -42,6 +44,7 @@ importers:
       '@pinia/nuxt': 0.4.6
       '@vueuse/core': 9.10.0
       '@vueuse/nuxt': 9.10.0_nuxt@3.0.0
+      ace-builds: 1.14.0
       date-fns: 2.29.3
       fflate: 0.7.4
       github-markdown-css: 5.1.0
@@ -55,6 +58,7 @@ importers:
       '@iconify-json/ic': 1.1.12
       '@iconify-json/mdi': 1.1.41
       '@nuxt/image-edge': 1.0.0-27840416.dc1ed65_hriulszuce5amvnyytahlvw3pe
+      '@nuxtjs/device': 3.0.0
       '@nuxtjs/fontaine': 0.2.4
       '@types/katex': 0.16.0
       '@types/node': 18.8.0
@@ -2050,6 +2054,16 @@ packages:
       - vls
       - vti
 
+  /@nuxtjs/device/3.0.0:
+    resolution: {integrity: sha512-81ZXEyJ/6rZEGTUIfgUjsHWBWB1InHayN83LVW63/TclVyrrb/Si47BczkGcIgmiETcKTM9iaqMLcDfu9M7BNg==}
+    dependencies:
+      '@nuxt/kit': 3.0.0
+      defu: 6.1.1
+    transitivePeerDependencies:
+      - rollup
+      - supports-color
+    dev: true
+
   /@nuxtjs/fontaine/0.2.4:
     resolution: {integrity: sha512-egOlWIQUMxXPAG3ltryF+R9lntSX4ovJu9iJ5IMbFnxo03DXBJMFIJSWhUNL/5jPUHkBoEFolaLZma5UtPpCpQ==}
     dependencies:
@@ -2857,6 +2871,10 @@ packages:
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
+
+  /ace-builds/1.14.0:
+    resolution: {integrity: sha512-3q8LvawomApRCt4cC0OzxVjDsZ609lDbm8l0Xl9uqG06dKEq4RT0YXLUyk7J2SxmqIp5YXzZNw767Dr8GKUruw==}
+    dev: false
 
   /acorn/8.8.1:
     resolution: {integrity: sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==}

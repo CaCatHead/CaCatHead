@@ -23,6 +23,7 @@ if [ "$1" = "server" ] ; then
   # start server
   /usr/src/.venv/bin/uvicorn CaCatHead.asgi:application --workers 4 --host 0.0.0.0 --port 8000
 elif [ "$1" = "judge" ] ; then
+  catj -v
   # wait rabbitmq bootstrap
   ./wait
   export C_FORCE_ROOT=true

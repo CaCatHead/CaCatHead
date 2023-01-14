@@ -10,13 +10,15 @@ from rest_framework.views import APIView
 
 from CaCatHead.core.decorators import HasPolygonPermission, func_validate_request, class_validate_request, \
     SubmitRateThrottle
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
-from CaCatHead.problem.models import Problem
+from CaCatHead.problem.models import Problem, DefaultCheckers
 from CaCatHead.problem.serializers import CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload, \
+    SubmitCheckerPayload
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
-    make_problem_by_uploading, edit_problem_by_uploading
+    make_problem_by_uploading, edit_problem_by_uploading, upload_custom_checker
 from CaCatHead.problem.views.submit import submit_polygon_problem_code, \
     rejudge_polygon_problem_code
 from CaCatHead.problem.views.upload import ProblemDirectory
@@ -87,6 +89,35 @@ def edit_polygon_problem(request: Request, problem_id: int):
     else:
         problem = edit_problem(problem=problem, payload=request.data)
         return make_response(problem=FullProblemSerializer(problem).get_or_raise())
+
+
+@api_view(['POST'])
+@permission_classes([HasPolygonPermission])
+@func_validate_request(SubmitCheckerPayload)
+def upload_polygon_problem_checker(request: Request, problem_id: int):
+    """
+    编辑自己创建的题目, 或者被授予编辑权限的题目
+    """
+    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     id=problem_id,
+                                                     user=request.user,
+                                                     permission=ProblemPermissions.Edit).first()
+    if problem is None:
+        raise NotFound('题目未找到')
+    else:
+        checker_type = request.data['type']
+        if checker_type == DefaultCheckers.custom:
+            code = request.data['code'] if 'code' in request.data else None
+            language = request.data['language'] if 'language' in request.data else None
+            if code is None or len(code) == 0:
+                raise BadRequest(detail='Checker 代码不能为空')
+            if language is None or len(language) == 0:
+                raise BadRequest(detail='Checker 语言不能为空')
+            upload_custom_checker(problem=problem, code=code, language=language)
+        else:
+            problem.problem_info.problem_judge.checker = checker_type
+            problem.problem_info.problem_judge.save()
+        return make_response()
 
 
 @api_view()

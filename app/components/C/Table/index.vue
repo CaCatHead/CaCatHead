@@ -40,8 +40,17 @@ provide(CTABLE, {
   border,
 });
 
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const smallScreen = computed(() => breakpoints.smallerOrEqual('sm').value);
+const breakpoints = process.server
+  ? undefined
+  : useBreakpoints(breakpointsTailwind);
+const device = process.server ? useDevice() : undefined;
+const smallScreen = computed(() => {
+  if (breakpoints === undefined) {
+    return device?.isMobile ?? false;
+  } else {
+    return breakpoints.smallerOrEqual('sm').value;
+  }
+});
 
 const MobileHeader = defineComponent({
   props: ['column'],
@@ -67,7 +76,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
   >
     <div v-if="smallScreen && mobile" space-y-4>
       <div hidden>
-        <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
+        <slot name="headers" v-bind="{ smallScreen }"></slot>
       </div>
       <div
         v-for="(row, index) in data"
@@ -102,7 +111,7 @@ const alignClasses = ['text-left', 'text-right', 'text-center'];
     >
       <thead select-none font-600>
         <tr :class="border && 'divide-x-1'">
-          <slot name="headers" v-bind="{ breakpoints, smallScreen }"></slot>
+          <slot name="headers" v-bind="{ smallScreen }"></slot>
         </tr>
       </thead>
       <tbody divide-y dark:divide="gray/40">

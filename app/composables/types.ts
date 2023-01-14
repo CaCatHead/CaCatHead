@@ -136,6 +136,12 @@ export interface ProblemContent {
 }
 
 export interface ProblemJudge {
+  checker: string;
+
+  custom_checker?: {
+    code: string;
+  };
+
   testcase_detail: Array<{
     input: string;
     answer: string;
@@ -170,7 +176,12 @@ interface SubmissionDetail {
     time: number;
     memory: number;
     score: number;
+    checker?: {
+      time: number;
+      memory: number;
+    };
     sample?: boolean;
+    message?: string;
   }>;
   score: number;
   verdict: string;

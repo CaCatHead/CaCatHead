@@ -10,11 +10,12 @@ from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.config import cacathead_config
-from CaCatHead.contest.models import ContestRegistration, ContestType
+from CaCatHead.contest.models import ContestRegistration
+from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
-from CaCatHead.problem.models import ProblemTypes
+from CaCatHead.problem.models import ProblemTypes, DefaultCheckers
 from CaCatHead.problem.views.upload import ProblemDirectory
-from CaCatHead.submission.models import Submission, ContestSubmission, ContestSubmissionType
+from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.submission')
 
@@ -26,8 +27,16 @@ class NoTestDataException(Exception):
     pass
 
 
+class NoCheckerException(Exception):
+    pass
+
+
 class NoLanguageException(Exception):
     pass
+
+
+def get_checker_path(source_id):
+    return Path(cacathead_config.judge.checker.root) / f'checker_{source_id}'
 
 
 class SubmissionTask:
@@ -64,6 +73,7 @@ class SubmissionTask:
         self.problem_type = problem.problem_info.problem_judge.problem_type
         self.time_limit = problem.time_limit
         self.memory_limit = problem.memory_limit
+        self.checker = problem.problem_info.problem_judge.checker
         self.testcase_detail = problem.problem_info.problem_judge.testcase_detail
 
         self.log(f'Language: {self.language}')
@@ -103,6 +113,11 @@ class SubmissionTask:
                                detail={'node': cacathead_config.judge.name})
 
         try:
+            self.prepare_checker()
+            if self.verdict == Verdict.CompileError:
+                # Checker 编译失败
+                raise NoCheckerException
+
             self.dump_code()
             self.compile_code()
 
@@ -110,6 +125,8 @@ class SubmissionTask:
                 self.verdict = Verdict.Running
                 self.update_submission(verdict=Verdict.Running)
                 self.judge()
+        except NoCheckerException:
+            self.verdict = Verdict.SystemError
         except NoTestDataException:
             self.verdict = Verdict.TestCaseError
         except NoLanguageException:
@@ -170,6 +187,55 @@ class SubmissionTask:
         shutil.copyfile(exec_file_src, exec_file_dst)
         os.chmod(exec_file_dst, 0o775)
 
+    def prepare_checker(self):
+        if self.checker == DefaultCheckers.custom:
+            self.checker = get_checker_path(self.submission.problem.problem_info.problem_judge.custom_checker_id)
+            if not self.checker.exists():
+                self.log(f"Start preparing custom checker {self.checker}")
+
+                custom_checker = self.submission.problem.problem_info.problem_judge.custom_checker
+                if custom_checker is None:
+                    raise NoCheckerException
+
+                cwd = Path(tempfile.mkdtemp())
+                os.chmod(cwd, 0o775)
+
+                try:
+                    if custom_checker.language == 'cpp':
+                        checker_code_file = 'Checker.cpp'
+                    elif custom_checker.language == 'c':
+                        checker_code_file = 'Checker.c'
+                    else:
+                        raise NoLanguageException
+
+                    file_handler = io.open(cwd / checker_code_file, 'w', encoding='utf8')
+                    file_handler.write(custom_checker.code)
+                    file_handler.close()
+
+                    if custom_checker.language == 'cpp':
+                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
+                                    "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
+                    elif custom_checker.language == 'c':
+                        (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
+                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
+                                    "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+                    else:
+                        raise NoLanguageException
+
+                    self.log(f"Start compiling custom checker {self.checker}")
+                    subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+                    os.chmod(self.checker, 0o775)
+                except subprocess.CalledProcessError as e:
+                    self.log(f'Compile Checker Error')
+                    self.verdict = Verdict.CompileError
+                    self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+                except OSError as e:
+                    self.verdict = Verdict.CompileError
+                    self.log(f'Compile checker OS Error {e}')
+                finally:
+                    shutil.rmtree(cwd)
+                    self.log(f'Finish compiling checker {self.checker}')
+
     def judge(self):
         self.log(f"Start judging")
 
@@ -228,8 +294,8 @@ class SubmissionTask:
         self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')
         in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, in_file)
         ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, ans_file)
-        in_file_dst = os.path.join(self.tmp_dir, "in.in")
-        ans_file_dst = os.path.join(self.tmp_dir, "out.out")
+        in_file_dst = os.path.join(self.tmp_dir, "in.txt")
+        ans_file_dst = os.path.join(self.tmp_dir, "ans.txt")
         if not os.path.exists(in_file_src) or not os.path.exists(ans_file_src):
             raise NoTestDataException
         shutil.copyfile(in_file_src, in_file_dst)
@@ -237,19 +303,25 @@ class SubmissionTask:
 
     def run_sandbox(self):
         commands = ["catj", "-t", str(self.time_limit), "-m", str(self.memory_limit),
-                    "-d", self.tmp_dir, "-l", self.language]
+                    "-d", self.tmp_dir, "-l", self.language, "-s", self.checker]
         subprocess.call(commands)
 
     def read_result(self, testcase):
         result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
-        verdict = Verdict.parse(result_file.readline().strip())
-        run_time = int(result_file.readline().strip())
-        run_memory = int(result_file.readline().strip())
-        others = result_file.readline().strip()
+        verdict = Verdict.parse(result_file.readline().strip().split()[1])
+        run_time = int(result_file.readline().strip().split()[1])
+        run_memory = int(result_file.readline().strip().split()[1])
+        checker_time = int(result_file.readline().strip().split()[1])
+        checker_memory = int(result_file.readline().strip().split()[1])
+        others = result_file.read().strip()
         detail = {
             'verdict': verdict,
             'time': run_time,
             'memory': run_memory,
+            'checker': {
+                'time': checker_time,
+                'memory': checker_memory
+            },
             'message': others
         }
         if 'score' in testcase:
@@ -279,73 +351,9 @@ class SubmissionTask:
     def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
         if self.registration is None:
             return
-
-        self.log(f"Save contest submission result of registration #{self.registration.id}")
-        self.registration.is_participate = True
-        contest = self.registration.contest
-        if contest.type == ContestType.icpc:
-            submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
-                                                           owner=self.registration.team,
-                                                           type=ContestSubmissionType.contestant).order_by(
-                'relative_time', 'judged').all()
-            score = 0  # 通过题数
-            dirty = 0  # 罚时，单位：秒
-            standings = []
-            accepted = set()
-            penalty = dict()
-            penalty_unit = 20 * 60  # 单次罚时：20 分钟
-            for sub in submissions:
-                if sub.verdict == Verdict.Accepted:
-                    # 第一次通过
-                    if sub.problem.id not in accepted:
-                        accepted.add(sub.problem.id)
-                        score += 1
-                        dirty += sub.relative_time
-                        if sub.problem.id in penalty:
-                            dirty += penalty[sub.problem.id] * penalty_unit
-                elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                     Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-                    # 添加罚时次数
-                    if sub.problem.id not in penalty:
-                        penalty[sub.problem.id] = 1
-                    else:
-                        penalty[sub.problem.id] += 1
-
-                # 只有 AC 或者错误提交，才会记录到排行榜的提交中
-                if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                                   Verdict.IdlenessLimitExceeded,
-                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-                    # 压缩榜单需要记录的信息
-                    standings.append({
-                        'i': sub.id,
-                        'p': sub.problem.display_id,
-                        'v': sub.verdict,
-                        'c': sub.created.isoformat(),
-                        'r': sub.relative_time
-                    })
-                    # standings.append({
-                    #     'id': sub.id,
-                    #     'problem': {
-                    #         'display_id': sub.problem.display_id,
-                    #         'title': sub.problem.title
-                    #     },
-                    #     'code_length': sub.code_length,
-                    #     'language': sub.language,
-                    #     'created': sub.created.isoformat(),
-                    #     'judged': sub.judged.isoformat(),
-                    #     'relative_time': sub.relative_time,
-                    #     'verdict': sub.verdict,
-                    #     'score': sub.score,
-                    #     'time_used': sub.time_used,
-                    #     'memory_used': sub.memory_used
-                    # })
-
-            self.registration.score = score
-            self.registration.dirty = dirty
-            self.registration.standings = {'submissions': standings}
-        elif contest.type == ContestType.ioi:
-            pass
-        self.registration.save()
+        self.log(f"Start refreshing contest submission result of registration #{self.registration.id}")
+        refresh_registration_standing(self.registration)
+        self.log(f"Finish refreshing contest submission result of registration #{self.registration.id}")
 
     def save_final_result(self):
         self.log(f"Save submission final result")
@@ -363,11 +371,14 @@ class SubmissionTask:
 
         if self.verdict == Verdict.CompileError:
             detail['verdict'] = Verdict.CompileError
-            detail['compile']['stdout'] = self.compile_stdout
         elif self.verdict in [Verdict.TestCaseError, Verdict.SystemError, Verdict.JudgeError]:
             detail['verdict'] = self.verdict
         else:
             detail['verdict'] = self.verdict
+
+        # Source compile error / Checker compile error
+        if self.compile_stdout is not None:
+            detail['compile']['stdout'] = self.compile_stdout
 
         if settings.DEBUG_JUDGE:
             self.log(detail)
