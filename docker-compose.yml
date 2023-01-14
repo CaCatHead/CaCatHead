@@ -88,7 +88,6 @@ services:
       - cat_net
     volumes:
       - ./deploy/server/cacathead.yml:/root/CaCatHead/cacathead.yml
-      - ./.cacathead/checkers:/root/checkers
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/logs/catj:/root/catj/logs
     secrets:
