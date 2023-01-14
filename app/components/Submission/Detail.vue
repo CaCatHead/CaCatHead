@@ -105,7 +105,7 @@ watch(
         <div v-show="expand[index]" mt4>
           <div flex items-center lt-sm="flex-col items-start">
             <div text-sm font-bold sm:w="1/5">Checker 运行信息</div>
-            <div space-x-4 sm:w="1/5">
+            <div space-x-4 sm:w="1/5" v-if="testcase.checker">
               <span inline-flex items-center lt-sm="justify-center">
                 <span i-carbon-time text-lg mr1></span>
                 <span>{{ testcase.checker?.time }} ms</span>
