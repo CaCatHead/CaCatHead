@@ -12,7 +12,10 @@ const { submission } = toRefs(props);
       submission.code
     }}</pre>
     <div
-      v-if="submission.verdict === Verdict.CompileError"
+      v-if="
+        submission.verdict === Verdict.CompileError ||
+        submission.detail?.compile?.stdout
+      "
       shadow-box
       rounded
       overflow-auto
@@ -23,7 +26,14 @@ const { submission } = toRefs(props);
       }}</pre>
       <pre v-else>未知编译错误</pre>
     </div>
-    <div v-else-if="submission.detail.results" shadow-box rounded divide-y>
+    <div
+      v-else-if="
+        submission.detail.results && submission.detail.results.length > 0
+      "
+      shadow-box
+      rounded
+      divide-y
+    >
       <div
         v-for="(testcase, index) in submission.detail.results"
         px4
@@ -75,7 +85,7 @@ const { submission } = toRefs(props);
         </div>
       </div>
     </div>
-    <div v-if="submission.detail.results" text-sm text-right>
+    <div v-if="submission.detail?.node" text-sm text-right>
       <div text-base-800 text-op-60>
         评测机 {{ submission.detail.node ?? '' }} 运行于
         {{ formatDateTime(submission.judged) }}

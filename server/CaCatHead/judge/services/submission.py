@@ -13,7 +13,7 @@ from CaCatHead.config import cacathead_config
 from CaCatHead.contest.models import ContestRegistration
 from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
-from CaCatHead.problem.models import ProblemTypes
+from CaCatHead.problem.models import ProblemTypes, DefaultCheckers
 from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission, ContestSubmission
 
@@ -27,8 +27,16 @@ class NoTestDataException(Exception):
     pass
 
 
+class NoCheckerException(Exception):
+    pass
+
+
 class NoLanguageException(Exception):
     pass
+
+
+def get_checker_path(source_id):
+    return Path(cacathead_config.judge.checker.root) / f'checker_{source_id}'
 
 
 class SubmissionTask:
@@ -105,6 +113,11 @@ class SubmissionTask:
                                detail={'node': cacathead_config.judge.name})
 
         try:
+            self.prepare_checker()
+            if self.verdict == Verdict.CompileError:
+                # Checker 编译失败
+                raise NoCheckerException
+
             self.dump_code()
             self.compile_code()
 
@@ -112,6 +125,8 @@ class SubmissionTask:
                 self.verdict = Verdict.Running
                 self.update_submission(verdict=Verdict.Running)
                 self.judge()
+        except NoCheckerException:
+            self.verdict = Verdict.SystemError
         except NoTestDataException:
             self.verdict = Verdict.TestCaseError
         except NoLanguageException:
@@ -171,6 +186,55 @@ class SubmissionTask:
         exec_file_dst = os.path.join(self.tmp_dir, exec_file_name_dst)
         shutil.copyfile(exec_file_src, exec_file_dst)
         os.chmod(exec_file_dst, 0o775)
+
+    def prepare_checker(self):
+        if self.checker == DefaultCheckers.custom:
+            self.checker = get_checker_path(self.submission.problem.problem_info.problem_judge.custom_checker_id)
+            if not self.checker.exists():
+                self.log(f"Start preparing custom checker {self.checker}")
+
+                custom_checker = self.submission.problem.problem_info.problem_judge.custom_checker
+                if custom_checker is None:
+                    raise NoCheckerException
+
+                cwd = Path(tempfile.mkdtemp())
+                os.chmod(cwd, 0o775)
+
+                try:
+                    if custom_checker.language == 'cpp':
+                        checker_code_file = 'Checker.cpp'
+                    elif custom_checker.language == 'c':
+                        checker_code_file = 'Checker.c'
+                    else:
+                        raise NoLanguageException
+
+                    file_handler = io.open(cwd / checker_code_file, 'w', encoding='utf8')
+                    file_handler.write(custom_checker.code)
+                    file_handler.close()
+
+                    if custom_checker.language == 'cpp':
+                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
+                                    "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
+                    elif custom_checker.language == 'c':
+                        (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
+                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
+                                    "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+                    else:
+                        raise NoLanguageException
+
+                    self.log(f"Start compiling custom checker {self.checker}")
+                    subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+                    os.chmod(self.checker, 0o775)
+                except subprocess.CalledProcessError as e:
+                    self.log(f'Compile Checker Error')
+                    self.verdict = Verdict.CompileError
+                    self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+                except OSError as e:
+                    self.verdict = Verdict.CompileError
+                    self.log(f'Compile checker OS Error {e}')
+                finally:
+                    shutil.rmtree(cwd)
+                    self.log(f'Finish compiling checker {self.checker}')
 
     def judge(self):
         self.log(f"Start judging")
@@ -301,11 +365,14 @@ class SubmissionTask:
 
         if self.verdict == Verdict.CompileError:
             detail['verdict'] = Verdict.CompileError
-            detail['compile']['stdout'] = self.compile_stdout
         elif self.verdict in [Verdict.TestCaseError, Verdict.SystemError, Verdict.JudgeError]:
             detail['verdict'] = self.verdict
         else:
             detail['verdict'] = self.verdict
+
+        # Source compile error / Checker compile error
+        if self.compile_stdout is not None:
+            detail['compile']['stdout'] = self.compile_stdout
 
         if settings.DEBUG_JUDGE:
             self.log(detail)

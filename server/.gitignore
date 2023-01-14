@@ -1,5 +1,6 @@
 .env
 .testcase
+.checker
 cacathead.yml
 catj-*.log
 static
