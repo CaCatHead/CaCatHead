@@ -138,7 +138,9 @@ export interface ProblemContent {
 export interface ProblemJudge {
   checker: string;
 
-  custom_checker: {};
+  custom_checker?: {
+    code: string;
+  };
 
   testcase_detail: Array<{
     input: string;

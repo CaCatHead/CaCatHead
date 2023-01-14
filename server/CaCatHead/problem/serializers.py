@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
-from CaCatHead.problem.models import ProblemRepository, Problem, ProblemInfo, ProblemContent, ProblemJudge
+from CaCatHead.problem.models import ProblemRepository, Problem, ProblemInfo, ProblemContent, ProblemJudge, \
+    DefaultCheckers, SourceCode
 from CaCatHead.user.serializers import UserSerializer
 
 
@@ -45,6 +46,12 @@ class SubmitCodePayload(serializers.Serializer):
     language = serializers.ChoiceField(choices=('c', 'cpp', 'java'), required=True)
 
 
+class SubmitCheckerPayload(serializers.Serializer):
+    type = serializers.ChoiceField(choices=DefaultCheckers.choices, required=True)
+    code = serializers.CharField(required=False)
+    language = serializers.ChoiceField(choices=('c', 'cpp'), required=False)
+
+
 class ProblemRepositorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProblemRepository
@@ -82,11 +89,19 @@ class _ProblemContentSerializer(serializers.ModelSerializer):
         fields = ['title', 'description', 'input', 'output', 'sample', 'hint', 'source', 'extra_content']
 
 
+class SourceCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourceCode
+        fields = ['type', 'code', 'code_length', 'language', 'extra_info']
+
+
 class _ProblemJudgeSerializer(serializers.ModelSerializer):
+    custom_checker = SourceCodeSerializer(read_only=True)
+
     class Meta:
         model = ProblemJudge
         fields = ['problem_type', 'time_limit', 'memory_limit', 'score',
-                  'checker', 'testcase_count', 'testcase_detail', 'extra_info']
+                  'checker', 'custom_checker', 'testcase_count', 'testcase_detail', 'extra_info']
 
 
 class FullProblemInfoSerializer(serializers.ModelSerializer):

@@ -9,13 +9,18 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
-const code = ref('');
-
 const CUSTOM = 'custom';
+
+const code = ref(
+  problem.value.problem_info.problem_judge.checker === CUSTOM
+    ? problem.value.problem_info.problem_judge.custom_checker?.code ?? ''
+    : ''
+);
 
 const handleSelect = () => {
   if (problem.value.problem_info.problem_judge.checker === CUSTOM) {
-    code.value = '';
+    code.value =
+      problem.value.problem_info.problem_judge.custom_checker?.code ?? '';
   }
 };
 
@@ -63,14 +68,14 @@ const save = async () => {
     });
     notify.success('Checker 设置成功');
   } catch (error: any) {
-    notify.success('Checker 设置失败');
+    notify.danger('Checker 设置失败');
   }
 };
 </script>
 
 <template>
   <div w-full space-y-4>
-    <div w-full flex gap2>
+    <div w-full flex gap4>
       <div flex-auto>
         <c-select
           id="checker"

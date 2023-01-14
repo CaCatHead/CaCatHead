@@ -5,7 +5,7 @@ from django.db import models
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
-    ProblemRepository
+    ProblemRepository, SourceCode, SourceCodeTypes, DefaultCheckers
 from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
 from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
@@ -89,6 +89,25 @@ def edit_problem(problem: Problem, payload: dict):
     ProblemDirectory.make(problem).save_config(problem)
 
     return problem
+
+
+def upload_custom_checker(problem: Problem, code: str, language: str):
+    old_checker = problem.problem_info.problem_judge.custom_checker
+
+    source = SourceCode(
+        type=SourceCodeTypes.checker,
+        code=code,
+        code_length=len(code),
+        language=language,
+    )
+    source.save()
+
+    problem.problem_info.problem_judge.checker = DefaultCheckers.custom
+    problem.problem_info.problem_judge.custom_checker = source
+    problem.problem_info.problem_judge.save()
+
+    if old_checker is not None:
+        old_checker.delete()
 
 
 def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
