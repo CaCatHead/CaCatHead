@@ -47,6 +47,8 @@ judge:
     repository: judge.repository
     contest: judge.contest
     polygon: judge.polygon
+  checker:
+    root: /root/checkers
 # ...
 ```
 
