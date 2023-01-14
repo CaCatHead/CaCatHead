@@ -50,15 +50,18 @@ watch(
         px4
         py4
         font-mono
-        select-none
-        cursor-pointer
         transition-all
         text-base-900
         hover:text-op-100
         :class="expand[index] ? 'text-op-100' : 'text-op-60'"
-        @click="() => (expand[index] = !expand[index])"
       >
-        <div sm:flex justify-between>
+        <div
+          sm:flex
+          justify-between
+          select-none
+          cursor-pointer
+          @click="() => (expand[index] = !expand[index])"
+        >
           <div
             w="2/5"
             lt-sm="w-full justify-between mb1"
@@ -66,8 +69,18 @@ watch(
             items-center
             justify-center
           >
-            <h4 w="1/2" font-600>
-              {{ testcase.sample ? '样例' : '测试点' }} #{{ index + 1 }}
+            <h4 w="1/2" font-600 inline-flex items-center gap1>
+              <span
+                text-xl
+                :class="
+                  expand[index] ? 'i-carbon-caret-down' : 'i-carbon-caret-right'
+                "
+              ></span>
+              <span
+                >{{ testcase.sample ? '样例' : '测试点' }} #{{
+                  index + 1
+                }}</span
+              >
             </h4>
             <display-verdict
               :verdict="testcase.verdict"
