@@ -91,12 +91,11 @@ const compiler = [
         <template #q>评测机的运行情况？</template>
         <template #a>
           <div space-y-2 w-full>
-            <div>共有 {{ data.nodes.length }} 台评测机正在运行。</div>
-            <judge-nodes
-              lt-sm:p1
-              overflow-auto
-              :nodes="data?.nodes"
-            ></judge-nodes>
+            <div>
+              共有
+              {{ data.nodes.filter(n => n.active).length }} 台评测机正在运行。
+            </div>
+            <judge-nodes lt-sm:p1 :nodes="data?.nodes"></judge-nodes>
           </div>
         </template>
       </q-a>

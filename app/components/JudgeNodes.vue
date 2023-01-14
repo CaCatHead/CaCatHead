@@ -32,6 +32,8 @@ const parseJava = (text: string) => {
         items-center
         select-none
         relative
+        z10
+        cursor-pointer
         :class="[
           smallScreen ? 'justify-end' : 'justify-center',
           'md:[&:hover>div]:flex',
@@ -59,6 +61,7 @@ const parseJava = (text: string) => {
           dark:bg-dark
           w-44
           justify-between
+          z10
         >
           <span font-bold>通讯时延</span>
           <span ml1
