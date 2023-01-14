@@ -21,7 +21,7 @@ const submit = async () => {
         <code-editor
           v-model="code"
           :language="language"
-          h="500px"
+          min-h="300px"
         ></code-editor>
         <template #fallback>
           <c-input type="textarea" id="code" v-model="code" font-mono>
