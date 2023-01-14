@@ -10,11 +10,12 @@ from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.config import cacathead_config
-from CaCatHead.contest.models import ContestRegistration, ContestType
+from CaCatHead.contest.models import ContestRegistration
+from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes
 from CaCatHead.problem.views.upload import ProblemDirectory
-from CaCatHead.submission.models import Submission, ContestSubmission, ContestSubmissionType
+from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.submission')
 
@@ -279,73 +280,9 @@ class SubmissionTask:
     def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
         if self.registration is None:
             return
-
-        self.log(f"Save contest submission result of registration #{self.registration.id}")
-        self.registration.is_participate = True
-        contest = self.registration.contest
-        if contest.type == ContestType.icpc:
-            submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
-                                                           owner=self.registration.team,
-                                                           type=ContestSubmissionType.contestant).order_by(
-                'relative_time', 'judged').all()
-            score = 0  # 通过题数
-            dirty = 0  # 罚时，单位：秒
-            standings = []
-            accepted = set()
-            penalty = dict()
-            penalty_unit = 20 * 60  # 单次罚时：20 分钟
-            for sub in submissions:
-                if sub.verdict == Verdict.Accepted:
-                    # 第一次通过
-                    if sub.problem.id not in accepted:
-                        accepted.add(sub.problem.id)
-                        score += 1
-                        dirty += sub.relative_time
-                        if sub.problem.id in penalty:
-                            dirty += penalty[sub.problem.id] * penalty_unit
-                elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                     Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-                    # 添加罚时次数
-                    if sub.problem.id not in penalty:
-                        penalty[sub.problem.id] = 1
-                    else:
-                        penalty[sub.problem.id] += 1
-
-                # 只有 AC 或者错误提交，才会记录到排行榜的提交中
-                if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                                   Verdict.IdlenessLimitExceeded,
-                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-                    # 压缩榜单需要记录的信息
-                    standings.append({
-                        'i': sub.id,
-                        'p': sub.problem.display_id,
-                        'v': sub.verdict,
-                        'c': sub.created.isoformat(),
-                        'r': sub.relative_time
-                    })
-                    # standings.append({
-                    #     'id': sub.id,
-                    #     'problem': {
-                    #         'display_id': sub.problem.display_id,
-                    #         'title': sub.problem.title
-                    #     },
-                    #     'code_length': sub.code_length,
-                    #     'language': sub.language,
-                    #     'created': sub.created.isoformat(),
-                    #     'judged': sub.judged.isoformat(),
-                    #     'relative_time': sub.relative_time,
-                    #     'verdict': sub.verdict,
-                    #     'score': sub.score,
-                    #     'time_used': sub.time_used,
-                    #     'memory_used': sub.memory_used
-                    # })
-
-            self.registration.score = score
-            self.registration.dirty = dirty
-            self.registration.standings = {'submissions': standings}
-        elif contest.type == ContestType.ioi:
-            pass
-        self.registration.save()
+        self.log(f"Start refreshing contest submission result of registration #{self.registration.id}")
+        refresh_registration_standing(self.registration)
+        self.log(f"Finish refreshing contest submission result of registration #{self.registration.id}")
 
     def save_final_result(self):
         self.log(f"Save submission final result")
