@@ -99,6 +99,38 @@ const compiler = [
           </div>
         </template>
       </q-a>
+      <q-a>
+        <template #q>程序的输入和输出什么？</template>
+        <template #a>
+          <div space-y-2>
+            <p>
+              你的程序需要从
+              <strong>标准输入 (stdin)</strong> 里读取数据，并且输出到
+              <strong>标准输出 (stdout)</strong>。
+            </p>
+            <p>
+              例如，如果你是用的是 C/C++ 语言，你可以用 C 中的
+              <code>scanf</code>，或者使用 C++ 的
+              <code>cin</code>，从标准输入里读入数据；并且使用 C 中的
+              <code>printf</code> 或者使用 C++ 的
+              <code>cout</code> 输出到标准输出。
+            </p>
+            <p>
+              评测机禁止用户的程序读取或者写入文件。如果你这样做，系统可能返回
+              <display-verdict verdict="RuntimeError"></display-verdict>
+              等错误结果。
+            </p>
+            <code-box></code-box>
+            <p>
+              你不能在提交的程序最后使用
+              <code>system("pause");</code>
+              等等便于调试的命令，这可能会导致程序无法正常终止。如果你这样做，系统可能返回
+              <display-verdict verdict="RuntimeError"></display-verdict>
+              等错误结果。
+            </p>
+          </div>
+        </template>
+      </q-a>
     </div>
   </div>
 </template>
