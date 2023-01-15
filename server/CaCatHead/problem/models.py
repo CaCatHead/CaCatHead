@@ -93,6 +93,8 @@ class ProblemJudge(models.Model):
 
     testcase_count = models.IntegerField(default=0, verbose_name=_(u"测试用例总数"))
 
+    testcase_version = models.IntegerField(default=0, verbose_name=_(u"测试用例版本"))
+
     testcase_detail = models.JSONField(default=list, verbose_name=_(u"测试用例配置"))
 
     checker = models.CharField(default=DefaultCheckers.lcmp, choices=DefaultCheckers.choices, max_length=64,

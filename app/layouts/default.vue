@@ -145,6 +145,7 @@ provide(ServerTimestamp, timestamp);
             <span>题库</span>
             <div hidden absolute top-full left="-1" w-36 pt3 font-normal>
               <div
+                v-if="repos?.repos && repos.repos.length > 0"
                 rounded
                 border="1 base"
                 divide-y

@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import shutil
 import tempfile
@@ -14,6 +15,31 @@ from CaCatHead.core.minio import upload_minio_testcase, download_minio_testcase
 from CaCatHead.problem.models import Problem
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
+logger = logging.getLogger(__name__)
+
+
+def get_testcase_root(problem: Problem) -> Path:
+    problem_judge = problem.problem_info.problem_judge
+    return settings.TESTCASE_ROOT / f'p{problem_judge.id}'
+
+
+def get_testcase_root_version(problem: Problem) -> Path:
+    directory = get_testcase_root(problem)
+    return directory / 'version'
+
+
+def read_testcase_root_version(problem: Problem) -> int:
+    path = get_testcase_root_version(problem)
+    if path.exists():
+        return int(path.read_text(encoding='UTF-8'))
+    else:
+        return -1
+
+
+def write_testcase_root_version(problem: Problem):
+    path = get_testcase_root_version(problem)
+    path.write_text(str(problem.problem_info.problem_judge.testcase_version), encoding='UTF-8')
+
 
 class ProblemDirectory:
     def __init__(self, root: str | Path):
@@ -26,14 +52,13 @@ class ProblemDirectory:
 
     @classmethod
     def make(cls, problem: Problem):
-        return ProblemDirectory(root=settings.TESTCASE_ROOT / str(problem.problem_info.problem_judge.id))
+        return ProblemDirectory(root=get_testcase_root(problem))
 
     @classmethod
-    def make_from_id(cls, problem_id: int | str, problem_judge_id: int | str):
-        root = Path(settings.TESTCASE_ROOT) / str(problem_judge_id)
+    def try_make(cls, problem: Problem):
+        root = get_testcase_root(problem)
         if not root.exists():
             problem_directory = ProblemDirectory(root=root)
-            problem = Problem.objects.filter(id=int(problem_id)).first()
             problem_directory.config['testcases'] = problem.problem_info.problem_judge.testcase_detail
             problem_directory.save_config(problem)
             return problem_directory
@@ -160,16 +185,20 @@ def try_unzip_problem_arch(problem_root: Path, file_name: str, zip_content: InMe
 
 def upload_problem_arch(problem: Problem, file: InMemoryUploadedFile) -> ProblemDirectory:
     problem_judge_id = problem.problem_info.problem_judge.id
-    problem_root = settings.TESTCASE_ROOT / str(problem_judge_id)
+    problem_root = get_testcase_root(problem)
     problem_root.mkdir(parents=True, exist_ok=True)
     zip_file_name = 'p' + str(problem_judge_id) + '_' + str(timezone.now().timestamp()) + '.zip'
     try:
         if try_unzip_problem_arch(problem_root, zip_file_name, file):
             problem_directory = ProblemDirectory(problem_root)
-            if not problem_directory.upload_testcases():
+            if problem_directory.upload_testcases():
+                write_testcase_root_version(problem)
+                return problem_directory
+            else:
+                logger.error("Upload testcases to MinIO fail")
                 return None
-            return problem_directory
         else:
             return None
-    except Exception:
+    except Exception as ex:
+        logger.error("Upload problem arch fail: %r", ex)
         return None
