@@ -46,6 +46,16 @@ const compiler = [
     run: ['java', 'Main'],
   },
 ];
+
+const CppExample = `#include <iostream>
+using namespace std;
+
+int main() {
+  int a, b;
+  cin >> a >> b
+  cout << a + b << endl;
+  return 0;
+}`;
 </script>
 
 <template>
@@ -120,7 +130,8 @@ const compiler = [
               <display-verdict verdict="RuntimeError"></display-verdict>
               等错误结果。
             </p>
-            <code-box></code-box>
+            <p>下面是题目 A + B 的 C++ 的样例程序:</p>
+            <code-box :code="CppExample" language="cpp"></code-box>
             <p>
               你不能在提交的程序最后使用
               <code>system("pause");</code>
