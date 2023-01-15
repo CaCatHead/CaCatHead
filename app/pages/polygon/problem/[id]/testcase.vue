@@ -35,16 +35,32 @@ const testcases = ref<Testcase[]>(
   }))
 );
 
+const moveUp = (testcase: Testcase, index: number) => {
+  if (index > 0) {
+    testcases.value[index] = testcases.value[index - 1];
+    testcases.value[index - 1] = testcase;
+  }
+};
+const moveDown = (testcase: Testcase, index: number) => {
+  if (index + 1 < testcases.value.length) {
+    testcases.value[index] = testcases.value[index + 1];
+    testcases.value[index + 1] = testcase;
+  }
+};
+
 watch(files, files => {
   const map = new Map<string, Testcase>();
   for (const file of files) {
+    const testSample = (name: string) =>
+      name.indexOf('sample') !== -1 || name.indexOf('example') !== -1;
     const setInput = (name: string, file: File) => {
-      if (!map.has(name))
+      if (!map.has(name)) {
         map.set(name, {
           name: trimFileEnd(file.name),
           score: 0,
-          sample: false,
+          sample: testSample(file.name),
         });
+      }
       map.get(name)!.input = file;
     };
     const setAnswer = (name: string, file: File) => {
@@ -52,7 +68,7 @@ watch(files, files => {
         map.set(name, {
           name: trimFileEnd(file.name),
           score: 0,
-          sample: false,
+          sample: testSample(file.name),
         });
       map.get(name)!.answer = file;
     };
@@ -205,46 +221,80 @@ const save = async () => {
     </div>
 
     <div mt4 shadow-box rounded divide-y ref="parent">
-      <div v-for="(testcase, idx) in testcases" :key="testcase.name" w-full p4>
-        <div mb2 flex items-center>
-          <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
-          <span
-            v-if="!!testcase.input?.size && !!testcase.answer?.size"
-            i-mdi-check
-            font-bold
-            ml2
-            class="text-success"
-          ></span>
-          <span v-else i-mdi-close ml2 class="text-danger" font-bold></span>
-          <div flex-auto></div>
-          <span font-bold mr2>显示为样例</span>
-          <c-switch v-model="testcase.sample"></c-switch>
+      <div
+        v-for="(testcase, idx) in testcases"
+        :key="testcase.name"
+        w-full
+        p4
+        flex
+        gap4
+        items-center
+      >
+        <div flex-1>
+          <div mb2 flex items-center>
+            <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
+            <span
+              v-if="!!testcase.input?.size && !!testcase.answer?.size"
+              i-mdi-check
+              font-bold
+              ml2
+              class="text-success"
+            ></span>
+            <span v-else i-mdi-close ml2 class="text-danger" font-bold></span>
+            <div flex-auto></div>
+            <span font-bold mr2>显示为样例</span>
+            <c-switch v-model="testcase.sample"></c-switch>
+          </div>
+          <div flex items-center gap4>
+            <div>
+              <c-button color="info" :disabled="!testcase.input?.size">
+                <span mr2>输入文件</span>
+                <span>{{ testcase.input?.name }}</span>
+              </c-button>
+            </div>
+            <div>
+              <c-button color="info" :disabled="!testcase.answer?.size">
+                <span mr2>答案文件</span>
+                <span>{{ testcase.answer?.name }}</span>
+              </c-button>
+            </div>
+            <div flex-auto></div>
+            <div>
+              <c-input
+                class="flex items-center"
+                :id="'score_' + idx"
+                type="number"
+                v-model="testcase.score"
+              >
+                <template #label>
+                  <label :for="'score_' + idx" mr4 text-lg font-bold
+                    >分值</label
+                  >
+                </template>
+              </c-input>
+            </div>
+          </div>
         </div>
-        <div flex items-center gap4>
+        <div flex flex-col gap2>
           <div>
-            <c-button color="info" v-if="!!testcase.input?.size">
-              <span mr2>输入文件</span>
-              <span>{{ testcase.input?.name }}</span>
-            </c-button>
+            <c-button
+              class="!h12"
+              color="info"
+              variant="outline"
+              text-xl
+              icon="i-carbon-caret-up"
+              @click="moveUp(testcase, idx)"
+            ></c-button>
           </div>
           <div>
-            <c-button color="info" v-if="!!testcase.answer?.size">
-              <span mr2>答案文件</span>
-              <span>{{ testcase.answer?.name }}</span>
-            </c-button>
-          </div>
-          <div flex-auto></div>
-          <div>
-            <c-input
-              class="flex items-center"
-              :id="'score_' + idx"
-              type="number"
-              v-model="testcase.score"
-            >
-              <template #label>
-                <label :for="'score_' + idx" mr4 text-lg font-bold>分值</label>
-              </template>
-            </c-input>
+            <c-button
+              class="!h12"
+              color="info"
+              variant="outline"
+              text-xl
+              icon="i-carbon-caret-down"
+              @click="moveDown(testcase, idx)"
+            ></c-button>
           </div>
         </div>
       </div>
