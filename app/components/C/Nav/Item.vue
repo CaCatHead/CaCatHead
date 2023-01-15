@@ -21,15 +21,16 @@ const isActive = computed(() => {
 </script>
 
 <template>
-  <div
+  <nuxt-link
     :class="[
+      'block',
       'c-nav-item',
       isActive && 'active',
       'inline-block',
       'cursor-pointer',
     ]"
-    @click="navigateTo(toPath)"
+    :to="toPath"
   >
     <slot></slot>
-  </div>
+  </nuxt-link>
 </template>

@@ -34,6 +34,12 @@ export interface User {
   nickname: string;
 }
 
+export type PublicUserProfile = User & {
+  joined: string;
+
+  last_login: string;
+};
+
 export type FullUser = User & {
   permissions: {
     polygon: boolean;

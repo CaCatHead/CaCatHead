@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # test ping
     path('api/ping', user_views.ping),
+    path('api/prime/<str:text>', user_views.is_prime),
     path('api/sync', user_views.sync_timestamp),
     # user auth
     path('api/auth/register', user_views.user_register),
@@ -39,6 +40,7 @@ urlpatterns = [
     path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
     # user profile
     path('api/user/profile', user_views.current_user_profile),
+    path('api/user/profile/<str:username>', user_views.get_user_info),
     # judge node
     path('api/judge/node', judge_views.list_judge_nodes),
     path('api/judge/nodes', judge_views.list_judge_nodes),

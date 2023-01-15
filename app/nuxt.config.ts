@@ -161,6 +161,12 @@ export default defineNuxtConfig({
       },
     },
   },
+  vite: {
+    define: {
+      // Fix shiki
+      'process.env.VSCODE_TEXTMATE_DEBUG': 'false',
+    },
+  },
 });
 
 function cacheControlHeader(time: number) {

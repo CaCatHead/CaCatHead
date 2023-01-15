@@ -63,7 +63,10 @@ const variant = computed(() => 'c-' + _variant.value);
 .c-button.c-fill {
   --at-apply: text-white bg-op-80;
 }
-.c-button.c-fill:hover {
+.c-button.c-fill.disabled {
+  --at-apply: border-gray-400 text-gray-400 bg-op-0 border-1;
+}
+.c-button.c-fill:not(.disabled):hover {
   --at-apply: bg-op-100;
 }
 

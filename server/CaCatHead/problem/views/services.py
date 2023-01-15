@@ -3,7 +3,6 @@ import logging
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-from django.db.models import F
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.exceptions import BadRequest
@@ -144,10 +143,10 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
     # 旧的测试用例版本号
-    problem_judge_id = problem.problem_info.problem_judge_id
     old_testcase_version = problem.problem_info.problem_judge.testcase_version
     # 更新测试用例版本号
-    ProblemJudge.objects.filter(id=problem_judge_id).update(testcase_version=F('testcase_version') + 1)
+    problem.problem_info.problem_judge.testcase_version = old_testcase_version + 1
+    problem.problem_info.problem_judge.save()
     # 保存测试用例
     problem_directory = upload_problem_arch(problem, zip_content)
 

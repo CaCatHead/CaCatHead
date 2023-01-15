@@ -1,15 +1,12 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    id: string;
     modelValue: File[];
     color?: string;
     accept?: string;
-    multiple?: boolean;
     variant?: 'fill' | 'outline' | 'light' | 'text';
   }>(),
   {
-    multiple: false,
     color: 'success',
     variant: 'fill',
   }
@@ -20,21 +17,29 @@ const emit = defineEmits<{
   (e: 'update:modelValue', files: File[]): void;
 }>();
 
-const { id, color, variant, accept, multiple } = toRefs(props);
+const { color, variant, accept } = toRefs(props);
 
 const files = useVModel(props, 'modelValue', emit);
 
-const onFileChange = async (ev: Event) => {
+const genId = () => 'multiple-file-input-' + randomString();
+const currentId = ref(genId());
+const inputs = ref<string[]>([currentId.value]);
+
+const onFileChange = async (ev: Event, id: string) => {
   const target = ev.target as HTMLInputElement;
   if (!target.files) return;
-  const uploaded: File[] = [];
+  const selected = [...files.value];
   for (let i = 0; i < target.files.length; i++) {
     if (target.files[i]) {
-      uploaded.push(target.files[i]);
+      selected.push(target.files[i]);
     }
   }
-  files.value.splice(0, files.value.length, ...uploaded);
+  files.value = selected;
   emit('change', ev);
+  // generate new fileinput
+  const newId = genId();
+  inputs.value.push(newId);
+  currentId.value = newId;
 };
 </script>
 
@@ -42,7 +47,7 @@ const onFileChange = async (ev: Event) => {
   <div inline-flex items-center>
     <c-button
       tag="label"
-      :for="id"
+      :for="currentId"
       :color="color"
       :variant="variant"
       flex
@@ -51,12 +56,22 @@ const onFileChange = async (ev: Event) => {
     ></c-button>
     <input
       type="file"
+      v-for="id in inputs"
       :id="id"
       :name="id"
       :accept="accept"
-      :multiple="multiple"
+      multiple
+      hidden
+      @change="ev => onFileChange(ev, id)"
+    />
+    <!-- <input
+      type="file"
+      :id="id"
+      :name="id"
+      :accept="accept"
+      multiple
       hidden
       @change="onFileChange"
-    />
+    /> -->
   </div>
 </template>

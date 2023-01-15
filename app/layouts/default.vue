@@ -118,12 +118,48 @@ provide(LoadingIndicatorSymbol, {
               gap4
               lt-md:gap1
             >
-              <c-button color="info" variant="text">{{
-                user.nickname
-              }}</c-button>
-              <c-button color="danger" variant="outline" text-sm @click="logout"
-                >退出</c-button
-              >
+              <c-dropdown class="[&>.c-dropdown]:pt1 [&>.c-dropdown]:right-0">
+                <nuxt-link :to="`/user/profile/${authUser.user?.username}`"
+                  ><c-button
+                    color="info"
+                    variant="text"
+                    border="!base"
+                    class="!text-base-900 !font-bold hover:!bg-gray-200/40 !bg-gray-200/10"
+                    >{{ user.nickname }}</c-button
+                  ></nuxt-link
+                >
+                <template #dropdown>
+                  <div
+                    w-36
+                    font-normal
+                    rounded
+                    border="1 base"
+                    divide-y
+                    dark:divide="gray/40"
+                    bg-white
+                    dark:bg-dark
+                  >
+                    <nuxt-link
+                      to="/user/settings"
+                      block
+                      p2
+                      text-link
+                      class="rounded-t hover:bg-gray-200/40"
+                      >设置</nuxt-link
+                    >
+                    <span
+                      cursor-pointer
+                      to="/user/settings"
+                      block
+                      p2
+                      text-link
+                      class="rounded-b hover:bg-gray-200/40"
+                      @click="authUser.logout()"
+                      >退出</span
+                    >
+                  </div>
+                </template>
+              </c-dropdown>
             </div>
             <div v-else space-x-4 lt-md:space-x-1>
               <c-button color="info" variant="fill">
@@ -167,26 +203,33 @@ provide(LoadingIndicatorSymbol, {
             activeTab === 'repository' && 'is-active',
           ]"
         >
-          <NuxtLink to="/repository/" relative z10 class="[&:hover>div]:block">
-            <span>题库</span>
-            <div hidden absolute top-full left="-1" w-36 pt3 font-normal>
-              <div
-                v-if="repos?.repos && repos.repos.length > 0"
-                rounded
-                border="1 base"
-                divide-y
-                dark:divide="gray/40"
-                bg-white
-                dark:bg-dark
-              >
-                <div v-for="repo in repos?.repos" p2 z10>
-                  <nuxt-link :to="`/repository/${repo.id}`" text-link>{{
-                    repo.name
-                  }}</nuxt-link>
+          <c-dropdown class="[&>.c-dropdown]:pt3 [&>.c-dropdown]:left--1">
+            <NuxtLink to="/repository/">题库</NuxtLink>
+            <template #dropdown>
+              <div w-36 font-normal>
+                <div
+                  v-if="repos?.repos && repos.repos.length > 1"
+                  rounded
+                  border="1 base"
+                  divide-y
+                  dark:divide="gray/40"
+                  bg-white
+                  dark:bg-dark
+                >
+                  <nuxt-link
+                    v-for="repo in repos?.repos"
+                    :to="`/repository/${repo.id}`"
+                    block
+                    text-link
+                    p2
+                    z10
+                    class="hover:bg-gray-200/40"
+                    >{{ repo.name }}</nuxt-link
+                  >
                 </div>
-              </div>
-            </div>
-          </NuxtLink>
+              </div></template
+            >
+          </c-dropdown>
         </div>
 
         <div
