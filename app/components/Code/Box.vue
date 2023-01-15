@@ -16,10 +16,37 @@ const rendered = ref('');
 
 const isDark = useDark();
 
+function hash(s: string) {
+  let h = 0,
+    l = s.length,
+    i = 0;
+  if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0;
+  return h;
+}
+
+const renderCache = useLocalStorage(
+  'render/cache',
+  {} as Record<string, { c: string; r: string }>
+);
+
+const isHydrating = !!useNuxtApp().isHydrating;
+
 watch(
-  () => [code.value, language.value, isDark.value],
-  async () => {
-    rendered.value = await highlight(code.value, language.value, isDark.value);
+  () => [code.value, language.value, isDark.value] as [string, string, boolean],
+  async ([code, language, isDark]) => {
+    const hsh = hash(code);
+    // Hyration 的时候，不能读取缓存
+    if (
+      !isHydrating &&
+      hsh in renderCache.value &&
+      renderCache.value[hsh].c === code
+    ) {
+      rendered.value = renderCache.value[hsh].r;
+    } else {
+      const result = await highlight(code, language, isDark);
+      rendered.value = result;
+      renderCache.value[hsh] = { c: code, r: result };
+    }
   },
   { immediate: true }
 );
@@ -39,14 +66,14 @@ const copyToClipboard = async () => {
 </script>
 
 <template>
-  <div v-if="rendered.length > 0" class="code-box relative transition-all">
+  <div v-show="rendered.length > 0" class="code-box relative transition-all">
     <div absolute top-2 right-2 v-if="copy">
       <c-button variant="text" color="info" @click="copyToClipboard"
         >复制</c-button
       >
     </div>
     <div
-      :class="['px-4 py-4 overflow-x-auto lt-md:text-xs lt-md:p-2']"
+      :class="['px-4 py-4 min-h-14 overflow-x-auto lt-md:text-xs lt-md:p-2']"
       v-html="rendered"
     ></div>
   </div>
