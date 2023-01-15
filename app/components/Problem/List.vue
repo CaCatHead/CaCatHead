@@ -24,8 +24,8 @@ const getBg = (row: Problem) => {
     const verdict = problemVerdict.value(row);
     if (verdict) {
       return verdict === Verdict.Accepted
-        ? '[&>td:first-child]:bg-[#e0ffe4] [&>td:first-child]:text-neutral-900'
-        : '[&>td:first-child]:bg-[#ffe3e3] [&>td:first-child]:text-neutral-900';
+        ? '[&>td:first-child]:bg-[#e0ffe4] [&>td:first-child]:dark:bg-[#56ca00] [&>td:first-child]:text-neutral-900'
+        : '[&>td:first-child]:bg-[#ffe3e3] [&>td:first-child]:dark:bg-[#ca0056] [&>td:first-child]:text-neutral-900';
     } else {
       return '';
     }
