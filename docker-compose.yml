@@ -186,6 +186,7 @@ services:
       - cat_net
     volumes:
       - ./deploy/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./.cacathead/rabbitmq:/var/lib/rabbitmq
     environment:
       TZ: Asia/Shanghai
 
