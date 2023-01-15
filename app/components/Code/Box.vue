@@ -24,8 +24,12 @@ function hash(s: string) {
   return h;
 }
 
-const renderCache = useLocalStorage(
-  'render/cache',
+const renderCacheLight = useLocalStorage(
+  'render/cache/light',
+  {} as Record<string, { c: string; r: string }>
+);
+const renderCacheDark = useLocalStorage(
+  'render/cache/dark',
   {} as Record<string, { c: string; r: string }>
 );
 
@@ -34,6 +38,7 @@ const isHydrating = !!useNuxtApp().isHydrating;
 watch(
   () => [code.value, language.value, isDark.value] as [string, string, boolean],
   async ([code, language, isDark]) => {
+    const renderCache = isDark ? renderCacheDark : renderCacheLight;
     const hsh = hash(code);
     // Hyration 的时候，不能读取缓存
     if (
