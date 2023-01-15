@@ -38,7 +38,7 @@ class Submission(models.Model):
                               related_name='submission_user',
                               verbose_name=_(u"创建者"))
 
-    code = models.TextField(blank=True, verbose_name=_(u"代码"))
+    code = models.TextField(blank=True, max_length=65535, verbose_name=_(u"代码"))
 
     code_length = models.IntegerField(default=0, verbose_name=_(u"代码长度"))
 
@@ -100,7 +100,7 @@ class ContestSubmission(models.Model):
 
     type = models.CharField(max_length=16, choices=ContestSubmissionType.choices, verbose_name=_(u"比赛提交类型"))
 
-    code = models.TextField(blank=True, verbose_name=_(u"代码"))
+    code = models.TextField(blank=True, max_length=65535, verbose_name=_(u"代码"))
 
     code_length = models.IntegerField(default=0, verbose_name=_(u"代码长度"))
 

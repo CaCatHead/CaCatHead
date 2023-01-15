@@ -41,14 +41,9 @@ class EditPermissionPayload(serializers.Serializer):
     revoke = serializers.CharField(max_length=32, required=False)
 
 
-class SubmitCodePayload(serializers.Serializer):
-    code = serializers.CharField(required=True)
-    language = serializers.ChoiceField(choices=('c', 'cpp', 'java'), required=True)
-
-
 class SubmitCheckerPayload(serializers.Serializer):
     type = serializers.ChoiceField(choices=DefaultCheckers.choices, required=True)
-    code = serializers.CharField(required=False)
+    code = serializers.CharField(max_length=65535, required=False)
     language = serializers.ChoiceField(choices=('c', 'cpp'), required=False)
 
 

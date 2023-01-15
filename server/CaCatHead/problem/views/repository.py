@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
-from CaCatHead.core.decorators import class_validate_request, SubmitRateThrottle
+from CaCatHead.core.decorators import class_validate_request, SubmitRateThrottle, func_validate_request
 from CaCatHead.permission.constants import ProblemRepositoryPermissions, ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import ProblemRepository, Problem
@@ -18,7 +18,7 @@ from CaCatHead.problem.views.services import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.problem.views.services import copy_repo_problem
 from CaCatHead.problem.views.submit import submit_repository_problem_code
 from CaCatHead.submission.models import Submission
-from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer
+from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, SubmitCodePayload
 from CaCatHead.user.serializers import UserSerializer
 from CaCatHead.utils import make_response, make_error_response
 
@@ -208,8 +208,9 @@ def edit_repo_problem(request: Request, repo_id: int, problem_id: int):
 
 
 @api_view(['POST'])
-@throttle_classes([SubmitRateThrottle])
 @permission_classes([IsAuthenticated])
+@throttle_classes([SubmitRateThrottle])
+@func_validate_request(SubmitCodePayload)
 def submit_repo_problem_code(request: Request, repo_id: int, problem_id: int):
     """
     提交代码

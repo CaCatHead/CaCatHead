@@ -21,9 +21,9 @@ from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ContestPermissions
-from CaCatHead.problem.serializers import SubmitCodePayload
 from CaCatHead.submission.models import ContestSubmission
-from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer
+from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer, \
+    SubmitCodePayload
 from CaCatHead.utils import make_response
 
 
