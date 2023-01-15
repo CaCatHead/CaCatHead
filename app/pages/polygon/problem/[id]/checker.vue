@@ -66,6 +66,16 @@ const save = async () => {
           : {}),
       },
     });
+    if (problem.value.problem_info.problem_judge.checker === 'custom') {
+      if (problem.value.problem_info.problem_judge.custom_checker) {
+        problem.value.problem_info.problem_judge.custom_checker.code =
+          code.value;
+      } else {
+        problem.value.problem_info.problem_judge.custom_checker = {
+          code: code.value,
+        };
+      }
+    }
     notify.success('Checker 设置成功');
   } catch (error: any) {
     notify.danger('Checker 设置失败');
