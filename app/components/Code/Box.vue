@@ -94,10 +94,6 @@ html.dark .shiki {
   background-color: #222 !important;
 }
 
-.markdown-body .shiki {
-  background-color: var(--color-canvas-subtle) !important;
-}
-
 .shiki code {
   counter-reset: step;
   counter-increment: step 0;

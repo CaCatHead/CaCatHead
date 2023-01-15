@@ -7,7 +7,7 @@ import {
   IShikiTheme,
 } from 'shiki-es';
 
-let highlighter: Highlighter | undefined = undefined;
+export let highlighter: Highlighter | undefined = undefined;
 
 const themes: IShikiTheme[] = [];
 
@@ -24,7 +24,7 @@ const supportLangs: Lang[] = [
   'css',
 ];
 
-const alias: Map<string, Lang> = new Map([
+export const alias: Map<string, Lang> = new Map([
   ['c++', 'cpp'],
   ['C++', 'cpp'],
   ['C', 'c'],
@@ -33,7 +33,7 @@ const alias: Map<string, Lang> = new Map([
   ['py', 'python'],
 ]);
 
-function isLangSupport(lang: string): lang is Lang {
+export function isLangSupport(lang: string): lang is Lang {
   return !!supportLangs.find(l => l === lang);
 }
 
@@ -67,6 +67,7 @@ async function setup(...langs: Lang[]) {
 export async function preSetup() {
   await setup(supportLangs[0]);
   await Promise.all(supportLangs.slice(1).map(lang => setup(lang)));
+  return setup(...supportLangs);
 }
 
 export function escapeCode(raw: string) {
