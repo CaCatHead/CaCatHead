@@ -8,22 +8,29 @@ const { problem } = toRefs(props);
 const notify = useNotification();
 
 const submit = async () => {
-  await fetchAPI(`/api/polygon/${problem.value.id}/edit`, {
-    method: 'POST',
-    body: {
-      title: problem.value.title,
-      description: problem.value.problem_info.problem_content.description ?? '',
-      input: problem.value.problem_info.problem_content.input ?? '',
-      output: problem.value.problem_info.problem_content.output ?? '',
-      hint: problem.value.problem_info.problem_content.hint ?? '',
-      source: problem.value.problem_info.problem_content.source ?? '',
-      time_limit: problem.value.time_limit,
-      memory_limit: problem.value.memory_limit,
-    },
-  });
+  try {
+    await fetchAPI(`/api/polygon/${problem.value.id}/edit`, {
+      method: 'POST',
+      body: {
+        title: problem.value.title,
+        description:
+          problem.value.problem_info.problem_content.description ?? '',
+        input: problem.value.problem_info.problem_content.input ?? '',
+        output: problem.value.problem_info.problem_content.output ?? '',
+        hint: problem.value.problem_info.problem_content.hint ?? '',
+        source: problem.value.problem_info.problem_content.source ?? '',
+        time_limit: problem.value.time_limit,
+        memory_limit: problem.value.memory_limit,
+      },
+    });
 
-  notify.success(`题目 ${problem.value.title} 修改成功`);
-  await navigateTo(`/polygon/problem/${problem.value.id}/`);
+    notify.success(
+      `题目 #${problem.value.id}. ${problem.value.title} 修改成功`
+    );
+    await navigateTo(`/polygon/problem/${problem.value.id}/`);
+  } catch {
+    notify.danger(`题目 #${problem.value.id}. ${problem.value.title} 修改失败`);
+  }
 };
 </script>
 
