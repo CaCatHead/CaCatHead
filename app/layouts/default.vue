@@ -118,9 +118,11 @@ provide(LoadingIndicatorSymbol, {
               gap4
               lt-md:gap1
             >
-              <c-button color="info" variant="text">{{
-                user.nickname
-              }}</c-button>
+              <nuxt-link :to="`/user/${authUser.user?.username}`"
+                ><c-button color="info" variant="text">{{
+                  user.nickname
+                }}</c-button></nuxt-link
+              >
               <c-button color="danger" variant="outline" text-sm @click="logout"
                 >退出</c-button
               >

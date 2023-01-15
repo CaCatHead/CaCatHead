@@ -3,18 +3,20 @@ from datetime import datetime
 import gmpy2
 import pytz
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.utils import timezone
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
 from CaCatHead.core.decorators import func_validate_request, class_validate_request, RegisterRateThrottle, \
     LoginRateThrottle
 from CaCatHead.core.exceptions import BadRequest
-from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer
+from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
+    UserSerializer, UserPublicSerializer
 from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response
 
@@ -51,6 +53,15 @@ def current_user_profile(request: Request):
     """
     user = request.user
     return make_response(user=FullUserSerializer(user).data)
+
+
+@api_view()
+def get_user_info(request: Request, username: int):
+    user = User.objects.get(username=username)
+    if user is not None:
+        return make_response(user=UserPublicSerializer(user).data)
+    else:
+        raise NotFound(detail=f'用户 {username} 未找到')
 
 
 @api_view(['POST'])

@@ -30,6 +30,18 @@ class UserSerializer(serializers.BaseSerializer):
         }
 
 
+class UserPublicSerializer(serializers.BaseSerializer):
+    def to_representation(self, user: User):
+        user_info = UserInfo.objects.get(user=user)
+        return {
+            'id': user.id,
+            'username': user.username,
+            'nickname': user_info.nickname,
+            'joined': user.date_joined,
+            'last_login': user.last_login
+        }
+
+
 class FullUserSerializer(serializers.BaseSerializer):
     def to_representation(self, user: User):
         user_info = UserInfo.objects.get(user=user)
