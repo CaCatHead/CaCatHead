@@ -28,7 +28,7 @@ const onClick = () => {
       :style="{ pointerEvents: show ? undefined : 'none' }"
       @click="onClick"
     >
-      <div id="c-modal-container" @click.stop.prevent></div>
+      <div id="c-modal-container" @click.stop.prevent="show = false"></div>
     </div>
   </div>
 </template>

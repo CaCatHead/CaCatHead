@@ -16,11 +16,12 @@ function toNumDuration(seconds: number) {
 </script>
 
 <template>
-  <div v-if="result" p4 select-none cursor-pointer>
+  <div v-if="result" sm:p4 select-none cursor-pointer>
     <div v-if="result.ok">
       <div
         :class="[
-          'text-center',
+          'sm:text-center',
+          'inline-block',
           'font-bold',
           !result.practice ? 'text-green-500' : 'text-blue-500',
         ]"
@@ -33,7 +34,7 @@ function toNumDuration(seconds: number) {
       </div>
     </div>
     <div v-else-if="!!result.dirty">
-      <div class="text-center font-bold text-red-500">
+      <div class="sm:text-center font-bold text-red-500">
         <span>-</span>
         <span>{{ result.dirty }}</span>
       </div>

@@ -115,7 +115,11 @@ const registrations = computed(() => {
 
 <template>
   <div>
-    <h3 text-center text-2xl font-bold>{{ contest.title }} 排行榜</h3>
+    <h3 text-center text-2xl font-bold>
+      <span hidden sm:inline>{{ contest.title }} 排行榜</span>
+      <div hidden lt-sm:block>{{ contest.title }}</div>
+      <div hidden lt-sm:block>排行榜</div>
+    </h3>
     <c-table :data="registrations" mt8 :row-class="checkMyself">
       <template #headers>
         <c-table-header name="rank" width="80">#</c-table-header>
@@ -149,8 +153,13 @@ const registrations = computed(() => {
     </c-table>
 
     <c-modal :show="showSubmissions" @close="showSubmissions = false">
-      <div v-if="showSubmissions && selectedSubmission.length > 0" p2>
-        <div v-for="sub in selectedSubmission" space-x-2 font-mono>
+      <div v-if="showSubmissions && selectedSubmission.length > 0" sm:p2>
+        <div
+          v-for="sub in selectedSubmission"
+          space-x-2
+          font-mono
+          lt-md="!text-sm"
+        >
           <span>{{ formatDateTime(sub.c) }}</span>
           <span
             ><nuxt-link :to="`/contest/${route.params.id}/submission/${sub.i}`"

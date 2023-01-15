@@ -40,7 +40,7 @@ watch(
       bg-white
       dark:bg-dark
       max-h="90vh"
-      max-w="80vw"
+      max-w="90vw"
       overflow-auto
     >
       <slot></slot>
