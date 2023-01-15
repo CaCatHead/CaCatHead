@@ -23,9 +23,23 @@ if [ "$1" = "server" ] ; then
   # start server
   /usr/src/.venv/bin/uvicorn CaCatHead.asgi:application --workers 4 --host 0.0.0.0 --port 8000
 elif [ "$1" = "judge" ] ; then
-  catj -v
+  # ensure catj exists
+  if [ ! -f "/usr/bin/catj" ]; then
+    echo "catj does not exist"
+    exit 1
+  else
+    catj -v
+  fi
+  # ensure checkers exist
+  if [ ! -f "/root/checkers/lcmp" ]; then
+    echo "lcmp does not exist"
+    exit 1
+  fi
+
   # wait rabbitmq bootstrap
   ./wait
+
+  # start celery worker
   export C_FORCE_ROOT=true
   /usr/src/.venv/bin/celery -A CaCatHead.core worker -l INFO
 fi
