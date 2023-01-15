@@ -35,6 +35,11 @@ const testcases = ref<Testcase[]>(
   }))
 );
 
+const clear = () => {
+  testcases.value.splice(0, testcases.value.length);
+  files.value.splice(0, files.value.length);
+};
+
 const moveUp = (testcase: Testcase, index: number) => {
   if (index > 0) {
     testcases.value[index] = testcases.value[index - 1];
@@ -226,6 +231,7 @@ const save = async () => {
         variant="outline"
         >导入测试数据文件</c-multiple-file-input
       >
+      <c-button color="danger" @click="clear">清空</c-button>
       <c-button color="success" @click="save">保存</c-button>
     </div>
 
