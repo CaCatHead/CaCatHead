@@ -17,11 +17,10 @@ function toNumDuration(seconds: number) {
 
 <template>
   <div v-if="result" sm:p4 select-none cursor-pointer>
-    <div v-if="result.ok">
+    <div v-if="result.ok" inline-block>
       <div
         :class="[
-          'sm:text-center',
-          'inline-block',
+          'text-center',
           'font-bold',
           !result.practice ? 'text-green-500' : 'text-blue-500',
         ]"
