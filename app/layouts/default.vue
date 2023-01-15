@@ -66,10 +66,36 @@ const timestamp = process.server
     });
 
 provide(ServerTimestamp, timestamp);
+
+const progress = ref(0);
+const loading = ref(false);
+provide(LoadingIndicatorSymbol, {
+  loading,
+  progress,
+  start() {
+    progress.value = 0;
+    loading.value = true;
+  },
+  update(value) {
+    if (value !== undefined && value !== null) {
+      progress.value = value;
+    } else {
+      progress.value = Math.min(90, progress.value + 10);
+    }
+  },
+  stop() {
+    progress.value = 100;
+    loading.value = false;
+  },
+});
 </script>
 
 <template>
   <div flex justify-center px="$main-padding-y">
+    <loading-indicator
+      :progress="progress"
+      :loading="loading"
+    ></loading-indicator>
     <div min-h-screen pt4 w="$main-max-width" max-w="$main-max-width">
       <div h="64px">
         <div h-full flex items-center>
