@@ -5,12 +5,13 @@ from django.contrib.auth import authenticate, login
 from django.utils import timezone
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
-from CaCatHead.core.decorators import func_validate_request, class_validate_request
+from CaCatHead.core.decorators import func_validate_request, class_validate_request, RegisterRateThrottle, \
+    LoginRateThrottle
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer
 from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response
@@ -40,6 +41,7 @@ def current_user_profile(request: Request):
 
 
 @api_view(['POST'])
+@throttle_classes([RegisterRateThrottle])
 @func_validate_request(RegisterPayloadSerializer)
 def user_register(request: Request):
     """
@@ -58,6 +60,8 @@ class UserLoginView(KnoxLoginView):
     """
 
     permission_classes = (permissions.AllowAny,)
+
+    throttle_classes = (LoginRateThrottle,)
 
     @class_validate_request(LoginPayloadSerializer)
     def post(self, request: Request, _format=None):
