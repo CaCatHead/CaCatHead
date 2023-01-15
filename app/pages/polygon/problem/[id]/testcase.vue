@@ -89,7 +89,16 @@ watch(files, files => {
     }
   }
 
-  const newTestcases = [...map.values()];
+  const oldTestcases = testcases.value.filter(
+    t => t.input?.size && t.answer?.size
+  );
+  const oldNames = new Set(oldTestcases.map(t => t.name));
+  const newTestcases = [...oldTestcases];
+  for (const [_key, testcase] of map.entries()) {
+    if (!oldNames.has(testcase.name)) {
+      newTestcases.push(testcase);
+    }
+  }
   for (const testcase of newTestcases) {
     testcase.score = Math.max(1, Math.floor(100 / newTestcases.length));
   }
