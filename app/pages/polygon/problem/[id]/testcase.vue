@@ -3,39 +3,57 @@ import type { FullPolygonProblem } from '@/composables/types';
 
 import { zipSync, strToU8 } from 'fflate';
 
+import { useAutoAnimate } from '@formkit/auto-animate/vue';
+
 const props = defineProps<{ problem: FullPolygonProblem }>();
 
 const { problem } = toRefs(props);
 
 const notify = useNotification();
 
+const [parent] = useAutoAnimate();
+
 const files = ref<File[]>([]);
 
 interface Testcase {
-  input?: File;
-  answer?: File;
+  name: string;
+  input?: File | { name: string; size: undefined };
+  answer?: File | { name: string; size: undefined };
   score: number;
   sample: boolean;
 }
 
-const testcases = computed(() => {
-  if (files.value.length === 0) {
-    return problem.value.problem_info.problem_judge.testcase_detail.map(d => ({
-      input: { name: d.input, size: undefined },
-      answer: { name: d.answer, size: undefined },
-      score: d.score,
-      sample: d.sample ?? false,
-    }));
-  }
+const trimFileEnd = (text: string) => text.replace(/\.[a-z]+$/, '');
 
+const testcases = ref<Testcase[]>(
+  problem.value.problem_info.problem_judge.testcase_detail.map(d => ({
+    name: trimFileEnd(d.input),
+    input: { name: d.input, size: undefined },
+    answer: { name: d.answer, size: undefined },
+    score: d.score,
+    sample: d.sample ?? false,
+  }))
+);
+
+watch(files, files => {
   const map = new Map<string, Testcase>();
-  for (const file of files.value) {
+  for (const file of files) {
     const setInput = (name: string, file: File) => {
-      if (!map.has(name)) map.set(name, { score: 0, sample: false });
+      if (!map.has(name))
+        map.set(name, {
+          name: trimFileEnd(file.name),
+          score: 0,
+          sample: false,
+        });
       map.get(name)!.input = file;
     };
     const setAnswer = (name: string, file: File) => {
-      if (!map.has(name)) map.set(name, { score: 0, sample: false });
+      if (!map.has(name))
+        map.set(name, {
+          name: trimFileEnd(file.name),
+          score: 0,
+          sample: false,
+        });
       map.get(name)!.answer = file;
     };
 
@@ -55,19 +73,19 @@ const testcases = computed(() => {
     }
   }
 
-  const testcases = [...map.values()];
-  for (const testcase of testcases) {
-    testcase.score = Math.max(1, Math.floor(100 / testcases.length));
+  const newTestcases = [...map.values()];
+  for (const testcase of newTestcases) {
+    testcase.score = Math.max(1, Math.floor(100 / newTestcases.length));
   }
 
-  if (testcases.length > 0) {
-    testcases[testcases.length - 1].score =
-      100 - Math.floor(100 / testcases.length) * (testcases.length - 1);
+  if (newTestcases.length > 0) {
+    newTestcases[newTestcases.length - 1].score =
+      100 - Math.floor(100 / newTestcases.length) * (newTestcases.length - 1);
 
-    testcases[0].sample = true;
+    newTestcases[0].sample = true;
   }
 
-  return testcases;
+  testcases.value = newTestcases;
 });
 
 const getAxios = useAxiosFactory();
@@ -175,19 +193,19 @@ const save = async () => {
 <template>
   <div>
     <div space-x-4>
-      <c-file-input
+      <c-multiple-file-input
         id="testcase"
         v-model="files"
         multiple
         accept=".a, .in, .ans, .out"
         variant="outline"
-        >导入测试用例文件</c-file-input
+        >导入测试用例文件</c-multiple-file-input
       >
       <c-button color="success" @click="save">保存</c-button>
     </div>
 
-    <div mt4 shadow-box rounded divide-y>
-      <div v-for="(testcase, idx) in testcases" :key="idx" w-full p4>
+    <div mt4 shadow-box rounded divide-y ref="parent">
+      <div v-for="(testcase, idx) in testcases" :key="testcase.name" w-full p4>
         <div mb2 flex items-center>
           <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
           <span
