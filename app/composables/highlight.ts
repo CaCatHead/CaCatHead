@@ -5,11 +5,7 @@ import {
   setWasm,
   Lang,
   IShikiTheme,
-  ILanguageRegistration,
 } from 'shiki-es';
-
-// @ts-ignore
-// import OnigUrl from 'shiki/dist/onig.wasm?url';
 
 let highlighter: Highlighter | undefined = undefined;
 

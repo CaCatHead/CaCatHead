@@ -53,8 +53,29 @@ using namespace std;
 int main() {
   int a, b;
   cin >> a >> b
-  cout << a + b << endl;
+  cout << a + b << '\\n';
   return 0;
+}`;
+
+const CExample = `#include <stdio.h>
+int main() {
+  int a, b;
+  scanf("%d%d", &a, &b);
+  printf("%d\\n", a + b);
+  return 0;
+}`;
+
+const JavaExample = `import java.util.Scanner;
+
+public class Main {
+  public static void main(String[] args) {
+    Scanner cin = new Scanner(System.in);
+    while (cin.hasNextInt()) {
+      int a = cin.nextInt();
+      int b = cin.nextInt();
+      System.out.println(a + b);
+    }
+  }
 }`;
 </script>
 
@@ -130,8 +151,6 @@ int main() {
               <display-verdict verdict="RuntimeError"></display-verdict>
               等错误结果。
             </p>
-            <p>下面是题目 A + B 的 C++ 的样例程序:</p>
-            <code-box :code="CppExample" language="cpp"></code-box>
             <p>
               你不能在提交的程序最后使用
               <code>system("pause");</code>
@@ -139,6 +158,12 @@ int main() {
               <display-verdict verdict="RuntimeError"></display-verdict>
               等错误结果。
             </p>
+            <p>下面是题目 A + B 的 C 的样例程序:</p>
+            <code-box :code="CExample" language="c"></code-box>
+            <p>下面是题目 A + B 的 C++ 的样例程序:</p>
+            <code-box :code="CppExample" language="cpp"></code-box>
+            <p>下面是题目 A + B 的 Java 的样例程序:</p>
+            <code-box :code="JavaExample" language="java"></code-box>
           </div>
         </template>
       </q-a>
