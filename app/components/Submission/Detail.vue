@@ -19,9 +19,10 @@ watch(
 
 <template>
   <div space-y-4 mt4>
-    <pre font-mono p4 shadow-box rounded overflow-auto>{{
-      submission.code
-    }}</pre>
+    <code-box
+      :code="submission.code"
+      :language="submission.language"
+    ></code-box>
     <div
       v-if="
         submission.verdict === Verdict.CompileError ||
@@ -44,6 +45,7 @@ watch(
       shadow-box
       rounded
       divide-y
+      dark:divide="gray/40"
     >
       <div
         v-for="(testcase, index) in submission.detail.results"
