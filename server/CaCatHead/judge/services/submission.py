@@ -14,7 +14,8 @@ from CaCatHead.contest.models import ContestRegistration
 from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
 from CaCatHead.problem.models import ProblemTypes, DefaultCheckers
-from CaCatHead.problem.views.upload import ProblemDirectory
+from CaCatHead.problem.views.upload import ProblemDirectory, get_testcase_root, read_testcase_root_version, \
+    write_testcase_root_version
 from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.submission')
@@ -23,7 +24,7 @@ MAX_COMPILE_OUTPUT_SIZE = 1024
 MAX_OUTPUT_SIZE = 512
 
 
-class NoTestDataException(Exception):
+class NoTestcaseException(Exception):
     pass
 
 
@@ -68,8 +69,9 @@ class SubmissionTask:
         self.code = self.submission.code
         self.language = self.submission.language
         problem = self.submission.problem
+        self.problem = problem
         self.problem_id = str(problem.id)
-        self.problem_judge_id = str(problem.problem_info.problem_judge.id)
+        self.testcase_directory = get_testcase_root(problem)
         self.problem_type = problem.problem_info.problem_judge.problem_type
         self.time_limit = problem.time_limit
         self.memory_limit = problem.memory_limit
@@ -78,10 +80,11 @@ class SubmissionTask:
 
         self.log(f'Language: {self.language}')
         self.log(f'Problem ID: {self.problem_id}')
-        self.log(f'Problem Judge ID: {self.problem_judge_id}')
         self.log(f'Problem type: {self.problem_type}')
         self.log(f'Time limit: {self.time_limit}')
         self.log(f'Memory limit: {self.memory_limit}')
+        self.log(f'Checker: {self.checker}')
+        self.log(f'Testcase dir: {self.testcase_directory}')
         self.log(f'Extra info: {problem.problem_info.problem_judge.extra_info}')
 
         # 保存编译输出
@@ -127,7 +130,7 @@ class SubmissionTask:
                 self.judge()
         except NoCheckerException:
             self.verdict = Verdict.SystemError
-        except NoTestDataException:
+        except NoTestcaseException:
             self.verdict = Verdict.TestCaseError
         except NoLanguageException:
             self.verdict = Verdict.JudgeError
@@ -242,12 +245,20 @@ class SubmissionTask:
         verdict = Verdict.Accepted
         for (index, testcase) in enumerate(self.testcase_detail):
             try:
-                self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
-            except NoTestDataException:
+                version = read_testcase_root_version(problem=self.problem)
+                if version == self.problem.problem_info.problem_judge.testcase_version:
+                    # 测试用例版本号匹配
+                    self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
+                else:
+                    shutil.rmtree(self.testcase_directory)
+                    # 测试用例过期
+                    raise NoTestcaseException
+            except NoTestcaseException:
                 # Try downloading testcases from minio
-                self.log(f'Downloading Problem Judge #{self.problem_judge_id}. testcases from minio')
-                problem_directory = ProblemDirectory.make_from_id(problem_id=self.problem_id,
-                                                                  problem_judge_id=self.problem_judge_id)
+                problem_judge_id = self.problem.problem_info.problem_judge_id
+                testcase_version = self.problem.problem_info.problem_judge.testcase_version
+                self.log(f'Downloading Problem Judge #{problem_judge_id}. (version: {testcase_version}) testcases')
+                problem_directory = ProblemDirectory.try_make(problem=self.problem)
                 # 处理 MinIO 下载失败
                 download_ok = False
                 try:
@@ -257,9 +268,10 @@ class SubmissionTask:
                     download_ok = False
                 finally:
                     if download_ok:
+                        write_testcase_root_version(problem=self.problem)
                         self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
                     else:
-                        raise NoTestDataException
+                        raise NoTestcaseException
 
             self.log(f'Run code on the testcase #{index}. in the sandbox')
             self.run_sandbox()
@@ -290,14 +302,15 @@ class SubmissionTask:
         self.log(f'Finish judging, verdict is {self.verdict}')
 
     def prepare_testcase_file(self, index: int, in_file: str, ans_file: str):
-        # TODO: extract these logic
         self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')
-        in_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, in_file)
-        ans_file_src = os.path.join(settings.TESTCASE_ROOT, self.problem_judge_id, ans_file)
-        in_file_dst = os.path.join(self.tmp_dir, "in.txt")
-        ans_file_dst = os.path.join(self.tmp_dir, "ans.txt")
-        if not os.path.exists(in_file_src) or not os.path.exists(ans_file_src):
-            raise NoTestDataException
+        in_file_src = self.testcase_directory / in_file
+        ans_file_src = self.testcase_directory / ans_file
+        self.log(f'In  file src: {in_file_src}, {in_file_src.exists()}')
+        self.log(f'Ans file src: {ans_file_src}, {ans_file_src.exists()}')
+        in_file_dst = self.tmp_dir / "in.txt"
+        ans_file_dst = self.tmp_dir / "ans.txt"
+        if not in_file_src.exists() or not ans_file_src.exists():
+            raise NoTestcaseException
         shutil.copyfile(in_file_src, in_file_dst)
         shutil.copyfile(ans_file_src, ans_file_dst)
 
@@ -307,7 +320,7 @@ class SubmissionTask:
         subprocess.call(commands)
 
     def read_result(self, testcase):
-        result_file = open(os.path.join(self.tmp_dir, "result.txt"), 'r')
+        result_file = open(self.tmp_dir / "result.txt", 'r')
         verdict = Verdict.parse(result_file.readline().strip().split()[1])
         run_time = int(result_file.readline().strip().split()[1])
         run_memory = int(result_file.readline().strip().split()[1])

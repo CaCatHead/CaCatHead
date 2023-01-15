@@ -1,6 +1,9 @@
+import logging
+
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.db.models import F
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.exceptions import BadRequest
@@ -9,9 +12,12 @@ from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, Probl
 from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
 from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
+logger = logging.getLogger(__name__)
+
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
-except Exception:
+except Exception as ex:
+    logger.error(f'Can not find main problem repository {MAIN_PROBLEM_REPOSITORY_NAME}: %r', ex)
     MAIN_PROBLEM_REPOSITORY = None
 
 DEFAULT_DISPLAY_ID = 1000
@@ -137,12 +143,23 @@ def make_problem_by_uploading(zip_content: InMemoryUploadedFile, user: User):
 
 
 def edit_problem_by_uploading(zip_content: InMemoryUploadedFile, problem: Problem):
+    # 旧的测试用例版本号
+    problem_judge_id = problem.problem_info.problem_judge_id
+    old_testcase_version = problem.problem_info.problem_judge.testcase_version
+    # 更新测试用例版本号
+    ProblemJudge.objects.filter(id=problem_judge_id).update(testcase_version=F('testcase_version') + 1)
+    # 保存测试用例
     problem_directory = upload_problem_arch(problem, zip_content)
 
     if problem_directory is None:
+        # 恢复测试用例版本号
+        problem.problem_info.problem_judge.testcase_version = old_testcase_version
+        problem.problem_info.problem_judge.save()
         raise BadRequest(detail='题目压缩包上传失败')
     else:
+        # 将压缩包内的更新，写入到数据库
         save_arch_to_database(problem, problem_directory)
+        # 将数据库中的信息，同步到题目目录
         problem_directory.save_config(problem)
 
     return problem
