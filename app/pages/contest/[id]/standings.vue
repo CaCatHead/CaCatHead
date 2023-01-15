@@ -153,7 +153,7 @@ const registrations = computed(() => {
         <div v-for="sub in selectedSubmission" space-x-1>
           <span>{{ formatDateTime(sub.c) }}</span>
           <span><display-verdict :verdict="sub.v"></display-verdict></span>
-          <span>→</span>
+          <span select-none>→</span>
           <span
             ><nuxt-link
               text-sky-700

@@ -26,9 +26,9 @@ const onClick = () => {
       transition-all
       :class="[show && 'bg-dark-100 bg-op-10']"
       :style="{ pointerEvents: show ? undefined : 'none' }"
-      @click.stop="onClick"
+      @click="onClick"
     >
-      <div id="c-modal-container"></div>
+      <div id="c-modal-container" @click.stop.prevent></div>
     </div>
   </div>
 </template>
