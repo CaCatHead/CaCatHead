@@ -9,12 +9,14 @@ useHead({
 </script>
 
 <template>
-  <c-notification-provider>
-    <NuxtLayout>
-      <NuxtLoadingIndicator />
-      <NuxtPage />
-    </NuxtLayout>
-  </c-notification-provider>
+  <c-modal-provider>
+    <c-notification-provider>
+      <NuxtLayout>
+        <NuxtLoadingIndicator />
+        <NuxtPage />
+      </NuxtLayout>
+    </c-notification-provider>
+  </c-modal-provider>
 </template>
 
 <style>

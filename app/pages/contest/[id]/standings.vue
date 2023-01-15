@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { FullContest, ContestStanding } from '@/composables/types';
+import type {
+  FullContest,
+  ContestStanding,
+  ContestStandingSubmission,
+} from '@/composables/types';
 
 const route = useRoute();
 
@@ -16,6 +20,15 @@ useHead({
 const { data } = await useFetchAPI<{ registrations: ContestStanding[] }>(
   `/api/contest/${route.params.id}/standings`
 );
+
+const showSubmissions = ref(false);
+const selectedSubmission = ref([] as ContestStandingSubmission[]);
+const handleShowSubmissions = (row: ContestStanding, index: string) => {
+  const display_id = indexToDisplayId(index);
+  selectedSubmission.value =
+    row.standings.submissions?.filter(s => s.p === display_id) ?? [];
+  showSubmissions.value = true;
+};
 
 const alphabet = new Array(contest.value.problems.length)
   .fill(undefined)
@@ -130,8 +143,29 @@ const registrations = computed(() => {
         <standing-result
           class="w-full h-full"
           :result="row.standings?.problems[idx]"
+          @click="handleShowSubmissions(row, idx)"
         ></standing-result>
       </template>
     </c-table>
+
+    <c-modal :show="showSubmissions" @close="showSubmissions = false">
+      <div v-if="showSubmissions && selectedSubmission.length > 0">
+        <div v-for="sub in selectedSubmission" space-x-1>
+          <span>{{ formatDateTime(sub.c) }}</span>
+          <span><display-verdict :verdict="sub.v"></display-verdict></span>
+          <span>→</span>
+          <span
+            ><nuxt-link
+              text-sky-700
+              text-op-70
+              dark:text-sky-200
+              hover:text-op-100
+              :to="`/contest/${route.params.id}/submission/${sub.i}`"
+              >{{ sub.i }}</nuxt-link
+            ></span
+          >
+        </div>
+      </div>
+    </c-modal>
   </div>
 </template>
