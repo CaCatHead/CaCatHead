@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import gmpy2
 import pytz
 from django.contrib.auth import authenticate, login
 from django.utils import timezone
@@ -12,6 +13,7 @@ from rest_framework.request import Request
 
 from CaCatHead.core.decorators import func_validate_request, class_validate_request, RegisterRateThrottle, \
     LoginRateThrottle
+from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer
 from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response
@@ -28,6 +30,17 @@ def sync_timestamp(request: Request):
     server = timezone.now()
     return make_response(diff=round((server - client).total_seconds() * 1000),
                          timestamp=round(server.timestamp() * 1000))
+
+
+@api_view()
+def is_prime(request: Request, text: str):
+    if len(text) > 1000:
+        raise BadRequest(detail='Your number is too big')
+    try:
+        n = int(text)
+        return make_response(prime=gmpy2.is_prime(n))
+    except ValueError:
+        raise BadRequest(detail='Your request is not a number')
 
 
 @api_view()
