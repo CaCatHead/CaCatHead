@@ -7,7 +7,7 @@ const { user } = toRefs(props);
 </script>
 
 <template>
-  <nuxt-link :to="`/user/${user.username}`" class="user-link">{{
+  <nuxt-link :to="`/user/profile/${user.username}`" class="user-link">{{
     user.nickname
   }}</nuxt-link>
 </template>
