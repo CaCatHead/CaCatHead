@@ -2,14 +2,15 @@
 import { highlight } from '@/composables/highlight';
 
 const props = withDefaults(
-  defineProps<{ code?: string; language?: string }>(),
+  defineProps<{ code?: string; language?: string; copy?: boolean }>(),
   {
     code: '',
     language: 'cpp',
+    copy: true,
   }
 );
 
-const { code, language } = toRefs(props);
+const { code, language, copy } = toRefs(props);
 
 const rendered = ref('');
 
@@ -31,10 +32,19 @@ const width = computed(() => {
     return '1em';
   }
 });
+
+const copyToClipboard = async () => {
+  await navigator.clipboard.writeText(code.value);
+};
 </script>
 
 <template>
-  <div class="code-box">
+  <div v-if="rendered.length > 0" class="code-box relative transition-all">
+    <div absolute top-2 right-2 v-if="copy">
+      <c-button variant="text" color="info" @click="copyToClipboard"
+        >复制</c-button
+      >
+    </div>
     <div
       :class="['px-4 py-4 overflow-x-auto lt-md:text-xs lt-md:p-2']"
       v-html="rendered"
