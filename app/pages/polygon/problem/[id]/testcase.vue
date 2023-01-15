@@ -224,7 +224,7 @@ const save = async () => {
         multiple
         accept=".a, .in, .ans, .out"
         variant="outline"
-        >导入测试用例文件</c-multiple-file-input
+        >导入测试数据文件</c-multiple-file-input
       >
       <c-button color="success" @click="save">保存</c-button>
     </div>
@@ -326,8 +326,22 @@ const save = async () => {
           </div>
         </div>
       </div>
-      <div v-if="testcases.length === 0" flex items-center justify-center h-24>
-        <span>请上传测试数据</span>
+      <div
+        v-if="testcases.length === 0"
+        flex
+        items-center
+        justify-center
+        h-48
+        w-full
+      >
+        <div text-center space-y-2 mx4>
+          <div font-bold>上传测试数据</div>
+          <ul list-decimal space-y-1 text-left whitespace-normal pl6>
+            <li>导入测试数据文件；</li>
+            <li>选择测试点显示为样例，输入分数，调整顺序；</li>
+            <li>重复以上步骤，设置完成后保存。</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
