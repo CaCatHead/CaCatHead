@@ -231,34 +231,46 @@ const save = async () => {
         items-center
       >
         <div flex-1>
-          <div mb2 flex items-center>
-            <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
-            <span
-              v-if="!!testcase.input?.size && !!testcase.answer?.size"
-              i-mdi-check
-              font-bold
-              ml2
-              class="text-success"
-            ></span>
-            <span v-else i-mdi-close ml2 class="text-danger" font-bold></span>
-            <div flex-auto></div>
-            <span font-bold mr2>显示为样例</span>
-            <c-switch v-model="testcase.sample"></c-switch>
+          <div mb2 lt-sm:mb4 flex items-center lt-sm="flex-col items-start">
+            <span inline-flex items-center>
+              <span font-bold text-lg>测试数据点 #{{ idx + 1 }}</span>
+              <span
+                v-if="!!testcase.input?.size && !!testcase.answer?.size"
+                i-mdi-check
+                font-bold
+                ml2
+                class="text-success"
+              ></span>
+              <span v-else i-mdi-close ml2 class="text-danger" font-bold></span>
+            </span>
+            <div sm:flex-auto></div>
+            <span>
+              <span font-bold mr2>显示为样例</span>
+              <c-switch v-model="testcase.sample"></c-switch>
+            </span>
           </div>
-          <div flex items-center gap4>
+          <div flex items-center gap4 lt-sm="gap2 flex-col items-start">
             <div>
-              <c-button color="info" :disabled="!testcase.input?.size">
+              <c-button
+                color="info"
+                :disabled="!testcase.input?.size"
+                lt-sm:text-sm
+              >
                 <span mr2>输入文件</span>
                 <span>{{ testcase.input?.name }}</span>
               </c-button>
             </div>
             <div>
-              <c-button color="info" :disabled="!testcase.answer?.size">
+              <c-button
+                color="info"
+                :disabled="!testcase.answer?.size"
+                lt-sm:text-sm
+              >
                 <span mr2>答案文件</span>
                 <span>{{ testcase.answer?.name }}</span>
               </c-button>
             </div>
-            <div flex-auto></div>
+            <div flex-auto lt-sm:hidden></div>
             <div>
               <c-input
                 class="flex items-center"
@@ -267,7 +279,13 @@ const save = async () => {
                 v-model="testcase.score"
               >
                 <template #label>
-                  <label :for="'score_' + idx" mr4 text-lg font-bold
+                  <label
+                    :for="'score_' + idx"
+                    inline-block
+                    w10
+                    mr4
+                    text-lg
+                    font-bold
                     >分值</label
                   >
                 </template>
@@ -286,6 +304,7 @@ const save = async () => {
               @click="moveUp(testcase, idx)"
             ></c-button>
           </div>
+          <div flex-auto></div>
           <div>
             <c-button
               class="!h12"
