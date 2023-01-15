@@ -21,9 +21,9 @@ from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ContestPermissions
-from CaCatHead.problem.serializers import SubmitCodePayload
 from CaCatHead.submission.models import ContestSubmission
-from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer
+from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer, \
+    SubmitCodePayload
 from CaCatHead.utils import make_response
 
 
@@ -134,6 +134,7 @@ def get_contest(request: Request, contest_id: int):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @func_validate_request(EditContestPayloadSerializer)
 def edit_contest(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
@@ -157,6 +158,7 @@ class ContestRegistrationView(APIView):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @func_validate_request(UserRegisterPayloadSerializer)
 def user_register_contest(request: Request, contest_id: int):
     # 用户有注册比赛的权限
@@ -180,6 +182,7 @@ def user_register_contest(request: Request, contest_id: int):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def user_unregister_contest(request: Request, contest_id: int):
     contest = check_register_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest, request.user)
@@ -202,6 +205,7 @@ def user_unregister_contest(request: Request, contest_id: int):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @throttle_classes([SubmitRateThrottle])
 @func_validate_request(SubmitCodePayload)
 def user_submit_code(request: Request, contest_id: int, problem_id: int):
@@ -215,6 +219,7 @@ def user_submit_code(request: Request, contest_id: int, problem_id: int):
 
 
 @api_view()
+@permission_classes([IsAuthenticated])
 @cache_page(1)
 @vary_on_headers("Authorization", )
 def user_list_own_submissions(request: Request, contest_id: int):
@@ -296,6 +301,7 @@ def user_view_submission(request: Request, contest_id: int, submission_id: int):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @throttle_classes([SubmitRateThrottle])
 def rejudge_contest_submission(request: Request, contest_id: int, submission_id: int):
     contest = check_read_contest(request.user, contest_id)

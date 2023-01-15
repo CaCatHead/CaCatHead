@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import caches
 from rest_framework.permissions import BasePermission
 from rest_framework.throttling import UserRateThrottle
 
@@ -47,5 +49,24 @@ class HasPolygonPermission(BasePermission):
             return False
 
 
-class SubmitRateThrottle(UserRateThrottle):
+ThrottleCache = 'default' if not settings.IS_TEST else 'dummy'
+
+
+class DefaultAnonRateThrottle(UserRateThrottle):
+    cache = caches[ThrottleCache]
+
+
+class DefaultUserRateThrottle(UserRateThrottle):
+    cache = caches[ThrottleCache]
+
+
+class LoginRateThrottle(DefaultAnonRateThrottle):
+    rate = '5/minute'
+
+
+class RegisterRateThrottle(DefaultAnonRateThrottle):
+    rate = '5/minute'
+
+
+class SubmitRateThrottle(DefaultUserRateThrottle):
     rate = '12/minute'

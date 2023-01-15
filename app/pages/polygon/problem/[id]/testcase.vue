@@ -70,10 +70,8 @@ const testcases = computed(() => {
   return testcases;
 });
 
-const API_BASE = useRuntimeConfig().API_BASE;
-const token = useToken();
-const loading = ref(false);
-const progress = ref(0);
+const getAxios = useAxiosFactory();
+const loading = useLoadingIndicator();
 
 const save = async () => {
   if (files.value.length === 0) {
@@ -143,43 +141,39 @@ const save = async () => {
 
   notify.info('开始上传测试用例');
 
-  progress.value = 0;
-  loading.value = true;
-  const { default: axios } = await import('axios');
-  const formData = new FormData();
-  formData.append('file', new Blob([arch]));
-  await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
-    baseURL: API_BASE,
-    headers: {
-      Authorization: token.value,
-      'Content-Type': 'application/zip',
-      'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
-    },
-    onUploadProgress(ev) {
-      if (ev.progress !== undefined) {
-        progress.value = ev.progress * 100;
-      } else {
-        progress.value = (ev.loaded / arch.length) * 100.0;
-      }
-    },
-  });
-  progress.value = 100;
-  loading.value = false;
+  try {
+    loading.start();
+    const axios = await getAxios();
+    const formData = new FormData();
+    formData.append('file', new Blob([arch]));
+    await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
+      },
+      onUploadProgress(ev) {
+        if (ev.progress !== undefined) {
+          loading.update(ev.progress * 100);
+        } else {
+          loading.update((ev.loaded / arch.length) * 100.0);
+        }
+      },
+    });
+    notify.success(`题目 ${problem.value.title} 测试数据保存成功`);
 
-  notify.success(`题目 ${problem.value.title} 测试数据保存成功`);
-
-  problem.value.problem_info.problem_content.sample = sample;
-  problem.value.problem_info.problem_judge.testcase_detail = testcaseDetail;
+    problem.value.problem_info.problem_content.sample = sample;
+    problem.value.problem_info.problem_judge.testcase_detail = testcaseDetail;
+  } catch (error: any) {
+    console.error(error);
+    notify.success(`题目 ${problem.value.title} 测试数据保存失败`);
+  } finally {
+    loading.stop();
+  }
 };
 </script>
 
 <template>
   <div>
-    <loading-indicator
-      :progress="progress"
-      :loading="loading"
-    ></loading-indicator>
-
     <div space-x-4>
       <c-file-input
         id="testcase"

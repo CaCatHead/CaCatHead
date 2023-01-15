@@ -16,15 +16,19 @@ if (!data.value?.problems) {
 }
 
 const files = ref<File[]>([]);
+
+const getAxios = useAxiosFactory();
+const loading = useLoadingIndicator();
+
 const upload = async () => {
   if (files.value.length > 0) {
+    loading.start();
+    const axios = await getAxios();
     const file = files.value[0];
     const formData = new FormData();
     formData.append('file', file);
     try {
-      await fetchAPI(`/api/polygon/upload`, {
-        method: 'POST',
-        body: formData,
+      await axios.post(`/api/polygon/upload`, formData, {
         headers: {
           'Content-Type': 'application/zip',
           'Content-Disposition': `form-data; filename="${encodeURIComponent(
@@ -36,6 +40,8 @@ const upload = async () => {
     } catch (err: unknown) {
       console.error(err);
       notify.danger(`题目上传失败`);
+    } finally {
+      loading.stop();
     }
   }
 };

@@ -3,11 +3,17 @@ const emit = defineEmits<{
   (e: 'submit', payload: { code: string; language: string }): void;
 }>();
 
+const notify = useNotification();
+
 const code = ref('');
 const language = ref('cpp');
 
 const submit = async () => {
-  emit('submit', { code: code.value, language: language.value });
+  if (code.value.length > 65535) {
+    notify.danger(`您提交的代码过长`);
+  } else {
+    emit('submit', { code: code.value, language: language.value });
+  }
 };
 </script>
 

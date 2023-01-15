@@ -28,6 +28,9 @@ DEBUG = False if os.getenv('DEBUG', 'true').lower() == 'false' else True
 # Disable DEBUG_JUDGE by default
 DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else False
 
+# Is Test Environment
+IS_TEST = 'test' in sys.argv
+
 # Root username and password
 CACATHEAD_ROOT_USER = cacathead_config.server.root.username
 CACATHEAD_ROOT_PASS = cacathead_config.server.root.password
@@ -76,9 +79,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'knox.auth.TokenAuthentication',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'CaCatHead.core.decorators.DefaultAnonRateThrottle',
+        'CaCatHead.core.decorators.DefaultUserRateThrottle'
+    ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '10/second',
-        'user': '10/second'
+        'anon': '5/second',
+        'user': '20/second'
     },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
@@ -132,7 +139,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / cacathead_config.database.name,
     }
-} if cacathead_config.database.engine == 'sqlite' or 'test' in sys.argv else {
+} if cacathead_config.database.engine == 'sqlite' or IS_TEST else {
     # 如果是测试环境，直接使用 sqlite 不使用 postgresql 或者 mysql
     'default': {
         'ENGINE': 'django.db.backends.' + cacathead_config.database.engine,  # mysql or postgresql
@@ -154,6 +161,9 @@ CACHES = {
     'redis': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
+    },
+    'dummy': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 

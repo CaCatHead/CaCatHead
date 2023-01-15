@@ -6,6 +6,11 @@ from CaCatHead.submission.models import Submission, ContestSubmission
 from CaCatHead.user.serializers import UserSerializer
 
 
+class SubmitCodePayload(serializers.Serializer):
+    code = serializers.CharField(max_length=65535, required=True)
+    language = serializers.ChoiceField(choices=('c', 'cpp', 'java'), required=True)
+
+
 class SubmissionSerializer(serializers.ModelSerializer):
     repository = ProblemRepositorySerializer(read_only=True)
 

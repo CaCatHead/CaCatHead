@@ -15,7 +15,7 @@ from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPermissionSerializer
 from CaCatHead.problem.models import Problem, DefaultCheckers
 from CaCatHead.problem.serializers import CreateProblemPayload, \
-    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, SubmitCodePayload, \
+    EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, \
     SubmitCheckerPayload
 from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
     make_problem_by_uploading, edit_problem_by_uploading, upload_custom_checker
@@ -24,7 +24,7 @@ from CaCatHead.problem.views.submit import submit_polygon_problem_code, \
 from CaCatHead.problem.views.upload import ProblemDirectory
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, \
-    FullPolygonSubmissionSerializer
+    FullPolygonSubmissionSerializer, SubmitCodePayload
 from CaCatHead.utils import make_response, make_error_response
 
 

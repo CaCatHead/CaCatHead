@@ -122,6 +122,8 @@ export interface PolygonProblem {
   title: string;
   is_public: boolean;
   owner: User;
+  created: string;
+  updated: string;
   problem_type: 'classic_ac';
 }
 

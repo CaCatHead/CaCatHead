@@ -19,18 +19,42 @@ const user = useUser();
 
 const files = ref<File[]>([]);
 
+const getAxios = useAxiosFactory();
+const loading = useLoadingIndicator();
+
 const downloadZip = async () => {
-  const result = await fetchAPI(`/api/polygon/${problem.value.id}/export`, {
-    responseType: 'blob',
-  });
-  const data = window.URL.createObjectURL(result as Blob);
-  const el = document.createElement('a');
-  el.setAttribute('href', data);
-  el.setAttribute('download', `${problem.value.title}.zip`);
-  el.style.display = 'none';
-  document.body.appendChild(el);
-  el.click();
-  document.body.removeChild(el);
+  try {
+    loading.start();
+    const axios = await getAxios();
+    const response = await axios.get(
+      `/api/polygon/${problem.value.id}/export`,
+      {
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
+        },
+        responseType: 'blob',
+        onDownloadProgress(ev) {
+          if (ev.progress) {
+            loading.update(ev.progress * 100);
+          } else {
+            loading.update();
+          }
+        },
+      }
+    );
+
+    const data = window.URL.createObjectURL(response.data as Blob);
+    const el = document.createElement('a');
+    el.setAttribute('href', data);
+    el.setAttribute('download', `${problem.value.title}.zip`);
+    el.style.display = 'none';
+    document.body.appendChild(el);
+    el.click();
+    document.body.removeChild(el);
+  } finally {
+    loading.stop();
+  }
 };
 
 const onUpdateZip = async () => {
@@ -39,20 +63,36 @@ const onUpdateZip = async () => {
     const file = files.value[0];
     formData.append('file', file);
     try {
-      await fetchAPI(`/api/polygon/${problem.value.id}/upload`, {
-        method: 'POST',
-        body: formData,
+      notify.success(
+        `开始上传题目 #${problem.value.id}. ${problem.value.title} 压缩包`
+      );
+
+      loading.start();
+      const axios = await getAxios();
+      await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
         headers: {
           'Content-Type': 'application/zip',
-          'Content-Disposition': `form-data; filename="${encodeURIComponent(
-            file.name
-          )}"`,
+          'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
+        },
+        onUploadProgress(ev) {
+          if (ev.progress !== undefined) {
+            loading.update(ev.progress * 100);
+          } else {
+            loading.update((ev.loaded / file.size) * 100.0);
+          }
         },
       });
-      notify.success(`题目 ${problem.value.title} 更新成功`);
+
+      notify.success(
+        `题目 #${problem.value.id}. ${problem.value.title} 更新成功`
+      );
     } catch (err: unknown) {
       console.error(err);
-      notify.danger(`题目 ${problem.value.title} 更新失败`);
+      notify.danger(
+        `题目 #${problem.value.id}. ${problem.value.title} 更新失败`
+      );
+    } finally {
+      loading.stop();
     }
   }
 };
@@ -63,6 +103,7 @@ const onUpdateZip = async () => {
     <Head>
       <Title>Polygon #{{ problem.id }}. {{ problem.title }}</Title>
     </Head>
+
     <div>
       <div flex pl2 lt-md="flex-col mb4">
         <h2 text-2xl font-bold mb4>#{{ problem.id }}. {{ problem.title }}</h2>
