@@ -26,7 +26,7 @@ const selectedSubmission = ref([] as ContestStandingSubmission[]);
 const handleShowSubmissions = (row: ContestStanding, index: string) => {
   const display_id = indexToDisplayId(index);
   selectedSubmission.value =
-    row.standings.submissions?.filter(s => s.p === display_id) ?? [];
+    row.standings.submissions?.filter(s => s.p === display_id).reverse() ?? [];
   showSubmissions.value = true;
 };
 
@@ -149,10 +149,13 @@ const registrations = computed(() => {
     </c-table>
 
     <c-modal :show="showSubmissions" @close="showSubmissions = false">
-      <div v-if="showSubmissions && selectedSubmission.length > 0">
-        <div v-for="sub in selectedSubmission" space-x-1>
+      <div v-if="showSubmissions && selectedSubmission.length > 0" p2>
+        <div v-for="sub in selectedSubmission" space-x-2 font-mono>
           <span>{{ formatDateTime(sub.c) }}</span>
-          <span><display-verdict :verdict="sub.v"></display-verdict></span>
+          <span
+            ><nuxt-link :to="`/contest/${route.params.id}/submission/${sub.i}`"
+              ><display-verdict :verdict="sub.v"></display-verdict></nuxt-link
+          ></span>
           <span select-none>→</span>
           <span
             ><nuxt-link
