@@ -250,7 +250,7 @@ class SubmissionTask:
                     # 测试用例版本号匹配
                     self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
                 else:
-                    shutil.rmtree(self.testcase_directory)
+                    shutil.rmtree(self.testcase_directory, ignore_errors=True)
                     # 测试用例过期
                     raise NoTestcaseException
             except NoTestcaseException:
