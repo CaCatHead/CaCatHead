@@ -116,7 +116,7 @@ public class Main {
               共有
               {{ data.nodes.filter(n => n.active).length }} 台评测机正在运行。
             </div>
-            <judge-nodes lt-sm:p1 :nodes="data?.nodes"></judge-nodes>
+            <judge-nodes :nodes="data?.nodes"></judge-nodes>
           </div>
         </template>
       </q-a>

@@ -64,8 +64,12 @@ const copyToClipboard = async () => {
 
 <template>
   <div v-show="rendered.length > 0" class="code-box relative transition-all">
-    <div absolute top-2 right-2 v-if="copy">
-      <c-button variant="text" color="info" @click="copyToClipboard"
+    <div absolute top-2 right-2 lt-md="top-0 right-1" v-if="copy">
+      <c-button
+        variant="text"
+        color="info"
+        lt-sm="text-xs"
+        @click="copyToClipboard"
         >复制</c-button
       >
     </div>
@@ -97,6 +101,7 @@ html.dark .shiki {
 }
 
 .shiki code .line {
+  padding-right: 0.5rem;
   height: 1em;
   line-height: 1em;
 }
