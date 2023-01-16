@@ -111,9 +111,7 @@ watch(files, files => {
       }
     }
   }
-  console.log(curSamples, curTestcases);
   newTestcases.push(...curSamples, ...curTestcases);
-  console.log(newTestcases);
 
   for (const testcase of newTestcases) {
     testcase.score = Math.max(1, Math.floor(100 / newTestcases.length));
