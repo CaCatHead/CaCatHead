@@ -49,7 +49,7 @@ const render = createMarkdown({
 
 const result = computed(() => {
   // Track deps
-  let _hl = highlighter.value;
+  let _deps = highlighter.value && isDark.value;
   return render(content.value);
 });
 </script>
