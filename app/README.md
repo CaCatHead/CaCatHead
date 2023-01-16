@@ -16,3 +16,15 @@ $ pnpm install
 
 $ pnpm dev:app
 ```
+
+## Config
+
+The app will read the following environment variables.
+
++ `API_BASE`: The API endpoint of the web server
++ `ENABLE_CACHE`: You can set it `"false"` to disable cache
++ `SHIKI_CDN`: shiki cdn prefix
+
+## License
+
+AGPL-3.0 License © 2022 [XLor](https://github.com/yjl9903)
