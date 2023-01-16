@@ -37,8 +37,10 @@ const render = createMarkdown({
     code = code.trim();
     lang = alias.get(lang) ?? lang;
     if (highlighter.value && isLangSupport(lang)) {
+      console.log(isDark.value);
       return highlighter.value.codeToHtml(code, {
         lang,
+
         theme: isDark.value ? 'Eva Dark' : 'Eva Light',
       });
     } else {
@@ -76,11 +78,11 @@ const result = computed(() => {
   list-style-type: decimal;
 }
 
-html.dark .markdown-body .shiki {
-  background-color: var(--color-fg-default) !important;
+.markdown-body .shiki {
+  background-color: #f6f8fa !important;
 }
 
-.markdown-body .shiki {
-  background-color: var(--color-canvas-subtle) !important;
+html.dark .markdown-body .shiki {
+  background-color: #24292f !important;
 }
 </style>
