@@ -47,8 +47,9 @@ async function setup(...langs: Lang[]) {
       setCDN('');
     } else {
       // CSR 渲染
-      if (!!process.env.SHIKI_CDN) {
-        setCDN(process.env.SHIKI_CDN);
+      const SHIKI_CDN = useRuntimeConfig().SHIKI_CDN;
+      if (!!SHIKI_CDN) {
+        setCDN(SHIKI_CDN);
       } else {
         // @ts-ignore
         const { default: OnigUrl } = await import('shiki/dist/onig.wasm?url');
