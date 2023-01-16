@@ -8,8 +8,16 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 
+import * as fs from 'fs-extra';
+
 // This is the django server
 const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
+
+// Enable cache
+const ENABLE_CACHE = process.env['ENABLE_CACHE'] === 'false' ? false : true;
+
+// shiki cdn url
+const SHIKI_CDN = process.env['SHIKI_CDN'];
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -19,7 +27,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'zh-Hans-CN',
       },
-      link: [{ rel: 'icon', href: '/favicon.png' }],
+      link: [{ rel: 'icon', href: '/favicon.ico' }],
       meta: [
         {
           name: 'description',
@@ -42,6 +50,9 @@ export default defineNuxtConfig({
     },
   },
   css: ['@/assets/main.css'],
+  appConfig: {
+    SHIKI_CDN,
+  },
   runtimeConfig: {
     API_BASE,
     proxy: {
@@ -56,6 +67,9 @@ export default defineNuxtConfig({
     // See https://github.com/nuxt/framework/issues/9318
     // Cache 30 days
     '/_nuxt/**': {
+      headers: cacheControlHeader(2592000),
+    },
+    '/shiki/**': {
       headers: cacheControlHeader(2592000),
     },
     // Cache 30 days
@@ -161,6 +175,30 @@ export default defineNuxtConfig({
       },
     },
   },
+  hooks: {
+    async 'build:before'() {
+      try {
+        const srcDir = './node_modules/shiki/languages/';
+        const dstDir = './public/shiki/languages/';
+        const languages = await fs.readdir(srcDir);
+        await fs.ensureDir(dstDir);
+        const tasks: Promise<void>[] = [];
+        for (const lang of languages) {
+          if (lang.endsWith('.json')) {
+            tasks.push(
+              fs.copyFile(
+                './node_modules/shiki/languages/' + lang,
+                './public/shiki/languages/' + lang
+              )
+            );
+          }
+        }
+        await Promise.all(tasks);
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+  },
   vite: {
     define: {
       // Fix shiki
@@ -170,7 +208,11 @@ export default defineNuxtConfig({
 });
 
 function cacheControlHeader(time: number) {
-  return {
-    'Cache-Control': `max-age=${time}, immutable, public, s-maxage=${time}`,
-  };
+  if (ENABLE_CACHE) {
+    return {
+      'Cache-Control': `max-age=${time}, immutable, public, s-maxage=${time}`,
+    };
+  } else {
+    return {};
+  }
 }

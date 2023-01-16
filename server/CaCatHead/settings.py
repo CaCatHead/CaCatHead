@@ -75,10 +75,17 @@ INSTALLED_APPS = [
 ]
 
 # Django REST framework config
+REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES = [
+    'rest_framework.renderers.JSONRenderer',
+]
+if DEBUG:
+    REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
+
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',
-    ),
+    ],
     'DEFAULT_THROTTLE_CLASSES': [
         'CaCatHead.core.decorators.DefaultAnonRateThrottle',
         'CaCatHead.core.decorators.DefaultUserRateThrottle'

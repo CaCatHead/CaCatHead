@@ -69,16 +69,9 @@ COPY --from=builder /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp 
                     /root/checkers/rcmp4 /root/checkers/rcmp6 /root/checkers/rcmp9 /root/checkers/wcmp /root/checkers/yesno \
                     /root/checkers/
 
-ADD ./server /root/CaCatHead
-
-ADD ./deploy/server/docker-entrypoint.sh /root/CaCatHead
-
-ADD ./deploy/server/ping.cron /root/CaCatHead
-
-ADD ./deploy/server/ping.sh /root/CaCatHead
-
-# See https://github.com/ufoscout/docker-compose-wait
-ADD ./deploy/server/wait /root/CaCatHead
+ADD ./server ./deploy/server/docker-entrypoint.sh \
+    ./deploy/server/ping.cron ./deploy/server/ping.sh ./deploy/server/wait \
+    /root/CaCatHead/
 
 WORKDIR /root/CaCatHead
 

@@ -2,12 +2,7 @@
 import 'katex/dist/katex.min.css';
 
 import { createMarkdown } from './render';
-import {
-  preSetup,
-  escapeCode,
-  alias,
-  isLangSupport,
-} from '@/composables/highlight';
+import { alias } from '@/composables/highlight';
 
 const props = withDefaults(defineProps<{ content?: string }>(), {
   content: '',
@@ -15,26 +10,17 @@ const props = withDefaults(defineProps<{ content?: string }>(), {
 
 const { content } = toRefs(props);
 
-const isDark = useDark();
-
-const highlighter = await preSetup();
-
 const render = createMarkdown({
   highlight: (code, lang) => {
     code = code.trim();
     lang = alias.get(lang) ?? lang;
-    if (highlighter && isLangSupport(lang)) {
-      return highlighter.codeToHtml(code, {
-        lang,
-        theme: isDark.value ? 'Eva Dark' : 'Eva Light',
-      });
-    } else {
-      return escapeCode(code);
-    }
+    return highlight(code, lang).html;
   },
 });
 
-const result = computed(() => render(content.value));
+const result = computed(() => {
+  return render(content.value);
+});
 </script>
 
 <template>
@@ -59,11 +45,11 @@ const result = computed(() => render(content.value));
   list-style-type: decimal;
 }
 
-html.dark .markdown-body .shiki {
-  background-color: var(--color-fg-default) !important;
+.markdown-body .shiki {
+  background-color: #f6f8fa !important;
 }
 
-.markdown-body .shiki {
-  background-color: var(--color-canvas-subtle) !important;
+html.dark .markdown-body .shiki {
+  background-color: #24292f !important;
 }
 </style>

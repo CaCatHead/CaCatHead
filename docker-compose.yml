@@ -2,7 +2,11 @@ version: '3.9'
 
 services:
   nginx:
-    build: ./deploy/nginx
+    build:
+      context: ./
+      dockerfile: ./deploy/nginx/Dockerfile
+      args:
+        SHIKI_VERSION: '0.12.1'
     container_name: cacathead_nginx
     restart: always
     depends_on:
@@ -11,27 +15,26 @@ services:
     networks:
       - cat_net
     volumes:
-      - ./.cacathead/logs/nginx:/var/log/nginx
-      - ./.cacathead/static:/var/www/cacathead/static
       - ./deploy/nginx/cert:/root/cert
+      - ./.cacathead/logs/nginx:/var/log/nginx
+      - ./deploy/app/public:/var/www/cacathead/public
+      - ./.cacathead/static:/var/www/cacathead/static
     ports:
       - 80:80
       - 443:443
-    environment:
-      TZ: Asia/Shanghai
 
   app:
     build:
       context: ./
       dockerfile: ./deploy/app/Dockerfile
+      args:
+        SHIKI_CDN: /shiki/
     container_name: cacathead_app
     restart: always
     depends_on:
       - server
     networks:
       - cat_net
-    environment:
-      TZ: Asia/Shanghai
     # ports:
     #   - '3333:3333'
 
@@ -116,7 +119,6 @@ services:
     secrets:
       - db_pass
     environment:
-      TZ: Asia/Shanghai
       WAIT_HOSTS: postgresql:5432  # See https://github.com/ufoscout/docker-compose-wait
     env_file:
       - ./deploy/server/.env

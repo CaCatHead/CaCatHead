@@ -1,5 +1,10 @@
 FROM postgres:15.1
 
+ENV TZ=Asia/Shanghai TimeZone=Asia/Shanghai
+
+RUN echo "${TimeZone}" > /etc/timezone \
+   && dpkg-reconfigure -f noninteractive tzdata
+
 # See https://github.com/ufoscout/docker-compose-wait
 ADD ./deploy/server/wait ./
 

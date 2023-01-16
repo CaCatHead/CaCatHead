@@ -1,9 +1,8 @@
 {
+  "name": "@cacathead/server",
   "private": true,
   "scripts": {
-    "dev": "cross-env DEBUG=true pipenv run python manage.py runserver"
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3"
+    "dev": "cross-env DEBUG=true pipenv run python manage.py runserver",
+    "judge": "cross-env C_FORCE_ROOT=true NODE_NAME=local_dev pipenv run celery -A CaCatHead.core worker -l INFO"
   }
 }

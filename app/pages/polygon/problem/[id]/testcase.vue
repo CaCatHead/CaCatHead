@@ -99,11 +99,20 @@ watch(files, files => {
   );
   const oldNames = new Set(oldTestcases.map(t => t.name));
   const newTestcases = [...oldTestcases];
-  for (const [_key, testcase] of map.entries()) {
+  const curSamples: Testcase[] = [];
+  const curTestcases: Testcase[] = [];
+  const entries = [...map.entries()].sort((l, r) => l[0].localeCompare(r[0]));
+  for (const [_key, testcase] of entries) {
     if (!oldNames.has(testcase.name)) {
-      newTestcases.push(testcase);
+      if (testcase.sample) {
+        curSamples.push(testcase);
+      } else {
+        curTestcases.push(testcase);
+      }
     }
   }
+  newTestcases.push(...curSamples, ...curTestcases);
+
   for (const testcase of newTestcases) {
     testcase.score = Math.max(1, Math.floor(100 / newTestcases.length));
   }

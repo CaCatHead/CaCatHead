@@ -12,8 +12,6 @@ const props = withDefaults(
 
 const { code, language, copy } = toRefs(props);
 
-const rendered = ref('');
-
 const isDark = useDark();
 
 function hash(s: string) {
@@ -35,26 +33,20 @@ const renderCacheDark = useLocalStorage(
 
 const isHydrating = !!useNuxtApp().isHydrating;
 
-watch(
-  () => [code.value, language.value, isDark.value] as [string, string, boolean],
-  async ([code, language, isDark]) => {
-    const renderCache = isDark ? renderCacheDark : renderCacheLight;
-    const hsh = hash(code);
-    // Hyration 的时候，不能读取缓存
-    if (
-      !isHydrating &&
-      hsh in renderCache.value &&
-      renderCache.value[hsh].c === code
-    ) {
-      rendered.value = renderCache.value[hsh].r;
-    } else {
-      const result = await highlight(code, language, isDark);
-      rendered.value = result;
-      renderCache.value[hsh] = { c: code, r: result };
+const rendered = computed(() => {
+  const renderCache = isDark ? renderCacheDark.value : renderCacheLight.value;
+  const hsh = hash(code.value);
+  // Hyration 的时候，不能读取缓存
+  if (!isHydrating && hsh in renderCache && renderCache[hsh].c === code.value) {
+    return renderCache[hsh].r;
+  } else {
+    const result = highlight(code.value, language.value);
+    if (language.value === result.language) {
+      renderCache[hsh] = { c: code.value, r: result.html };
     }
-  },
-  { immediate: true }
-);
+    return result.html;
+  }
+});
 
 const measure = ref<HTMLElement | null>(null);
 const width = computed(() => {
@@ -72,8 +64,12 @@ const copyToClipboard = async () => {
 
 <template>
   <div v-show="rendered.length > 0" class="code-box relative transition-all">
-    <div absolute top-2 right-2 v-if="copy">
-      <c-button variant="text" color="info" @click="copyToClipboard"
+    <div absolute top-2 right-2 lt-md="top-0 right-1" v-if="copy">
+      <c-button
+        variant="text"
+        color="info"
+        lt-sm="text-xs"
+        @click="copyToClipboard"
         >复制</c-button
       >
     </div>
@@ -105,6 +101,7 @@ html.dark .shiki {
 }
 
 .shiki code .line {
+  padding-right: 0.5rem;
   height: 1em;
   line-height: 1em;
 }
