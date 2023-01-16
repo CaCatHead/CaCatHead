@@ -16,7 +16,7 @@ from CaCatHead.core.decorators import func_validate_request, class_validate_requ
     LoginRateThrottle
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
-    UserSerializer, UserPublicSerializer
+    UserPublicSerializer
 from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response
 
@@ -43,6 +43,8 @@ def is_prime(request: Request, text: str):
         return make_response(prime=gmpy2.is_prime(n))
     except ValueError:
         raise BadRequest(detail='Your request is not a number')
+    except Exception:
+        raise BadRequest(detail='Something went wrong')
 
 
 @api_view()
