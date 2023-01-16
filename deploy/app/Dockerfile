@@ -26,9 +26,15 @@ ADD ./app /root/CaCatHead/app/
 
 ADD ./deploy/app/public /root/CaCatHead/app/public/
 
+ARG SHIKI_CDN
+
+ENV SHIKI_CDN ${SHIKI_CDN}
+
 RUN pnpm build:app
 
 FROM node:18 AS runtime
+
+ENV TimeZone Asia/Shanghai
 
 COPY --from=builder /root/CaCatHead/app/.output /root/CaCatHead/app/.output
 
