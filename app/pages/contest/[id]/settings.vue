@@ -33,7 +33,7 @@ const start_time = ref(formatDatetime(contest.value.start_time));
 
 const duration = ref(formatDuration());
 
-const problems = ref('');
+// const problems = ref('');
 
 const description = ref(contest.value.description);
 
@@ -62,13 +62,6 @@ const submit = async () => {
           is_public: is_public.value,
           view_standings: view_standings.value,
           view_submissions_after_contest: view_submissions_after_contest.value,
-          problems:
-            problems.value !== ''
-              ? problems.value
-                  .split(',')
-                  .map(p => p.trim())
-                  .filter(Boolean)
-              : undefined,
         },
       }
     );
@@ -84,7 +77,7 @@ const submit = async () => {
     } else {
       notify.danger('未知错误');
     }
-    problems.value = '';
+    // problems.value = '';
   }
 };
 </script>
@@ -92,34 +85,34 @@ const submit = async () => {
 <template>
   <div space-y-4>
     <c-input type="text" id="title" v-model="title">
-      <template #label>比赛标题</template>
+      <template #label><span font-bold>比赛标题</span></template>
     </c-input>
     <c-input type="datetime-local" id="start_time" v-model="start_time">
-      <template #label>比赛开始时间</template>
+      <template #label><span font-bold>比赛开始时间</span></template>
     </c-input>
     <c-input type="number" id="duration" v-model="duration">
-      <template #label>比赛持续时间 (分钟)</template>
+      <template #label><span font-bold>比赛持续时间 (分钟)</span></template>
     </c-input>
-    <c-input type="text" id="problems" v-model="problems">
+    <!-- <c-input type="text" id="problems" v-model="problems">
       <template #label>题目列表 (使用 Polygon 题目编号, 逗号分隔)</template>
-    </c-input>
+    </c-input> -->
     <div flex items-center space-x-4>
-      <span>是否公开</span>
+      <span font-bold>是否公开</span>
       <c-switch id="is_public" v-model="is_public"></c-switch>
     </div>
     <div flex items-center space-x-4>
-      <span>是否开启赛时榜单</span>
+      <span font-bold>是否开启赛时榜单</span>
       <c-switch id="view_standings" v-model="view_standings"></c-switch>
     </div>
     <div flex items-center space-x-4>
-      <span>是否开启赛后查看提交</span>
+      <span font-bold>是否开启赛后查看提交</span>
       <c-switch
         id="view_submissions_after_contest"
         v-model="view_submissions_after_contest"
       ></c-switch>
     </div>
     <div>
-      <h4 mb2>比赛描述</h4>
+      <h4 mb2 font-bold>比赛描述</h4>
       <markdown-editor v-model="description"></markdown-editor>
     </div>
 
