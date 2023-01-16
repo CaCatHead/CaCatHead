@@ -68,6 +68,7 @@ int main() {
 }`;
 
 const CExample = `#include <stdio.h>
+
 int main() {
   int a, b;
   scanf("%d%d", &a, &b);
@@ -105,7 +106,10 @@ public class Main {
         >
       </q-a>
       <q-a v-if="!!data?.nodes">
-        <template #q>评测机的运行情况？</template>
+        <template #q
+          ><nuxt-link to="/nodes" text-link>评测机</nuxt-link
+          >的运行情况？</template
+        >
         <template #a>
           <div space-y-2 w-full>
             <div>
