@@ -13,8 +13,8 @@ services:
     volumes:
       - ./deploy/nginx/cert:/root/cert
       - ./.cacathead/logs/nginx:/var/log/nginx
+      - ./deploy/app/public:/var/www/cacathead/public
       - ./.cacathead/static:/var/www/cacathead/static
-      - ./app/public/favicon.ico:/var/www/cacathead/favicon.ico
     ports:
       - 80:80
       - 443:443
