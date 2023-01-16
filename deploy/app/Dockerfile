@@ -2,7 +2,7 @@
 
 FROM node:18 AS builder
 
-RUN npm i --registry https://registry.npm.taobao.org -g pnpm
+RUN npm i --registry https://registry.npmmirror.com/ -g pnpm
 
 ADD ./package.json ./.npmrc ./pnpm-lock.yaml ./pnpm-workspace.yaml /root/CaCatHead/
 
@@ -20,7 +20,7 @@ ENV npm_config_sharp_binary_host=https://cdn.npmmirror.com/binaries/sharp \
     API_BASE=http://server:8000 \
     NUXT_PROXY_OPTIONS_TARGET=http://server:8000
 
-RUN pnpm install --registry https://registry.npm.taobao.org
+RUN pnpm install --registry https://registry.npmmirror.com/
 
 ADD ./app /root/CaCatHead/app/
 

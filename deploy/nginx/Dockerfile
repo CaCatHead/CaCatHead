@@ -4,6 +4,7 @@ COPY . /etc/nginx/
 
 # TimeZone
 ENV TimeZone Asia/Shanghai
+
 RUN echo "${TimeZone}" > /etc/timezone \
    && dpkg-reconfigure -f noninteractive tzdata
 
