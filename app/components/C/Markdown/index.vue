@@ -37,10 +37,8 @@ const render = createMarkdown({
     code = code.trim();
     lang = alias.get(lang) ?? lang;
     if (highlighter.value && isLangSupport(lang)) {
-      console.log(isDark.value);
       return highlighter.value.codeToHtml(code, {
         lang,
-
         theme: isDark.value ? 'Eva Dark' : 'Eva Light',
       });
     } else {
