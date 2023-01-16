@@ -127,10 +127,15 @@ def get_contest(request: Request, contest_id: int):
                          Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
             solved[pid] = False
 
+    extra_info = None
+    if contest.has_admin_permission(request.user):
+        extra_info = contest.extra_info
+
     return make_response(contest=ContestContentSerializer(contest).data,
                          solved=solved,
                          registration=ContestRegistrationSerializer(registration).data,
-                         is_admin=contest.has_admin_permission(request.user))
+                         is_admin=contest.has_admin_permission(request.user),
+                         extra_info=extra_info)
 
 
 @api_view(['POST'])

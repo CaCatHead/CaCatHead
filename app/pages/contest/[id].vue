@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { FullContest, Registration } from '@/composables/types';
+import type {
+  FullContest,
+  Registration,
+  ContestExtraInfo,
+} from '@/composables/types';
 
 const route = useRoute();
 
@@ -8,6 +12,7 @@ const { data: contest } = await useFetchAPI<{
   solved: Record<string, boolean>;
   registration: Registration | null;
   is_admin: boolean;
+  extra_info: ContestExtraInfo | null;
 }>(`/api/contest/${route.params.id}/content`);
 
 if (
@@ -41,6 +46,9 @@ if (
       >
       <c-nav-item to="standings">排行榜</c-nav-item>
       <c-nav-item to="settings" v-if="contest.is_admin">比赛设置</c-nav-item>
+      <c-nav-item to="problemset" v-if="contest.is_admin"
+        >题目列表设置</c-nav-item
+      >
       <c-nav-item to="permissions" v-if="contest.is_admin">权限管理</c-nav-item>
     </c-nav>
     <NuxtPage
@@ -48,6 +56,7 @@ if (
       :solved="contest.solved"
       :registration="contest.registration"
       :admin="contest.is_admin"
+      :extra_info="contest.extra_info"
     />
   </div>
 </template>

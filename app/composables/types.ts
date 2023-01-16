@@ -72,6 +72,10 @@ export interface Contest {
   is_public: boolean;
 }
 
+export interface ContestExtraInfo {
+  polygon_problems?: Array<{ id: number }>;
+}
+
 export type FullContest = Contest & {
   settings: Record<string, boolean>;
   description: string;

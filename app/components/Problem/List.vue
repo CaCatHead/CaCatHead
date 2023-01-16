@@ -6,9 +6,9 @@ import { Verdict } from '@/composables/verdict';
 const props = withDefaults(
   defineProps<{
     problems: Problem[];
-    problemLink: (problem: Problem) => string;
-    problemIndex?: (problem: Problem) => string;
-    problemVerdict?: (problem: Problem) => Verdict | undefined;
+    problemLink: (problem: Problem, index: number) => string;
+    problemIndex?: (problem: Problem, index: number) => string;
+    problemVerdict?: (problem: Problem, index: number) => Verdict | undefined;
     operationWidth?: string;
   }>(),
   {
@@ -19,9 +19,9 @@ const props = withDefaults(
 
 const { problems, problemVerdict } = toRefs(props);
 
-const getBg = (row: Problem) => {
+const getBg = (row: Problem, index: number) => {
   if (problemVerdict?.value) {
-    const verdict = problemVerdict.value(row);
+    const verdict = problemVerdict.value(row, index);
     if (verdict) {
       return verdict === Verdict.Accepted
         ? '[&>td:first-child]:bg-[#e0ffe4] [&>td:first-child]:dark:bg-[#56ca00] [&>td:first-child]:text-neutral-900'
@@ -51,14 +51,14 @@ const emit = defineEmits<{
         ><span></span
       ></c-table-header>
     </template>
-    <template #display_id="{ row }">
-      <nuxt-link :to="problemLink(row)" class="text-link font-bold">{{
-        problemIndex(row)
+    <template #display_id="{ row, index }">
+      <nuxt-link :to="problemLink(row, index)" class="text-link font-bold">{{
+        problemIndex(row, index)
       }}</nuxt-link>
     </template>
-    <template #title="{ row }">
+    <template #title="{ row, index }">
       <div flex justify-between items-center lt-md="items-start flex-col gap1">
-        <nuxt-link :to="problemLink(row)" class="text-link">{{
+        <nuxt-link :to="problemLink(row, index)" class="text-link">{{
           row.title
         }}</nuxt-link>
         <div

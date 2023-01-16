@@ -6,7 +6,7 @@ const props = defineProps<{ repo: ProblemRepository }>();
 const { repo } = toRefs(props);
 
 useHead({
-  title: `题目设置 - ${repo.value.name}`,
+  title: `题目列表设置 - ${repo.value.name}`,
 });
 
 const notify = useNotification();

@@ -50,7 +50,7 @@ const submit = async () => {
   const end = addMinutes(start, duration.value);
 
   try {
-    const { contest: newContest } = await fetchAPI<{ contest: FullContest }>(
+    await fetchAPI<{ contest: FullContest }>(
       `/api/contest/${route.params.id}/edit`,
       {
         method: 'POST',
@@ -73,7 +73,8 @@ const submit = async () => {
       }
     );
 
-    contest.value = newContest;
+    contest.value.title = title.value;
+    contest.value.description = description.value;
 
     notify.success(`比赛 ${contest.value.title} 修改成功`);
     await navigateTo(`/contest/${route.params.id}`);
