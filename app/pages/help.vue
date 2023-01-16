@@ -102,7 +102,7 @@ public class Main {
             text-link
             target="_blank"
             >猫猫头</a
-          >，是一个开源的在线评测系统。</template
+          >，是一个开源的在线评测系统。虽然目前尚未开源，因为项目仍在快速迭代中，计划在到达一定完成度后开源。</template
         >
       </q-a>
       <q-a v-if="!!data?.nodes">
@@ -167,26 +167,26 @@ public class Main {
               <strong>标准输出 (stdout)</strong>。
             </p>
             <p>
-              例如，如果你是用的是 C/C++ 语言，你可以用 C 中的
+              例如，如果你使用的是 C/C++ 语言，那么你可以用 C 中的
               <a
                 href="https://zh.cppreference.com/w/c/io/fscanf"
                 text-link
                 target="_blank"
                 ><code>scanf</code></a
-              >，或者使用 C++ 的
+              >，或者 C++ 中的
               <a
                 href="https://zh.cppreference.com/w/cpp/io/cin"
                 text-link
                 target="_blank"
                 ><code>cin</code></a
-              >，从标准输入里读入数据；并且使用 C 中的
+              >，从标准输入里读入数据；你可以使用 C 中的
               <a
                 href="https://en.cppreference.com/w/cpp/io/cout"
                 text-link
                 target="_blank"
                 ><code>printf</code></a
               >
-              或者使用 C++ 的
+              或者 C++ 的
               <a
                 href="https://zh.cppreference.com/w/c/io/fprintf"
                 text-link
@@ -196,7 +196,7 @@ public class Main {
               输出到标准输出。
             </p>
             <p>
-              评测机禁止用户的程序读取或者写入文件。如果你这样做，系统可能返回
+              评测机禁止用户程序读取或者写入文件。如果你这样做，系统可能返回
               <display-verdict verdict="RuntimeError"></display-verdict>
               等错误结果。
             </p>
