@@ -11,6 +11,9 @@ import {
 // This is the django server
 const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
 
+// Enable cache
+const ENABLE_CACHE = process.env['ENABLE_CACHE'] === 'false' ? false : true;
+
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   app: {
@@ -173,7 +176,11 @@ export default defineNuxtConfig({
 });
 
 function cacheControlHeader(time: number) {
-  return {
-    'Cache-Control': `max-age=${time}, immutable, public, s-maxage=${time}`,
-  };
+  if (ENABLE_CACHE) {
+    return {
+      'Cache-Control': `max-age=${time}, immutable, public, s-maxage=${time}`,
+    };
+  } else {
+    return {};
+  }
 }
