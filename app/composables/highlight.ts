@@ -42,8 +42,10 @@ async function setup(...langs: Lang[]) {
     if (process.server) {
       setCDN('');
     } else {
-      // @ts-ignore
-      const { default: OnigUrl } = await import('shiki/dist/onig.wasm?url');
+      const { default: OnigUrl } = await import(
+        // @ts-ignore
+        '~/node_modules/shiki/dist/onig.wasm?url'
+      );
       setWasm(await fetch(OnigUrl).then(res => res.arrayBuffer()));
       setCDN('/shiki/');
     }

@@ -47,6 +47,16 @@ const compiler = [
   },
 ];
 
+const MacroExample = `#ifdef ONLINE_JUDGE
+  // 这段代码只会在评测机里运行
+#endif
+
+#ifndef ONLINE_JUDGE
+  // 这段代码只会在本地运行
+  // 例如，本地运行时读取输入文件
+  freopen("in.txt", "r", stdin);
+#endif`;
+
 const CppExample = `#include <iostream>
 using namespace std;
 
@@ -115,6 +125,12 @@ public class Main {
                 <span text-sm font-mono mx2>{{ row.run.join(' ') }}</span>
               </template>
             </c-table>
+            <p>
+              <strong>提示</strong>：如果你使用的是 C/C++ 语言，你可以使用
+              <code>ONLINE_JUDGE</code>
+              宏和条件编译来判断代码是否运行在评测机上。
+            </p>
+            <code-box :code="MacroExample"></code-box>
           </div>
         </template>
       </q-a>
