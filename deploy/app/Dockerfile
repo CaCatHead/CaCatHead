@@ -4,7 +4,13 @@ FROM node:18 AS builder
 
 RUN npm i --registry https://registry.npm.taobao.org -g pnpm
 
-ADD . /root/CaCatHead
+ADD ./package.json ./.npmrc ./pnpm-lock.yaml ./pnpm-workspace.yaml /root/CaCatHead/
+
+ADD ./app/package.json /root/CaCatHead/app/
+
+ADD ./app/patches /root/CaCatHead/app/patches/
+
+ADD ./server/package.json /root/CaCatHead/server/
 
 WORKDIR /root/CaCatHead
 
@@ -15,6 +21,10 @@ ENV npm_config_sharp_binary_host=https://cdn.npmmirror.com/binaries/sharp \
     NUXT_PROXY_OPTIONS_TARGET=http://server:8000
 
 RUN pnpm install --registry https://registry.npm.taobao.org
+
+ADD ./app /root/CaCatHead/app/
+
+ADD ./deploy/app/public /root/CaCatHead/app/public/
 
 RUN pnpm build:app
 
