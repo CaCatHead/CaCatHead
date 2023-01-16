@@ -1,15 +1,8 @@
 <script setup lang="ts">
 import 'katex/dist/katex.min.css';
 
-import type { Highlighter } from 'shiki-es';
-
 import { createMarkdown } from './render';
-import {
-  preSetup,
-  escapeCode,
-  alias,
-  isLangSupport,
-} from '@/composables/highlight';
+import { alias } from '@/composables/highlight';
 
 const props = withDefaults(defineProps<{ content?: string }>(), {
   content: '',
@@ -17,39 +10,15 @@ const props = withDefaults(defineProps<{ content?: string }>(), {
 
 const { content } = toRefs(props);
 
-const isDark = useDark();
-
-const highlighter = ref<Highlighter>();
-
-if (!process.server) {
-  preSetup()
-    .then(hl => {
-      highlighter.value = hl;
-    })
-    .catch(error => {
-      console.error(error);
-      return undefined;
-    });
-}
-
 const render = createMarkdown({
   highlight: (code, lang) => {
     code = code.trim();
     lang = alias.get(lang) ?? lang;
-    if (highlighter.value && isLangSupport(lang)) {
-      return highlighter.value.codeToHtml(code, {
-        lang,
-        theme: isDark.value ? 'Eva Dark' : 'Eva Light',
-      });
-    } else {
-      return escapeCode(code);
-    }
+    return highlight(code, lang).html;
   },
 });
 
 const result = computed(() => {
-  // Track deps
-  let _deps = highlighter.value && isDark.value;
   return render(content.value);
 });
 </script>
