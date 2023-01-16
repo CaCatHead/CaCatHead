@@ -79,6 +79,7 @@ export function useShikiTheme() {
 
 export function highlight(code: string, lang: string) {
   const shiki = useHightlighter(lang as Lang);
+  const theme = useShikiTheme();
 
   const renderText = () => ({
     language: 'text',
@@ -94,7 +95,7 @@ export function highlight(code: string, lang: string) {
     try {
       const html = shiki.codeToHtml(code, {
         lang,
-        theme: useShikiTheme(),
+        theme,
       });
       return { language: lang, html };
     } catch (error) {
