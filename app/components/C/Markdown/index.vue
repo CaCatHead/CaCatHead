@@ -21,14 +21,16 @@ const isDark = useDark();
 
 const highlighter = ref<Highlighter>();
 
-preSetup()
-  .then(hl => {
-    highlighter.value = hl;
-  })
-  .catch(error => {
-    console.error(error);
-    return undefined;
-  });
+if (!process.server) {
+  preSetup()
+    .then(hl => {
+      highlighter.value = hl;
+    })
+    .catch(error => {
+      console.error(error);
+      return undefined;
+    });
+}
 
 const render = createMarkdown({
   highlight: (code, lang) => {
