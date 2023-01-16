@@ -102,6 +102,18 @@ public class Main {
           >，是一个开源的在线评测系统。</template
         >
       </q-a>
+      <q-a v-if="!!data?.nodes">
+        <template #q>评测机的运行情况？</template>
+        <template #a>
+          <div space-y-2 w-full>
+            <div>
+              共有
+              {{ data.nodes.filter(n => n.active).length }} 台评测机正在运行。
+            </div>
+            <judge-nodes lt-sm:p1 :nodes="data?.nodes"></judge-nodes>
+          </div>
+        </template>
+      </q-a>
       <q-a>
         <template #q>CaCatHead Online Judge 支持哪些语言？</template>
         <template #a>
@@ -131,18 +143,6 @@ public class Main {
               宏和条件编译来判断代码是否运行在评测机上。
             </p>
             <code-box :code="MacroExample"></code-box>
-          </div>
-        </template>
-      </q-a>
-      <q-a v-if="!!data?.nodes">
-        <template #q>评测机的运行情况？</template>
-        <template #a>
-          <div space-y-2 w-full>
-            <div>
-              共有
-              {{ data.nodes.filter(n => n.active).length }} 台评测机正在运行。
-            </div>
-            <judge-nodes lt-sm:p1 :nodes="data?.nodes"></judge-nodes>
           </div>
         </template>
       </q-a>
