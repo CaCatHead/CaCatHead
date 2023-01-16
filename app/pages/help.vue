@@ -90,7 +90,7 @@ public class Main {
 </script>
 
 <template>
-  <div>
+  <div class="qa-page">
     <div class="!max-w-full !w-full prose prose-truegray dark:prose-invert">
       <h2 text-center>常见问题及解答</h2>
     </div>
@@ -98,7 +98,11 @@ public class Main {
       <q-a>
         <template #q>这是什么网站？</template>
         <template #a
-          >这是<a href="https://github.com/XLoJ/CaCatHead">猫猫头</a
+          >这是<a
+            href="https://github.com/XLoJ/CaCatHead"
+            text-link
+            target="_blank"
+            >猫猫头</a
           >，是一个开源的在线评测系统。</template
         >
       </q-a>
@@ -140,7 +144,12 @@ public class Main {
             <p>
               <strong>提示</strong>：如果你使用的是 C/C++ 语言，你可以使用
               <code>ONLINE_JUDGE</code>
-              宏和条件编译来判断代码是否运行在评测机上。
+              宏和<a
+                href="https://zh.cppreference.com/w/c/preprocessor/conditional"
+                target="_blank"
+                text-link
+                >条件编译</a
+              >来判断代码是否运行在评测机上。
             </p>
             <code-box :code="MacroExample"></code-box>
           </div>
@@ -157,10 +166,32 @@ public class Main {
             </p>
             <p>
               例如，如果你是用的是 C/C++ 语言，你可以用 C 中的
-              <code>scanf</code>，或者使用 C++ 的
-              <code>cin</code>，从标准输入里读入数据；并且使用 C 中的
-              <code>printf</code> 或者使用 C++ 的
-              <code>cout</code> 输出到标准输出。
+              <a
+                href="https://zh.cppreference.com/w/c/io/fscanf"
+                text-link
+                target="_blank"
+                ><code>scanf</code></a
+              >，或者使用 C++ 的
+              <a
+                href="https://zh.cppreference.com/w/cpp/io/cin"
+                text-link
+                target="_blank"
+                ><code>cin</code></a
+              >，从标准输入里读入数据；并且使用 C 中的
+              <a
+                href="https://en.cppreference.com/w/cpp/io/cout"
+                text-link
+                target="_blank"
+                ><code>printf</code></a
+              >
+              或者使用 C++ 的
+              <a
+                href="https://zh.cppreference.com/w/c/io/fprintf"
+                text-link
+                target="_blank"
+                ><code>cout</code></a
+              >
+              输出到标准输出。
             </p>
             <p>
               评测机禁止用户的程序读取或者写入文件。如果你这样做，系统可能返回
@@ -186,3 +217,10 @@ public class Main {
     </div>
   </div>
 </template>
+
+<style>
+.qa-page [text-link=""] {
+  --at-apply: text-sky-500 dark:text-sky-200;
+  --at-apply: hover:text-sky-700 hover:dark:text-sky-400;
+}
+</style>
