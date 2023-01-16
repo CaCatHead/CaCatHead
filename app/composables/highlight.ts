@@ -43,13 +43,20 @@ export function isLangSupport(lang: string): lang is Lang {
 async function setup(...langs: Lang[]) {
   if (!highlighter) {
     if (process.server) {
+      // SSR 渲染
       setCDN('');
     } else {
-      // @ts-ignore
-      const { default: OnigUrl } = await import('shiki/dist/onig.wasm?url');
-      setWasm(await fetch(OnigUrl).then(res => res.arrayBuffer()));
-      setCDN('/shiki/');
+      // CSR 渲染
+      if (!!process.env.SHIKI_CDN) {
+        setCDN(process.env.SHIKI_CDN);
+      } else {
+        // @ts-ignore
+        const { default: OnigUrl } = await import('shiki/dist/onig.wasm?url');
+        setWasm(await fetch(OnigUrl).then(res => res.arrayBuffer()));
+        setCDN('/shiki/');
+      }
     }
+
     // @ts-ignore
     themes.push(EvaDark);
     // @ts-ignore
