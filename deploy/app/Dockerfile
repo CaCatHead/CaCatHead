@@ -34,7 +34,10 @@ RUN pnpm build:app
 
 FROM node:18 AS runtime
 
-ENV TimeZone Asia/Shanghai
+ENV TZ=Asia/Shanghai TimeZone=Asia/Shanghai
+
+RUN echo "${TimeZone}" > /etc/timezone \
+   && dpkg-reconfigure -f noninteractive tzdata
 
 COPY --from=builder /root/CaCatHead/app/.output /root/CaCatHead/app/.output
 
