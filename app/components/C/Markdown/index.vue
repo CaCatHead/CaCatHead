@@ -17,7 +17,10 @@ const { content } = toRefs(props);
 
 const isDark = useDark();
 
-const highlighter = await preSetup();
+const highlighter = await preSetup().catch(error => {
+  console.error(error);
+  return undefined;
+});
 
 const render = createMarkdown({
   highlight: (code, lang) => {

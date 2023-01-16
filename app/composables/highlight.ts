@@ -7,6 +7,9 @@ import {
   IShikiTheme,
 } from 'shiki-es';
 
+import EvaDark from '~/assets/shiki/themes/eva-dark.json';
+import EvaLight from '~/assets/shiki/themes/eva-light.json';
+
 export let highlighter: Highlighter | undefined = undefined;
 
 const themes: IShikiTheme[] = [];
@@ -42,17 +45,15 @@ async function setup(...langs: Lang[]) {
     if (process.server) {
       setCDN('');
     } else {
-      const { default: OnigUrl } = await import(
-        // @ts-ignore
-        '~/node_modules/shiki/dist/onig.wasm?url'
-      );
+      // @ts-ignore
+      const { default: OnigUrl } = await import('shiki/dist/onig.wasm?url');
       setWasm(await fetch(OnigUrl).then(res => res.arrayBuffer()));
       setCDN('/shiki/');
     }
     // @ts-ignore
-    themes.push(await import('~/assets/shiki/themes/eva-light.json'));
+    themes.push(EvaDark);
     // @ts-ignore
-    themes.push(await import('~/assets/shiki/themes/eva-dark.json'));
+    themes.push(EvaLight);
 
     return (highlighter = await getHighlighter({
       themes,
@@ -106,10 +107,15 @@ export async function highlight(
     return renderText();
   } else {
     if (isLangSupport(lang)) {
-      return (await setup(lang)).codeToHtml(code, {
-        lang,
-        theme: isDark ? 'Eva Dark' : 'Eva Light',
-      });
+      try {
+        return (await setup(lang)).codeToHtml(code, {
+          lang,
+          theme: isDark ? 'Eva Dark' : 'Eva Light',
+        });
+      } catch (error: any) {
+        console.error(error);
+        return renderText();
+      }
     } else {
       return renderText();
     }

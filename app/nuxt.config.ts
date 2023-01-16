@@ -58,6 +58,9 @@ export default defineNuxtConfig({
     '/_nuxt/**': {
       headers: cacheControlHeader(2592000),
     },
+    '/shiki/**': {
+      headers: cacheControlHeader(2592000),
+    },
     // Cache 30 days
     '/favicon.png': {
       headers: cacheControlHeader(2592000),
