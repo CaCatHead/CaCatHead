@@ -57,7 +57,7 @@ export function useHightlighter(lang: Lang) {
 
   if (!shiki.value) return undefined;
 
-  if (!registeredLang.value.get(lang)) {
+  if ((lang as string) !== 'text' && !registeredLang.value.get(lang)) {
     shiki.value
       .loadLanguage(lang)
       .then(() => {
@@ -86,7 +86,7 @@ export function highlight(code: string, lang: string) {
     html: `<pre class="shiki"><code>${escapeCode(code)
       .split('\n')
       .map(l => `<span class="line">${l}</span>`)
-      .join('\n')}</code></pre>`,
+      .join('')}</code></pre>`,
   });
 
   if (lang === 'text') {
