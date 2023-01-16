@@ -99,11 +99,19 @@ watch(files, files => {
   );
   const oldNames = new Set(oldTestcases.map(t => t.name));
   const newTestcases = [...oldTestcases];
+  const nextSamples: Testcase[] = [];
+  const nextTestcases: Testcase[] = [];
   for (const [_key, testcase] of map.entries()) {
     if (!oldNames.has(testcase.name)) {
-      newTestcases.push(testcase);
+      if (testcase.sample) {
+        nextSamples.push(testcase);
+      } else {
+        nextTestcases.push(testcase);
+      }
     }
   }
+  newTestcases.push(...nextSamples, ...newTestcases);
+
   for (const testcase of newTestcases) {
     testcase.score = Math.max(1, Math.floor(100 / newTestcases.length));
   }
