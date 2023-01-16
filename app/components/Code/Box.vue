@@ -101,7 +101,7 @@ html.dark .shiki {
 }
 
 .shiki code .line {
-  padding-right: 0.5rem;
+  --at-apply: lt-sm:pr4;
   height: 1em;
   line-height: 1em;
 }
@@ -110,17 +110,11 @@ html.dark .shiki {
   margin-left: 1rem;
 }
 
-.code-box .markdown-body {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  margin-bottom: 1rem;
-}
-
-.ml-token {
+.code-box .ml-token {
   margin-left: calc(v-bind(width) + 0.5em);
 }
 
-.shiki code .line::before {
+.code-box .shiki code .line::before {
   content: counter(step);
   counter-increment: step;
   height: 1em;
@@ -133,10 +127,11 @@ html.dark .shiki {
 }
 
 @media (min-width: 768px) {
-  .ml-token {
+  .code-box .ml-token {
     margin-left: calc(v-bind(width) + 1em);
   }
-  .shiki code .line::before {
+
+  .code-box .shiki code .line::before {
     margin-right: 1em;
   }
 }

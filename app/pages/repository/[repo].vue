@@ -38,9 +38,9 @@ useHead({
         >题库设置</c-nav-item
       >
       <c-nav-item
-        to="problems"
+        to="problemset"
         v-if="user?.permissions.is_staff || user?.permissions.is_superuser"
-        >题目设置</c-nav-item
+        >题目列表设置</c-nav-item
       >
     </c-nav>
     <NuxtPage :repo="repo" />

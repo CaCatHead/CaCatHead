@@ -136,11 +136,16 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
             # 复用比赛中的旧题目
             new_problem = problem_info_contest_problem[polygon_problem.problem_info_id]
             new_problem.display_id = display_id
+            new_problem.title = polygon_problem.title
+            new_problem.time_limit = polygon_problem.time_limit
+            new_problem.memory_limit = polygon_problem.memory_limit
             new_problem.save()
             contest.problem_repository.problems.add(new_problem)
         else:
             # 添加新的比赛题目
             copy_repo_problem(user=contest.owner, repo=contest.problem_repository,
                               problem=polygon_problem, display_id=display_id)
+
+    contest.extra_info['polygon_problems'] = [{'id': p.id} for p in polygon_problems]
 
     return contest
