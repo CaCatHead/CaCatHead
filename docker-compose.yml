@@ -11,9 +11,10 @@ services:
     networks:
       - cat_net
     volumes:
+      - ./deploy/nginx/cert:/root/cert
       - ./.cacathead/logs/nginx:/var/log/nginx
       - ./.cacathead/static:/var/www/cacathead/static
-      - ./deploy/nginx/cert:/root/cert
+      - ./app/public/favicon.ico:/var/www/cacathead/favicon.ico
     ports:
       - 80:80
       - 443:443
