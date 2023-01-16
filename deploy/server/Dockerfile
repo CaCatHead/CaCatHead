@@ -71,7 +71,7 @@ COPY --from=builder /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp 
 
 ADD ./server ./deploy/server/docker-entrypoint.sh \
     ./deploy/server/ping.cron ./deploy/server/ping.sh ./deploy/server/wait \
-    /root/CaCatHead
+    /root/CaCatHead/
 
 WORKDIR /root/CaCatHead
 
