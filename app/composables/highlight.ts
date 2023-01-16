@@ -47,7 +47,7 @@ async function setup(...langs: Lang[]) {
       setCDN('');
     } else {
       // CSR 渲染
-      const SHIKI_CDN = useAppConfig().SHIKI_CDN;
+      const SHIKI_CDN = useRuntimeConfig().SHIKI_CDN;
       if (!!SHIKI_CDN) {
         setCDN(SHIKI_CDN);
       } else {

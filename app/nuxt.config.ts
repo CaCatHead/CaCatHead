@@ -50,10 +50,8 @@ export default defineNuxtConfig({
     },
   },
   css: ['@/assets/main.css'],
-  appConfig: {
-    SHIKI_CDN,
-  },
   runtimeConfig: {
+    SHIKI_CDN,
     API_BASE,
     proxy: {
       options: {
