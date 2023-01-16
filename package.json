@@ -9,7 +9,9 @@
     "dev:server": "pnpm -C server run dev"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "@types/fs-extra": "^11.0.1",
+    "cross-env": "^7.0.3",
+    "fs-extra": "^11.1.0"
   },
   "packageManager": "pnpm@7.13.6",
   "engines": {

@@ -8,6 +8,8 @@ import {
   transformerVariantGroup,
 } from 'unocss';
 
+import * as fs from 'fs-extra';
+
 // This is the django server
 const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
 
@@ -165,6 +167,30 @@ export default defineNuxtConfig({
       boxShadow: {
         box: '0 2px 3px rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 10%)',
       },
+    },
+  },
+  hooks: {
+    async 'build:before'() {
+      try {
+        const srcDir = './node_modules/shiki/languages/';
+        const dstDir = './public/shiki/languages/';
+        const languages = await fs.readdir(srcDir);
+        await fs.ensureDir(dstDir);
+        const tasks: Promise<void>[] = [];
+        for (const lang of languages) {
+          if (lang.endsWith('.json')) {
+            tasks.push(
+              fs.copyFile(
+                './node_modules/shiki/languages/' + lang,
+                './public/shiki/languages/' + lang
+              )
+            );
+          }
+        }
+        await Promise.all(tasks);
+      } catch (error: any) {
+        console.error(error);
+      }
     },
   },
   vite: {

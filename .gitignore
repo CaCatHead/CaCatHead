@@ -7,6 +7,9 @@ rabbitmq.conf
 *.key
 *.pem
 
+# Shiki language definition
+*.tmLanguage.json
+
 # CaCatHead Storage
 .cacathead
 
