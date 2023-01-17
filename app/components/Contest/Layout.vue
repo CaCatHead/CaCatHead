@@ -65,6 +65,8 @@ const problemId = computed(() => {
   }
 });
 
+const lastSubmit = useContestLastProblemSubmit(route.params.id);
+
 const language = ref('cpp');
 const codeFile = ref<File[]>([]);
 const onFileChange = () => {
@@ -80,10 +82,21 @@ const onFileChange = () => {
   }
 };
 const submit = async () => {
-  try {
-    if (problemId.value < 0) return;
-    if (codeFile.value.length > 0) {
+  if (problemId.value < 0) return;
+
+  if (codeFile.value.length > 0) {
+    const pid = +problemId.value;
+    const oldCode = lastSubmit.value[pid];
+
+    try {
       const code = await readFileContent(codeFile.value[0]);
+      if (oldCode === code) {
+        notify.warning(`不能连续提交相同代码`);
+        return;
+      } else {
+        lastSubmit.value[pid] = code;
+      }
+
       await fetchAPI(
         `/api/contest/${route.params.id}/problem/${problemId.value}/submit`,
         {
@@ -96,11 +109,12 @@ const submit = async () => {
       );
       notify.success(`代码提交成功`);
       await navigateTo(`/contest/${route.params.id}/status`);
-    } else {
-      notify.danger(`请选择上传代码文件`);
+    } catch {
+      lastSubmit.value[pid] = oldCode;
+      notify.danger(`代码提交失败`);
     }
-  } catch {
-    notify.danger(`代码提交失败`);
+  } else {
+    notify.danger(`请选择上传代码文件`);
   }
 };
 
