@@ -22,7 +22,7 @@ from CaCatHead.core.decorators import func_validate_request, class_validate_requ
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemRepositoryPermissions
 from CaCatHead.post.models import Post
-from CaCatHead.post.serializers import PostContentSerializer
+from CaCatHead.post.serializers import PostContentSerializer, PostSerializer
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.problem.serializers import ProblemRepositorySerializer
 from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
@@ -62,9 +62,11 @@ def is_prime(request: Request, text: str):
 @cache_page(60)
 def get_home_info(request: Request):
     posts = Post.objects.filter_public().filter(is_home=True).all()[:10]
-    contests = Contest.objects.filter_public().all()[:5]
+    recent_posts = Post.objects.filter_public().all()[:20]
+    recent_contests = Contest.objects.filter_public().all()[:5]
     return make_response(posts=PostContentSerializer(posts, many=True).data,
-                         contests=ContestSerializer(contests, many=True).data)
+                         recent_posts=PostSerializer(recent_posts, many=True).data,
+                         recent_contests=ContestSerializer(recent_contests, many=True).data)
 
 
 @api_view()

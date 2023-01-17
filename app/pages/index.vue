@@ -5,9 +5,11 @@ useHead({
   title: '主页',
 });
 
-const { data } = await useFetchAPI<{ posts: Post[]; contests: Contest[] }>(
-  `/api/home`
-);
+const { data } = await useFetchAPI<{
+  posts: Post[];
+  recent_post: Post[];
+  recent_contests: Contest[];
+}>(`/api/home`);
 
 const posts = ref(data.value?.posts ?? []);
 </script>
@@ -31,7 +33,7 @@ const posts = ref(data.value?.posts ?? []);
       <div shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold>最近比赛</h3>
         <div p4 text-sm>
-          <c-table :data="data?.contests">
+          <c-table :data="data?.recent_contests">
             <template #headers>
               <c-table-header name="title">比赛</c-table-header>
               <c-table-header name="start_time">开始时间</c-table-header>
