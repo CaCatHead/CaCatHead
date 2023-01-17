@@ -22,6 +22,7 @@ const handleSelect = (e: any) => {
 const submit = async (payload: { code: string; language: string }) => {
   const { code, language } = payload;
   try {
+    lastProblem.value = +problem.value;
     await fetchAPI(
       `/api/contest/${route.params.id}/problem/${problem.value}/submit`,
       {
