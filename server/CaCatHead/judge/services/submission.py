@@ -13,7 +13,7 @@ from CaCatHead.config import cacathead_config
 from CaCatHead.contest.models import ContestRegistration
 from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
-from CaCatHead.problem.models import ProblemTypes, DefaultCheckers
+from CaCatHead.problem.models import ProblemTypes, DefaultCheckers, SourceCode, Problem
 from CaCatHead.problem.views.upload import ProblemDirectory, get_testcase_root, read_testcase_root_version, \
     write_testcase_root_version
 from CaCatHead.submission.models import Submission, ContestSubmission
@@ -69,17 +69,19 @@ class SubmissionTask:
         self.code = self.submission.code
         self.language = self.submission.language
         problem = self.submission.problem
-        self.problem = problem
-        self.problem_id = str(problem.id)
-        self.testcase_directory = get_testcase_root(problem)
+        self.problem_id = problem.id
+        self.problem_judge_id = problem.problem_info.problem_judge_id
+        self.testcase_directory = get_testcase_root(problem_judge_id=problem.problem_info.problem_judge_id)
         self.problem_type = problem.problem_info.problem_judge.problem_type
         self.time_limit = problem.time_limit
         self.memory_limit = problem.memory_limit
         self.checker = problem.problem_info.problem_judge.checker
+        self.custom_checker_id = problem.problem_info.problem_judge.custom_checker_id
+        self.testcase_version = problem.problem_info.problem_judge.testcase_version
         self.testcase_detail = problem.problem_info.problem_judge.testcase_detail
 
         self.log(f'Language: {self.language}')
-        self.log(f'Problem ID: {self.problem_id}')
+        self.log(f'Problem ID: {str(problem.id)}')
         self.log(f'Problem type: {self.problem_type}')
         self.log(f'Time limit: {self.time_limit}')
         self.log(f'Memory limit: {self.memory_limit}')
@@ -192,11 +194,11 @@ class SubmissionTask:
 
     def prepare_checker(self):
         if self.checker == DefaultCheckers.custom:
-            self.checker = get_checker_path(self.submission.problem.problem_info.problem_judge.custom_checker_id)
+            self.checker = get_checker_path(self.custom_checker_id)
             if not self.checker.exists():
                 self.log(f"Start preparing custom checker {self.checker}")
 
-                custom_checker = self.submission.problem.problem_info.problem_judge.custom_checker
+                custom_checker = SourceCode.objects.get(id=self.custom_checker_id)
                 if custom_checker is None:
                     raise NoCheckerException
 
@@ -245,8 +247,8 @@ class SubmissionTask:
         verdict = Verdict.Accepted
         for (index, testcase) in enumerate(self.testcase_detail):
             try:
-                version = read_testcase_root_version(problem=self.problem)
-                if version == self.problem.problem_info.problem_judge.testcase_version:
+                version = read_testcase_root_version(problem_judge_id=self.problem_judge_id)
+                if version == self.testcase_version:
                     # 测试用例版本号匹配
                     self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
                 else:
@@ -255,10 +257,11 @@ class SubmissionTask:
                     raise NoTestcaseException
             except NoTestcaseException:
                 # Try downloading testcases from minio
-                problem_judge_id = self.problem.problem_info.problem_judge_id
-                testcase_version = self.problem.problem_info.problem_judge.testcase_version
+                problem_judge_id = self.problem_judge_id
+                testcase_version = self.testcase_version
                 self.log(f'Downloading Problem Judge #{problem_judge_id}. (version: {testcase_version}) testcases')
-                problem_directory = ProblemDirectory.try_make(problem=self.problem)
+                problem = Problem.objects.get(id=self.problem_id)
+                problem_directory = ProblemDirectory.try_make(problem=problem)
                 # 处理 MinIO 下载失败
                 download_ok = False
                 try:
@@ -268,7 +271,7 @@ class SubmissionTask:
                     download_ok = False
                 finally:
                     if download_ok:
-                        write_testcase_root_version(problem=self.problem)
+                        write_testcase_root_version(problem=problem)
                         self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
                     else:
                         raise NoTestcaseException
