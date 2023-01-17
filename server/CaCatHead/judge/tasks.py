@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from CaCatHead.config import cacathead_config
 from CaCatHead.contest.models import ContestRegistration
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @app.task(ignore_result=True)
-def ping(timestamp: datetime):
+def ping(timestamp: str):
     logger.info(f'Receive a new ping task')
     try:
         handle_ping(timestamp)

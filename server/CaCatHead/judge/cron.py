@@ -26,5 +26,10 @@ class PingJudgeNode(CronJobBase):
                 node.delete()
             elif delta >= 90:
                 JudgeNode.objects.filter(id=node.id).update(active=False)
-        ping.apply_async((timezone.now(),), queue='', exchange=cacathead_config.judge.broadcast.ping, priority=10)
-        logger.info('Sending ping judge nodes messages OK ')
+        try:
+            ping.apply_async((timezone.now().isoformat(),),
+                             queue='', exchange=cacathead_config.judge.broadcast.ping, priority=10)
+            logger.info('Sending ping judge nodes messages OK')
+        except Exception as ex:
+            logger.exception(ex)
+            logger.error('Sending ping judge nodes messages Fails')

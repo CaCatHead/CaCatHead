@@ -1,5 +1,8 @@
 import json
+import logging
 import sys
+
+logger = logging.getLogger(__name__)
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -38,11 +41,19 @@ def dumps(obj):
     """
     Encoder function
     """
-    return json.dumps(obj, cls=CustomJSONEncoder)
+    try:
+        return json.dumps(obj, cls=CustomJSONEncoder)
+    except Exception as ex:
+        logger.exception(ex)
+        raise ex
 
 
 def loads(obj):
     """
     Decoder function
     """
-    return json.loads(obj, cls=CustomJSONDecoder)
+    try:
+        return json.loads(obj, cls=CustomJSONDecoder)
+    except Exception as ex:
+        logger.exception(ex)
+        raise ex

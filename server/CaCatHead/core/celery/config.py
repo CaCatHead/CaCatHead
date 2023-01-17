@@ -28,6 +28,7 @@ task_queues = (
     Queue(judge_contest_queue_name),
     Queue(judge_polygon_queue_name),
 )
+
 task_routes = {
     # Ping 优先级为 10
     'CaCatHead.judge.tasks.ping': {
