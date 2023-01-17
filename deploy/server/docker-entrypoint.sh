@@ -18,8 +18,16 @@ if [ "$1" = "server" ] ; then
   ./wait
   /usr/src/.venv/bin/python ./manage.py migrate
   /usr/src/.venv/bin/python ./manage.py collectstatic --no-input
+  
   # start cron jobs
   cron
+
+  # start standing worker
+  /usr/src/.venv/bin/celery -A CaCatHead.core multi start worker \
+    -l INFO -Q "$CONTEST_WORKER_QUEUE" \
+    --pidfile="/root/celery/run/%n.pid" \
+    --logfile="/root/celery/log/%n%I.log"
+  
   # start server
   /usr/src/.venv/bin/uvicorn CaCatHead.asgi:application --workers 4 --host 0.0.0.0 --port 8000
 elif [ "$1" = "judge" ] ; then
@@ -41,5 +49,5 @@ elif [ "$1" = "judge" ] ; then
 
   # start celery worker
   export C_FORCE_ROOT=true
-  /usr/src/.venv/bin/celery -A CaCatHead.core worker -l INFO
+  /usr/src/.venv/bin/celery -A CaCatHead.core worker -X "$CONTEST_WORKER_QUEUE" -l INFO
 fi
