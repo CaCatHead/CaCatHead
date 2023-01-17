@@ -152,8 +152,11 @@ const registrations = computed(() => {
       </template>
     </c-table>
 
-    <c-modal :show="showSubmissions" @close="showSubmissions = false">
-      <div v-if="showSubmissions && selectedSubmission.length > 0" sm:p2>
+    <c-modal
+      :show="showSubmissions && selectedSubmission.length > 0"
+      @close="showSubmissions = false"
+    >
+      <div sm:p2>
         <div
           v-for="sub in selectedSubmission"
           space-x-2
