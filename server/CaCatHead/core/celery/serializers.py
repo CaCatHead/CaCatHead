@@ -45,4 +45,4 @@ def loads(obj):
     """
     Decoder function
     """
-    return json.loads(obj, object_hook=CustomJSONDecoder)
+    return json.loads(obj, cls=CustomJSONDecoder)
