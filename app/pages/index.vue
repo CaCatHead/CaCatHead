@@ -33,7 +33,7 @@ const posts = ref(data.value?.posts ?? []);
       <div shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold>最近比赛</h3>
         <div p4 text-sm>
-          <c-table :data="data?.recent_contests">
+          <c-table :data="data?.recent_contests" :mobile="false">
             <template #headers>
               <c-table-header name="title">比赛</c-table-header>
               <c-table-header name="start_time">开始时间</c-table-header>
@@ -54,7 +54,7 @@ const posts = ref(data.value?.posts ?? []);
       <div shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold>最新动态</h3>
         <div p4 text-sm>
-          <c-table :data="data?.recent_posts">
+          <c-table :data="data?.recent_posts" :mobile="false">
             <template #headers>
               <c-table-header name="title">博客</c-table-header>
               <c-table-header name="owner">作者</c-table-header>
