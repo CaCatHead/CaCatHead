@@ -18,9 +18,19 @@ $ pipenv run python manage.py runserver  # start dev server
 
 Open `Client/user.http` to try the api endpoints.
 
-> We recommend you use the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the api.
+> We recommend you use
+> the [IntelliJ HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) to test the api.
 
-### Judge Server
+### Contest Worker
+
+```bash
+$ export C_FORCE_ROOT=true
+$ export NODE_NAME=local_dev
+$ export CONTEST_WORKER=test_refresh
+$ pipenv run celery -A CaCatHead.core worker -Q test_refresh -l INFO
+```
+
+### Judge Worker
 
 ```bash
 $ export C_FORCE_ROOT=true

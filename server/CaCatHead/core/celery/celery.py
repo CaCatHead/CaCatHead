@@ -7,11 +7,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'CaCatHead.settings')
 
 app = Celery('CaCatHead')
 
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
-# - namespace='CELERY' means all celery-related configuration keys
-#   should have a `CELERY_` prefix.
 app.config_from_object('CaCatHead.core.celery.config')
-
-# Load task modules from all registered Django apps.
-app.autodiscover_tasks()

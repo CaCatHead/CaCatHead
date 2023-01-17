@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from kombu import Queue, Exchange, serialization
 
@@ -15,6 +17,10 @@ worker_max_tasks_per_child = cacathead_config.judge.tasks
 task_queue_max_priority = 10
 task_default_priority = 5
 
+CONTEST_WORKER = os.getenv('CONTEST_WORKER', None)
+task_module = 'CaCatHead.judge.tasks' if CONTEST_WORKER is None else 'CaCatHead.contest.tasks'
+include = [task_module]
+
 ping_exchange_name = cacathead_config.judge.broadcast.ping
 ping_queue_name = f'{ping_exchange_name}.{cacathead_config.judge.name}'
 
@@ -27,7 +33,7 @@ task_queues = (
     Queue(judge_repository_queue_name),
     Queue(judge_contest_queue_name),
     Queue(judge_polygon_queue_name),
-)
+) if CONTEST_WORKER is None else (Queue(CONTEST_WORKER),)
 
 task_routes = {
     # Ping 优先级为 10
@@ -48,6 +54,10 @@ task_routes = {
     'CaCatHead.judge.tasks.judge_polygon_submission': {
         'queue': judge_polygon_queue_name
     }
+} if CONTEST_WORKER is None else {
+    'CaCatHead.contest.tasks.refresh_registration_standing': {
+        'queue': f'{CONTEST_WORKER}'
+    },
 }
 
 # Config custom json serializer
