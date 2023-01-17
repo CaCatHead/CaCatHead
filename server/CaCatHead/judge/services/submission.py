@@ -10,9 +10,8 @@ from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.config import cacathead_config
-from CaCatHead.contest.models import ContestRegistration
-from CaCatHead.contest.services.standings import refresh_registration_standing
 from CaCatHead.core.constants import Verdict
+from CaCatHead.judge.services.payload import JudgeSubmissionPayload
 from CaCatHead.problem.models import ProblemTypes, DefaultCheckers, SourceCode, Problem
 from CaCatHead.problem.views.upload import ProblemDirectory, get_testcase_root, read_testcase_root_version, \
     write_testcase_root_version
@@ -42,52 +41,51 @@ def get_checker_path(source_id):
 
 class SubmissionTask:
     def log(self, message, *args):
-        logger.info(message, *args, extra={'type': self.type, 'submission': self.submission})
+        submission_id = self.submission_id if self.submission_id is not None else self.contest_submission_id
+        logger.info(message, *args, extra={'type': self.type, 'submission_id': submission_id})
 
-    def __init__(self, submission: Submission = None,
-                 contest_submission: ContestSubmission = None,
-                 registration: ContestRegistration = None):
-        if submission is not None:
+    def __init__(self, payload: JudgeSubmissionPayload):
+        if payload.submission_id is not None:
             self.type = 'Submission'
-            self.submission = submission
-        elif contest_submission is not None:
+            self.submission_id = payload.submission_id
+            self.contest_submission_id = None
+        elif payload.contest_submission_id is not None:
             self.type = 'Contest Submission'
-            self.submission = contest_submission
+            self.submission_id = None
+            self.contest_submission_id = payload.contest_submission_id
         else:
             # This is unreachable
             assert False
 
         self.log('Start initializing SubmissionTask')
 
-        if registration is not None:
-            self.registration = registration
-            self.log(
-                f'Registration {{ id={self.registration.id}, team = {self.registration.team.id}, contest={self.registration.contest.id} }}')
+        if payload.registration_id is not None:
+            self.registration_id = payload.registration_id
+            self.log(f'Contest Registration {{ id={self.registration_id} }}')
         else:
-            self.registration = None
+            self.registration_id = None
 
-        self.code = self.submission.code
-        self.language = self.submission.language
-        problem = self.submission.problem
-        self.problem_id = problem.id
-        self.problem_judge_id = problem.problem_info.problem_judge_id
-        self.testcase_directory = get_testcase_root(problem_judge_id=problem.problem_info.problem_judge_id)
-        self.problem_type = problem.problem_info.problem_judge.problem_type
-        self.time_limit = problem.time_limit
-        self.memory_limit = problem.memory_limit
-        self.checker = problem.problem_info.problem_judge.checker
-        self.custom_checker_id = problem.problem_info.problem_judge.custom_checker_id
-        self.testcase_version = problem.problem_info.problem_judge.testcase_version
-        self.testcase_detail = problem.problem_info.problem_judge.testcase_detail
+        self.code = payload.code
+        self.language = payload.language
+        self.problem_id = payload.problem_id
+        self.problem_judge_id = payload.problem_judge_id
+        self.testcase_directory = get_testcase_root(problem_judge_id=self.problem_judge_id)
+        self.problem_type = payload.problem_type
+        self.time_limit = payload.time_limit
+        self.memory_limit = payload.memory_limit
+        self.checker = payload.checker
+        self.custom_checker_id = payload.custom_checker_id
+        self.testcase_version = payload.testcase_version
+        self.testcase_detail = payload.testcase_detail
 
         self.log(f'Language: {self.language}')
-        self.log(f'Problem ID: {str(problem.id)}')
+        self.log(f'Problem ID: {self.problem_id}')
         self.log(f'Problem type: {self.problem_type}')
         self.log(f'Time limit: {self.time_limit}')
         self.log(f'Memory limit: {self.memory_limit}')
         self.log(f'Checker: {self.checker}')
         self.log(f'Testcase dir: {self.testcase_directory}')
-        self.log(f'Extra info: {problem.problem_info.problem_judge.extra_info}')
+        self.log(f'Extra info: {payload.judge_extra_info}')
 
         # 保存编译输出
         self.compile_stdout = None
@@ -106,16 +104,62 @@ class SubmissionTask:
 
         self.log('SubmissionTask has been initialized')
 
-    def run(self):
-        if self.submission.verdict != Verdict.Waiting:
-            self.log('Fail starting running SubmissionTask for the submission may have been judge')
-            return
+    def update_submission(self, verdict, score, detail):
+        if self.submission_id is not None:
+            sub_id = self.submission_id
+            manager = Submission.objects
+        elif self.contest_submission_id is not None:
+            sub_id = self.contest_submission_id
+            manager = ContestSubmission.objects
         else:
-            self.log('Start running SubmissionTask')
+            # This is unreachable
+            assert False
+
+        if len(self.results) > 0:
+            time_used = max([d['time'] for d in self.results])
+            memory_used = max([d['memory'] for d in self.results])
+        else:
+            time_used = 0
+            memory_used = 0
+
+        return manager.filter(id=sub_id).update(verdict=verdict, score=score, detail=detail,
+                                                time_used=time_used, memory_used=memory_used) == 1
+
+    def update_submission_verdict(self, verdict: Verdict):
+        if self.submission_id is not None:
+            sub_id = self.submission_id
+            manager = Submission.objects
+        elif self.contest_submission_id is not None:
+            sub_id = self.contest_submission_id
+            manager = ContestSubmission.objects
+        else:
+            # This is unreachable
+            assert False
+
+        if verdict == Verdict.Compiling:
+            rows = manager.filter(id=sub_id, verdict=Verdict.Waiting).update(
+                judged=timezone.now(),
+                verdict=Verdict.Compiling,
+                detail={'node': cacathead_config.judge.name}
+            )
+            return rows == 1
+        elif verdict == Verdict.Running:
+            rows = manager.filter(id=sub_id, verdict=Verdict.Compiling).update(
+                verdict=Verdict.Running
+            )
+            return rows == 1
+        else:
+            rows = manager.filter(id=sub_id, verdict=Verdict.Running).update(
+                verdict=verdict
+            )
+            return rows == 1
+
+    def run(self):
+        self.log('Start running SubmissionTask')
 
         self.verdict = Verdict.Compiling
-        self.update_submission(judged=timezone.now(), verdict=Verdict.Compiling,
-                               detail={'node': cacathead_config.judge.name})
+        if not self.update_submission_verdict(Verdict.Compiling):
+            self.log('This submission may have been judge')
 
         try:
             self.prepare_checker()
@@ -128,7 +172,8 @@ class SubmissionTask:
 
             if self.verdict != Verdict.CompileError:
                 self.verdict = Verdict.Running
-                self.update_submission(verdict=Verdict.Running)
+                if not self.update_submission_verdict(Verdict.Running):
+                    self.log('This submission may have been judge')
                 self.judge()
         except NoCheckerException:
             self.verdict = Verdict.SystemError
@@ -308,8 +353,6 @@ class SubmissionTask:
         self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')
         in_file_src = self.testcase_directory / in_file
         ans_file_src = self.testcase_directory / ans_file
-        self.log(f'In  file src: {in_file_src}, {in_file_src.exists()}')
-        self.log(f'Ans file src: {ans_file_src}, {ans_file_src.exists()}')
         in_file_dst = self.tmp_dir / "in.txt"
         ans_file_dst = self.tmp_dir / "ans.txt"
         if not in_file_src.exists() or not ans_file_src.exists():
@@ -350,26 +393,13 @@ class SubmissionTask:
         self.results.append(detail)
         return detail
 
-    def update_submission(self, judged=None, verdict=None, score=None, detail=None):
-        if judged is not None:
-            self.submission.judged = judged
-        if verdict is not None:
-            self.submission.verdict = verdict
-        if score is not None:
-            self.submission.score = score
-        if detail is not None:
-            self.submission.detail = detail
-        if len(self.results) > 0:
-            self.submission.time_used = max([d['time'] for d in self.results])
-            self.submission.memory_used = max([d['memory'] for d in self.results])
-        self.submission.save()
-
     def save_contest_result(self, verdict: Verdict, score: int, detail: dict):
-        if self.registration is None:
-            return
-        self.log(f"Start refreshing contest submission result of registration #{self.registration.id}")
-        refresh_registration_standing(self.registration)
-        self.log(f"Finish refreshing contest submission result of registration #{self.registration.id}")
+        pass
+        # if self.registration is None:
+        #     return
+        # self.log(f"Start refreshing contest submission result of registration #{self.registration.id}")
+        # refresh_registration_standing(self.registration)
+        # self.log(f"Finish refreshing contest submission result of registration #{self.registration.id}")
 
     def save_final_result(self):
         self.log(f"Save submission final result")
@@ -400,7 +430,7 @@ class SubmissionTask:
             self.log(detail)
 
         self.update_submission(verdict=detail['verdict'], score=detail['score'], detail=detail)
-        self.save_contest_result(verdict=detail['verdict'], score=detail['score'], detail=detail)
+        # self.save_contest_result(verdict=detail['verdict'], score=detail['score'], detail=detail)
 
     def clean_temp(self):
         if not settings.DEBUG_JUDGE:

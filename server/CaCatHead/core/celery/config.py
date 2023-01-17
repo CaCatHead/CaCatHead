@@ -51,9 +51,9 @@ task_routes = {
 }
 
 # Config custom json serializer
-serialization.register('json', dumps, loads,
-                       content_type='application/json',
+serialization.register('cjson', dumps, loads,
+                       content_type='application/x-cjson',
                        content_encoding='utf-8')
-accept_content = ['json']
-result_serializer = 'json'
-task_serializer = 'json'
+accept_content = ['cjson']
+result_serializer = 'cjson'
+task_serializer = 'cjson'

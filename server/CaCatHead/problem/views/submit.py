@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.exceptions import BadRequest
+from CaCatHead.judge.services.payload import JudgeSubmissionPayload
 from CaCatHead.judge.tasks import judge_polygon_submission, judge_repository_submission
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.submission.models import Submission
@@ -27,14 +28,16 @@ def submit_problem_code(is_repo: bool, user: User, repo: ProblemRepository, prob
 
     if is_repo:
         try:
-            judge_repository_submission.apply_async((submission.id,), priority=6)
+            payload = JudgeSubmissionPayload.make(submission=submission)
+            judge_repository_submission.apply_async((payload,), priority=6)
             return submission
         except judge_repository_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
             raise BadRequest(detail='提交题库代码失败')
     else:
         try:
-            judge_polygon_submission.delay(submission.id)
+            payload = JudgeSubmissionPayload.make(submission=submission)
+            judge_polygon_submission.delay(payload)
             return submission
         except judge_polygon_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
@@ -63,14 +66,16 @@ def rejudge_problem_code(is_repo: bool, submission: Submission):
 
     if is_repo:
         try:
-            judge_repository_submission.apply_async((submission.id,), priority=7)
+            payload = JudgeSubmissionPayload.make(submission=submission)
+            judge_repository_submission.apply_async((payload,), priority=7)
             return submission
         except judge_repository_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
             raise BadRequest(detail='重测题库代码失败')
     else:
         try:
-            judge_polygon_submission.delay(submission.id)
+            payload = JudgeSubmissionPayload.make(submission=submission)
+            judge_polygon_submission.delay(payload)
             return submission
         except judge_polygon_submission.OperationalError as ex:
             logger.exception('Sending task raised: %r', ex)
