@@ -7,6 +7,10 @@ useHead({
 
 const route = useRoute();
 
+definePageMeta({
+  middleware: ['auth', 'redirect'],
+});
+
 const notify = useNotification();
 
 const username = ref('');
@@ -28,9 +32,9 @@ const login = async () => {
     await authUser.setToken(token, expiry);
 
     if (!!route.query.redirect && typeof route.query.redirect === 'string') {
-      await navigateTo(route.query.redirect);
+      await navigateTo(route.query.redirect, { replace: true });
     } else {
-      await navigateTo('/');
+      await navigateTo('/', { replace: true });
     }
   } catch (error: any) {
     // show error message

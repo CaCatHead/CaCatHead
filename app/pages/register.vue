@@ -7,6 +7,8 @@ const notify = useNotification();
 
 const route = useRoute();
 
+definePageMeta({ middleware: ['redirect'] });
+
 const username = ref('');
 const email = ref('');
 const password = ref('');
@@ -29,6 +31,7 @@ const register = async () => {
       query: {
         redirect: route.query.redirect,
       },
+      replace: true,
     });
   } catch (error: any) {
     // show error message
