@@ -68,6 +68,8 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
         contest.settings[ContestSettings.view_standings] = payload['view_standings']
     if 'view_submissions_after_contest' in payload:
         contest.settings[ContestSettings.view_submissions_after_contest] = payload['view_submissions_after_contest']
+    if 'view_submission_checker_info' in payload:
+        contest.settings[ContestSettings.view_submission_checker_info] = payload['view_submission_checker_info']
 
     if 'problems' in payload and payload['problems'] is not None and isinstance(payload['problems'], list):
         contest = edit_contest_problems(user, contest, payload['problems'])

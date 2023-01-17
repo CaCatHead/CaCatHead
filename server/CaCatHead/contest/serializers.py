@@ -33,6 +33,8 @@ class EditContestPayloadSerializer(serializers.Serializer):
 
     view_submissions_after_contest = serializers.BooleanField(required=False, allow_null=True)
 
+    view_submission_checker_info = serializers.BooleanField(required=False, allow_null=True)
+
 
 class UserRegisterPayloadSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, max_length=32)

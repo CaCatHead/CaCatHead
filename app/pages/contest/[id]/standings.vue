@@ -47,7 +47,7 @@ function toNumDuration(seconds: number) {
 const checkMyself = (standing: ContestStanding) => {
   const me =
     user?.value && standing.team.members.some(m => m.id === user.value.id);
-  return me ? 'bg-[#ddeeff]' : '';
+  return me ? 'bg-[#ddeeff] dark:bg-sky-900/80' : '';
 };
 
 const registrations = computed(() => {
@@ -152,8 +152,11 @@ const registrations = computed(() => {
       </template>
     </c-table>
 
-    <c-modal :show="showSubmissions" @close="showSubmissions = false">
-      <div v-if="showSubmissions && selectedSubmission.length > 0" sm:p2>
+    <c-modal
+      :show="showSubmissions && selectedSubmission.length > 0"
+      @close="showSubmissions = false"
+    >
+      <div sm:p2>
         <div
           v-for="sub in selectedSubmission"
           space-x-2

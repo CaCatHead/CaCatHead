@@ -51,8 +51,28 @@ class FullContestSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContestSubmission
         fields = ['id', 'type', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'relative_time',
-                  'verdict',
-                  'score', 'detail', 'time_used', 'memory_used', 'owner']
+                  'verdict', 'score', 'detail', 'time_used', 'memory_used', 'owner']
+
+
+class NoDetailContestSubmissionSerializer(serializers.ModelSerializer):
+    problem = ProblemSerializer(read_only=True)
+
+    owner = TeamSerializer(read_only=True)
+
+    detail = serializers.SerializerMethodField(method_name='get_detail')
+
+    class Meta:
+        model = ContestSubmission
+        fields = ['id', 'type', 'problem', 'code', 'code_length', 'language', 'created', 'judged', 'relative_time',
+                  'verdict', 'score', 'detail', 'time_used', 'memory_used', 'owner']
+
+    def get_detail(self, sub: ContestSubmission):
+        if 'results' in sub.detail:
+            results = filter(lambda t: 'sample' in t and bool(t['sample']), sub.detail['results'])
+            sub.detail['results'] = results
+            return sub.detail
+        else:
+            return sub.detail
 
 
 class FullPolygonSubmissionSerializer(serializers.ModelSerializer):

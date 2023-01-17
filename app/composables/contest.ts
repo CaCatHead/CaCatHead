@@ -5,6 +5,12 @@ import { formatInterval } from './date';
 export const useContestLastProblem = (id: string | string[]) =>
   useLocalStorage(`contest/${id}/last-problem`, 0);
 
+export const useContestLastProblemSubmit = (id: string | string[]) =>
+  useLocalStorage(
+    `contest/${id}/last-problem-submit`,
+    {} as Record<number, string>
+  );
+
 export const isContestStart = (contest: Contest) => {
   const now = new Date();
   const start_time = new Date(contest.start_time);

@@ -23,7 +23,7 @@ from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.submission.models import ContestSubmission
 from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer, \
-    SubmitCodePayload
+    SubmitCodePayload, NoDetailContestSubmissionSerializer
 from CaCatHead.utils import make_response
 
 
@@ -289,14 +289,25 @@ def user_view_submission(request: Request, contest_id: int, submission_id: int):
 
     if submission is None:
         raise NotFound('提交未找到')
-    elif contest.has_admin_permission(request.user) or submission.has_user(request.user):
-        # 管理员用户，比赛所有者，用户自己
+    elif contest.has_admin_permission(request.user):
+        # 管理员用户，比赛所有者
         return make_response(submission=FullContestSubmissionSerializer(submission).data)
+    elif submission.has_user(request.user):
+        # 用户自己
+        if contest.is_ended() and contest.enable_settings(ContestSettings.view_submission_checker_info):
+            # 比赛结束，且打开 Checker info 才能查看 checker info
+            return make_response(submission=FullContestSubmissionSerializer(submission).data)
+        else:
+            # 不能查看 Checker Info
+            return make_response(submission=NoDetailContestSubmissionSerializer(submission).data)
     else:
         if contest.is_ended():
             # 比赛已经结束
             if contest.enable_settings(ContestSettings.view_submissions_after_contest):
-                return make_response(submission=FullContestSubmissionSerializer(submission).data)
+                if contest.enable_settings(ContestSettings.view_submission_checker_info):
+                    return make_response(submission=FullContestSubmissionSerializer(submission).data)
+                else:
+                    return make_response(submission=NoDetailContestSubmissionSerializer(submission).data)
             else:
                 # 没有权限访问该提交
                 raise NotFound(detail='没有权限访问该提交')
