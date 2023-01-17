@@ -7,7 +7,7 @@ useHead({
 
 const { data } = await useFetchAPI<{
   posts: Post[];
-  recent_post: Post[];
+  recent_posts: Post[];
   recent_contests: Contest[];
 }>(`/api/home`);
 
@@ -46,6 +46,26 @@ const posts = ref(data.value?.posts ?? []);
             <template #start_time="{ row }">
               <div text-xs>{{ formatDateTimeDay(row.start_time) }}</div>
               <div text-xs>{{ formatDateTimeTime(row.start_time) }}</div>
+            </template>
+          </c-table>
+        </div>
+      </div>
+
+      <div shadow-box rounded>
+        <h3 border="b-1 base" p4 text-xl font-bold>最新动态</h3>
+        <div p4 text-sm>
+          <c-table :data="data?.recent_posts">
+            <template #headers>
+              <c-table-header name="title">博客</c-table-header>
+              <c-table-header name="owner">作者</c-table-header>
+            </template>
+            <template #title="{ row }">
+              <nuxt-link :to="`/post/entry/${row.id}`" text-link>{{
+                row.title
+              }}</nuxt-link>
+            </template>
+            <template #owner="{ row }">
+              <user-link :user="row.owner"></user-link>
             </template>
           </c-table>
         </div>
