@@ -4,7 +4,9 @@ import gmpy2
 import pytz
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
@@ -12,9 +14,17 @@ from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
+from CaCatHead.contest.models import Contest
+from CaCatHead.contest.serializers import ContestSerializer
 from CaCatHead.core.decorators import func_validate_request, class_validate_request, RegisterRateThrottle, \
     LoginRateThrottle
 from CaCatHead.core.exceptions import BadRequest
+from CaCatHead.permission.constants import ProblemRepositoryPermissions
+from CaCatHead.post.models import Post
+from CaCatHead.post.serializers import PostContentSerializer
+from CaCatHead.problem.models import ProblemRepository
+from CaCatHead.problem.serializers import ProblemRepositorySerializer
+from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
 from CaCatHead.user.services import register_student_user
@@ -48,13 +58,26 @@ def is_prime(request: Request, text: str):
 
 
 @api_view()
+@cache_page(60)
+def get_home_info(request: Request):
+    posts = Post.objects.filter_public().filter(is_home=True).all()[:10]
+    contests = Contest.objects.filter_public().all()[:5]
+    return make_response(posts=PostContentSerializer(posts, many=True).data,
+                         contests=ContestSerializer(contests, many=True).data)
+
+
+@api_view()
 @permission_classes([IsAuthenticated])
 def current_user_profile(request: Request):
     """
     获取当前用户信息
     """
     user = request.user
-    return make_response(user=FullUserSerializer(user).data)
+    repos = ProblemRepository.objects.filter_user_public(user=request.user,
+                                                         permission=ProblemRepositoryPermissions.ListProblems).filter(
+        ~Q(id=MAIN_PROBLEM_REPOSITORY.id)).filter(is_contest=False)
+    return make_response(user=FullUserSerializer(user).data,
+                         repos=ProblemRepositorySerializer(repos, many=True).data)
 
 
 @api_view()
