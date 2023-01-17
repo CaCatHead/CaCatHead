@@ -5,8 +5,10 @@ from django.utils import timezone
 
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.services.registration import make_single_user_team
+from CaCatHead.contest.tasks import refresh_standing
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.exceptions import BadRequest
+from CaCatHead.judge.services.payload import JudgeSubmissionPayload
 from CaCatHead.judge.tasks import judge_contest_submission
 from CaCatHead.problem.models import Problem
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
@@ -27,27 +29,33 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
         relative_time=(timezone.now() - contest.start_time).total_seconds()
     )
 
-    registration_id = -1
     if registration is not None and contest.is_running():
         # 比赛提交
         contest_submission.owner = registration.team
         contest_submission.type = ContestSubmissionType.contestant
         contest_submission.save()
-
-        registration_id = registration.id
     elif contest.can_edit_contest(user):
         # 管理员提交
         contest_submission.owner = make_single_user_team(user)
         contest_submission.type = ContestSubmissionType.manager
         contest_submission.save()
+
+        registration = None
     elif contest.is_ended():
         # 练习提交
         contest_submission.owner = make_single_user_team(user)
         contest_submission.type = ContestSubmissionType.practice
         contest_submission.save()
 
+        registration = None
+
     try:
-        judge_contest_submission.apply_async((contest_submission.id, registration_id), priority=8)
+        payload = JudgeSubmissionPayload.make(contest_submission=contest_submission, registration=registration)
+        if registration is not None:
+            judge_contest_submission.apply_async((payload,), priority=8,
+                                                 link=refresh_standing.signature((registration.id,), priority=1))
+        else:
+            judge_contest_submission.apply_async((payload,), priority=8)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
@@ -55,11 +63,11 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
 
 
 def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
-    registration_id = -1
+    registration = None
     if contest_submission.type == ContestSubmissionType.contestant:
-        registration = ContestRegistration.objects.filter(contest=contest, team=contest_submission.owner).first()
-        if registration is not None:
-            registration_id = registration.id
+        rg = ContestRegistration.objects.filter(contest=contest, team=contest_submission.owner).first()
+        if rg is not None:
+            registration = rg
         else:
             raise BadRequest(detail='Rejudge 失败，未找到注册信息')
     else:
@@ -76,7 +84,12 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
     contest_submission.save()
 
     try:
-        judge_contest_submission.apply_async((contest_submission.id, registration_id), priority=9)
+        payload = JudgeSubmissionPayload.make(contest_submission=contest_submission, registration=registration)
+        if registration is not None:
+            judge_contest_submission.apply_async((payload,), priority=9,
+                                                 link=refresh_standing.signature((registration.id,), priority=2))
+        else:
+            judge_contest_submission.apply_async((payload,), priority=9)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)

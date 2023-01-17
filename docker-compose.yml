@@ -61,6 +61,7 @@ services:
       - ./deploy/server/cacathead.yml:/root/CaCatHead/cacathead.yml
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/static:/root/CaCatHead/static
+      - ./.cacathead/logs/celery:/root/celery/log
     secrets:
       - db_pass
       - redis_pass

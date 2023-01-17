@@ -18,26 +18,29 @@ from CaCatHead.problem.serializers import TestcaseInfoPayload
 logger = logging.getLogger(__name__)
 
 
-def get_testcase_root(problem: Problem) -> Path:
-    problem_judge = problem.problem_info.problem_judge
-    return settings.TESTCASE_ROOT / f'p{problem_judge.id}'
+def get_testcase_root(problem: Problem = None, problem_judge_id=None) -> Path:
+    if problem is not None:
+        problem_judge = problem.problem_info.problem_judge
+        return settings.TESTCASE_ROOT / f'p{problem_judge.id}'
+    else:
+        return settings.TESTCASE_ROOT / f'p{problem_judge_id}'
 
 
-def get_testcase_root_version(problem: Problem) -> Path:
-    directory = get_testcase_root(problem)
+def get_testcase_root_version(problem: Problem = None, problem_judge_id=None) -> Path:
+    directory = get_testcase_root(problem=problem, problem_judge_id=problem_judge_id)
     return directory / 'version'
 
 
-def read_testcase_root_version(problem: Problem) -> int:
-    path = get_testcase_root_version(problem)
+def read_testcase_root_version(problem: Problem = None, problem_judge_id=None) -> int:
+    path = get_testcase_root_version(problem=problem, problem_judge_id=problem_judge_id)
     if path.exists():
         return int(path.read_text(encoding='UTF-8'))
     else:
         return -1
 
 
-def write_testcase_root_version(problem: Problem):
-    path = get_testcase_root_version(problem)
+def write_testcase_root_version(problem: Problem = None, problem_judge_id=None):
+    path = get_testcase_root_version(problem=problem, problem_judge_id=problem_judge_id)
     path.write_text(str(problem.problem_info.problem_judge.testcase_version), encoding='UTF-8')
 
 

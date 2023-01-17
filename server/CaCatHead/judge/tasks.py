@@ -1,18 +1,16 @@
 import logging
-from datetime import datetime
 
 from CaCatHead.config import cacathead_config
-from CaCatHead.contest.models import ContestRegistration
 from CaCatHead.core.celery import app
+from CaCatHead.judge.services.payload import JudgeSubmissionPayload
 from CaCatHead.judge.services.ping import handle_ping
 from CaCatHead.judge.services.submission import SubmissionTask
-from CaCatHead.submission.models import ContestSubmission, Submission
 
 logger = logging.getLogger(__name__)
 
 
 @app.task(ignore_result=True)
-def ping(timestamp: datetime):
+def ping(timestamp: str):
     logger.info(f'Receive a new ping task')
     try:
         handle_ping(timestamp)
@@ -22,25 +20,24 @@ def ping(timestamp: datetime):
 
 
 @app.task()
-def judge_repository_submission(submission_id: int):
-    logger.info(f'Receive a new repository submission')
-    submission = Submission.objects.get(id=submission_id)
-    task = SubmissionTask(submission=submission)
+def judge_repository_submission(payload: JudgeSubmissionPayload):
+    logger.info(f'Receive a new repository submission #{payload.submission_id}.')
+    task = SubmissionTask(payload)
     task.run()
+    logger.info(f'Handle repository submission #{payload.submission_id}. OK')
 
 
 @app.task()
-def judge_contest_submission(contest_submission_id: int, registration_id: int):
-    logger.info(f'Receive a new contest submission')
-    contest_submission = ContestSubmission.objects.get(id=contest_submission_id)
-    registration = ContestRegistration.objects.get(id=registration_id) if registration_id >= 0 else None
-    task = SubmissionTask(contest_submission=contest_submission, registration=registration)
+def judge_contest_submission(payload: JudgeSubmissionPayload):
+    logger.info(f'Receive a new contest submission #{payload.contest_submission_id}.')
+    task = SubmissionTask(payload=payload)
     task.run()
+    logger.info(f'Handle contest submission #{payload.contest_submission_id}. OK')
 
 
 @app.task()
-def judge_polygon_submission(submission_id: int):
-    logger.info(f'Receive a new polygon submission')
-    submission = Submission.objects.get(id=submission_id)
-    task = SubmissionTask(submission=submission)
+def judge_polygon_submission(payload: JudgeSubmissionPayload):
+    logger.info(f'Receive a new polygon submission #{payload.submission_id}.')
+    task = SubmissionTask(payload)
     task.run()
+    logger.info(f'Handle polygon submission #{payload.submission_id}. OK')

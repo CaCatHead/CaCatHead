@@ -231,7 +231,7 @@ LOGGING = {
             'style': '{'
         },
         'judge': {
-            'format': '[{asctime}: {type} #{submission.id}] {message}',
+            'format': '[{asctime}: {type} #{submission_id}] {message}',
             'style': '{'
         },
         'simple': {
