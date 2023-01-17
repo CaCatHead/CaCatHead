@@ -12,10 +12,10 @@ const { data: contest } = await useFetchAPI<{
 
 if (!contest.value) {
   notify.danger('比赛未找到或你无权访问此比赛');
-  await navigateTo(`/contests`);
+  await navigateTo(`/contests`, { replace: true });
 } else if (isContestEnd(contest.value.contest)) {
   notify.danger(`比赛 ${contest.value?.contest.title} 已经结束`);
-  await navigateTo(`/contest/${contest.value.contest.id}`);
+  await navigateTo(`/contest/${contest.value.contest.id}`, { replace: true });
 }
 
 useHead({
