@@ -11,8 +11,7 @@ const user = computed(() => authUser.user!);
 provide(AuthUserKey, user);
 
 const logout = async () => {
-  await authUser.logout();
-  await navigateTo('/');
+  await Promise.all([authUser.logout(), navigateTo('/')]);
 };
 
 const activeTab = computed(() => {
@@ -154,7 +153,7 @@ provide(LoadingIndicatorSymbol, {
                       p2
                       text-link
                       class="rounded-b hover:bg-gray-200/40"
-                      @click="authUser.logout()"
+                      @click="logout()"
                       >退出</span
                     >
                   </div>
