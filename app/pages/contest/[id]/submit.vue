@@ -21,34 +21,39 @@ const handleSelect = (e: any) => {
   problem.value = +(e?.target?.value ?? 1000);
 };
 
-const submit = async (payload: { code: string; language: string }) => {
-  const { code, language } = payload;
+const submit = useThrottleFn(
+  async (payload: { code: string; language: string }) => {
+    console.log('click');
 
-  const pid = +problem.value;
-  lastProblem.value = pid;
-  const oldCode = lastSubmit.value[pid];
-  if (oldCode === code) {
-    notify.warning(`不能连续提交相同代码`);
-    return;
-  } else {
-    lastSubmit.value[pid] = code;
-  }
+    const { code, language } = payload;
 
-  try {
-    await fetchAPI(`/api/contest/${route.params.id}/problem/${pid}/submit`, {
-      method: 'POST',
-      body: {
-        code,
-        language,
-      },
-    });
-    notify.success(`代码提交成功`);
-    await navigateTo(`/contest/${route.params.id}/status`);
-  } catch {
-    lastSubmit.value[pid] = oldCode;
-    notify.danger(`代码提交失败`);
-  }
-};
+    const pid = +problem.value;
+    lastProblem.value = pid;
+    const oldCode = lastSubmit.value[pid];
+    if (oldCode === code) {
+      notify.warning(`不能连续提交相同代码`);
+      return;
+    } else {
+      lastSubmit.value[pid] = code;
+    }
+
+    try {
+      await fetchAPI(`/api/contest/${route.params.id}/problem/${pid}/submit`, {
+        method: 'POST',
+        body: {
+          code,
+          language,
+        },
+      });
+      notify.success(`代码提交成功`);
+      await navigateTo(`/contest/${route.params.id}/status`);
+    } catch {
+      lastSubmit.value[pid] = oldCode;
+      notify.danger(`代码提交失败`);
+    }
+  },
+  1000
+);
 </script>
 
 <template>

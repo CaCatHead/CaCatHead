@@ -81,7 +81,8 @@ const onFileChange = () => {
     }
   }
 };
-const submit = async () => {
+
+const submit = useThrottleFn(async () => {
   if (problemId.value < 0) return;
 
   if (codeFile.value.length > 0) {
@@ -116,7 +117,7 @@ const submit = async () => {
   } else {
     notify.danger(`请选择上传代码文件`);
   }
-};
+}, 1000);
 
 const timestamp = useServerTimestamp();
 const duration = getContestDuration(contest.value) * 60;
