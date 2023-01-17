@@ -3,7 +3,6 @@
   "private": true,
   "scripts": {
     "dev": "cross-env DEBUG=true pipenv run python manage.py runserver",
-    "judge": "cross-env C_FORCE_ROOT=true NODE_NAME=local_dev pipenv run celery -A CaCatHead.core worker -l INFO",
-    "worker": "cross-env C_FORCE_ROOT=true CONTEST_WORKER=test_refresh pipenv run celery -A CaCatHead.core worker -Q test_refresh -l INFO"
+    "judge": "cross-env C_FORCE_ROOT=true NODE_NAME=local_dev pipenv run celery -A CaCatHead.core worker -l INFO"
   }
 }

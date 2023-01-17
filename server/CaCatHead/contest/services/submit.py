@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from CaCatHead.contest.models import Contest, ContestRegistration
 from CaCatHead.contest.services.registration import make_single_user_team
+from CaCatHead.contest.tasks import refresh_standing
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.judge.services.payload import JudgeSubmissionPayload
@@ -50,7 +51,11 @@ def user_submit_problem(user: User, contest: Contest, problem: Problem, code: st
 
     try:
         payload = JudgeSubmissionPayload.make(contest_submission=contest_submission, registration=registration)
-        judge_contest_submission.apply_async((payload,), priority=8)
+        if registration is not None:
+            judge_contest_submission.apply_async((payload,), priority=8,
+                                                 link=refresh_standing.signature((registration.id,), priority=1))
+        else:
+            judge_contest_submission.apply_async((payload,), priority=8)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
@@ -80,7 +85,11 @@ def rejudge_submission(contest: Contest, contest_submission: ContestSubmission):
 
     try:
         payload = JudgeSubmissionPayload.make(contest_submission=contest_submission, registration=registration)
-        judge_contest_submission.apply_async((payload,), priority=9)
+        if registration is not None:
+            judge_contest_submission.apply_async((payload,), priority=9,
+                                                 link=refresh_standing.signature((registration.id,), priority=2))
+        else:
+            judge_contest_submission.apply_async((payload,), priority=9)
         return contest_submission
     except judge_contest_submission.OperationalError as ex:
         logger.exception('Sending task raised: %r', ex)
