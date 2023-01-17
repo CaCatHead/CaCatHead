@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from kombu import Queue, Exchange, serialization
 
@@ -17,7 +19,7 @@ worker_max_tasks_per_child = cacathead_config.judge.tasks
 task_queue_max_priority = 10
 task_default_priority = 5
 
-contest_worker_queue = 'test_refresh'
+contest_worker_queue = os.getenv('CONTEST_WORKER_QUEUE', 'refresh_standings')
 imports = ['CaCatHead.judge.tasks', 'CaCatHead.contest.tasks']
 
 ping_exchange_name = cacathead_config.judge.broadcast.ping
