@@ -15,7 +15,7 @@ if (!contest.value) {
   await navigateTo(`/contests`, { replace: true });
 } else if (isContestEnd(contest.value.contest)) {
   notify.danger(`比赛 ${contest.value?.contest.title} 已经结束`);
-  await navigateTo(`/contest/${contest.value.contest.id}`, { replace: true });
+  await navigateTo(`/contest/${route.params.id}`, { replace: true });
 }
 
 useHead({

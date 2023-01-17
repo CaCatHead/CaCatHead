@@ -110,22 +110,26 @@ def get_contest(request: Request, contest_id: int):
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
 
-    teams = [make_single_user_team(request.user).id]
-    if registration is not None:
-        teams.append(registration.team.id)
-    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
-    solved = {}
-    for r in submissions.values_list('problem__display_id', 'verdict'):
-        pid = r[0]
-        verdict = r[1]
-        if pid in solved and solved[pid]:
-            continue
-        if verdict == Verdict.Accepted:
-            solved[pid] = True
-        elif verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                         Verdict.IdlenessLimitExceeded,
-                         Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-            solved[pid] = False
+    user: User = request.user
+    if user.is_authenticated:
+        teams = [make_single_user_team(request.user).id]
+        if registration is not None:
+            teams.append(registration.team.id)
+        submissions = ContestSubmission.objects.filter(repository=contest.problem_repository, owner__in=teams)
+        solved = {}
+        for r in submissions.values_list('problem__display_id', 'verdict'):
+            pid = r[0]
+            verdict = r[1]
+            if pid in solved and solved[pid]:
+                continue
+            if verdict == Verdict.Accepted:
+                solved[pid] = True
+            elif verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
+                             Verdict.IdlenessLimitExceeded,
+                             Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+                solved[pid] = False
+    else:
+        solved = {}
 
     extra_info = None
     if contest.has_admin_permission(request.user):
