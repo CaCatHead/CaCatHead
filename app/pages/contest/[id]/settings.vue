@@ -42,6 +42,9 @@ const view_standings = ref(contest.value?.settings?.view_standings);
 const view_submissions_after_contest = ref(
   contest.value?.settings?.view_submissions_after_contest
 );
+const view_submission_checker_info = ref(
+  contest.value?.settings?.view_submission_checker_info
+);
 
 const notify = useNotification();
 
@@ -62,6 +65,7 @@ const submit = async () => {
           is_public: is_public.value,
           view_standings: view_standings.value,
           view_submissions_after_contest: view_submissions_after_contest.value,
+          view_submission_checker_info: view_submission_checker_info.value,
         },
       }
     );
@@ -109,6 +113,13 @@ const submit = async () => {
       <c-switch
         id="view_submissions_after_contest"
         v-model="view_submissions_after_contest"
+      ></c-switch>
+    </div>
+    <div flex items-center space-x-4>
+      <span font-bold>是否开启显示提交详情</span>
+      <c-switch
+        id="view_submission_checker_info"
+        v-model="view_submission_checker_info"
       ></c-switch>
     </div>
     <div>
