@@ -25,6 +25,7 @@ def judge_repository_submission(payload: JudgeSubmissionPayload):
     task = SubmissionTask(payload)
     task.run()
     logger.info(f'Handle repository submission #{payload.submission_id}. OK')
+    return {'ok': True}
 
 
 @app.task()
@@ -33,6 +34,7 @@ def judge_contest_submission(payload: JudgeSubmissionPayload):
     task = SubmissionTask(payload=payload)
     task.run()
     logger.info(f'Handle contest submission #{payload.contest_submission_id}. OK')
+    return {'ok': True}
 
 
 @app.task()
@@ -41,3 +43,4 @@ def judge_polygon_submission(payload: JudgeSubmissionPayload):
     task = SubmissionTask(payload)
     task.run()
     logger.info(f'Handle polygon submission #{payload.submission_id}. OK')
+    return {'ok': True}
