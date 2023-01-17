@@ -16,6 +16,7 @@ from rest_framework.request import Request
 
 from CaCatHead.contest.models import Contest
 from CaCatHead.contest.serializers import ContestSerializer
+from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.decorators import func_validate_request, class_validate_request, RegisterRateThrottle, \
     LoginRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -73,9 +74,12 @@ def current_user_profile(request: Request):
     获取当前用户信息
     """
     user = request.user
+    main_repo = MAIN_PROBLEM_REPOSITORY
+    if main_repo is None:
+        main_repo = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
     repos = ProblemRepository.objects.filter_user_public(user=request.user,
                                                          permission=ProblemRepositoryPermissions.ListProblems).filter(
-        ~Q(id=MAIN_PROBLEM_REPOSITORY.id)).filter(is_contest=False)
+        ~Q(id=main_repo.id)).filter(is_contest=False)
     return make_response(user=FullUserSerializer(user).data,
                          repos=ProblemRepositorySerializer(repos, many=True).data)
 
