@@ -8,11 +8,8 @@ logger = logging.getLogger(__name__)
 class CustomJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         try:
-            logger.info('call default')
-            logger.info(obj)
             return super().default(obj)
         except TypeError:
-            logger.info('type error')
             pass
         cls = type(obj)
         return {
