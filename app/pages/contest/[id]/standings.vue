@@ -47,7 +47,7 @@ function toNumDuration(seconds: number) {
 const checkMyself = (standing: ContestStanding) => {
   const me =
     user?.value && standing.team.members.some(m => m.id === user.value.id);
-  return me ? 'bg-[#ddeeff]' : '';
+  return me ? 'bg-[#ddeeff] dark:bg-sky-900/80' : '';
 };
 
 const registrations = computed(() => {
