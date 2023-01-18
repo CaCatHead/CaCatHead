@@ -10,7 +10,7 @@ const { data } = await useFetchAPI<{ problem: FullPolygonProblem }>(
 );
 
 if (data.value === null) {
-  await navigateTo('/polygon');
+  await navigateTo('/polygon', { replace: true });
 }
 
 const problem = ref(data.value!.problem);

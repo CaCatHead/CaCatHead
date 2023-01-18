@@ -23,7 +23,9 @@ const submission = computed(() => {
 
 if (!submission.value) {
   notify.danger('未找到提交或者无访问权限');
-  await navigateTo(`/repository/${route.params.repo}/submissions`);
+  await navigateTo(`/repository/${route.params.repo}/submissions`, {
+    replace: true,
+  });
 }
 
 const rejudge = async () => {};

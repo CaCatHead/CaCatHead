@@ -10,7 +10,7 @@ const { data } = await useFetchAPI<{ user: PublicUserProfile }>(
 );
 
 if (!data.value?.user) {
-  await navigateTo('/');
+  await navigateTo('/', { replace: true });
 }
 
 useHead({

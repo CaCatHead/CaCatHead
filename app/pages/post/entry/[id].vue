@@ -8,7 +8,7 @@ const { data: post } = await useFetchAPI<{ post: Post }>(
 );
 
 if (!post.value) {
-  await navigateTo('/');
+  await navigateTo('/posts', { replace: true });
 }
 </script>
 

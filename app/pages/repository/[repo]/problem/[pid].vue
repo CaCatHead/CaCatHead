@@ -8,7 +8,7 @@ const { data } = await useFetchAPI<{ problem: FullProblem }>(
 );
 
 if (!data) {
-  await navigateTo('/repository');
+  await navigateTo(`/repository/${route.params.repo}`, { replace: true });
 }
 
 const problem = computed(() => data.value!.problem);

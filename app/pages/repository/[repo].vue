@@ -12,7 +12,7 @@ const { data } = await useFetchAPI<{
 const repo = computed(() => data.value?.repo);
 
 if (!repo.value) {
-  await navigateTo(`/repository/1`);
+  await navigateTo(`/repository/1`, { replace: true });
 }
 
 useHead({

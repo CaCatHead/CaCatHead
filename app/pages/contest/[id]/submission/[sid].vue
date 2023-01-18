@@ -18,7 +18,7 @@ const submission = computed(() => {
 });
 
 if (!submission.value) {
-  await navigateTo(`/contest/${route.params.id}/status`);
+  await navigateTo(`/contest/${route.params.id}/status`, { replace: true });
 }
 
 useHead({
