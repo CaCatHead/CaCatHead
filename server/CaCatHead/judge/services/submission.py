@@ -89,6 +89,7 @@ class SubmissionTask:
 
         # 保存编译输出
         self.compile_stdout = None
+        self.compile_stderr = None
 
         self.verdict = Verdict.Waiting
         self.score = 0
@@ -197,10 +198,10 @@ class SubmissionTask:
         self.log(f'Compile code {self.code_file}')
         if self.language == 'cpp':
             commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE"]
+                        "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'c':
             commands = ["gcc", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+                        "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'java':
             commands = ["javac", self.code_file, "-d", "."]
         else:
@@ -210,7 +211,12 @@ class SubmissionTask:
         os.chmod(cwd, 0o775)
 
         try:
-            subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+            result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    check=True, cwd=cwd, encoding='UTF-8')
+            self.log(f'stdout: {result.stdout}')
+            self.log(f'stderr: {result.stderr}')
+            self.compile_stdout = result.stdout
+            self.compile_stderr = result.stderr
             self.prepare_exec_file(cwd)
         except subprocess.CalledProcessError as e:
             self.log(f'Compile Error')
@@ -408,7 +414,8 @@ class SubmissionTask:
             'verdict': Verdict.Accepted,
             'score': self.score,
             'compile': {
-                'stdout': ''
+                'stdout': '',
+                'stderr': '',
             },
             'node': cacathead_config.judge.name,
             'results': self.results,
@@ -423,8 +430,10 @@ class SubmissionTask:
             detail['verdict'] = self.verdict
 
         # Source compile error / Checker compile error
-        if self.compile_stdout is not None:
+        if self.compile_stdout is not None and len(self.compile_stdout) > 0:
             detail['compile']['stdout'] = self.compile_stdout
+        elif self.compile_stderr is not None and len(self.compile_stderr) > 0:
+            detail['compile']['stdout'] = self.compile_stderr
 
         if settings.DEBUG_JUDGE:
             self.log(detail)
