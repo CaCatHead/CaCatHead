@@ -15,8 +15,11 @@ const compiler = [
       '代码路径',
       '-o',
       'a.out',
+      '-fdiagnostics-color=always',
+      '-Wall',
+      '-Wextra',
+      '-Wno-unused-result',
       '-static',
-      '-w',
       '-lm',
       '-std=c11',
       '-O2',
@@ -31,8 +34,11 @@ const compiler = [
       '代码路径',
       '-o',
       'a.out',
+      '-fdiagnostics-color=always',
+      '-Wall',
+      '-Wextra',
+      '-Wno-unused-result',
       '-static',
-      '-w',
       '-lm',
       '-std=c++11',
       '-O2',
@@ -132,12 +138,18 @@ public class Main {
                   >语言</c-table-header
                 >
                 <c-table-header name="compile">编译命令</c-table-header>
-                <c-table-header name="run">运行命令</c-table-header>
+                <c-table-header name="run" width="120px"
+                  >运行命令</c-table-header
+                >
               </template>
 
               <template #language="{ row }">{{ row.language }}</template>
               <template #compile="{ row }">
-                <span text-sm font-mono mx2>{{ row.compile.join(' ') }}</span>
+                <span text-sm font-mono mx2>
+                  <span v-for="(t, index) in row.compile" inline-block>{{
+                    (index > 0 ? '&nbsp;' : '') + t
+                  }}</span>
+                </span>
               </template>
               <template #run="{ row }">
                 <span text-sm font-mono mx2>{{ row.run.join(' ') }}</span>

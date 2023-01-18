@@ -19,8 +19,9 @@ from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.submission')
 
-MAX_COMPILE_OUTPUT_SIZE = 1024
+COMPILE_TIMEOUT = 15
 MAX_OUTPUT_SIZE = 512
+MAX_COMPILE_OUTPUT_SIZE = 4096
 
 
 class NoTestcaseException(Exception):
@@ -197,11 +198,13 @@ class SubmissionTask:
     def compile_code(self):
         self.log(f'Compile code {self.code_file}')
         if self.language == 'cpp':
-            commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE", "-Wall"]
+            commands = ["g++", self.code_file, "-o", "Main",
+                        "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                        "-static", "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'c':
-            commands = ["gcc", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE", "-Wall"]
+            commands = ["gcc", self.code_file, "-o", "Main",
+                        "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                        "-static", "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'java':
             commands = ["javac", self.code_file, "-d", "."]
         else:
@@ -211,17 +214,18 @@ class SubmissionTask:
         os.chmod(cwd, 0o775)
 
         try:
-            result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                    check=True, cwd=cwd, encoding='UTF-8')
+            result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                    check=True, cwd=cwd, timeout=COMPILE_TIMEOUT, encoding='UTF-8')
             self.log(f'stdout: {result.stdout}')
             self.log(f'stderr: {result.stderr}')
             self.compile_stdout = result.stdout
             self.compile_stderr = result.stderr
             self.prepare_exec_file(cwd)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             self.log(f'Compile Error')
             self.verdict = Verdict.CompileError
-            self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stdout = e.stdout[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stderr = e.stderr[:MAX_COMPILE_OUTPUT_SIZE]
         except OSError as e:
             self.verdict = Verdict.CompileError
             self.log(f'Compile OS Error {e}')
@@ -279,7 +283,7 @@ class SubmissionTask:
                         raise NoLanguageException
 
                     self.log(f"Start compiling custom checker {self.checker}")
-                    subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+                    subprocess.check_output(commands, stderr=subprocess.STDOUT, timeout=COMPILE_TIMEOUT, cwd=cwd)
                     os.chmod(self.checker, 0o775)
                 except subprocess.CalledProcessError as e:
                     self.log(f'Compile Checker Error')
@@ -432,8 +436,8 @@ class SubmissionTask:
         # Source compile error / Checker compile error
         if self.compile_stdout is not None and len(self.compile_stdout) > 0:
             detail['compile']['stdout'] = self.compile_stdout
-        elif self.compile_stderr is not None and len(self.compile_stderr) > 0:
-            detail['compile']['stdout'] = self.compile_stderr
+        if self.compile_stderr is not None and len(self.compile_stderr) > 0:
+            detail['compile']['stderr'] = self.compile_stderr
 
         if settings.DEBUG_JUDGE:
             self.log(detail)
