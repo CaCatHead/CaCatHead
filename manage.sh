@@ -43,10 +43,7 @@ case "$1" in
     ;;
   "judge")
     case "$2" in
-      "")
-        docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
-        ;;
-      "up")
+      "" | "up")
         docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
         ;;
       "sync")
