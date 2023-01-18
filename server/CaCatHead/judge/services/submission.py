@@ -216,10 +216,8 @@ class SubmissionTask:
         try:
             result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
                                     check=True, cwd=cwd, timeout=COMPILE_TIMEOUT, encoding='UTF-8')
-            self.log(f'stdout: {result.stdout}')
-            self.log(f'stderr: {result.stderr}')
-            self.compile_stdout = result.stdout
-            self.compile_stderr = result.stderr
+            self.compile_stdout = result.stdout[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stderr = result.stderr[:MAX_COMPILE_OUTPUT_SIZE]
             self.prepare_exec_file(cwd)
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             self.log(f'Compile Error')
@@ -273,22 +271,28 @@ class SubmissionTask:
                     file_handler.close()
 
                     if custom_checker.language == 'cpp':
-                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
-                                    "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
+                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(),
+                                    "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                                    "-static", "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
                     elif custom_checker.language == 'c':
                         (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
-                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
-                                    "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(),
+                                    "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                                    "-static", "-lm", "-std=c17", "-O2", "-DONLINE_JUDGE"]
                     else:
                         raise NoLanguageException
 
                     self.log(f"Start compiling custom checker {self.checker}")
-                    subprocess.check_output(commands, stderr=subprocess.STDOUT, timeout=COMPILE_TIMEOUT, cwd=cwd)
+                    result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                            check=True, cwd=cwd, timeout=COMPILE_TIMEOUT, encoding='UTF-8')
+                    self.compile_stdout = result.stdout[:10 * MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stderr = result.stderr[:10 * MAX_COMPILE_OUTPUT_SIZE]
                     os.chmod(self.checker, 0o775)
                 except subprocess.CalledProcessError as e:
                     self.log(f'Compile Checker Error')
                     self.verdict = Verdict.CompileError
-                    self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stdout = e.stdout[:10 * MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stderr = e.stderr[:10 * MAX_COMPILE_OUTPUT_SIZE]
                 except OSError as e:
                     self.verdict = Verdict.CompileError
                     self.log(f'Compile checker OS Error {e}')
