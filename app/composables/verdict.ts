@@ -16,3 +16,22 @@ export enum Verdict {
   JudgeError = 'JudgeError',
   TestCaseError = 'TestCaseError',
 }
+
+export const VerdictText: Record<Verdict, string> = {
+  Waiting: 'Waiting',
+  Running: 'Running',
+  Compiling: 'Compiling',
+  Accepted: 'Accepted',
+  WrongAnswer: 'Wrong Answer',
+  TimeLimitExceeded: 'Time Limit Exceeded',
+  IdlenessLimitExceeded: 'Idleness Limit Exceeded',
+  MemoryLimitExceeded: 'Memory Limit Exceeded',
+  OutputLimitExceeded: 'Output Limit Exceeded',
+  RuntimeError: 'Runtime Error',
+  Point: 'Point',
+  PartiallyCorrect: 'Partially Correct',
+  CompileError: 'Compile Error',
+  SystemError: 'System Error',
+  JudgeError: 'Judge Error',
+  TestCaseError: 'TestCase Error',
+};
