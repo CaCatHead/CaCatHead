@@ -90,6 +90,24 @@ case "$1" in
     prompt_config
     ;;
   *)
-    echo "Usage: ./manage.sh [up|judge|ps|stop|restart|logs|exec]"
+    echo "Usage: ./manage.sh <command>"
+    echo ""
+    echo "CaCatHead deploy management script."
+    echo ""
+    echo "Commands":
+    echo "  up [service]       Create and start CaCatHead containers"
+    echo "  stop [service]     Stop CaCatHead containers"
+    echo "  restart [service]  Restart CaCatHead service containers"
+    echo "  rm [service]       Remove CaCatHead stopped service containers"
+    echo "  logs [service]     View output from CaCatHead containers"
+    echo "  exec [service]     Go to the CaCatHead containers"
+    echo "  ps                 List CaCatHead containers"
+    echo "  config             Config CaCatHead serivce passwords"
+    echo "  judge              Create and start CaCatHead judge containers"
+    echo "  judge stop         Stop CaCatHead judge containers"
+    echo "  judge restart      Restart CaCatHead judge containers"
+    echo "  judge logs         View output from CaCatHead judge containers"
+    echo "  judge exec         Go to the CaCatHead judge containers"
+    echo ""
     ;;
 esac
