@@ -14,7 +14,7 @@ const { data, refresh } = await useFetchAPI<{ submission: FullSubmission }>(
 );
 
 if (data.value === null) {
-  await navigateTo(`/polygon`);
+  await navigateTo(`/polygon`, { replace: true });
 }
 
 const submission = computed(() => data.value!.submission);

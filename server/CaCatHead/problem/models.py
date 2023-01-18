@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.models import BaseModel
@@ -218,6 +219,9 @@ class Problem(BaseModel):
         verbose_name = _(u"题目信息")
 
         verbose_name_plural = _(u"题目列表")
+
+    def make_update(self):
+        Problem.objects.filter(id=self.id).update(updated=timezone.now())
 
 
 class ProblemRepository(models.Model):

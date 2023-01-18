@@ -12,7 +12,7 @@ const { data, refresh } = await useFetchAPI<{ problems: PolygonProblem[] }>(
 );
 
 if (!data.value?.problems) {
-  await navigateTo('/');
+  await navigateTo('/', { replace: true });
 }
 
 const files = ref<File[]>([]);

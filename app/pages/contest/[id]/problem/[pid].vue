@@ -23,7 +23,7 @@ const problem = computed(() => {
 });
 
 if (problem.value === undefined) {
-  await navigateTo(`/contest/${route.params.id}`);
+  await navigateTo(`/contest/${route.params.id}`, { replace: true });
 }
 
 useContestLastProblem(route.params.id).value = problem.value?.display_id;

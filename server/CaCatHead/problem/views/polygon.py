@@ -117,6 +117,7 @@ def upload_polygon_problem_checker(request: Request, problem_id: int):
         else:
             problem.problem_info.problem_judge.checker = checker_type
             problem.problem_info.problem_judge.save()
+        problem.make_update()
         return make_response()
 
 
@@ -142,7 +143,7 @@ def export_polygon_problem_zip(request: Request, problem_id: int):
     problem = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
                                                  id=problem_id,
                                                  user=request.user,
-                                                 permission=ProblemPermissions.ReadProblem).first()
+                                                 permission=ProblemPermissions.Export).first()
     problem_directory = ProblemDirectory.make(problem)
     response = HttpResponse(problem_directory.generate_zip(), content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={problem.title}.zip'
