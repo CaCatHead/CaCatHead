@@ -3,6 +3,7 @@ import logging
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.utils import timezone
 
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.exceptions import BadRequest
@@ -88,6 +89,7 @@ def edit_problem(problem: Problem, payload: dict):
     if 'extra_judge' in payload:
         problem.problem_info.problem_judge.extra_info = payload['extra_judge']
 
+    problem.updated = timezone.now()
     problem.save()
     problem.problem_info.problem_content.save()
     problem.problem_info.problem_judge.save()

@@ -117,6 +117,7 @@ def upload_polygon_problem_checker(request: Request, problem_id: int):
         else:
             problem.problem_info.problem_judge.checker = checker_type
             problem.problem_info.problem_judge.save()
+        problem.make_update()
         return make_response()
 
 
