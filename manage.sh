@@ -24,6 +24,8 @@ function prompt_config() {
   echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
 }
 
+ALL_SERVICE=("nginx" "app" "server" "judge" "backup" "postgresql" "minio" "redis" "rabbitmq")
+
 case "$1" in
   "up")
     if [ -z "$2" ] ; then
@@ -62,6 +64,13 @@ case "$1" in
       docker compose restart "$2"
     fi
     ;;
+  "rm")
+    if [ -z "$2" ] ; then
+      docker compose rm
+    else
+      docker compose rm "$2"
+    fi
+    ;;
   "logs")
     if [ -z "$2" ] ; then
       docker compose logs -f
@@ -70,7 +79,12 @@ case "$1" in
     fi
     ;;
   "exec")
-    docker exec -it "cacathead_$2" /bin/bash 
+    if [ -z "$2" ] ; then
+      service=$(gum choose ${ALL_SERVICE[@]})
+      docker exec -it "cacathead_$service" /bin/bash 
+    else
+      docker exec -it "cacathead_$2" /bin/bash 
+    fi
     ;;
   "config")
     prompt_config
