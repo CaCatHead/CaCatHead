@@ -115,12 +115,6 @@ const save = async () => {
       "
     >
       <template #operation="{ row, index }">
-        <!-- <c-button
-          color="info"
-          variant="text"
-          :icon="row.is_public ? 'i-carbon-view' : 'i-carbon-view-off'"
-          @click="toggleProblemPublic(row)"
-        ></c-button> -->
         <c-button
           color="danger"
           variant="text"

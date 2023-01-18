@@ -35,6 +35,7 @@ importers:
       '@vueuse/core': ^9.10.0
       '@vueuse/nuxt': ^9.10.0
       ace-builds: ^1.14.0
+      ansi_up: ^5.1.0
       axios: ^1.2.2
       date-fns: ^2.29.3
       fflate: ^0.7.4
@@ -74,6 +75,7 @@ importers:
       '@types/katex': 0.16.0
       '@types/node': 18.8.0
       '@unocss/nuxt': 0.48.0
+      ansi_up: 5.1.0
       ipx: 1.0.0-2
       nuxt: 3.0.0_@types+node@18.8.0
       nuxt-proxy: 0.3.4
@@ -2976,6 +2978,10 @@ packages:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
     engines: {node: '>=12'}
 
+  /ansi_up/5.1.0:
+    resolution: {integrity: sha512-3wwu+nJCKBVBwOCurm0uv91lMoVkhFB+3qZQz3U11AmAdDJ4tkw1sNPWJQcVxMVYwe0pGEALOjSBOxdxNc+pNQ==}
+    dev: true
+
   /anymatch/3.1.2:
     resolution: {integrity: sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg==}
     engines: {node: '>= 8'}
@@ -4253,18 +4259,6 @@ packages:
       debug:
         optional: true
 
-  /follow-redirects/1.15.2_debug@4.3.4:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.4
-    dev: true
-
   /fontaine/0.2.3:
     resolution: {integrity: sha512-qUTZfWEdPqfqAqX+3Oati/M8s/81uproVVQ3cpEcpmmzPB37/bZGwEm/92ZIIwYg/JFkQEpFRjnwg0HTiJ/FGQ==}
     dependencies:
@@ -4646,7 +4640,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug

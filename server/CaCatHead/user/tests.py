@@ -31,7 +31,7 @@ class UserAuthTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertMatchSnapshot(resp2.data)
+        self.assertMatchSnapshot(resp2.data['user'])
 
     def test_token_error_authentication_fail(self):
         resp = self.client.post('/api/auth/login', {"username": ROOT_USER, "password": ROOT_PASS})
@@ -96,7 +96,7 @@ class UserAuthTests(TestCase):
             self.client.credentials(HTTP_AUTHORIZATION=authorization)
             resp2 = self.client.get('/api/user/profile')
             assert resp2.status_code == 200
-            self.assertMatchSnapshot(resp2.data)
+            self.assertMatchSnapshot(resp2.data['user'])
         # 退出
         self.client.credentials(HTTP_AUTHORIZATION=authorizations[0])
         resp3 = self.client.post('/api/auth/logoutall')
@@ -131,7 +131,7 @@ class UserAuthTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
         resp2 = self.client.get('/api/user/profile')
         assert resp2.status_code == 200
-        self.assertMatchSnapshot(resp2.data)
+        self.assertMatchSnapshot(resp2.data['user'])
         # 退出
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 204

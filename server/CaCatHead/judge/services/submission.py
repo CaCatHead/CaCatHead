@@ -19,8 +19,9 @@ from CaCatHead.submission.models import Submission, ContestSubmission
 
 logger = logging.getLogger('Judge.submission')
 
-MAX_COMPILE_OUTPUT_SIZE = 1024
+COMPILE_TIMEOUT = 15
 MAX_OUTPUT_SIZE = 512
+MAX_COMPILE_OUTPUT_SIZE = 4096
 
 
 class NoTestcaseException(Exception):
@@ -89,6 +90,7 @@ class SubmissionTask:
 
         # 保存编译输出
         self.compile_stdout = None
+        self.compile_stderr = None
 
         self.verdict = Verdict.Waiting
         self.score = 0
@@ -196,11 +198,13 @@ class SubmissionTask:
     def compile_code(self):
         self.log(f'Compile code {self.code_file}')
         if self.language == 'cpp':
-            commands = ["g++", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE"]
+            commands = ["g++", self.code_file, "-o", "Main",
+                        "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                        "-static", "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'c':
-            commands = ["gcc", self.code_file, "-o", "Main", "-static", "-w",
-                        "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+            commands = ["gcc", self.code_file, "-o", "Main",
+                        "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                        "-static", "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'java':
             commands = ["javac", self.code_file, "-d", "."]
         else:
@@ -210,12 +214,16 @@ class SubmissionTask:
         os.chmod(cwd, 0o775)
 
         try:
-            subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+            result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                    check=True, cwd=cwd, timeout=COMPILE_TIMEOUT, encoding='UTF-8')
+            self.compile_stdout = result.stdout[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stderr = result.stderr[:MAX_COMPILE_OUTPUT_SIZE]
             self.prepare_exec_file(cwd)
-        except subprocess.CalledProcessError as e:
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             self.log(f'Compile Error')
             self.verdict = Verdict.CompileError
-            self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stdout = e.stdout[:MAX_COMPILE_OUTPUT_SIZE]
+            self.compile_stderr = e.stderr[:MAX_COMPILE_OUTPUT_SIZE]
         except OSError as e:
             self.verdict = Verdict.CompileError
             self.log(f'Compile OS Error {e}')
@@ -263,22 +271,28 @@ class SubmissionTask:
                     file_handler.close()
 
                     if custom_checker.language == 'cpp':
-                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
-                                    "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
+                        commands = ["g++", checker_code_file, "-o", self.checker.absolute(),
+                                    "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                                    "-static", "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
                     elif custom_checker.language == 'c':
                         (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
-                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(), "-static", "-w",
-                                    "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
+                        commands = ["gcc", checker_code_file, "-o", self.checker.absolute(),
+                                    "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
+                                    "-static", "-lm", "-std=c17", "-O2", "-DONLINE_JUDGE"]
                     else:
                         raise NoLanguageException
 
                     self.log(f"Start compiling custom checker {self.checker}")
-                    subprocess.check_output(commands, stderr=subprocess.STDOUT, cwd=cwd)
+                    result = subprocess.run(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                            check=True, cwd=cwd, timeout=COMPILE_TIMEOUT, encoding='UTF-8')
+                    self.compile_stdout = result.stdout[:10 * MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stderr = result.stderr[:10 * MAX_COMPILE_OUTPUT_SIZE]
                     os.chmod(self.checker, 0o775)
                 except subprocess.CalledProcessError as e:
                     self.log(f'Compile Checker Error')
                     self.verdict = Verdict.CompileError
-                    self.compile_stdout = e.output.decode('utf-8')[:MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stdout = e.stdout[:10 * MAX_COMPILE_OUTPUT_SIZE]
+                    self.compile_stderr = e.stderr[:10 * MAX_COMPILE_OUTPUT_SIZE]
                 except OSError as e:
                     self.verdict = Verdict.CompileError
                     self.log(f'Compile checker OS Error {e}')
@@ -408,7 +422,8 @@ class SubmissionTask:
             'verdict': Verdict.Accepted,
             'score': self.score,
             'compile': {
-                'stdout': ''
+                'stdout': '',
+                'stderr': '',
             },
             'node': cacathead_config.judge.name,
             'results': self.results,
@@ -423,8 +438,10 @@ class SubmissionTask:
             detail['verdict'] = self.verdict
 
         # Source compile error / Checker compile error
-        if self.compile_stdout is not None:
+        if self.compile_stdout is not None and len(self.compile_stdout) > 0:
             detail['compile']['stdout'] = self.compile_stdout
+        if self.compile_stderr is not None and len(self.compile_stderr) > 0:
+            detail['compile']['stderr'] = self.compile_stderr
 
         if settings.DEBUG_JUDGE:
             self.log(detail)

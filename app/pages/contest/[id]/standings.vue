@@ -29,6 +29,9 @@ const handleShowSubmissions = (row: ContestStanding, index: string) => {
     row.standings.submissions?.filter(s => s.p === display_id).reverse() ?? [];
   showSubmissions.value = true;
 };
+const closeSubmissions = () => {
+  showSubmissions.value = false;
+};
 
 const alphabet = new Array(contest.value.problems.length)
   .fill(undefined)
@@ -154,7 +157,7 @@ const registrations = computed(() => {
 
     <c-modal
       :show="showSubmissions && selectedSubmission.length > 0"
-      @close="showSubmissions = false"
+      @close="closeSubmissions"
     >
       <div sm:p2>
         <div
@@ -176,6 +179,7 @@ const registrations = computed(() => {
               dark:text-sky-200
               hover:text-op-100
               :to="`/contest/${route.params.id}/submission/${sub.i}`"
+              @click="closeSubmissions"
               >{{ sub.i }}</nuxt-link
             ></span
           >

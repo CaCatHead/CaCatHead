@@ -35,6 +35,7 @@
     "@types/katex": "^0.16.0",
     "@types/node": "18.8.0",
     "@unocss/nuxt": "^0.48.0",
+    "ansi_up": "^5.1.0",
     "ipx": "1.0.0-2",
     "nuxt": "3.0.0",
     "nuxt-proxy": "^0.3.4",

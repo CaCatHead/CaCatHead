@@ -181,6 +181,7 @@ export interface FullPolygonProblem {
 interface SubmissionDetail {
   compile: {
     stdout: string;
+    stderr: string;
   };
   node: string;
   results: Array<{

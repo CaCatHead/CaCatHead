@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { BaseFullSubmission } from '@/composables/types';
 
+import AnsiUp from 'ansi_up';
+
 const props = defineProps<{ submission: BaseFullSubmission }>();
 
 const { submission } = toRefs(props);
@@ -15,6 +17,22 @@ watch(
   },
   { immediate: true }
 );
+
+// @ts-ignore
+const parser: AnsiUp = AnsiUp.default
+  ? // @ts-ignore
+    new AnsiUp.default()
+  : new AnsiUp();
+
+const compileOutput = computed(() => {
+  if (submission.value.detail?.compile?.stdout) {
+    return parser.ansi_to_html(submission.value.detail?.compile?.stdout);
+  } else if (submission.value.detail?.compile?.stderr) {
+    return parser.ansi_to_html(submission.value.detail?.compile?.stderr);
+  } else {
+    return '';
+  }
+});
 </script>
 
 <template>
@@ -26,22 +44,27 @@ watch(
     <div
       v-if="
         submission.verdict === Verdict.CompileError ||
+        submission.detail?.compile?.stderr ||
         submission.detail?.compile?.stdout
       "
       shadow-box
       rounded
       overflow-auto
     >
-      <h3 p4 border="b-1 base" font-bold>编译信息</h3>
-      <pre v-if="!!submission.detail.compile.stdout" font-mono p4>{{
-        submission.detail.compile.stdout
-      }}</pre>
-      <pre v-else>未知编译错误</pre>
+      <h3 p4 w-full font-bold>编译信息</h3>
+      <pre
+        v-if="compileOutput"
+        font-mono
+        p4
+        overflow-auto
+        border="t-1 base"
+        lt-sm:text-xs
+        v-html="compileOutput"
+      ></pre>
+      <pre v-else font-mono p4 border="t-1 base">未知编译错误</pre>
     </div>
     <div
-      v-else-if="
-        submission.detail.results && submission.detail.results.length > 0
-      "
+      v-if="submission.detail.results && submission.detail.results.length > 0"
       shadow-box
       rounded
       divide-y

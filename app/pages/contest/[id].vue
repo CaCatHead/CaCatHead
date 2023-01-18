@@ -24,7 +24,7 @@ if (
     title: `${contest.value?.contest.title}`,
   });
 } else {
-  await navigateTo(`/contests/register/${route.params.value}`);
+  await navigateTo(`/contests/register/${route.params.id}`);
 }
 </script>
 

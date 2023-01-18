@@ -26,6 +26,7 @@ const addProblem = async () => {
     await fetchAPI<{}>(`/api/repo/${repo.value.id}/problems/add/${pid.value}`, {
       method: 'POST',
     });
+    pid.value += 1;
     notify.success(`题目添加成功`);
     await refresh();
   } catch (error) {

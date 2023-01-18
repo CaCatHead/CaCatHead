@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Post, Contest } from '@/composables/types';
+
 const route = useRoute();
 
 const isDark = useDark();
@@ -11,8 +13,7 @@ const user = computed(() => authUser.user!);
 provide(AuthUserKey, user);
 
 const logout = async () => {
-  await authUser.logout();
-  await navigateTo('/');
+  await Promise.all([authUser.logout(), navigateTo('/')]);
 };
 
 const activeTab = computed(() => {
@@ -33,8 +34,6 @@ const activeTab = computed(() => {
     return '';
   }
 });
-
-const { data: repos } = await useFetchAPI<{ repos: any[] }>('/api/repos');
 
 const lastSync = ref(useLocalStorage('global/last-sync-time', 0));
 const cacheSync = ref(useLocalStorage('global/sync-time', 0));
@@ -154,7 +153,7 @@ provide(LoadingIndicatorSymbol, {
                       p2
                       text-link
                       class="rounded-b hover:bg-gray-200/40"
-                      @click="authUser.logout()"
+                      @click="logout()"
                       >退出</span
                     >
                   </div>
@@ -208,7 +207,7 @@ provide(LoadingIndicatorSymbol, {
             <template #dropdown>
               <div w-36 font-normal>
                 <div
-                  v-if="repos?.repos && repos.repos.length > 1"
+                  v-if="authUser.repos && authUser.repos.length > 1"
                   rounded
                   border="1 base"
                   divide-y
@@ -217,7 +216,7 @@ provide(LoadingIndicatorSymbol, {
                   dark:bg-dark
                 >
                   <nuxt-link
-                    v-for="repo in repos?.repos"
+                    v-for="repo in authUser.repos"
                     :to="`/repository/${repo.id}`"
                     block
                     text-link
