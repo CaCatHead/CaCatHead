@@ -18,7 +18,11 @@ watch(
   { immediate: true }
 );
 
-const parser = new AnsiUp();
+// @ts-ignore
+const parser: AnsiUp = AnsiUp.default
+  ? // @ts-ignore
+    new AnsiUp.default()
+  : new AnsiUp();
 
 const compileOutput = computed(() => {
   if (submission.value.detail?.compile?.stdout) {
@@ -60,9 +64,7 @@ const compileOutput = computed(() => {
       <pre v-else font-mono p4 border="t-1 base">未知编译错误</pre>
     </div>
     <div
-      v-else-if="
-        submission.detail.results && submission.detail.results.length > 0
-      "
+      v-if="submission.detail.results && submission.detail.results.length > 0"
       shadow-box
       rounded
       divide-y
