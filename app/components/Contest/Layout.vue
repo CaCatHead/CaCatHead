@@ -35,7 +35,7 @@ const Verdicts = [
   Verdict.SystemError,
   Verdict.JudgeError,
   Verdict.TestCaseError,
-];
+].map(v => VerdictText[v]);
 
 const filter = reactive({
   verdict: route.query.verdict as string | undefined,
@@ -45,7 +45,7 @@ const filter = reactive({
 });
 const goSubmissions = async () => {
   await emit('filter', {
-    verdict: filter.verdict,
+    verdict: filter.verdict?.replace(/ /g, ''),
     problem:
       filter.problem !== undefined &&
       filter.problem !== null &&
