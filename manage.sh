@@ -1,5 +1,29 @@
 #!/bin/bash
 
+function prompt_password() {
+  pass=$(gum input --password --header="CaCatHead $1 Password:" --placeholder="...")
+  if [ $? -eq 0 ] ; then
+    cat "$pass" "./deploy/password/$2_pass.txt"
+  else
+    exit $?
+  fi
+}
+
+function prompt_config() {
+  if ! [ -x "$(command -v gum)" ]; then
+    echo 'Error: gum is not installed, see https://github.com/charmbracelet/gum' >&2
+    exit 1
+  fi
+
+  prompt_password Postgresql db
+  prompt_password Redis redis
+  prompt_password MinIO minio
+  prompt_password RabbitMQ rmq
+
+  echo "default_user = root" > ./deploy/rabbitmq.conf
+  echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
+}
+
 case "$1" in
   "up")
     if [ -z "$2" ] ; then
@@ -47,6 +71,9 @@ case "$1" in
     ;;
   "exec")
     docker exec -it "cacathead_$2" /bin/bash 
+    ;;
+  "config")
+    prompt_config
     ;;
   *)
     echo "Usage: ./manage.sh [up|judge|ps|stop|restart|logs|exec]"
