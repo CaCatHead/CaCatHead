@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BaseFullSubmission } from '@/composables/types';
 
-import { default as AnsiUp } from 'ansi_up';
+import AnsiUp from 'ansi_up';
 
 const props = defineProps<{ submission: BaseFullSubmission }>();
 
