@@ -34,18 +34,44 @@ case "$1" in
       docker compose up "$2" --build -d
     fi
     ;;
-  "judge")
-    if [ -z "$2" ] ; then
-      docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
-    elif [ "$2" = "stop" ] ; then
-      docker stop "catjudge_node"
-    elif [ "$2" = "restart" ] ; then
-      docker restart "catjudge_node"
-    elif [ "$2" = "logs" ] ; then
-      docker logs "catjudge_node" -f
-    elif [ "$2" = "exec" ] ; then
-      docker exec -it "catjudge_node" /bin/bash 
+  "sync")
+    git pull
+    if [ $? -ne 0 ] ; then
+      exit $?
     fi
+    docker compose up --build -d
+    ;;
+  "judge")
+    case "$2" in
+      "")
+        docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
+        ;;
+      "up")
+        docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
+        ;;
+      "sync")
+        git pull
+        if [ $? -ne 0 ] ; then
+          exit $?
+        fi
+        docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
+        ;;
+      "stop")
+        docker compose stop
+        ;;
+      "restart")
+        docker compose restart
+        ;;
+      "logs")
+        docker logs "catjudge_node" -f
+        ;;
+      "exec")
+        docker exec -it "catjudge_node" /bin/bash 
+        ;;
+      *)
+        echo "Usage: ./manage.sh judge <sub command>"
+        ;;
+    esac
     ;;
   "ps")
     docker compose ps
@@ -101,9 +127,11 @@ case "$1" in
     echo "  rm [service]       Remove CaCatHead stopped service containers"
     echo "  logs [service]     View output from CaCatHead containers"
     echo "  exec [service]     Go to the CaCatHead containers"
+    echo "  sync               Sync code and start CaCatHead containers"
     echo "  ps                 List CaCatHead containers"
     echo "  config             Config CaCatHead serivce passwords"
     echo "  judge              Create and start CaCatHead judge containers"
+    echo "  judge sync         Sync code and start CaCatHead judge containers"
     echo "  judge stop         Stop CaCatHead judge containers"
     echo "  judge restart      Restart CaCatHead judge containers"
     echo "  judge logs         View output from CaCatHead judge containers"
