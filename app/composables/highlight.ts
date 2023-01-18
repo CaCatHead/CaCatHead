@@ -85,7 +85,7 @@ export function highlight(code: string, lang: string) {
     language: 'text',
     html: `<pre class="shiki"><code>${escapeCode(code)
       .split('\n')
-      .map(l => `<span class="line">${l.trim()}</span>`)
+      .map(l => `<span class="line">${l.trimEnd()}</span>`)
       .join('\n')}</code></pre>`,
   });
 
