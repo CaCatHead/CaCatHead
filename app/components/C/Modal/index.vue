@@ -1,36 +1,27 @@
 <script setup lang="ts">
-import { CModalSymbol } from './context';
-
 const props = withDefaults(defineProps<{ show: boolean }>(), { show: false });
 
-const emit = defineEmits(['open', 'close']);
-
-const ctx = inject(CModalSymbol)!;
+const emit = defineEmits(['close']);
 
 const { show } = toRefs(props);
-
-ctx.show.value = show.value;
-watch(show, show => {
-  if (ctx.show.value !== show) {
-    ctx.show.value = show;
-  }
-});
-watch(
-  () => ctx.show.value,
-  ctx => {
-    if (ctx !== show.value) {
-      if (ctx) {
-        emit('open');
-      } else {
-        emit('close');
-      }
-    }
-  }
-);
 </script>
 
 <template>
-  <Teleport to="#c-modal-container">
+  <div
+    fixed
+    top-0
+    left-0
+    z1000
+    w-screen
+    h-screen
+    flex
+    items-center
+    justify-center
+    transition-all
+    :class="[show && 'bg-dark-100 bg-op-10']"
+    :style="{ pointerEvents: show ? undefined : 'none' }"
+    @click="emit('close')"
+  >
     <div
       v-if="show"
       transition-all
@@ -42,8 +33,9 @@ watch(
       max-h="90vh"
       max-w="90vw"
       overflow-auto
+      @click.stop.prevent="show = false"
     >
       <slot></slot>
     </div>
-  </Teleport>
+  </div>
 </template>

@@ -3,7 +3,7 @@
 function prompt_password() {
   pass=$(gum input --password --header="CaCatHead $1 Password:" --placeholder="...")
   if [ $? -eq 0 ] ; then
-    cat "$pass" "./deploy/password/$2_pass.txt"
+    echo "$pass" > "./deploy/password/$2_pass.txt"
   else
     exit $?
   fi

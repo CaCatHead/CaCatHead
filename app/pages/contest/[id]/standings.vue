@@ -56,10 +56,12 @@ const checkMyself = (standing: ContestStanding) => {
 const registrations = computed(() => {
   const list = data?.value?.registrations ?? [];
 
+  const firstSolved = new Map<string, number>();
+
   const items = list.map(r => {
     const problems: Record<
       string,
-      { ok: boolean; time: number; dirty: number }
+      { ok: boolean; time: number; dirty: number; first: boolean }
     > = {};
 
     for (const sub of r.standings?.submissions ?? []) {
@@ -67,15 +69,18 @@ const registrations = computed(() => {
       if (sub.v === Verdict.Accepted) {
         if (!problems[pid]?.ok) {
           if (!problems[pid]) {
-            problems[pid] = { ok: true, time: sub.r, dirty: 0 };
+            problems[pid] = { ok: true, time: sub.r, dirty: 0, first: false };
           } else {
             problems[pid].ok = true;
             problems[pid].time = sub.r;
           }
         }
+        if (!firstSolved.has(pid) || firstSolved.get(pid)! > sub.r) {
+          firstSolved.set(pid, sub.r);
+        }
       } else {
         if (!problems[pid]) {
-          problems[pid] = { ok: false, time: sub.r, dirty: 1 };
+          problems[pid] = { ok: false, time: sub.r, dirty: 1, first: false };
         } else {
           if (!problems[pid].ok) {
             problems[pid].dirty += 1;
@@ -95,6 +100,13 @@ const registrations = computed(() => {
   });
 
   for (let i = 0; i < items.length; i++) {
+    // 设置一血
+    for (const [pid, prob] of Object.entries(items[i].standings.problems)) {
+      if (firstSolved.has(pid) && firstSolved.get(pid) === prob.time) {
+        prob.first = true;
+      }
+    }
+
     if (!items[i].is_participate) {
       continue;
     }

@@ -17,8 +17,13 @@ const submission = computed(() => {
   return data.value?.submission!;
 });
 
+const token = useToken();
 if (!submission.value) {
-  await navigateTo(`/contest/${route.params.id}/status`, { replace: true });
+  if (token.value) {
+    await navigateTo(`/contest/${route.params.id}/status`, { replace: true });
+  } else {
+    await navigateTo(`/contest/${route.params.id}`, { replace: true });
+  }
 }
 
 useHead({
