@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -25,6 +27,11 @@ from CaCatHead.submission.models import ContestSubmission
 from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer, \
     SubmitCodePayload, NoDetailContestSubmissionSerializer
 from CaCatHead.utils import make_response
+
+
+def check_string(s: str) -> bool:
+    pattern = re.compile(r'^[\u4e00-\u9fa5\w\U00010000-\U0010ffff]+$')
+    return pattern.match(s) is not None
 
 
 @api_view()
@@ -184,8 +191,11 @@ def user_register_contest(request: Request, contest_id: int):
         else:
             raise BadRequest(detail='请填写比赛邀请码')
     # TODO: 检查用户是否已经注册该比赛
+    name = request.data['name']
+    if check_string(name) is False:
+        raise BadRequest(detail="队伍名格式错误")
     registration = single_user_register(user=request.user, contest=contest,
-                                        name=request.data['name'],
+                                        name=name,
                                         extra_info=request.data['extra_info'])
     return make_response(registration=ContestRegistrationSerializer(registration).data)
 
