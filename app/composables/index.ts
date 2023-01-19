@@ -37,7 +37,7 @@ export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
     async onResponseError({ response }) {
       if (response.status === 401) {
         token.value = '';
-        await navigateTo({ path: '/login' });
+        await navigateTo({ path: '/login', replace: true });
       }
     },
   });
