@@ -243,3 +243,6 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
         'username': 'world'
     }
 }
+
+snapshots[
+    'UserRegisterTests::test_register_validate_error 1'] = b'{"detail":"\xe7\x94\xa8\xe6\x88\xb7\xe5\x90\x8d\xe6\xa0\xbc\xe5\xbc\x8f\xe9\x94\x99\xe8\xaf\xaf"}'
