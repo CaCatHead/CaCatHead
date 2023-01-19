@@ -1,7 +1,13 @@
 <script setup lang="ts">
 defineProps<{
   result:
-    | { ok: boolean; time: number; dirty: number; practice?: boolean }
+    | {
+        ok: boolean;
+        time: number;
+        dirty: number;
+        first: boolean;
+        practice?: boolean;
+      }
     | undefined;
 }>();
 
@@ -16,7 +22,13 @@ function toNumDuration(seconds: number) {
 </script>
 
 <template>
-  <div v-if="result" sm:p4 select-none cursor-pointer>
+  <div
+    v-if="result"
+    sm:p4
+    select-none
+    cursor-pointer
+    :class="[result.first && 'bg-[#E0FFE4]']"
+  >
     <div v-if="result.ok" inline-block>
       <div
         :class="[
