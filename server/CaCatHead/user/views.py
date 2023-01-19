@@ -87,8 +87,8 @@ def current_user_profile(request: Request):
 
 
 @api_view()
-def get_user_info(request: Request, username: int):
-    user = User.objects.get(username=username)
+def get_user_info(request: Request, username: str):
+    user = User.objects.filter(username=username).first()
     if user is not None:
         return make_response(user=UserPublicSerializer(user).data)
     else:
