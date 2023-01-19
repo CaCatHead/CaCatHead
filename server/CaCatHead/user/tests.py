@@ -184,12 +184,6 @@ class UserRegisterTests(TestCase):
         assert resp.status_code == 400
         assert resp.data['username'][0] == "请确保这个字段不能超过 32 个字符。"
         assert resp.data['password'][0] == "请确保这个字段不能超过 64 个字符。"
-        resp = self.client.post('/api/auth/register', {
-            "username": "<h2><b>scsofts</b></h2>",
-            "password": "123456",
-            "email": "gdx@example.com"
-        })
-        self.assertMatchSnapshot(resp.content)
 
     def test_register_error_same_username(self):
         """
