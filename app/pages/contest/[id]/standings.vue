@@ -167,7 +167,10 @@ const registrations = computed(() => {
       </template>
     </c-table>
 
-    <c-modal :show="showSubmissions && selectedSubmission.length > 0">
+    <c-modal
+      :show="showSubmissions && selectedSubmission.length > 0"
+      @close="closeSubmissions"
+    >
       <div sm:p2>
         <div
           v-for="sub in selectedSubmission"

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const props = withDefaults(defineProps<{ show: boolean }>(), { show: false });
 
+const emit = defineEmits(['close']);
+
 const { show } = toRefs(props);
 </script>
 
@@ -18,6 +20,7 @@ const { show } = toRefs(props);
     transition-all
     :class="[show && 'bg-dark-100 bg-op-10']"
     :style="{ pointerEvents: show ? undefined : 'none' }"
+    @click="emit('close')"
   >
     <div
       v-if="show"
