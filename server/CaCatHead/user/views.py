@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 import gmpy2
@@ -30,12 +29,7 @@ from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
 from CaCatHead.user.services import register_student_user
-from CaCatHead.utils import make_response
-
-
-def check_string(s: str) -> bool:
-    pattern = re.compile(r'^[\u4e00-\u9fa5\w\U00010000-\U0010ffff]+$')
-    return pattern.match(s) is not None
+from CaCatHead.utils import make_response, check_username_format
 
 
 @api_view()
@@ -111,7 +105,7 @@ def user_register(request: Request):
     username = request.data['username']
     email = request.data['email']
     password = request.data['password']
-    if check_string(username) is False:
+    if not check_username_format(username):
         raise BadRequest(detail="用户名格式错误")
     user = register_student_user(username=username, email=email, password=password)
     return make_response(user=FullUserSerializer(user).data)
