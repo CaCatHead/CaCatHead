@@ -11,11 +11,19 @@ useHead({
 
 const notify = useNotification();
 
+const user = useUser();
+
 const route = useRoute();
 
 const pid = ref(useRepoLastProblem(route.params.repo).value);
 
 const submit = async (payload: { code: string; language: string }) => {
+  if (!user?.value) {
+    notify.danger('请登录');
+    await navigateTo('/login');
+    return;
+  }
+
   const { code, language } = payload;
   try {
     await fetchAPI(

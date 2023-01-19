@@ -3,6 +3,8 @@ import type { FullContest } from '@/composables/types';
 
 const route = useRoute();
 
+const user = useUser();
+
 const notify = useNotification();
 
 const props = defineProps<{ contest: FullContest }>();
@@ -235,7 +237,7 @@ const formatProgress = (value: number) => {
           >
         </div>
       </div>
-      <div v-if="problemId >= 0" border="1 base" rounded-2>
+      <div v-if="user && problemId >= 0" border="1 base" rounded-2>
         <h3 px4 py2 border="b-1 base" font-bold>提交代码</h3>
         <div p4 space-y-4>
           <problem-select-language

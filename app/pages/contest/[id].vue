@@ -15,6 +15,8 @@ const { data: contest } = await useFetchAPI<{
   extra_info: ContestExtraInfo | null;
 }>(`/api/contest/${route.params.id}/content`);
 
+const user = useUser();
+
 if (
   contest !== undefined &&
   contest.value !== undefined &&
@@ -33,8 +35,8 @@ if (
     <h3 font-bold text-xl>{{ contest.contest.title }}</h3>
     <c-nav :prefix="`/contest/${route.params.id}/`" my4 lt-md="text-xs pb2">
       <c-nav-item to="">面板</c-nav-item>
-      <c-nav-item to="submit">提交代码</c-nav-item>
-      <c-nav-item to="status">我的提交</c-nav-item>
+      <c-nav-item to="submit" v-if="user">提交代码</c-nav-item>
+      <c-nav-item to="status" v-if="user">我的提交</c-nav-item>
       <c-nav-item
         to="submissions"
         v-if="
