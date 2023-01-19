@@ -29,7 +29,7 @@ from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
 from CaCatHead.user.services import register_student_user
-from CaCatHead.utils import make_response
+from CaCatHead.utils import make_response, check_username_format
 
 
 @api_view()
@@ -87,8 +87,8 @@ def current_user_profile(request: Request):
 
 
 @api_view()
-def get_user_info(request: Request, username: int):
-    user = User.objects.get(username=username)
+def get_user_info(request: Request, username: str):
+    user = User.objects.filter(username=username).first()
     if user is not None:
         return make_response(user=UserPublicSerializer(user).data)
     else:
@@ -105,6 +105,8 @@ def user_register(request: Request):
     username = request.data['username']
     email = request.data['email']
     password = request.data['password']
+    if not check_username_format(username):
+        raise BadRequest(detail="用户名格式错误")
     user = register_student_user(username=username, email=email, password=password)
     return make_response(user=FullUserSerializer(user).data)
 

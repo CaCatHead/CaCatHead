@@ -24,7 +24,7 @@ from CaCatHead.permission.constants import ContestPermissions
 from CaCatHead.submission.models import ContestSubmission
 from CaCatHead.submission.serializers import ContestSubmissionSerializer, FullContestSubmissionSerializer, \
     SubmitCodePayload, NoDetailContestSubmissionSerializer
-from CaCatHead.utils import make_response
+from CaCatHead.utils import make_response, check_username_format
 
 
 @api_view()
@@ -184,6 +184,9 @@ def user_register_contest(request: Request, contest_id: int):
         else:
             raise BadRequest(detail='请填写比赛邀请码')
     # TODO: 检查用户是否已经注册该比赛
+    name = request.data['name']
+    if not check_username_format(name):
+        raise BadRequest(detail="队伍名格式错误")
     registration = single_user_register(user=request.user, contest=contest,
                                         name=request.data['name'],
                                         extra_info=request.data['extra_info'])

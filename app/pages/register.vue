@@ -18,8 +18,8 @@ const register = async () => {
     await $fetch<{ token: string; expiry: string }>('/api/auth/register', {
       method: 'POST',
       body: {
-        username: username.value,
-        email: email.value,
+        username: username.value.trim(),
+        email: email.value.trim(),
         password: password.value,
       },
     });

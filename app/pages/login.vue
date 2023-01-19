@@ -22,7 +22,7 @@ const login = async () => {
       {
         method: 'POST',
         body: {
-          username: username.value,
+          username: username.value.trim(),
           password: password.value,
         },
       }

@@ -15,6 +15,43 @@ if (!data.value?.problems) {
   await navigateTo('/', { replace: true });
 }
 
+type Tag = 'like' | 'archive' | 'none';
+const tags = useLocalStorage(
+  'polygon/problems/tags',
+  ref<Record<string, Tag>>({})
+);
+
+const getTag = (p: PolygonProblem) => {
+  if (p.id in tags.value) {
+    return tags.value?.[p.id] ?? 'none';
+  } else {
+    return 'none';
+  }
+};
+const toggleLike = (p: PolygonProblem) => {
+  if (tags.value) {
+    const tag = getTag(p);
+    if (tag === 'like') {
+      tags.value[p.id] = 'none';
+    } else {
+      tags.value[p.id] = 'like';
+    }
+  }
+};
+
+const prolems = computed(() => {
+  const problems = data.value?.problems ?? [];
+  return problems.sort((l, r) => {
+    const lt = getTag(l);
+    const rt = getTag(r);
+    if (lt == rt) {
+      return r.id - l.id;
+    } else {
+      return lt.localeCompare(rt);
+    }
+  });
+});
+
 const files = ref<File[]>([]);
 
 const getAxios = useAxiosFactory();
@@ -74,7 +111,7 @@ const upload = async () => {
       </div>
     </div>
 
-    <c-table :data="data?.problems ?? []">
+    <c-table :data="prolems">
       <template #headers>
         <c-table-header
           name="id"
@@ -93,7 +130,12 @@ const upload = async () => {
           label="创建者"
           row-class="text-center"
         ></c-table-header>
-        <c-table-header name="updated" label="更新时间"></c-table-header>
+        <c-table-header
+          name="updated"
+          label="更新时间"
+          width="200px"
+        ></c-table-header>
+        <c-table-header name="operation" label="" width="60px"></c-table-header>
       </template>
 
       <template #updated="{ row }">
@@ -111,6 +153,16 @@ const upload = async () => {
       </template>
       <template #owner="{ row }">
         <user-link :user="row.owner"></user-link>
+      </template>
+      <template #operation="{ row }">
+        <c-button
+          color="warning"
+          variant="text"
+          :icon="
+            getTag(row) === 'like' ? 'i-carbon-star-filled' : 'i-carbon-star'
+          "
+          @click="toggleLike(row)"
+        ></c-button>
       </template>
     </c-table>
   </div>
