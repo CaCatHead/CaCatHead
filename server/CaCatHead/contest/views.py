@@ -333,7 +333,20 @@ def rejudge_contest_submission(request: Request, contest_id: int, submission_id:
         submission = rejudge_submission(contest, submission)
         return make_response(submission=FullContestSubmissionSerializer(submission).data)
     else:
-        raise PermissionDenied(detail='你无权进行 Rejudge 操作')
+        raise PermissionDenied(detail='你无权进行重测比赛提交操作')
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@throttle_classes([SubmitRateThrottle])
+def delete_contest_submission(request: Request, contest_id: int, submission_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    submission = ContestSubmission.objects.filter(repository=contest.problem_repository, id=submission_id).first()
+    if contest.has_admin_permission(request.user):
+        submission.delete()
+        return make_response()
+    else:
+        raise PermissionDenied(detail='你无权进行删除比赛提交操作')
 
 
 @api_view()
