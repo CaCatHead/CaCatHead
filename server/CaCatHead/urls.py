@@ -91,6 +91,7 @@ urlpatterns = [
     path('api/contest/<int:contest_id>/public', contest_views.get_contest_public),  # 查看比赛详情, 包括题目内容
     path('api/contest/<int:contest_id>/content', contest_views.get_contest),  # 查看比赛详情, 包括题目内容
     path('api/contest/<int:contest_id>/problem/<int:problem_id>/submit', contest_views.user_submit_code),  # 提交代码
+    path('api/contest/<int:contest_id>/problem/<int:problem_id>/prepare', contest_views.prepare_problem),  # 预热题目
     path('api/contest/<int:contest_id>/status', contest_views.user_list_own_submissions),  # 查看比赛个人提交
     path('api/contest/<int:contest_id>/submission/<int:submission_id>',
          contest_views.user_view_submission),  # 获取比赛提交状态详情

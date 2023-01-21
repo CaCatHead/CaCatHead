@@ -16,7 +16,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
     UserRegisterPayloadSerializer, ContestStandingSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
-from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission
+from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -228,6 +228,23 @@ def user_submit_code(request: Request, contest_id: int, problem_id: int):
     contest_submission = user_submit_problem(request.user, contest, problem,
                                              code=request.data['code'], language=request.data['language'])
     return make_response(submission=ContestSubmissionSerializer(contest_submission).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@throttle_classes([SubmitRateThrottle])
+@func_validate_request(SubmitCodePayload)
+def prepare_problem(request: Request, contest_id: int, problem_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    problem = contest.get_problem(problem_id)
+    if problem is None:
+        raise NotFound(f'比赛 {contest.title} 没有题目 {problem_id}')
+    if contest.has_admin_permission(request.user):
+        prepare_contest_problems(request.user, contest, problem, code=request.data['code'],
+                                 language=request.data['language'])
+        return make_response()
+    else:
+        raise PermissionDenied(detail='你无权进行此操作')
 
 
 @api_view()
