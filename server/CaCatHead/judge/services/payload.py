@@ -7,6 +7,7 @@ class JudgeSubmissionPayload:
                  submission_id,
                  contest_submission_id,
                  registration_id,
+                 owner_id,
                  code, language,
                  problem_id, problem_judge_id, problem_type,
                  time_limit, memory_limit,
@@ -16,6 +17,7 @@ class JudgeSubmissionPayload:
         self.submission_id = submission_id
         self.contest_submission_id = contest_submission_id
         self.registration_id = registration_id
+        self.owner_id = owner_id
         self.code = code
         self.language = language
         self.problem_id = problem_id
@@ -36,6 +38,7 @@ class JudgeSubmissionPayload:
         submission_id = submission.id if submission is not None else None
         contest_submission_id = contest_submission.id if contest_submission is not None else None
         registration_id = registration.id if registration is not None else None
+        owner_id = submission.owner_id if submission is not None else contest_submission.owner_id
 
         sub = submission if submission is not None else contest_submission
         problem = sub.problem
@@ -44,6 +47,7 @@ class JudgeSubmissionPayload:
             submission_id=submission_id,
             contest_submission_id=contest_submission_id,
             registration_id=registration_id,
+            owner_id=owner_id,
             code=sub.code,
             language=sub.language,
             problem_id=problem.id,
@@ -63,6 +67,7 @@ class JudgeSubmissionPayload:
             'sid': self.submission_id,
             'csid': self.contest_submission_id,
             'rid': self.registration_id,
+            'oid': self.owner_id,
             'c': self.code,
             'l': self.language,
             'pid': self.problem_id,
@@ -83,6 +88,7 @@ class JudgeSubmissionPayload:
             submission_id=obj['sid'],
             contest_submission_id=obj['csid'],
             registration_id=obj['rid'],
+            owner_id=obj['oid'],
             code=obj['c'],
             language=obj['l'],
             problem_id=obj['pid'],

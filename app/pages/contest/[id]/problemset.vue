@@ -62,6 +62,33 @@ const removeProblem = (_row: Problem, index: number) => {
   }
 };
 
+const prepareProblem = useThrottleFn(async (row: Problem, _index: number) => {
+  try {
+    if (!!problems.value.find(p => p.polygon_id === -1)) {
+      return;
+    }
+
+    await fetchAPI<{ contest: FullContest }>(
+      `/api/contest/${route.params.id}/problem/${row.display_id}/prepare`,
+      {
+        method: 'POST',
+        body: {
+          code: '#include <stdio.h>\nint main() {}',
+          language: 'c',
+        },
+      }
+    );
+
+    notify.success(
+      `题目 ${displyaIdToIndex(row.display_id)}. ${row.title} 开始预热`
+    );
+  } catch (err: any) {
+    notify.danger(
+      `题目 ${displyaIdToIndex(row.display_id)}. ${row.title} 发起预热失败`
+    );
+  }
+}, 1000);
+
 const save = async () => {
   try {
     if (!!problems.value.find(p => p.polygon_id === -1)) {
@@ -113,8 +140,15 @@ const save = async () => {
             row.display_id
           )}`
       "
+      operation-width="100px"
     >
       <template #operation="{ row, index }">
+        <c-button
+          color="warning"
+          variant="text"
+          icon="i-carbon-fire"
+          @click="prepareProblem(row, index)"
+        ></c-button>
         <c-button
           color="danger"
           variant="text"

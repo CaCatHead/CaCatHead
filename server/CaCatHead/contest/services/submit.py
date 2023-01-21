@@ -9,12 +9,32 @@ from CaCatHead.contest.tasks import refresh_standing
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.judge.services.payload import JudgeSubmissionPayload
-from CaCatHead.judge.tasks import judge_contest_submission
+from CaCatHead.judge.tasks import judge_contest_submission, prepare_contest_problem_submission
 from CaCatHead.problem.models import Problem
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 from CaCatHead.submission.utils import can_rejudge_submission
 
 logger = logging.getLogger(__name__)
+
+
+def prepare_contest_problems(user: User, contest: Contest, problem: Problem, code: str, language: str):
+    contest_submission = ContestSubmission(
+        type=ContestSubmissionType.manager,
+        repository=contest.problem_repository,
+        problem=problem,
+        owner=make_single_user_team(user),
+        code=code,
+        code_length=len(code),
+        language=language,
+        relative_time=(timezone.now() - contest.start_time).total_seconds()
+    )
+
+    try:
+        payload = JudgeSubmissionPayload.make(contest_submission=contest_submission)
+        prepare_contest_problem_submission.apply_async((payload,), priority=1)
+    except judge_contest_submission.OperationalError as ex:
+        logger.exception('Sending task raised: %r', ex)
+        raise BadRequest(detail='提交代码失败')
 
 
 def user_submit_problem(user: User, contest: Contest, problem: Problem, code: str, language: str):

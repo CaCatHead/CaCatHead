@@ -24,6 +24,8 @@ imports = ['CaCatHead.judge.tasks', 'CaCatHead.contest.tasks']
 
 ping_exchange_name = cacathead_config.judge.broadcast.ping
 ping_queue_name = f'{ping_exchange_name}.{cacathead_config.judge.name}'
+polygon_exchange_name = cacathead_config.judge.broadcast.polygon
+polygon_queue_name = f'{polygon_exchange_name}.{cacathead_config.judge.name}'
 
 judge_repository_queue_name = cacathead_config.judge.queue.repository
 judge_contest_queue_name = cacathead_config.judge.queue.contest
@@ -31,6 +33,7 @@ judge_polygon_queue_name = cacathead_config.judge.queue.polygon
 
 task_queues = (
     Queue(ping_queue_name, Exchange(ping_exchange_name, type='fanout', durable=False, delivery_mode=1), durable=False),
+    Queue(polygon_queue_name, Exchange(polygon_exchange_name, type='fanout')),
     Queue(judge_repository_queue_name),
     Queue(judge_contest_queue_name),
     Queue(judge_polygon_queue_name),
@@ -58,8 +61,11 @@ task_routes = {
     },
     # 刷新榜单优先级为 1
     'CaCatHead.contest.tasks.refresh_standing': {
-        'queue': f'{contest_worker_queue}'
+        'queue': contest_worker_queue
     },
+    'CaCatHead.judge.tasks.prepare_contest_problem_submission': {
+        'queue': polygon_queue_name
+    }
 }
 
 # Config custom json serializer
