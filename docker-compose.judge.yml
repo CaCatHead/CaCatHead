@@ -5,6 +5,8 @@ services:
     build:
       context: ./
       dockerfile: ./deploy/server/Dockerfile
+      args:
+        COMMIT_SHA: ${COMMIT_SHA}
     container_name: catjudge_node
     privileged: true
     restart: on-failure

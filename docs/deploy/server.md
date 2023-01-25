@@ -139,8 +139,6 @@ server:
 完成以上所有配置后，你可以启动服务了。
 
 ```bash
-$ docker compose up --build -d
-# or
 $ ./manage.sh up
 ```
 
