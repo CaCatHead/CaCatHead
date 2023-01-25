@@ -17,7 +17,10 @@ const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
 const ENABLE_CACHE = process.env['ENABLE_CACHE'] === 'false' ? false : true;
 
 // shiki cdn url
-const SHIKI_CDN = process.env['SHIKI_CDN'];
+const SHIKI_CDN = process.env['SHIKI_CDN'] ?? '';
+
+// commit sha
+const COMMIT_SHA = process.env['COMMIT_SHA'] ?? '';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -52,6 +55,7 @@ export default defineNuxtConfig({
   css: ['@/assets/main.css'],
   appConfig: {
     SHIKI_CDN,
+    COMMIT_SHA,
   },
   runtimeConfig: {
     API_BASE,
