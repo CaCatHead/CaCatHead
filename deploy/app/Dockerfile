@@ -28,7 +28,9 @@ ADD ./deploy/app/public /root/CaCatHead/app/public/
 
 ARG SHIKI_CDN
 
-ENV SHIKI_CDN ${SHIKI_CDN}
+ARG COMMIT_SHA
+
+ENV SHIKI_CDN=${SHIKI_CDN} COMMIT_SHA=${COMMIT_SHA}
 
 RUN pnpm build:app
 

@@ -87,6 +87,8 @@ provide(LoadingIndicatorSymbol, {
     loading.value = false;
   },
 });
+
+const commit = useAppConfig().COMMIT_SHA;
 </script>
 
 <template>
@@ -253,7 +255,7 @@ provide(LoadingIndicatorSymbol, {
 
       <footer block pb8 w-full text-center text-base-500>
         <div border="b-2 base" mb8></div>
-        <div flex="~ gap2" mb2 items-center justify-center text-lg>
+        <div mb2 flex="~ gap2" items-center justify-center text-lg>
           <button
             icon-btn
             i-carbon-sun
@@ -270,6 +272,7 @@ provide(LoadingIndicatorSymbol, {
             to="/nodes"
           ></nuxt-link>
           <a
+            v-if="!commit"
             i-carbon-logo-github
             icon-btn
             text-gray-500
@@ -297,6 +300,20 @@ provide(LoadingIndicatorSymbol, {
               (user.permissions.is_superuser || user.permissions.is_staff)
             "
           ></a>
+        </div>
+        <div v-if="commit" flex items-center justify-center gap1 align-middle>
+          <a
+            i-carbon-logo-github
+            class="text-gray-500/50 hover:text-gray-500"
+            :href="`https://github.com/XLoJ/CaCatHead/tree/${commit}`"
+            target="_blank"
+          ></a>
+          <a
+            :href="`https://github.com/XLoJ/CaCatHead/tree/${commit}`"
+            target="_blank"
+            text-link
+            >{{ commit.slice(0, 7) }}
+          </a>
         </div>
         <div flex items-center justify-center gap1 align-middle>
           <span i-ic-round-electric-bolt class="text-gray-500/50"></span>

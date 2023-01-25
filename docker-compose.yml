@@ -29,6 +29,7 @@ services:
       dockerfile: ./deploy/app/Dockerfile
       args:
         SHIKI_CDN: /shiki/
+        COMMIT_SHA: ${COMMIT_SHA}
     container_name: cacathead_app
     restart: always
     depends_on:
@@ -42,6 +43,8 @@ services:
     build:
       context: ./
       dockerfile: ./deploy/server/Dockerfile
+      args:
+        COMMIT_SHA: ${COMMIT_SHA}
     container_name: cacathead_server
     depends_on:
       - postgresql
@@ -76,6 +79,8 @@ services:
     build:
       context: ./
       dockerfile: ./deploy/server/Dockerfile
+      args:
+        COMMIT_SHA: ${COMMIT_SHA}
     container_name: cacathead_judge
     depends_on:
       - postgresql

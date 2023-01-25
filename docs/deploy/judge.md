@@ -94,17 +94,13 @@ rabbitmq:
 完成以上所有配置后，你可以评测机容器了。
 
 ```bash
-$ docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
-# or
-$ ./manage.sh judge
+$ ./manage.sh judge up
 ```
 
 ## 查看评测机容器日志
 
 ```bash
-$ docker logs catjudge_node
-# or
-$ ./manage.sh logs node
+$ ./manage.sh judge logs
 ```
 
 ## 常见问题

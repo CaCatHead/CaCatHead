@@ -200,11 +200,11 @@ class SubmissionTask:
         if self.language == 'cpp':
             commands = ["g++", self.code_file, "-o", "Main",
                         "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                        "-static", "-lm", "-std=c++11", "-O2", "-DONLINE_JUDGE", "-Wall"]
+                        "-static", "-lm", "-std=c++20", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'c':
             commands = ["gcc", self.code_file, "-o", "Main",
                         "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                        "-static", "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE", "-Wall"]
+                        "-static", "-lm", "-std=c20", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'java':
             commands = ["javac", self.code_file, "-d", "."]
         else:
@@ -273,12 +273,12 @@ class SubmissionTask:
                     if custom_checker.language == 'cpp':
                         commands = ["g++", checker_code_file, "-o", self.checker.absolute(),
                                     "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                                    "-static", "-lm", "-std=c++17", "-O2", "-DONLINE_JUDGE"]
+                                    "-static", "-lm", "-std=c++20", "-O2", "-DONLINE_JUDGE"]
                     elif custom_checker.language == 'c':
                         (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
                         commands = ["gcc", checker_code_file, "-o", self.checker.absolute(),
                                     "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                                    "-static", "-lm", "-std=c17", "-O2", "-DONLINE_JUDGE"]
+                                    "-static", "-lm", "-std=c20", "-O2", "-DONLINE_JUDGE"]
                     else:
                         raise NoLanguageException
 
