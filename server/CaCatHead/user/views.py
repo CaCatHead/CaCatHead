@@ -2,6 +2,7 @@ from datetime import datetime
 
 import gmpy2
 import pytz
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -64,7 +65,8 @@ def get_home_info(request: Request):
     posts = Post.objects.filter_public().filter(is_home=True).all()[:10]
     recent_posts = Post.objects.filter_public().all()[:20]
     recent_contests = Contest.objects.filter_public().all()[:5]
-    return make_response(posts=PostContentSerializer(posts, many=True).data,
+    return make_response(commit_sha=settings.COMMIT_SHA,
+                         posts=PostContentSerializer(posts, many=True).data,
                          recent_posts=PostSerializer(recent_posts, many=True).data,
                          recent_contests=ContestSerializer(recent_contests, many=True).data)
 

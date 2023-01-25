@@ -1,6 +1,7 @@
 import platform
 import subprocess
 
+from django.conf import settings
 from django.utils import timezone
 
 from CaCatHead.config import cacathead_config
@@ -52,7 +53,8 @@ def handle_ping(timestamp: str):
             'response': now.isoformat()
         },
         'platform': platform_info,
-        'compiler': compiler_info
+        'compiler': compiler_info,
+        'commit_sha': settings.COMMIT_SHA
     }
 
     node.active = True

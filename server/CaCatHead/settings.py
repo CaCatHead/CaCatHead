@@ -31,6 +31,9 @@ DEBUG_JUDGE = True if os.getenv('DEBUG_JUDGE', 'false').lower() == 'true' else F
 # Is Test Environment
 IS_TEST = 'test' in sys.argv
 
+# Git commit sha
+COMMIT_SHA = os.getenv('COMMIT_SHA', '')
+
 # Root username and password
 CACATHEAD_ROOT_USER = cacathead_config.server.root.username
 CACATHEAD_ROOT_PASS = cacathead_config.server.root.password
