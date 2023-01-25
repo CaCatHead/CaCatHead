@@ -89,7 +89,7 @@ server {
 server {
     listen              80;
     listen              [::]:80;
-    server_name         oj.xlorpaste.cn;
+    server_name         cacathead.cn;
     # ...
 }
 ```
@@ -100,7 +100,7 @@ server {
 server {
     listen              443 ssl http2;
     listen              [::]:443 ssl http2;
-    server_name         oj.xlorpaste.cn;
+    server_name         cacathead.cn;
     # ...
     # SSL
     ssl_certificate     /root/cert/ssl.pem;
@@ -127,10 +127,10 @@ server:
   allowed_host:
     - '127.0.0.1'
     - server  # This is docker-compose service name, and is used for nginx
-    - oj.xlorpaste.cn  # Config your domain here
+    - cacathead.cn  # Config your domain here
   trusted_origin:
     - http://127.0.0.1
-    - https://oj.xlorpaste.cn  # Config your domain here
+    - https://cacathead.cn  # Config your domain here
   # ...
 ```
 

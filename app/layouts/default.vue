@@ -285,7 +285,7 @@ const commit = useAppConfig().COMMIT_SHA;
             icon-btn
             text-gray-500
             hover:text="$c-brand"
-            :href="`https://oj-docs.onekuma.cn/`"
+            :href="`https://docs.cacathead.cn/`"
             target="_blank"
           ></a>
           <a
