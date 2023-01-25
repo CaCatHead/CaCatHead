@@ -30,7 +30,7 @@ export default defineConfig({
     nav: [
       { text: '部署', link: '/deploy/' },
       { text: '使用文档', link: '/usage/' },
-      { text: '体验', link: 'https://oj.xlorpaste.cn' },
+      { text: '体验', link: 'https://cacathead.cn' },
     ],
     sidebar: {
       '/': [
