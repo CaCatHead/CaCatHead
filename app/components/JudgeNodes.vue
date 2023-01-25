@@ -32,7 +32,6 @@ const parseJava = (text: string) => {
         items-center
         select-none
         relative
-        z10
         cursor-pointer
         :class="[
           smallScreen ? 'justify-end' : 'justify-center',
