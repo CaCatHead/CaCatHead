@@ -26,6 +26,8 @@ function prompt_config() {
 
 ALL_SERVICE=("nginx" "app" "server" "judge" "backup" "postgresql" "minio" "redis" "rabbitmq")
 
+export COMMIT_SHA="$(git rev-parse HEAD)"
+
 case "$1" in
   "up")
     if [ -z "$2" ] ; then

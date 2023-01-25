@@ -1,16 +1,16 @@
 # This should be run at the project top level
 
-FROM python:3.10 AS builder
+FROM yjl9903/sandbox:latest AS builder
 
 # 换成阿里源
-RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
-  && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update \
-  && apt-get install -y gcc g++ cmake default-jdk default-jre
+RUN sed -i "s@http://archive.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && sed -i "s@http://security.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get update \
+  && apt-get install -y cmake python3-pip
 
 # 换成清华源
-RUN pip install --user pipenv -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cnpypi.tuna.tsinghua.edu.cn 
+RUN pip3 install --user pipenv -i https://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host pypi.tuna.tsinghua.edu.cnpypi.tuna.tsinghua.edu.cn 
 
 ENV PIPENV_VENV_IN_PROJECT=1
 
@@ -24,7 +24,6 @@ RUN /root/.local/bin/pipenv sync \
 ADD ./CatJudge /usr/src/CatJudge/
 
 RUN cd /usr/src/CatJudge \
-  && cp ./testlib/testlib.h /usr/local/include/testlib.h \
   && mkdir -p /root/catj/logs \
   && mkdir -p /root/checkers \
   && export LOG_PATH="/root/catj/logs" \
@@ -44,16 +43,18 @@ RUN cd /usr/src/CatJudge \
   && cp ./rcmp9 /root/checkers/rcmp9 \
   && cp ./wcmp /root/checkers/wcmp \
   && cp ./yesno /root/checkers/yesno \
+  && ln -s /usr/bin/python3 /usr/local/bin/python \
   && ctest --verbose
 
-FROM python:3.10 AS runtime
+FROM yjl9903/sandbox:latest AS runtime
 
 # 换成阿里源
-RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+RUN sed -i "s@http://archive.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && sed -i "s@http://security.ubuntu.com@http://mirrors.aliyun.com@g" /etc/apt/sources.list \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get update \
+  && apt-get install -y cron \
   && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update \
-  && apt-get install -y cron gcc g++ default-jdk default-jre
 
 RUN mkdir -v /usr/src/.venv \
   && mkdir -p /root/catj/logs \
@@ -61,13 +62,9 @@ RUN mkdir -v /usr/src/.venv \
 
 COPY --from=builder /usr/src/.venv/ /usr/src/.venv/
 
-COPY --from=builder /usr/local/include/testlib.h /usr/local/include/testlib.h
-
 COPY --from=builder /usr/bin/catj /usr/bin/catj
 
-COPY --from=builder /root/checkers/fcmp /root/checkers/hcmp /root/checkers/lcmp /root/checkers/ncmp /root/checkers/nyesno \
-                    /root/checkers/rcmp4 /root/checkers/rcmp6 /root/checkers/rcmp9 /root/checkers/wcmp /root/checkers/yesno \
-                    /root/checkers/
+COPY --from=builder /root/checkers/* /root/checkers/
 
 ADD ./server ./deploy/server/docker-entrypoint.sh \
     ./deploy/server/ping.cron ./deploy/server/ping.sh ./deploy/server/wait \
@@ -83,5 +80,9 @@ RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)" \
   && chmod 0644 ./ping.cron \
   && crontab ./ping.cron \
   && touch /var/log/cron.log
+
+ARG COMMIT_SHA
+
+ENV COMMIT_SHA=${COMMIT_SHA}
 
 EXPOSE 80
