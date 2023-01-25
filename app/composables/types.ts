@@ -23,6 +23,7 @@ export interface JudgeNode {
       processor: string;
       architecture: [string, string];
     };
+    commit_sha: string;
   };
 }
 

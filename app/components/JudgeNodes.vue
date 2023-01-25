@@ -36,7 +36,7 @@ const parseJava = (text: string) => {
         cursor-pointer
         :class="[
           smallScreen ? 'justify-end' : 'justify-center',
-          'md:[&:hover>div]:flex',
+          'md:[&:hover>div]:block',
         ]"
       >
         <span
@@ -60,17 +60,22 @@ const parseJava = (text: string) => {
           bg-white
           dark:bg-dark
           w-44
-          justify-between
           z10
         >
-          <span font-bold>通讯时延</span>
-          <span ml1
-            >{{
-              new Date(row.information.timestamp.response).getTime() -
-              new Date(row.information.timestamp.request).getTime()
-            }}
-            毫秒</span
-          >
+          <div flex justify-between>
+            <span font-bold>通讯时延</span>
+            <span ml1
+              >{{
+                new Date(row.information.timestamp.response).getTime() -
+                new Date(row.information.timestamp.request).getTime()
+              }}
+              毫秒</span
+            >
+          </div>
+          <div v-if="row.information.commit_sha" flex justify-between>
+            <span font-bold>版本</span>
+            <span ml1>{{ row.information.commit_sha.slice(0, 7) }}</span>
+          </div>
         </div>
       </div>
     </template>
