@@ -1,5 +1,5 @@
 diff --git a/dist/module.mjs b/dist/module.mjs
-index dbaac3436f3aaa83e4cbb309ba62754f7b382f0b..c7fcf5a7255bb5de638d5aaa803d3df248afefe4 100644
+index 9b1f34bf9b525d8f0dbf450dfc7963d8d42ec43b..be9062d9b1fc9eaed8094d533790fe000d7214f4 100644
 --- a/dist/module.mjs
 +++ b/dist/module.mjs
 @@ -13,6 +13,7 @@ const ipxSetup = async (_providerOptions, moduleOptions) => {

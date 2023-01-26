@@ -19,7 +19,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@nuxt/image-edge@1.0.0-27840416.dc1ed65": "app/patches/@nuxt__image-edge@1.0.0-27840416.dc1ed65.patch"
+      "@nuxt/image-edge@1.0.0-27907872.f4dd19d": "app/patches/@nuxt__image-edge@1.0.0-27907872.f4dd19d.patch"
     }
   }
 }
