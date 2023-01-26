@@ -1,3 +1,9 @@
+<script lang="ts">
+export default {
+  name: 'CTableHeader',
+};
+</script>
+
 <script setup lang="ts">
 import { useCTableContext } from './context';
 

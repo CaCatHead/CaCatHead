@@ -1,3 +1,9 @@
+<script lang="ts">
+export default {
+  name: 'CTable',
+};
+</script>
+
 <script setup lang="ts" generic="T extends any">
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 
