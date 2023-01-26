@@ -73,8 +73,8 @@ const prepareProblem = useThrottleFn(async (row: Problem, _index: number) => {
       {
         method: 'POST',
         body: {
-          code: '#include <stdio.h>\nint main() {}',
-          language: 'c',
+          code: [`#include <cstdio>`, `int main() { return 0; }`].join('\n'),
+          language: 'cpp',
         },
       }
     );
