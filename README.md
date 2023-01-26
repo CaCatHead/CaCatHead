@@ -4,12 +4,12 @@
 
 # CaCatHead
 
-[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml) [![Demo](https://img.shields.io/badge/CaCatHead-Demo-brightgreen)](https://oj.xlorpaste.cn/) [![license](https://img.shields.io/badge/license-AGPL--3.0-orange)](./LICENSE)
+[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml) [![Demo](https://img.shields.io/badge/CaCatHead-Demo-brightgreen)](https://cacathead.cn/) [![license](https://img.shields.io/badge/license-AGPL--3.0-orange)](./LICENSE)
 
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
-+ 📺 [Online Demo | 在线 Demo](https://oj.xlorpaste.cn/)
-+ 📖 [Chinese Document | 中文文档](https://oj-docs.onekuma.cn/)
++ 📺 [Online Demo | 在线 Demo](https://cacathead.cn/)
++ 📖 [Chinese Document | 中文文档](https://docs.cacathead.cn/)
 
 ## Deploy
 
@@ -104,10 +104,10 @@ server:
   allowed_host:
     - '127.0.0.1'
     - server  # This is docker-compose service name, and is used for nginx
-    - oj.xlorpaste.cn  # Config your domain here
+    - cacathead.cn  # Config your domain here
   trusted_origin:
     - http://127.0.0.1
-    - https://oj.xlorpaste.cn  # Config your domain here
+    - https://cacathead.cn  # Config your domain here
   # ...
 ```
 

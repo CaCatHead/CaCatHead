@@ -18,7 +18,7 @@ hero:
       link: /intro/
     - theme: alt
       text: 试一试
-      link: https://oj.xlorpaste.cn
+      link: https://cacathead.cn
     - theme: alt
       text: GitHub
       link: https://github.com/XLoJ/CaCatHead
