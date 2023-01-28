@@ -17,6 +17,8 @@ class UserInfo(BaseModel):
     nickname = models.CharField(
         max_length=50, blank=True, default='', verbose_name=_("昵称"))
 
+    rating = models.IntegerField(default=1500, verbose_name=_("Rating"))
+
     is_teacher = models.BooleanField(default=False, verbose_name=_("是否教师"))
 
     class Meta:

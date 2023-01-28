@@ -8,7 +8,7 @@ def load_fixture(_apps, _schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('user', '__latest__'),
+        ('user', '0002_root'),
         ('post', '0001_initial'),
     ]
 
