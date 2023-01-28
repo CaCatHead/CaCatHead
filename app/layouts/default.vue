@@ -126,8 +126,16 @@ const commit = useAppConfig().COMMIT_SHA;
                     variant="text"
                     border="!base"
                     class="!text-base-900 !font-bold hover:!bg-gray-200/40 !bg-gray-200/10"
-                    >{{ user.nickname }}</c-button
-                  ></nuxt-link
+                  >
+                    <display-rating
+                      :rating="user.rating"
+                      :admin="
+                        user.permissions.is_staff ||
+                        user.permissions.is_superuser
+                      "
+                      >{{ user.nickname }}</display-rating
+                    >
+                  </c-button></nuxt-link
                 >
                 <template #dropdown>
                   <div
