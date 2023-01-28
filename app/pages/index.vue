@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Post, Contest } from '@/composables/types';
+import type { User, Post, Contest } from '@/composables/types';
 
 useHead({
   title: '主页',
 });
 
 const { data } = await useFetchAPI<{
+  top_users: User[];
   posts: Post[];
   recent_posts: Post[];
   recent_contests: Contest[];
@@ -32,7 +33,7 @@ const posts = ref(data.value?.posts ?? []);
 
       <div shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold>最近比赛</h3>
-        <div p4 text-sm>
+        <div text-sm>
           <c-table :data="data?.recent_contests" :mobile="false">
             <template #headers>
               <c-table-header name="title">比赛</c-table-header>
@@ -52,8 +53,26 @@ const posts = ref(data.value?.posts ?? []);
       </div>
 
       <div shadow-box rounded>
+        <h3 border="b-1 base" p4 text-xl font-bold>牛逼网友</h3>
+        <div text-sm>
+          <c-table :data="data?.top_users" :mobile="false">
+            <template #headers>
+              <c-table-header name="name">用户</c-table-header>
+              <c-table-header name="rating">Rating</c-table-header>
+            </template>
+            <template #name="{ row }">
+              <user-link :user="row"></user-link>
+            </template>
+            <template #rating="{ row }">
+              <span font-bold>{{ row.rating }}</span>
+            </template>
+          </c-table>
+        </div>
+      </div>
+
+      <div shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold>最新动态</h3>
-        <div p4 text-sm>
+        <div text-sm>
           <c-table :data="data?.recent_posts" :mobile="false">
             <template #headers>
               <c-table-header name="title">博客</c-table-header>

@@ -65,10 +65,12 @@ def get_home_info(request: Request):
     posts = Post.objects.filter_public().filter(is_home=True).all()[:10]
     recent_posts = Post.objects.filter_public().all()[:20]
     recent_contests = Contest.objects.filter_public().all()[:5]
+    top_users = User.objects.filter(userinfo__rating__isnull=False).order_by('-userinfo__rating').all()[:5]
     return make_response(commit_sha=settings.COMMIT_SHA,
                          posts=PostContentSerializer(posts, many=True).data,
                          recent_posts=PostSerializer(recent_posts, many=True).data,
-                         recent_contests=ContestSerializer(recent_contests, many=True).data)
+                         recent_contests=ContestSerializer(recent_contests, many=True).data,
+                         top_users=UserPublicSerializer(top_users, many=True).data)
 
 
 @api_view()
