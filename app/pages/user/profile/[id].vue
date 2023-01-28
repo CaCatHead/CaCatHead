@@ -24,9 +24,13 @@ const formatCNDateTime = (date: string | number | Date) =>
 <template>
   <div v-if="data?.user" space-y-4>
     <h3 font-bold text-3xl>
-      <display-rating :rating="data.user.rating">{{
-        data.user.nickname
-      }}</display-rating>
+      <display-rating
+        :rating="data.user.rating"
+        :admin="
+          data.user.permissions.is_staff || data.user.permissions.is_superuser
+        "
+        >{{ data.user.nickname }}</display-rating
+      >
     </h3>
     <div text-sm text-base-500>
       注册于 {{ formatCNDateTime(data.user.joined) }}

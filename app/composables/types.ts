@@ -43,6 +43,11 @@ export type PublicUserProfile = User & {
   joined: string;
 
   last_login: string;
+
+  permissions: {
+    is_superuser: boolean;
+    is_staff: boolean;
+  };
 };
 
 export type FullUser = User & {

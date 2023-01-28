@@ -42,7 +42,11 @@ class UserPublicSerializer(serializers.BaseSerializer):
             'rating': user_info.rating,
             'rank': user_info.rank,
             'joined': user.date_joined,
-            'last_login': user.last_login
+            'last_login': user.last_login,
+            'permissions': {
+                'is_superuser': user.is_superuser,
+                'is_staff': user.is_staff,
+            }
         }
 
 
