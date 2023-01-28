@@ -17,7 +17,7 @@ const name = computed(() => {
 </script>
 
 <template>
-  <nuxt-link :to="`/user/profile/${team.owner.username}`" class="user-link">{{
-    name
-  }}</nuxt-link>
+  <nuxt-link :to="`/user/profile/${team.owner.username}`" class="user-link">
+    <display-rating :rating="team.owner.rating">{{ name }}</display-rating>
+  </nuxt-link>
 </template>

@@ -1,0 +1,75 @@
+<script setup lang="ts">
+const props = withDefaults(
+  defineProps<{ rating?: number | undefined; rank?: string }>(),
+  {
+    rating: undefined,
+    rank: undefined,
+  }
+);
+
+const { rating, rank } = toRefs(props);
+
+const color = computed(() => {
+  const rk = rank?.value;
+  if (rk) {
+    return rk.replace(/ /g, '-');
+  }
+  const rt = rating?.value;
+  if (rt === undefined || rt === null) return null;
+  if (rt < 1200) return 'newbie';
+  if (rt < 1400) return 'pupil';
+  if (rt < 1600) return 'specialist';
+  if (rt < 1900) return 'expert';
+  if (rt < 2100) return 'candidate-master';
+  if (rt < 2400) return 'master';
+  if (rt < 3000) return 'grandmaster';
+  return 'grandmaster';
+});
+</script>
+
+<template>
+  <span :class="['rating', color]"><slot></slot></span>
+</template>
+
+<style>
+.rating {
+  display: inline-block;
+  color: black;
+  font-weight: bold;
+}
+
+.rating.legendary-grandmaster::first-letter {
+  color: black !important;
+}
+
+.rating.legendary-grandmaster,
+.rating.international-grandmaster,
+.rating.grandmaster {
+  color: #ff0000 !important;
+}
+
+.rating.international-master,
+.rating.master {
+  color: #ff8c00 !important;
+}
+
+.rating.candidate-master {
+  color: #aa00aa !important;
+}
+
+.rating.expert {
+  color: #0000ff !important;
+}
+
+.rating.specialist {
+  color: #03a89e !important;
+}
+
+.rating.pupil {
+  color: #008000 !important;
+}
+
+.rating.newbie {
+  color: gray !important;
+}
+</style>

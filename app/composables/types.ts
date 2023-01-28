@@ -33,6 +33,10 @@ export interface User {
   username: string;
 
   nickname: string;
+
+  rating: number | undefined;
+
+  rank: string;
 }
 
 export type PublicUserProfile = User & {
