@@ -20,11 +20,14 @@ def clear_contest_rating(contest: Contest):
         new_rating = RatingLog.objects.filter(team=team).aggregate(Sum('delta'))['delta__sum']
         if new_rating is None:
             team.rating = RATING_BASE
+            team.save()
+            if team.single_user:
+                UserInfo.objects.filter(user=team.owner).update(rating=None)
         else:
             team.rating = RATING_BASE + new_rating
-        team.save()
-        if team.single_user:
-            UserInfo.objects.filter(user=team.owner).update(rating=new_rating)
+            team.save()
+            if team.single_user:
+                UserInfo.objects.filter(user=team.owner).update(rating=new_rating + RATING_BASE)
     return registrations
 
 
