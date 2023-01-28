@@ -48,6 +48,9 @@ const rendered = computed(() => {
   }
 });
 
+const line = computed(() => {
+  return code.value.split('\n').length;
+});
 const measure = ref<HTMLElement | null>(null);
 const width = computed(() => {
   if (measure.value) {
@@ -77,6 +80,9 @@ const copyToClipboard = async () => {
       :class="['px-4 py-4 min-h-14 overflow-x-auto lt-md:text-xs lt-md:p-2']"
       v-html="rendered"
     ></div>
+    <div class="hidden-measure font-mono lt-md:text-xs" ref="measure">
+      {{ line + 1 }}
+    </div>
   </div>
 </template>
 
