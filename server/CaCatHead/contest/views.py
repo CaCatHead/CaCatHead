@@ -15,6 +15,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
     EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
     UserRegisterPayloadSerializer, ContestStandingSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
+from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
 from CaCatHead.core.constants import Verdict
@@ -388,3 +389,36 @@ def user_view_standings(request: Request, contest_id: int):
         return response
     else:
         raise BadRequest(detail='您无权访问比赛榜单')
+
+
+class RatingView(APIView):
+    """
+    比赛 Rating
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request: Request, contest_id: int):
+        return make_response()
+
+    def post(self, request: Request, contest_id: int):
+        contest = check_read_contest(request.user, contest_id)
+
+        if contest.has_admin_permission(request.user):
+            if contest.is_ended():
+                refresh_contest_rating(contest)
+                return make_response()
+            else:
+                raise BadRequest(detail='比赛还未结束')
+        else:
+            raise BadRequest(detail='您无权访问比赛 Rating')
+
+    def delete(self, request: Request, contest_id: int):
+        contest = check_read_contest(request.user, contest_id)
+        if contest.has_admin_permission(request.user):
+            if contest.is_ended():
+                clear_contest_rating(contest)
+                return make_response()
+            else:
+                raise BadRequest(detail='比赛还未结束')
+        else:
+            raise BadRequest(detail='您无权访问比赛 Rating')

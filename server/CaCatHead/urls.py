@@ -101,6 +101,7 @@ urlpatterns = [
          contest_views.delete_contest_submission),  # 删除某个提交
     path('api/contest/<int:contest_id>/submissions', contest_views.user_view_all_submissions),  # 查看比赛所有提交
     path('api/contest/<int:contest_id>/standings', contest_views.user_view_standings),  # 查看比赛排行榜
+    path('api/contest/<int:contest_id>/rating', contest_views.RatingView.as_view()),  # 更新比赛 Rating
     # path('api/contest/<int:contest_id>/export'),  # 导出比赛数据
     # team
     # path('api/teams'),  # 列出自己参加的团队

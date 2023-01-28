@@ -164,3 +164,22 @@ class ContestRegistration(models.Model):
         verbose_name = _("比赛注册信息")
 
         verbose_name_plural = _("比赛注册信息列表")
+
+
+class RatingLog(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE, verbose_name=_(u"比赛"))
+
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, verbose_name=_(u"队伍"))
+
+    rating = models.IntegerField(verbose_name=_(u"原 Rating"))
+
+    delta = models.IntegerField(verbose_name=_(u"Rating 变化量"))
+
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))
+
+    class Meta:
+        db_table = 'rating_log'
+
+        verbose_name = _("Rating 日志")
+
+        verbose_name_plural = _("Rating 日志列表")
