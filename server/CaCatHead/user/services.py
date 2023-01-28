@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from .models import UserInfo, StudentInfo
+from ..contest.services.registration import make_single_user_team
 from ..core.exceptions import BadRequest
 
 
@@ -23,6 +24,10 @@ def register_student_user(username: str, email: str, password: str):
         user_info.save()
         student_info = StudentInfo(user=user, student_name=username)
         student_info.save()
+
+        # 创建代表用户自己的团队，用于个人参加比赛
+        make_single_user_team(user)
+
         return user
     except IntegrityError as error:
         message = '未知的数据库错误'

@@ -97,6 +97,8 @@ class Team(models.Model):
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_(u"队长"))
 
+    single_user = models.BooleanField(default=False, verbose_name=_(u"用户自己的队伍"))
+
     members = models.ManyToManyField(User, related_name='members', verbose_name=_(u"队员"))
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))

@@ -4,12 +4,14 @@ from CaCatHead.contest.models import Team, ContestRegistration, Contest
 
 
 def make_single_user_team(user: User) -> Team:
-    team = Team.objects.filter(owner=user).first()
+    team = Team.objects.filter(owner=user, single_user=True).first()
     if team is not None:
         return team
-    team = Team()
-    team.owner = user
-    team.name = user.userinfo.nickname
+    team = Team(
+        owner=user,
+        name=user.userinfo.nickname,
+        single_user=True
+    )
     team.save()
     team.members.add(user)
     return team
