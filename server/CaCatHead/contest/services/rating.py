@@ -36,6 +36,8 @@ class RatingCalculator(object):
     def __init__(self, registrations: list[ContestRegistration]):
         self.user_list = []
         for (index, registration) in enumerate(registrations):
+            if not registration.is_participate:
+                continue
             old_rating = registration.team.rating
             user = RatingUser(index + 1, old_rating, registration.team)
             self.user_list.append(user)
