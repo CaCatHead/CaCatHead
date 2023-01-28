@@ -16,7 +16,7 @@
 
 ```bash
 # 克隆本仓库到本地
-$ git clone https://github.com/XLoJ/CaCatHead.git --depth 1
+$ git clone https://github.com/CaCatHead/CaCatHead.git --depth 1
 
 # 进入仓库根目录
 $ cd CaCatHead
@@ -27,7 +27,7 @@ $ git submodule update --init --recursive
 
 ## 配置数据库密码
 
-部署环境使用的数据库的密码存储在 [./deploy/password/](https://github.com/XLoJ/CaCatHead/tree/main/deploy/password) 目录下。
+部署环境使用的数据库的密码存储在 [./deploy/password/](https://github.com/CaCatHead/CaCatHead/tree/main/deploy/password) 目录下。
 
 包含 4 个密码文件：
 
@@ -62,7 +62,7 @@ echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq
 
 ## 配置 nginx
 
-使用文本编辑器打开 [./deploy/nginx/sites-enabled/cacathead.conf](https://github.com/XLoJ/CaCatHead/blob/main/deploy/nginx/sites-enabled/cacathead.conf)。
+使用文本编辑器打开 [./deploy/nginx/sites-enabled/cacathead.conf](https://github.com/CaCatHead/CaCatHead/blob/main/deploy/nginx/sites-enabled/cacathead.conf)。
 
 ```bash
 $ vim ./deploy/nginx/sites-enabled/cacathead.conf
@@ -109,11 +109,11 @@ server {
 }
 ```
 
-除此以外，你还需要在 [./deploy/nginx/cert](https://github.com/XLoJ/CaCatHead/blob/main/deploy/nginx/cert) 目录下，创建 SSL 证书文件 `ssl.key` 和 `ssl.pem`。
+除此以外，你还需要在 [./deploy/nginx/cert](https://github.com/CaCatHead/CaCatHead/blob/main/deploy/nginx/cert) 目录下，创建 SSL 证书文件 `ssl.key` 和 `ssl.pem`。
 
 ## 配置服务器设置
 
-使用文本编辑器打开 [./deploy/server/cacathead.yml](https://github.com/XLoJ/CaCatHead/blob/main/deploy/server/cacathead.yml)。
+使用文本编辑器打开 [./deploy/server/cacathead.yml](https://github.com/CaCatHead/CaCatHead/blob/main/deploy/server/cacathead.yml)。
 
 ```bash
 $ vim ./deploy/server/cacathead.yml

@@ -104,7 +104,7 @@ public class Main {
         <template #q>这是什么网站？</template>
         <template #a
           >这是<a
-            href="https://github.com/XLoJ/CaCatHead"
+            href="https://github.com/CaCatHead/CaCatHead"
             text-link
             target="_blank"
             >猫猫头</a

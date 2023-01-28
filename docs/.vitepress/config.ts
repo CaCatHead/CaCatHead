@@ -12,7 +12,7 @@ export default defineConfig({
   themeConfig: {
     logo: '/favicon.png',
     editLink: {
-      pattern: 'https://github.com/XLoJ/CaCatHead/tree/main/docs/:path',
+      pattern: 'https://github.com/CaCatHead/CaCatHead/tree/main/docs/:path',
       text: '反馈修改建议',
     },
     footer: {
@@ -20,7 +20,7 @@ export default defineConfig({
       copyright: 'Copyright © 2021-PRESENT XLor',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/XLoJ/CaCatHead' },
+      { icon: 'github', link: 'https://github.com/CaCatHead/CaCatHead' },
     ],
     // algolia: {
     //   appId: 'FGCMJD7ZM9',

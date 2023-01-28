@@ -21,7 +21,7 @@ hero:
       link: https://cacathead.cn
     - theme: alt
       text: GitHub
-      link: https://github.com/XLoJ/CaCatHead
+      link: https://github.com/CaCatHead/CaCatHead
 
 features:
   - title: 比赛

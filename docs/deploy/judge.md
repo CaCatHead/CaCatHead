@@ -24,7 +24,7 @@
 
 ## 配置服务器设置
 
-使用文本编辑器打开 [./deploy/judge/cacathead.yml](https://github.com/XLoJ/CaCatHead/blob/main/deploy/judge/cacathead.yml)。
+使用文本编辑器打开 [./deploy/judge/cacathead.yml](https://github.com/CaCatHead/CaCatHead/blob/main/deploy/judge/cacathead.yml)。
 
 ```bash
 $ vim ./deploy/judge/cacathead.yml
@@ -117,4 +117,4 @@ $ ./manage.sh judge logs
 
 ### CaCatHead.config 解析失败
 
-检查 [./deploy/judge/cacathead.yml](https://github.com/XLoJ/CaCatHead/blob/main/deploy/judge/cacathead.yml) 是否为合法的 yml 格式文件。检查 field 名称是否正确，缩进是否正确，是否缺失某些配置。也可能因为 `git pull` (`git merge`) 遇到冲突，导致格式损坏。
+检查 [./deploy/judge/cacathead.yml](https://github.com/CaCatHead/CaCatHead/blob/main/deploy/judge/cacathead.yml) 是否为合法的 yml 格式文件。检查 field 名称是否正确，缩进是否正确，是否缺失某些配置。也可能因为 `git pull` (`git merge`) 遇到冲突，导致格式损坏。

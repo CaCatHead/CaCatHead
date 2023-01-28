@@ -285,7 +285,7 @@ const commit = useAppConfig().COMMIT_SHA;
             icon-btn
             text-gray-500
             hover:text="$c-brand"
-            :href="`https://github.com/XLoJ/CaCatHead`"
+            :href="`https://github.com/CaCatHead/CaCatHead`"
             target="_blank"
           ></a>
           <a
@@ -313,11 +313,11 @@ const commit = useAppConfig().COMMIT_SHA;
           <a
             i-carbon-logo-github
             class="text-gray-500/50 hover:text-gray-500"
-            :href="`https://github.com/XLoJ/CaCatHead/tree/${commit}`"
+            :href="`https://github.com/CaCatHead/CaCatHead/tree/${commit}`"
             target="_blank"
           ></a>
           <a
-            :href="`https://github.com/XLoJ/CaCatHead/tree/${commit}`"
+            :href="`https://github.com/CaCatHead/CaCatHead/tree/${commit}`"
             target="_blank"
             text-link
             >{{ commit.slice(0, 7) }}
@@ -328,7 +328,7 @@ const commit = useAppConfig().COMMIT_SHA;
           <span
             >Powered by
             <a
-              :href="`https://github.com/XLoJ/CaCatHead`"
+              :href="`https://github.com/CaCatHead/CaCatHead`"
               target="_blank"
               text-link
               >CaCatHead</a
