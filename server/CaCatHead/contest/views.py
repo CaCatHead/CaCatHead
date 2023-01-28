@@ -395,7 +395,7 @@ class RatingView(APIView):
     """
     比赛 Rating
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def get(self, request: Request, contest_id: int):
         return make_response()

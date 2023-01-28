@@ -17,6 +17,8 @@ snapshots['UserAuthTests::test_flow 1'] = {
         'is_superuser': False,
         'polygon': False
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'world'
 }
 
@@ -31,6 +33,8 @@ snapshots['UserAuthTests::test_flow 2'] = {
         'is_superuser': False,
         'polygon': False
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'world'
 }
 
@@ -50,6 +54,8 @@ snapshots['UserAuthTests::test_login 1'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -64,6 +70,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -78,6 +86,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -92,6 +102,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -106,6 +118,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -120,6 +134,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -134,6 +150,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -148,6 +166,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -162,6 +182,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -176,6 +198,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -190,6 +214,8 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'is_superuser': True,
         'polygon': True
     },
+    'rank': 'newbie',
+    'rating': None,
     'username': 'cacathead'
 }
 
@@ -206,6 +232,8 @@ snapshots['UserRegisterTests::test_register 1'] = {
             'is_superuser': False,
             'polygon': False
         },
+        'rank': 'newbie',
+        'rating': None,
         'username': 'world'
     }
 }
@@ -223,6 +251,8 @@ snapshots['UserRegisterTests::test_register_error_same_username 1'] = {
             'is_superuser': False,
             'polygon': False
         },
+        'rank': 'newbie',
+        'rating': None,
         'username': 'world'
     }
 }
@@ -240,6 +270,8 @@ snapshots['UserRegisterTests::test_register_ok_same_email 1'] = {
             'is_superuser': False,
             'polygon': False
         },
+        'rank': 'newbie',
+        'rating': None,
         'username': 'world'
     }
 }
