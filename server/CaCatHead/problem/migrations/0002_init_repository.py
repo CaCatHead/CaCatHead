@@ -34,7 +34,7 @@ def init_problem_repository(_apps, _schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('problem', '0001_initial'),
-        ('user', '__latest__')
+        ('user', '0002_root')
     ]
 
     operations = [

@@ -51,6 +51,7 @@ if (
       <c-nav-item to="problemset" v-if="contest.is_admin"
         >题目列表设置</c-nav-item
       >
+      <c-nav-item to="rating" v-if="contest.is_admin">Rating 管理</c-nav-item>
       <c-nav-item to="permissions" v-if="contest.is_admin">权限管理</c-nav-item>
     </c-nav>
     <NuxtPage

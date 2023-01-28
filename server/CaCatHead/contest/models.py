@@ -97,9 +97,13 @@ class Team(models.Model):
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_(u"队长"))
 
+    single_user = models.BooleanField(default=False, verbose_name=_(u"用户自己的队伍"))
+
     members = models.ManyToManyField(User, related_name='members', verbose_name=_(u"队员"))
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))
+
+    rating = models.IntegerField(default=1500, verbose_name=_("Rating"))
 
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
@@ -162,3 +166,28 @@ class ContestRegistration(models.Model):
         verbose_name = _("比赛注册信息")
 
         verbose_name_plural = _("比赛注册信息列表")
+
+
+class RatingLog(models.Model):
+    contest = models.ForeignKey(Contest, on_delete=models.CASCADE, verbose_name=_(u"比赛"))
+
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, verbose_name=_(u"队伍"))
+
+    rating = models.IntegerField(verbose_name=_(u"原 Rating"))
+
+    delta = models.IntegerField(verbose_name=_(u"Rating 变化量"))
+
+    created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))
+
+    class Meta:
+        db_table = 'rating_log'
+
+        ordering = ('-created', 'contest', '-rating')
+
+        indexes = [
+            models.Index(fields=['contest'], name='rating_log_contest_index')
+        ]
+
+        verbose_name = _("Rating 日志")
+
+        verbose_name_plural = _("Rating 日志列表")
