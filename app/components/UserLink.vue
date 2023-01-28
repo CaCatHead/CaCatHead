@@ -8,7 +8,11 @@ const { user } = toRefs(props);
 
 <template>
   <nuxt-link :to="`/user/profile/${user.username}`" class="user-link">
-    <display-rating :rating="user.rating">{{ user.nickname }}</display-rating>
+    <display-rating
+      :rating="user.rating"
+      :admin="user.username === 'root' || user.username === 'cacathead'"
+      >{{ user.nickname }}</display-rating
+    >
   </nuxt-link>
 </template>
 

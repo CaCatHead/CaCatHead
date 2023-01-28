@@ -1,9 +1,14 @@
 <script setup lang="ts">
 const props = withDefaults(
-  defineProps<{ rating?: number | undefined; rank?: string }>(),
+  defineProps<{
+    rating?: number | undefined;
+    rank?: string;
+    admin?: boolean;
+  }>(),
   {
     rating: undefined,
     rank: undefined,
+    admin: false,
   }
 );
 
@@ -28,7 +33,7 @@ const color = computed(() => {
 </script>
 
 <template>
-  <span :class="['rating', color]"><slot></slot></span>
+  <span :class="['rating', admin ? 'rainbow' : color]"><slot></slot></span>
 </template>
 
 <style>
@@ -36,6 +41,32 @@ const color = computed(() => {
   display: inline-block;
   color: black;
   font-weight: bold;
+}
+
+.rating.rainbow {
+  background-image: linear-gradient(
+    to left,
+    #ee4035,
+    #f37736,
+    #7bc043,
+    #0392cf
+  );
+  -webkit-background-clip: text;
+  color: transparent;
+  /* background: linear-gradient(
+    to right,
+    #ef5350,
+    #f48fb1,
+    #7e57c2,
+    #2196f3,
+    #26c6da,
+    #43a047,
+    #eeff41,
+    #f9a825,
+    #ff5722
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; */
 }
 
 .rating.legendary-grandmaster::first-letter {
