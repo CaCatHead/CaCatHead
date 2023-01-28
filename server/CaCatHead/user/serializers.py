@@ -27,7 +27,8 @@ class UserSerializer(serializers.BaseSerializer):
             'id': user.id,
             'username': user.username,
             'nickname': user_info.nickname,
-            'rating': user_info.rating
+            'rating': user_info.rating,
+            'rank': user_info.rank,
         }
 
 
@@ -39,6 +40,7 @@ class UserPublicSerializer(serializers.BaseSerializer):
             'username': user.username,
             'nickname': user_info.nickname,
             'rating': user_info.rating,
+            'rank': user_info.rank,
             'joined': user.date_joined,
             'last_login': user.last_login
         }
@@ -53,6 +55,7 @@ class FullUserSerializer(serializers.BaseSerializer):
             'email': user.email,
             'nickname': user_info.nickname,
             'rating': user_info.rating,
+            'rank': user_info.rank,
             'permissions': {
                 'is_superuser': user.is_superuser,
                 'is_staff': user.is_staff,
