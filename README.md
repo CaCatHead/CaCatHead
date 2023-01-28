@@ -4,7 +4,7 @@
 
 # CaCatHead
 
-[![CI](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/XLoJ/CaCatHead/actions/workflows/ci.yml) [![Demo](https://img.shields.io/badge/CaCatHead-Demo-brightgreen)](https://cacathead.cn/) [![license](https://img.shields.io/badge/license-AGPL--3.0-orange)](./LICENSE)
+[![CI](https://github.com/CaCatHead/CaCatHead/actions/workflows/ci.yml/badge.svg)](https://github.com/CaCatHead/CaCatHead/actions/workflows/ci.yml) [![Demo](https://img.shields.io/badge/CaCatHead-Demo-brightgreen)](https://cacathead.cn/) [![license](https://img.shields.io/badge/license-AGPL--3.0-orange)](./LICENSE)
 
 CaCatHead is the fully rewritten open-source successor of Cat (used internally by NJUST).
 
@@ -21,7 +21,7 @@ First, clone this repo and its submodules.
 
 ```bash
 # Clone this repo
-$ git clone https://github.com/XLoJ/CaCatHead.git --depth 1
+$ git clone https://github.com/CaCatHead/CaCatHead.git --depth 1
 
 # Go to the root directory of this repo
 $ cd CaCatHead

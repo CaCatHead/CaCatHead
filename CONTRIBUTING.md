@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your support and interest to [CaCatHead](https://github.com/XLoJ/CaCatHead).
+Thank you for your support and interest to [CaCatHead](https://github.com/CaCatHead/CaCatHead).
 
 ## Prepare Environment
 
@@ -210,7 +210,7 @@ After cloning the project, you should first update the submodules.
 
 ```bash
 # Clone this project
-$ git clone https://github.com/XLoJ/CaCatHead.git
+$ git clone https://github.com/CaCatHead/CaCatHead.git
 
 # Go to the root directory
 $ cd CaCatHead

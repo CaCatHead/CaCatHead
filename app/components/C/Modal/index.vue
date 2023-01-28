@@ -33,7 +33,7 @@ const { show } = toRefs(props);
       max-h="90vh"
       max-w="90vw"
       overflow-auto
-      @click.stop.prevent="show = false"
+      @click.stop.prevent="() => {}"
     >
       <slot></slot>
     </div>

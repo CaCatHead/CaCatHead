@@ -7,6 +7,9 @@ GET http://127.0.0.1:8000/api/sync?timestamp={{$timestamp}}
 ### List judge nodes
 GET http://127.0.0.1:8000/api/judge/nodes
 
+### Get home info
+GET http://127.0.0.1:8000/api/home
+
 ### Register
 POST http://127.0.0.1:8000/api/auth/register
 Content-Type: application/json

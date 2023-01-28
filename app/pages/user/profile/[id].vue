@@ -36,7 +36,7 @@ const formatCNDateTime = (date: string | number | Date) =>
       注册于 {{ formatCNDateTime(data.user.joined) }}
     </div>
     <div v-if="!!data.user.rating">
-      <span>比赛 Rating</span>
+      <span text-base-500>比赛 Rating</span>
       <display-rating :rating="data.user.rating" ml2>{{
         data.user.rating
       }}</display-rating>
