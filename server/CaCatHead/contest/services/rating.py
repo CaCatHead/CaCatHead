@@ -5,17 +5,19 @@ from django.db.models import Sum
 from CaCatHead.contest.models import Contest, RatingLog, ContestRegistration, Team
 from CaCatHead.user.models import UserInfo
 
+RATING_BASE = 1500
+
 
 def clear_contest_rating(contest: Contest):
     RatingLog.objects.filter(contest=contest).delete()
-    registrations = ContestRegistration.objects.filter(contest=contest)
+    registrations = ContestRegistration.objects.filter(contest=contest).all()
     for reg in registrations:
         team = reg.team
         new_rating = RatingLog.objects.filter(team=team).aggregate(Sum('delta'))['delta__sum']
         if new_rating is None:
-            team.rating = 1500
+            team.rating = RATING_BASE
         else:
-            team.rating = new_rating
+            team.rating = RATING_BASE + new_rating
         team.save()
         if team.single_user:
             UserInfo.objects.filter(user=team.owner).update(rating=new_rating)
