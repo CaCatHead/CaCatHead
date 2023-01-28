@@ -103,6 +103,8 @@ class Team(models.Model):
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"创建时间"))
 
+    rating = models.IntegerField(default=1500, verbose_name=_("Rating"))
+
     extra_info = models.JSONField(default=dict, verbose_name=_(u"其他信息"))
 
     class Meta:
