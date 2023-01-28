@@ -8,6 +8,10 @@ from CaCatHead.user.models import UserInfo
 RATING_BASE = 1500
 
 
+def get_contest_rating_logs(contest: Contest):
+    return RatingLog.objects.filter(contest=contest).all()
+
+
 def clear_contest_rating(contest: Contest):
     RatingLog.objects.filter(contest=contest).delete()
     registrations = ContestRegistration.objects.filter(contest=contest).all()

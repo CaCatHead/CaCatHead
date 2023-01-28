@@ -13,9 +13,9 @@ from rest_framework.views import APIView
 from CaCatHead.contest.models import Contest, ContestRegistration, ContestSettings
 from CaCatHead.contest.serializers import CreateContestPayloadSerializer, ContestSerializer, \
     EditContestPayloadSerializer, ContestContentSerializer, ContestRegistrationSerializer, \
-    UserRegisterPayloadSerializer, ContestStandingSerializer
+    UserRegisterPayloadSerializer, ContestStandingSerializer, RatingLogSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
-from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating
+from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
 from CaCatHead.core.constants import Verdict
@@ -398,7 +398,9 @@ class RatingView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request: Request, contest_id: int):
-        return make_response()
+        contest = check_read_contest(request.user, contest_id)
+        logs = get_contest_rating_logs(contest)
+        return make_response(logs=RatingLogSerializer(logs, many=True).data)
 
     def post(self, request: Request, contest_id: int):
         contest = check_read_contest(request.user, contest_id)

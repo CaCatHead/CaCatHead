@@ -182,6 +182,12 @@ class RatingLog(models.Model):
     class Meta:
         db_table = 'rating_log'
 
+        ordering = ('-created', 'contest', '-rating')
+
+        indexes = [
+            models.Index(fields=['contest'], name='rating_log_contest_index')
+        ]
+
         verbose_name = _("Rating 日志")
 
         verbose_name_plural = _("Rating 日志列表")

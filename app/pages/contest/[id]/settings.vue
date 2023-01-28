@@ -84,28 +84,6 @@ const submit = async () => {
     // problems.value = '';
   }
 };
-
-const refreshRating = useThrottleFn(async () => {
-  try {
-    await fetchAPI(`/api/contest/${route.params.id}/rating`, {
-      method: 'POST',
-    });
-    notify.success(`比赛 ${contest.value.title} 刷新 Rating 成功`);
-  } catch (err) {
-    notify.danger(`比赛 ${contest.value.title} 刷新 Rating 失败`);
-  }
-}, 10000);
-
-const deleteRating = async () => {
-  try {
-    await fetchAPI(`/api/contest/${route.params.id}/rating`, {
-      method: 'DELETE',
-    });
-    notify.success(`比赛 ${contest.value.title} 删除 Rating 成功`);
-  } catch (err) {
-    notify.danger(`比赛 ${contest.value.title} 删除 Rating 失败`);
-  }
-};
 </script>
 
 <template>
@@ -149,10 +127,8 @@ const deleteRating = async () => {
       <markdown-editor v-model="description"></markdown-editor>
     </div>
 
-    <div space-x-2>
+    <div>
       <c-button color="success" @click="submit">保存</c-button>
-      <c-button color="info" @click="refreshRating">刷新 Rating</c-button>
-      <c-button color="danger" @click="deleteRating">删除 Rating</c-button>
     </div>
   </div>
 </template>

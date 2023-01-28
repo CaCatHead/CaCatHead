@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from CaCatHead.contest.models import Contest, ContestRegistration, Team
+from CaCatHead.contest.models import Contest, ContestRegistration, Team, RatingLog
 from CaCatHead.problem.serializers import ProblemContentSerializer
 from CaCatHead.user.serializers import UserSerializer
 
@@ -95,3 +95,16 @@ class ContestStandingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContestRegistration
         fields = ['name', 'team', 'created', 'score', 'dirty', 'standings', 'is_participate', 'extra_info']
+
+
+class RatingLogSerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+
+    old_rating = serializers.SerializerMethodField(method_name='get_old_rating')
+
+    class Meta:
+        model = RatingLog
+        fields = ['contest_id', 'team', 'old_rating', 'delta', 'created']
+
+    def get_old_rating(self, obj: RatingLog):
+        return obj.rating
