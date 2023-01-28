@@ -26,6 +26,7 @@ class RatingUser(object):
     def __init__(self, rank, old_rating, team=None):
         self.rank = float(rank)
         self.old_rating = int(old_rating)
+        self.new_rating = int(old_rating)
         self.seed = 1.0
         self.handle = team
         self.delta = 0
