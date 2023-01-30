@@ -212,7 +212,7 @@ const formatProgress = (value: number) => {
           <div mb2>距离比赛开始还有</div>
           <div text-2xl>
             <span>{{
-              formatProgress(upcomingContestStartTime - timestamp)
+              formatProgress(Math.max(0, upcomingContestStartTime - timestamp))
             }}</span>
           </div>
         </div>
