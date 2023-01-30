@@ -7,19 +7,58 @@ useHead({
 
 const user = useUser();
 
-const { data } = await useFetchAPI<{ contests: Contest[] }>('/api/contests');
-
-const now = new Date().getTime();
-const currentContests = computed(() => {
-  return data.value?.contests.filter(
-    c => new Date(c.end_time).getTime() >= now
-  );
-});
-const historyContests = computed(() => {
-  return data.value?.contests.filter(c => new Date(c.end_time).getTime() < now);
-});
+const notify = useNotification();
 
 const timestamp = useServerTimestamp();
+
+const { data } = await useFetchAPI<{ contests: Contest[] }>('/api/contests');
+
+const now = timestamp.value;
+const currentContests = computed(() => {
+  return (
+    data.value?.contests.filter(c => new Date(c.end_time).getTime() >= now) ??
+    []
+  );
+});
+const upcomingContest = computed(() => {
+  for (const contest of currentContests.value) {
+    const start = new Date(contest.start_time).getTime();
+    if (now <= start && start <= now + 15 * 60 * 1000) {
+      console.log(contest);
+      return contest;
+    }
+  }
+});
+const upcomingContestStartTime = computed(() => {
+  if (upcomingContest.value) {
+    return new Date(upcomingContest.value.start_time).getTime();
+  } else {
+    return Number.MAX_SAFE_INTEGER;
+  }
+});
+
+const openHistory = ref(!upcomingContest.value);
+const historyContests = computed(() => {
+  return (
+    data.value?.contests.filter(c => new Date(c.end_time).getTime() < now) ?? []
+  );
+});
+
+if (currentContests.value.length > 0) {
+  let jumped = false;
+  watch(timestamp, async timestamp => {
+    if (jumped) return;
+    for (const contest of currentContests.value) {
+      const start = new Date(contest.start_time).getTime();
+      if (start <= timestamp && timestamp <= start + 1000) {
+        notify.success(`比赛 ${contest.title} 开始...`);
+        jumped = true;
+        await navigateTo(`/contest/${contest.id}`);
+        break;
+      }
+    }
+  });
+}
 
 const contestStatus = (contest: Contest) => {
   const now = new Date(timestamp.value);
@@ -42,6 +81,16 @@ const statusColor = (status: string) => {
     return 'text-info';
   }
 };
+
+const formatProgress = (value: number) => {
+  function alignNumber(value: number) {
+    return (value < 10 ? '0' : '') + value;
+  }
+  const h = Math.floor(value / 3600000);
+  const m = Math.floor((value % 3600000) / 60000);
+  const s = Math.floor((value % 60000) / 1000);
+  return `${h}:${alignNumber(m)}:${alignNumber(s)}`;
+};
 </script>
 
 <template>
@@ -57,7 +106,12 @@ const statusColor = (status: string) => {
         >
       </div>
     </div>
-    <c-table :data="currentContests" border>
+    <c-table
+      :data="
+        openHistory && upcomingContest ? [upcomingContest!] : currentContests
+      "
+      border
+    >
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
@@ -133,12 +187,50 @@ const statusColor = (status: string) => {
         </div>
       </template>
     </c-table>
+
+    <client-only>
+      <div v-if="upcomingContest" text-right text-base-500 class="!mt1">
+        <span
+          text-sm
+          select-none
+          cursor-pointer
+          text-link
+          @click="openHistory = !openHistory"
+          >{{ openHistory ? '隐藏' : '显示' }}比赛历史</span
+        >
+      </div>
+      <div v-if="upcomingContest" space-y-2 pt-12>
+        <h3 font-bold text-3xl text-center>
+          <nuxt-link :to="`/contest/${upcomingContest.id}`">{{
+            upcomingContest.title
+          }}</nuxt-link>
+        </h3>
+        <div
+          text-base-500
+          text-center
+          flex
+          flex-col
+          items-center
+          justify-center
+          h48
+        >
+          <div mb2>距离比赛开始还有</div>
+          <div text-2xl>
+            <span>{{
+              formatProgress(Math.max(0, upcomingContestStartTime - timestamp))
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </client-only>
+
     <div>
       <display-server-timestamp justify-end></display-server-timestamp>
+      <client-only> </client-only>
     </div>
 
-    <h3 font-bold text-xl>比赛历史</h3>
-    <c-table :data="historyContests" border>
+    <h3 v-show="openHistory" font-bold text-xl>比赛历史</h3>
+    <c-table v-show="openHistory" :data="historyContests" border>
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
