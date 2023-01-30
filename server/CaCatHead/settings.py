@@ -286,7 +286,7 @@ LOGGING = {
             'handlers': ['null'],
         },
         'django.db.backends': {
-            'handlers': ['debug'],
+            'handlers': ['null'],
             'level': 'DEBUG',
         },
         'CaCatHead': {

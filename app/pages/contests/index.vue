@@ -5,21 +5,42 @@ useHead({
   title: '比赛',
 });
 
+const notify = useNotification();
+
 const user = useUser();
 
 const { data } = await useFetchAPI<{ contests: Contest[] }>('/api/contests');
 
 const now = new Date().getTime();
 const currentContests = computed(() => {
-  return data.value?.contests.filter(
-    c => new Date(c.end_time).getTime() >= now
+  return (
+    data.value?.contests.filter(c => new Date(c.end_time).getTime() >= now) ??
+    []
   );
 });
 const historyContests = computed(() => {
-  return data.value?.contests.filter(c => new Date(c.end_time).getTime() < now);
+  return (
+    data.value?.contests.filter(c => new Date(c.end_time).getTime() < now) ?? []
+  );
 });
 
 const timestamp = useServerTimestamp();
+
+if (currentContests.value.length > 0) {
+  let jumped = false;
+  watch(timestamp, async timestamp => {
+    if (jumped) return;
+    for (const contest of currentContests.value) {
+      const start = new Date(contest.start_time).getTime();
+      if (start <= timestamp && timestamp <= start + 1000) {
+        notify.success(`比赛 ${contest.title} 开始...`);
+        jumped = true;
+        await navigateTo(`/contest/${contest.id}`);
+        break;
+      }
+    }
+  });
+}
 
 const contestStatus = (contest: Contest) => {
   const now = new Date(timestamp.value);
