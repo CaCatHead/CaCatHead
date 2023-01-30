@@ -106,7 +106,12 @@ const formatProgress = (value: number) => {
         >
       </div>
     </div>
-    <c-table :data="currentContests" border>
+    <c-table
+      :data="
+        openHistory && upcomingContest ? currentContests : [upcomingContest!]
+      "
+      border
+    >
       <template #headers>
         <c-table-header name="title">比赛</c-table-header>
         <c-table-header name="start_time">开始时间</c-table-header>
