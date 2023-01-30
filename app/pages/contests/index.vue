@@ -108,7 +108,7 @@ const formatProgress = (value: number) => {
     </div>
     <c-table
       :data="
-        openHistory && upcomingContest ? currentContests : [upcomingContest!]
+        openHistory && upcomingContest ? [upcomingContest!] : currentContests
       "
       border
     >
