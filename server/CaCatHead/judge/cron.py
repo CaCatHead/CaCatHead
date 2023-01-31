@@ -16,7 +16,8 @@ logger = logging.getLogger(__name__)
 
 class RejudgeErrorSubmission(CronJobBase):
     """
-    每分钟自动重新评测发生 TestcaseError 的提交
+    每分钟自动重测可能是挂掉的提交，可能是遇到 TestcaseError 或者消息丢失一直 Waiting
+    单次最多重测 MAX_REJUDGE_COUNT 次（30 次）
     """
 
     code = 'CaCatHead.judge.cron.RejudgeErrorSubmission'
