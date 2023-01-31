@@ -188,8 +188,7 @@ def user_register_contest(request: Request, contest_id: int):
     name = request.data['name']
     if not check_username_format(name):
         raise BadRequest(detail="队伍名格式错误")
-    registration = single_user_register(user=request.user, contest=contest,
-                                        name=request.data['name'],
+    registration = single_user_register(user=request.user, contest=contest, name=name,
                                         extra_info=request.data['extra_info'])
     return make_response(registration=ContestRegistrationSerializer(registration).data)
 
