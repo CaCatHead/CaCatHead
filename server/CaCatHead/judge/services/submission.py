@@ -200,11 +200,11 @@ class SubmissionTask:
         if self.language == 'cpp':
             commands = ["g++", self.code_file, "-o", "Main",
                         "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                        "-static", "-lm", "-std=c++20", "-O2", "-DONLINE_JUDGE", "-Wall"]
+                        "-static", "-lm", "-std=c++2a", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'c':
             commands = ["gcc", self.code_file, "-o", "Main",
                         "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                        "-static", "-lm", "-std=c20", "-O2", "-DONLINE_JUDGE", "-Wall"]
+                        "-static", "-lm", "-std=c2a", "-O2", "-DONLINE_JUDGE", "-Wall"]
         elif self.language == 'java':
             commands = ["javac", self.code_file, "-d", "."]
         else:

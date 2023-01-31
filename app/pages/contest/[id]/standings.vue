@@ -89,6 +89,13 @@ const registrations = computed(() => {
       }
     }
 
+    for (const [key, value] of Object.entries(r.standings?.penalty ?? {})) {
+      const index = displyaIdToIndex(+key);
+      if (index in problems) {
+        problems[index].dirty = +value;
+      }
+    }
+
     return {
       ...r,
       rank: -1,

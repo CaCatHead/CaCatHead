@@ -16,30 +16,33 @@ def refresh_icpc_standing(registration: ContestRegistration):
     penalty = dict()
     penalty_unit = 20 * 60  # 单次罚时：20 分钟
     for sub in submissions:
+        pid = sub.problem.display_id
         if sub.verdict == Verdict.Accepted:
             # 第一次通过
-            if sub.problem.id not in accepted:
-                accepted.add(sub.problem.id)
+            if pid not in accepted:
+                accepted.add(pid)
                 score += 1
                 dirty += sub.relative_time
-                if sub.problem.id in penalty:
-                    dirty += penalty[sub.problem.id] * penalty_unit
+                if pid in penalty:
+                    dirty += penalty[pid] * penalty_unit
+                else:
+                    penalty[pid] = 0
         elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
                              Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
             skip_wrong = False
             try:
                 # WA1 不计入罚时
                 if 'results' in sub.detail and isinstance(sub.detail['results'], list):
-                    if len(sub.detail['results']) == 1 and sub.detail['results']['sample']:
+                    if len(sub.detail['results']) == 1 and sub.detail['results'][0]['sample']:
                         skip_wrong = True
             except Exception:
                 pass
             if not skip_wrong:
                 # 添加罚时次数
-                if sub.problem.id not in penalty:
-                    penalty[sub.problem.id] = 1
+                if pid not in penalty:
+                    penalty[pid] = 1
                 else:
-                    penalty[sub.problem.id] += 1
+                    penalty[pid] += 1
 
         # 只有 AC 或者错误提交，才会记录到排行榜的提交中
         if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,

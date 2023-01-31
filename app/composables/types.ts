@@ -290,6 +290,7 @@ export interface ContestStanding {
   is_participate: boolean;
 
   standings: {
+    penalty?: Record<string, number>;
     submissions?: ContestStandingSubmission[];
   };
 }
