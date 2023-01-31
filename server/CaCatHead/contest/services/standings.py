@@ -26,11 +26,20 @@ def refresh_icpc_standing(registration: ContestRegistration):
                     dirty += penalty[sub.problem.id] * penalty_unit
         elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
                              Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
-            # 添加罚时次数
-            if sub.problem.id not in penalty:
-                penalty[sub.problem.id] = 1
-            else:
-                penalty[sub.problem.id] += 1
+            skip_wrong = False
+            try:
+                # WA1 不计入罚时
+                if 'results' in sub.detail and isinstance(sub.detail['results'], list):
+                    if len(sub.detail['results']) == 1 and sub.detail['results']['sample']:
+                        skip_wrong = True
+            except Exception:
+                pass
+            if not skip_wrong:
+                # 添加罚时次数
+                if sub.problem.id not in penalty:
+                    penalty[sub.problem.id] = 1
+                else:
+                    penalty[sub.problem.id] += 1
 
         # 只有 AC 或者错误提交，才会记录到排行榜的提交中
         if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
@@ -47,7 +56,7 @@ def refresh_icpc_standing(registration: ContestRegistration):
 
     registration.score = score
     registration.dirty = dirty
-    registration.standings = {'submissions': standings}
+    registration.standings = {'submissions': standings, 'penalty': penalty}
 
 
 def refresh_registration_standing(registration: ContestRegistration):
