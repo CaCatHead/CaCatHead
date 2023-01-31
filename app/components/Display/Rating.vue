@@ -33,7 +33,9 @@ const color = computed(() => {
 </script>
 
 <template>
-  <span :class="['rating', admin ? 'rainbow' : color]"><slot></slot></span>
+  <span :class="['rating', admin || rank === 'rainbow' ? 'rainbow' : color]"
+    ><slot></slot
+  ></span>
 </template>
 
 <style>
