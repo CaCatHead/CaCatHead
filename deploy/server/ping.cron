@@ -1,1 +1,1 @@
-* * * * * /root/CaCatHead/ping.sh >> /var/log/cron.log 2>&1
+* * * * * /root/CaCatHead/ping.sh >> /root/cron/log/cron.log 2>&1

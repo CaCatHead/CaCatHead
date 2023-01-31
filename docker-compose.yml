@@ -65,6 +65,7 @@ services:
       - ./.cacathead/testcases:/root/testcases
       - ./.cacathead/static:/root/CaCatHead/static
       - ./.cacathead/logs/celery:/root/celery/log
+      - ./.cacathead/logs/cron:/root/cron/log/
     secrets:
       - db_pass
       - redis_pass
