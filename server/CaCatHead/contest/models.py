@@ -159,6 +159,11 @@ class ContestRegistration(models.Model):
 
         ordering = ('-score', 'dirty', '-is_participate')
 
+        unique_together = (
+            ('contest', 'name'),
+            ('contest', 'team'),
+        )
+
         indexes = [
             models.Index(fields=['contest', 'team'], name='contest_team_index')
         ]

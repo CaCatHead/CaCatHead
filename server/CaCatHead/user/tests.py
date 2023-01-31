@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from CaCatHead.core.tests import TestCase
+from CaCatHead.utils import check_username_format
 
 ROOT_USER = settings.CACATHEAD_ROOT_USER
 ROOT_PASS = settings.CACATHEAD_ROOT_PASS
@@ -223,3 +224,34 @@ class UserRegisterTests(TestCase):
         })
         self.assertUserRegistered('world', 'world@example.com')
         self.assertUserRegistered('gdx', 'world@example.com')
+
+
+class UsernameFormatTests(TestCase):
+    def test_name(self):
+        assert check_username_format('abc')
+        assert check_username_format('ABC')
+        assert check_username_format('123')
+        assert check_username_format('___')
+        assert check_username_format('孤独熊')
+
+    def test_invalid(self):
+        assert not check_username_format(u' abc')
+        assert not check_username_format(u'abc\n')
+        assert not check_username_format(u'\tabc')
+        assert not check_username_format(u'<abc')
+        assert not check_username_format(u'>abc')
+        assert not check_username_format(u'/abc')
+        assert not check_username_format(u'\\abc')
+        assert not check_username_format(u'???abc')
+        assert not check_username_format(u'&&&abc')
+        assert not check_username_format(u':::abc')
+        assert not check_username_format(u'ㅤ')  # unicode U+3164
+        assert not check_username_format(u'aㅤ')  # unicode U+3164
+        assert not check_username_format(u'ㅤb')  # unicode U+3164
+
+    def test_emoji(self):
+        assert check_username_format(u'🐟lg')
+        assert check_username_format(u'gd🐻')
+        assert check_username_format(u'🐱j')
+        assert check_username_format(u'🐆zg')
+        assert check_username_format(u'c🦈')

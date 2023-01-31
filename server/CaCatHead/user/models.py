@@ -14,8 +14,7 @@ NJUST_ICPC_GROUP = Group(name=NJUST_ICPC_GROUP_NAME)
 class UserInfo(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    nickname = models.CharField(
-        max_length=50, blank=True, default='', verbose_name=_("昵称"))
+    nickname = models.CharField(max_length=50, unique=True, blank=True, default='', verbose_name=_("昵称"))
 
     rating = models.IntegerField(default=None, null=True, verbose_name=_("Rating"))
 
