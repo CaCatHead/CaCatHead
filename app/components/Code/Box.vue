@@ -33,11 +33,10 @@ const renderCacheDark = useLocalStorage(
 
 const isHydrating = !!useNuxtApp().isHydrating;
 
-const settings = {
+const settings = ref({
   tabwidth: 2,
   format: true,
-};
-const enableFormat = settings.format;
+});
 
 const rendered = computed(() => {
   const renderCache = isDark ? renderCacheDark.value : renderCacheLight.value;
@@ -47,11 +46,11 @@ const rendered = computed(() => {
     !isHydrating &&
     hsh in renderCache &&
     renderCache[hsh].c === code.value &&
-    renderCache[hsh].f === enableFormat
+    renderCache[hsh].f === settings.value.format
   ) {
     return renderCache[hsh].r;
   } else {
-    const result = highlight(code.value, language.value, settings);
+    const result = highlight(code.value, language.value, settings.value);
     if (language.value === result.language) {
       renderCache[hsh] = {
         c: code.value,
@@ -83,6 +82,13 @@ const copyToClipboard = async () => {
 <template>
   <div v-show="rendered.length > 0" class="code-box relative transition-all">
     <div absolute top-2 right-2 lt-md="top-0 right-1" v-if="copy">
+      <c-button
+        variant="text"
+        color="success"
+        lt-sm="text-xs"
+        @click="settings.format = !settings.format"
+        >{{ settings.format ? '源文件' : '格式化' }}</c-button
+      >
       <c-button
         variant="text"
         color="info"
