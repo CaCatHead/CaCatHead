@@ -24,25 +24,40 @@ function hash(s: string) {
 
 const renderCacheLight = useLocalStorage(
   'render/cache/light',
-  {} as Record<string, { c: string; r: string }>
+  {} as Record<string, { c: string; r: string; f: boolean }>
 );
 const renderCacheDark = useLocalStorage(
   'render/cache/dark',
-  {} as Record<string, { c: string; r: string }>
+  {} as Record<string, { c: string; r: string; f: boolean }>
 );
 
 const isHydrating = !!useNuxtApp().isHydrating;
+
+const settings = {
+  tabwidth: 2,
+  format: true,
+};
+const enableFormat = settings.format;
 
 const rendered = computed(() => {
   const renderCache = isDark ? renderCacheDark.value : renderCacheLight.value;
   const hsh = hash(code.value);
   // Hyration 的时候，不能读取缓存
-  if (!isHydrating && hsh in renderCache && renderCache[hsh].c === code.value) {
+  if (
+    !isHydrating &&
+    hsh in renderCache &&
+    renderCache[hsh].c === code.value &&
+    renderCache[hsh].f === enableFormat
+  ) {
     return renderCache[hsh].r;
   } else {
-    const result = highlight(code.value, language.value);
+    const result = highlight(code.value, language.value, settings);
     if (language.value === result.language) {
-      renderCache[hsh] = { c: code.value, r: result.html };
+      renderCache[hsh] = {
+        c: code.value,
+        r: result.html,
+        f: result.option.format,
+      };
     }
     return result.html;
   }
