@@ -242,8 +242,8 @@ class UsernameFormatTests(TestCase):
         assert not check_username_format(u'ㅤ')
 
     def test_emoji(self):
-        assert check_username_format(u'🐟')
-        assert check_username_format(u'🐻')
-        assert check_username_format(u'🐱')
-        assert check_username_format(u'🐆')
-        assert check_username_format(u'🦈')
+        assert check_username_format(u'🐟lg')
+        assert check_username_format(u'gd🐻')
+        assert check_username_format(u'🐱j')
+        assert check_username_format(u'🐆zg')
+        assert check_username_format(u'c🦈')
