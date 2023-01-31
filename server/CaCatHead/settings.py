@@ -109,7 +109,7 @@ REST_KNOX = {
 # django cron tasks
 CRON_CLASSES = [
     'CaCatHead.judge.cron.PingJudgeNode',
-    'CaCatHead.judge.cron.RejudgeTestcaseErrorSubmission',
+    'CaCatHead.judge.cron.RejudgeErrorSubmission',
 ]
 
 MIDDLEWARE = [

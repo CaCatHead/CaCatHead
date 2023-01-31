@@ -46,6 +46,8 @@ class Submission(models.Model):
 
     created = models.DateTimeField(auto_now_add=True, verbose_name=_(u"提交时间"))
 
+    updated = models.DateTimeField(auto_now=True, verbose_name=_(u"更新时间"))
+
     judged = models.DateTimeField(blank=True, null=True, verbose_name=_(u"评测时间"))
 
     verdict = models.CharField(default=Verdict.Waiting, max_length=32, verbose_name=_(u"提交状态和判题结果"))
@@ -110,6 +112,8 @@ class ContestSubmission(models.Model):
 
     # 提交时间相对于比赛开始时间，单位：秒
     relative_time = models.IntegerField(verbose_name=_(u"提交相对时间"))
+
+    updated = models.DateTimeField(auto_now=True, verbose_name=_(u"更新时间"))
 
     judged = models.DateTimeField(blank=True, null=True, verbose_name=_(u"评测时间"))
 
