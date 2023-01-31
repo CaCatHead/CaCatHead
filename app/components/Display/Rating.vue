@@ -15,10 +15,6 @@ const props = withDefaults(
 const { rating, rank } = toRefs(props);
 
 const color = computed(() => {
-  const rk = rank?.value;
-  if (rk) {
-    return rk.replace(/ /g, '-');
-  }
   const rt = rating?.value;
   if (rt === undefined || rt === null) return null;
   if (rt < 1200) return 'newbie';
@@ -33,7 +29,9 @@ const color = computed(() => {
 </script>
 
 <template>
-  <span :class="['rating', admin ? 'rainbow' : color]"><slot></slot></span>
+  <span :class="['rating', admin || rank === 'rainbow' ? 'rainbow' : color]"
+    ><slot></slot
+  ></span>
 </template>
 
 <style>
