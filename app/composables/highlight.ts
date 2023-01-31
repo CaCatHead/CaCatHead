@@ -93,7 +93,7 @@ export function highlight(code: string, lang: string) {
     return renderText();
   } else if (shiki) {
     try {
-      const html = shiki.codeToHtml(code, {
+      const html = shiki.codeToHtml(code.replace('\t', '    '), {
         lang,
         theme,
       });
