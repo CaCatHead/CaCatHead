@@ -77,7 +77,16 @@ export function useShikiTheme() {
   return useColorMode().value === 'dark' ? 'Eva Dark' : 'Eva Light';
 }
 
-export function highlight(code: string, lang: string) {
+interface HighLightOption {
+  tabwidth?: number;
+  format?: boolean;
+}
+
+export function highlight(
+  code: string,
+  lang: string,
+  { tabwidth = 4, format = false }: HighLightOption = {}
+) {
   const shiki = useHightlighter(lang as Lang);
   const theme = useShikiTheme();
 
@@ -93,7 +102,8 @@ export function highlight(code: string, lang: string) {
     return renderText();
   } else if (shiki) {
     try {
-      const html = shiki.codeToHtml(code.replace('\t', '    '), {
+      code = code.replace('\t', ' '.repeat(tabwidth));
+      const html = shiki.codeToHtml(code, {
         lang,
         theme,
       });
