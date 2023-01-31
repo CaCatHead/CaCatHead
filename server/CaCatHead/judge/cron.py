@@ -32,6 +32,7 @@ class RejudgeErrorSubmission(CronJobBase):
             try:
                 contest = Contest.objects.filter(problem_repository=sub.repository).first()
                 if contest is not None:
+                    logger.info(f"Rejudge TestcaseError contest submission #{sub.id}.")
                     rejudge_submission(contest, sub)
                 else:
                     logger.error('Rejudge TestcaseError contest submission fails: can not find contest')
@@ -47,6 +48,7 @@ class RejudgeErrorSubmission(CronJobBase):
                 if contest is not None:
                     delta = (timezone.now() - sub.updated).total_seconds()
                     if delta >= 60:
+                        logger.info(f"Rejudge Waiting contest submission #{sub.id}.")
                         rejudge_submission(contest, sub)
                 else:
                     logger.error('Rejudge Waiting contest submission fails: can not find contest')
