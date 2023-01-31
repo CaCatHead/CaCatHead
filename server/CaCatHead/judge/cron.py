@@ -26,6 +26,8 @@ class RejudgeErrorSubmission(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
 
     def do(self):
+        logger.info('Start finding error contest submissions to rejudge')
+
         # 重测 TestcaseError 的提交
         subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.TestCaseError).all()
         for sub in subs:
