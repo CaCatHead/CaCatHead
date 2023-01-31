@@ -15,10 +15,6 @@ const props = withDefaults(
 const { rating, rank } = toRefs(props);
 
 const color = computed(() => {
-  const rk = rank?.value;
-  if (rk) {
-    return rk.replace(/ /g, '-');
-  }
   const rt = rating?.value;
   if (rt === undefined || rt === null) return null;
   if (rt < 1200) return 'newbie';
