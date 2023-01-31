@@ -136,6 +136,7 @@ class ContestSubmission(models.Model):
         indexes = [
             models.Index(fields=['repository'], name='contest_sub__repo_index'),
             models.Index(fields=['repository', 'owner'], name='contest_sub__repo_owner_index'),
+            models.Index(fields=['verdict'], name="contest_sub__verdict_index")
         ]
 
     def has_user(self, user: User):
