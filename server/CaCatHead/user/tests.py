@@ -235,7 +235,14 @@ class UsernameFormatTests(TestCase):
         assert check_username_format('孤独熊')
 
     def test_invalid(self):
-        assert not check_username_format(' ')
-        assert not check_username_format('\n')
-        assert not check_username_format('\t')
-        assert not check_username_format('ㅤ')
+        assert not check_username_format(u' ')
+        assert not check_username_format(u'\n')
+        assert not check_username_format(u'\t')
+        assert not check_username_format(u'ㅤ')
+
+    def test_emoji(self):
+        assert check_username_format(u'🐟')
+        assert check_username_format(u'🐻')
+        assert check_username_format(u'🐱')
+        assert check_username_format(u'🐆')
+        assert check_username_format(u'🦈')
