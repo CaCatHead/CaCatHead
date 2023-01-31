@@ -13,7 +13,7 @@ def make_error_response(status=None, headers=None, exception=None, **kwargs):
                     content_type=None, template_name=None)
 
 
-USERNAME_RE = re.compile(r"^[\w"
+USERNAME_RE = re.compile(r"^[a-zA-Z0-9_"
                          u"\u4e00-\u9fa5"
                          u"\u3040-\u309f\u30a0-\u30ff"
                          u"\U0001F600-\U0001F64F"
@@ -28,9 +28,9 @@ USERNAME_RE = re.compile(r"^[\w"
                          u"\u2600-\u2b55"
                          u"\u200d\u23cf\u23e9"
                          u"\u231a\ufe0f\u3030"
-                         u"]*$", flags=re.UNICODE)
+                         u"]+$", flags=re.UNICODE)
 
-VIEW_RE = re.compile(r"^[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]$")
+VIEW_RE = re.compile(r"^[a-zA-Z0-9_\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]+$")
 
 
 def check_username_format(s: str) -> bool:
@@ -41,7 +41,7 @@ def check_username_format(s: str) -> bool:
     for c in s:
         if c == 'ㅤ':
             return False
-        elif c.isalnum() or is_ch(c):
+        elif is_ch(c):
             ok = True
         elif USERNAME_RE.match(c) is None:
             return False
