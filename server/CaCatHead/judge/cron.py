@@ -19,7 +19,7 @@ class RejudgeErrorSubmission(CronJobBase):
     每分钟自动重新评测发生 TestcaseError 的提交
     """
 
-    code = 'CaCatHead.judge.cron'
+    code = 'CaCatHead.judge.cron.RejudgeErrorSubmission'
 
     RUN_EVERY_MINS = 1
 
@@ -60,7 +60,7 @@ class RejudgeErrorSubmission(CronJobBase):
 
 
 class PingJudgeNode(CronJobBase):
-    code = 'CaCatHead.judge.cron'
+    code = 'CaCatHead.judge.cron.PingJudgeNode'
 
     RUN_EVERY_MINS = 1  # every minutes
 
