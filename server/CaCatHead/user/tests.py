@@ -238,6 +238,7 @@ class UsernameFormatTests(TestCase):
         assert not check_username_format(u' ')
         assert not check_username_format(u'\n')
         assert not check_username_format(u'\t')
+        assert 'ㅤ'.encode("unicode_escape") == b'\\u3164'
         assert not check_username_format(u'ㅤ')
 
     def test_emoji(self):
