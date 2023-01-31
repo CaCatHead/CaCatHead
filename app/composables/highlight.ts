@@ -1,3 +1,4 @@
+import type { format } from 'wastyle';
 import type { Highlighter, Lang, IShikiTheme } from 'shiki-es';
 
 import EvaDark from '~/assets/shiki/themes/eva-dark.json';
@@ -5,12 +6,13 @@ import EvaLight from '~/assets/shiki/themes/eva-light.json';
 
 // @ts-ignore
 const themes: IShikiTheme[] = [EvaDark, EvaLight];
-
-const shiki = ref<Highlighter>();
-
 const registeredLang = ref(new Map<string, boolean>());
 
 let shikiImport: Promise<void> | undefined;
+let wastyleImport: Promise<void> | undefined;
+
+const shiki = ref<Highlighter>();
+const wastyleFormatter = ref<typeof format>();
 
 export const alias: Map<string, Lang> = new Map([
   ['c++', 'cpp'],
@@ -50,6 +52,19 @@ async function setup(...langs: Lang[]) {
   }
 }
 
+async function setupWastyle() {
+  try {
+    const wastyle = await import('wastyle');
+    // @ts-ignore
+    const astyleBinaryUrl = (await import('wastyle/dist/astyle.wasm?url'))
+      .default;
+    await wastyle.init(astyleBinaryUrl);
+    wastyleFormatter.value = wastyle.format;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 export function useHightlighter(lang: Lang) {
   if (!shikiImport) {
     shikiImport = setup('c', 'cpp');
@@ -73,6 +88,13 @@ export function useHightlighter(lang: Lang) {
   return shiki.value;
 }
 
+export function useFormatter() {
+  if (!wastyleImport) {
+    wastyleImport = setupWastyle();
+  }
+  return wastyleFormatter.value;
+}
+
 export function useShikiTheme() {
   return useColorMode().value === 'dark' ? 'Eva Dark' : 'Eva Light';
 }
@@ -82,10 +104,33 @@ interface HighLightOption {
   format?: boolean;
 }
 
+const DefaultFormatOption = [
+  'style=java',
+  'attach-namespaces',
+  'attach-classes',
+  'attach-inlines',
+  'attach-extern-c',
+  'attach-closing-while',
+  'indent-col1-comments',
+  'break-blocks',
+  'pad-oper',
+  'pad-comma',
+  'pad-header',
+  'unpad-paren',
+  'align-pointer=name',
+  'break-one-line-headers',
+  'attach-return-type',
+  'attach-return-type-decl',
+  'convert-tabs',
+  'close-templates',
+  'max-code-length=100',
+  'break-after-logical',
+];
+
 export function highlight(
   code: string,
   lang: string,
-  { tabwidth = 4, format = false }: HighLightOption = {}
+  { tabwidth = 2, format = false }: HighLightOption = {}
 ) {
   const shiki = useHightlighter(lang as Lang);
   const theme = useShikiTheme();
@@ -96,18 +141,43 @@ export function highlight(
       .split('\n')
       .map(l => `<span class="line">${l.trimEnd()}</span>`)
       .join('\n')}</code></pre>`,
+    option: { tabwidth, format: false },
   });
 
   if (lang === 'text') {
     return renderText();
   } else if (shiki) {
     try {
-      code = code.replace('\t', ' '.repeat(tabwidth));
+      const formater = useFormatter();
+      if (
+        format &&
+        formater &&
+        (lang === 'c' || lang === 'cpp' || lang === 'java')
+      ) {
+        const [success, result] = formater(
+          code,
+          [
+            ...DefaultFormatOption,
+            `indent=spaces=${tabwidth}`,
+            `mode=${lang === 'cpp' ? 'c' : lang}`,
+          ].join(' ')
+        );
+        if (success) {
+          format = true;
+          code = result;
+        } else {
+          format = false;
+        }
+      } else {
+        format = false;
+      }
+
       const html = shiki.codeToHtml(code, {
         lang,
         theme,
       });
-      return { language: lang, html };
+
+      return { language: lang, html, option: { tabwidth, format } };
     } catch (error) {
       console.error(error);
       return renderText();

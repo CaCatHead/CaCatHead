@@ -24,25 +24,39 @@ function hash(s: string) {
 
 const renderCacheLight = useLocalStorage(
   'render/cache/light',
-  {} as Record<string, { c: string; r: string }>
+  {} as Record<string, { c: string; r: string; f: boolean }>
 );
 const renderCacheDark = useLocalStorage(
   'render/cache/dark',
-  {} as Record<string, { c: string; r: string }>
+  {} as Record<string, { c: string; r: string; f: boolean }>
 );
 
 const isHydrating = !!useNuxtApp().isHydrating;
+
+const settings = ref({
+  tabwidth: 2,
+  format: true,
+});
 
 const rendered = computed(() => {
   const renderCache = isDark ? renderCacheDark.value : renderCacheLight.value;
   const hsh = hash(code.value);
   // Hyration 的时候，不能读取缓存
-  if (!isHydrating && hsh in renderCache && renderCache[hsh].c === code.value) {
+  if (
+    !isHydrating &&
+    hsh in renderCache &&
+    renderCache[hsh].c === code.value &&
+    renderCache[hsh].f === settings.value.format
+  ) {
     return renderCache[hsh].r;
   } else {
-    const result = highlight(code.value, language.value);
+    const result = highlight(code.value, language.value, settings.value);
     if (language.value === result.language) {
-      renderCache[hsh] = { c: code.value, r: result.html };
+      renderCache[hsh] = {
+        c: code.value,
+        r: result.html,
+        f: result.option.format,
+      };
     }
     return result.html;
   }
@@ -68,6 +82,13 @@ const copyToClipboard = async () => {
 <template>
   <div v-show="rendered.length > 0" class="code-box relative transition-all">
     <div absolute top-2 right-2 lt-md="top-0 right-1" v-if="copy">
+      <c-button
+        variant="text"
+        color="success"
+        lt-sm="text-xs"
+        @click="settings.format = !settings.format"
+        >{{ settings.format ? '源文件' : '格式化' }}</c-button
+      >
       <c-button
         variant="text"
         color="info"

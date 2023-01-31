@@ -4,10 +4,39 @@ from django.utils import timezone
 from django_cron import CronJobBase, Schedule
 
 from CaCatHead.config import cacathead_config
+from CaCatHead.contest.models import Contest
+from CaCatHead.contest.services.submit import rejudge_submission
+from CaCatHead.core.constants import Verdict
 from CaCatHead.judge.models import JudgeNode
 from CaCatHead.judge.tasks import ping
+from CaCatHead.submission.models import ContestSubmission
 
 logger = logging.getLogger(__name__)
+
+
+class RejudgeTestcaseErrorSubmission(CronJobBase):
+    """
+    每分钟自动重新评测发生 TestcaseError 的提交
+    """
+
+    code = 'CaCatHead.judge.cron'
+
+    RUN_EVERY_MINS = 1
+
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+
+    def do(self):
+        subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.TestCaseError).all()
+        for sub in subs:
+            try:
+                contest = Contest.objects.filter(problem_repository=sub.repository).first()
+                if contest is not None:
+                    rejudge_submission(contest, sub)
+                else:
+                    logger.error('Rejudge TestcaseError contest submission fails: can not find contest')
+            except Exception as ex:
+                logger.exception(ex)
+                logger.error('Rejudge TestcaseError contest submission fails')
 
 
 class PingJudgeNode(CronJobBase):
