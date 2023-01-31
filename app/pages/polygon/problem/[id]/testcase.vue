@@ -144,6 +144,8 @@ const save = async () => {
 
   // 读取所有测试用例
   notify.info('开始读取测试用例');
+
+  let sampleMode = true;
   for (const testcase of testcases.value) {
     if (testcase.input && testcase.answer) {
       const inputFile = testcase.input as File;
@@ -171,13 +173,21 @@ const save = async () => {
       if (testcase.sample) {
         const inp = await readFileContent(testcase.input as File);
         const ans = await readFileContent(testcase.answer as File);
-        if (inp.length > 1024 || ans.length > 1024) {
-          // 不应该上传这么大的样例
+        if (!sampleMode) {
+          notify.danger('样例必须放在测试数据的前面');
+          return;
+        } else if (inp.length > 1024 || ans.length > 1024) {
+          notify.danger('禁止上传大样例');
+          return;
+        } else {
+          sample.push({ input: inp, answer: ans });
         }
-        sample.push({ input: inp, answer: ans });
+      } else {
+        sampleMode = false;
       }
     }
   }
+
   await Promise.all(tasks);
 
   const config = {
@@ -346,7 +356,7 @@ const save = async () => {
         flex
         items-center
         justify-center
-        h-48
+        h-80
         w-full
       >
         <div text-center space-y-2 mx4>
@@ -355,6 +365,13 @@ const save = async () => {
             <li>导入测试数据文件；</li>
             <li>选择测试点显示为样例，输入分数，调整顺序；</li>
             <li>重复以上步骤，设置完成后保存。</li>
+          </ul>
+          <div font-bold>Tips</div>
+          <ul list-decimal space-y-1 text-left whitespace-normal pl6>
+            <li>测试数据格式为输入文件 xxx.in 对应答案文件 xxx.ans；</li>
+            <li>除此以外还支持：xxx.in / xxx.out 和 xxx / xxx.a；</li>
+            <li>文件名包含 example 或 sample 会被自动识别为样例；</li>
+            <li>只要不离开页面，你可以多次导入测试数据文件。</li>
           </ul>
         </div>
       </div>

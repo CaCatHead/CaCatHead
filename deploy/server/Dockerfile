@@ -78,8 +78,9 @@ RUN /usr/src/.venv/bin/python -c "import django; print(django.__version__)" \
   && chmod +x ./ping.sh \
   && chmod +x ./wait \
   && chmod 0644 ./ping.cron \
-  && crontab ./ping.cron \
-  && touch /var/log/cron.log
+  && mkdir -p /root/cron/log/ \
+  && touch /root/cron/log/cron.log \
+  && crontab ./ping.cron
 
 ARG COMMIT_SHA
 

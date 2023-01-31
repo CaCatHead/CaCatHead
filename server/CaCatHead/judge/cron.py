@@ -14,33 +14,66 @@ from CaCatHead.submission.models import ContestSubmission
 logger = logging.getLogger(__name__)
 
 
-class RejudgeTestcaseErrorSubmission(CronJobBase):
+class RejudgeErrorSubmission(CronJobBase):
     """
-    每分钟自动重新评测发生 TestcaseError 的提交
+    每分钟自动重测可能是挂掉的提交，可能是遇到 TestcaseError 或者消息丢失一直 Waiting
+    单次最多重测 MAX_REJUDGE_COUNT 次（30 次）
     """
 
-    code = 'CaCatHead.judge.cron'
+    code = 'CaCatHead.judge.cron.RejudgeErrorSubmission'
 
     RUN_EVERY_MINS = 1
+
+    MAX_REJUDGE_COUNT = 30
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
 
     def do(self):
+        logger.info('Start finding error contest submissions to rejudge')
+
+        rejudge_count = 0
+
+        # 重测 TestcaseError 的提交
         subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.TestCaseError).all()
         for sub in subs:
+            if rejudge_count == self.MAX_REJUDGE_COUNT:
+                break
             try:
                 contest = Contest.objects.filter(problem_repository=sub.repository).first()
                 if contest is not None:
+                    logger.info(f"Rejudge TestcaseError contest submission #{sub.id}.")
                     rejudge_submission(contest, sub)
+                    rejudge_count += 1
                 else:
                     logger.error('Rejudge TestcaseError contest submission fails: can not find contest')
             except Exception as ex:
                 logger.exception(ex)
                 logger.error('Rejudge TestcaseError contest submission fails')
 
+        # 重测等待时长超过 1 分钟的提交
+        subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.Waiting).all()
+        for sub in subs:
+            if rejudge_count == self.MAX_REJUDGE_COUNT:
+                break
+            try:
+                contest = Contest.objects.filter(problem_repository=sub.repository).first()
+                if contest is not None:
+                    delta = (timezone.now() - sub.updated).total_seconds()
+                    if delta >= 60:
+                        logger.info(f"Rejudge Waiting contest submission #{sub.id}.")
+                        rejudge_submission(contest, sub)
+                        rejudge_count += 1
+                else:
+                    logger.error('Rejudge Waiting contest submission fails: can not find contest')
+            except Exception as ex:
+                logger.exception(ex)
+                logger.error('Rejudge Waiting contest submission fails')
+
+        logger.info(f"Rejudge {rejudge_count} contest submissions")
+
 
 class PingJudgeNode(CronJobBase):
-    code = 'CaCatHead.judge.cron'
+    code = 'CaCatHead.judge.cron.PingJudgeNode'
 
     RUN_EVERY_MINS = 1  # every minutes
 
