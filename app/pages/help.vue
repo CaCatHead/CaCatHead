@@ -219,13 +219,109 @@ public class Main {
               <display-verdict verdict="RuntimeError"></display-verdict>
               等错误结果。
             </p>
-            <p>下面是题目 A + B 的 C 的样例程序:</p>
+            <p>下面是题目 A + B 的 C 的样例程序：</p>
             <code-box :code="CExample" language="c"></code-box>
-            <p>下面是题目 A + B 的 C++ 的样例程序:</p>
+            <p>下面是题目 A + B 的 C++ 的样例程序：</p>
             <code-box :code="CppExample" language="cpp"></code-box>
-            <p>下面是题目 A + B 的 Java 的样例程序:</p>
+            <p>下面是题目 A + B 的 Java 的样例程序：</p>
             <code-box :code="JavaExample" language="java"></code-box>
           </div>
+        </template>
+      </q-a>
+      <q-a>
+        <template #q>返回的评测结果具体含义和可能出现的原因？</template>
+        <template #a>
+          <ul list-circle pl4 space-y-2>
+            <li>
+              <display-verdict :verdict="Verdict.Waiting"></display-verdict
+              >：<span
+                >提交的代码尚未开始运行，可能是正在等待空闲的评测机，或者评测机正在和主服务器通信；</span
+              >
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.Compiling"></display-verdict
+              >：<span>提交的代码正在进行编译；</span>
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.Running"></display-verdict
+              >：<span
+                >提交的代码正在运行，若提交的代码长时间保持以上这三种等待状态，请及时联系管理员处理；</span
+              >
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.Accepted"></display-verdict>：
+              <span>提交的代码运行正常，正确通过了所有测试数据；</span>
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.WrongAnswer"></display-verdict
+              >：<span
+                >提交的代码运行正常，但是没有正确通过所有测试数据，请检查你的算法是否正确，是否忽略了某些边界情况等等；</span
+              >
+            </li>
+            <li>
+              <display-verdict
+                :verdict="Verdict.TimeLimitExceeded"
+              ></display-verdict
+              >：<span
+                >提交的代码由于超过运行时间限制导致运行失败，请检查你的算法的时间复杂度是否正确，如果显示的运行时间小于题目标出的时间限制，那么可能是由于你的代码在内核态运行了过长时间（可能是由于输入输出超时，或者使用
+                <code>sleep</code> 等）；</span
+              >
+            </li>
+            <li>
+              <display-verdict
+                :verdict="Verdict.IdlenessLimitExceeded"
+              ></display-verdict
+              >：<span
+                >未使用，该情况暂时被包含在
+                <display-verdict
+                  :verdict="Verdict.TimeLimitExceeded"
+                ></display-verdict>
+                内；</span
+              >
+            </li>
+            <li>
+              <display-verdict
+                :verdict="Verdict.MemoryLimitExceeded"
+              ></display-verdict
+              >：<span
+                >提交的代码由于超过运行内存限制导致运行失败，请检查你是否创建了过大的数组，或者动态分配了过多的内存空间；</span
+              >
+            </li>
+            <li>
+              <display-verdict
+                :verdict="Verdict.OutputLimitExceeded"
+              ></display-verdict
+              >：<span
+                >提交的代码由于输出过多导致运行失败，请检查你的输出代码是否陷入了死循环等情况；</span
+              >
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.RuntimeError"></display-verdict
+              >：<span>提交的代码由于某些错误导致运行失败，可能的原因是：</span>
+              <ul list-initial pl4 space-y-1 mt1>
+                <li>提交的代码退出时，没有返回 0；</li>
+                <li>提交的代码运行时，访问了非法的内存地址；</li>
+                <li>试图攻击系统，触发了评测机的安全机制；</li>
+                <li>...</li>
+              </ul>
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.CompileError"></display-verdict
+              >：<span
+                >提交的代码编译失败，请在本地开发环境确认代码能否正确编译，你可以在提交详情中查看到具体的编译错误信息（或者编译警告信息）；</span
+              >
+            </li>
+            <li>
+              <display-verdict :verdict="Verdict.SystemError"></display-verdict>
+              /
+              <display-verdict :verdict="Verdict.JudgeError"></display-verdict>
+              /
+              <display-verdict
+                :verdict="Verdict.TestCaseError"
+              ></display-verdict
+              >：<span>评测机内部出错，请及时反馈给管理员。</span>
+            </li>
+          </ul>
         </template>
       </q-a>
     </div>

@@ -46,6 +46,8 @@ const message = computed(() => {
     return 'Idleness Limit Exceeded';
   } else if (verdict === Verdict.MemoryLimitExceeded) {
     return 'Memory Limit Exceeded';
+  } else if (verdict === Verdict.OutputLimitExceeded) {
+    return 'Output Limit Exceeded';
   } else if (verdict === Verdict.RuntimeError) {
     return 'Runtime Error';
   } else if (verdict === Verdict.SystemError) {
