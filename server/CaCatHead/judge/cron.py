@@ -26,6 +26,10 @@ class RejudgeErrorSubmission(CronJobBase):
 
     MAX_REJUDGE_COUNT = 30
 
+    MAX_WAITING_SEC = 60
+
+    MAX_RUNNING_SEC = 60 * 10
+
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
 
     def do(self):
@@ -34,8 +38,8 @@ class RejudgeErrorSubmission(CronJobBase):
         rejudge_count = 0
 
         # 重测 TestcaseError 的提交
-        subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.TestCaseError).all()
-        for sub in subs:
+        error_subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.TestCaseError).all()
+        for sub in error_subs:
             if rejudge_count == self.MAX_REJUDGE_COUNT:
                 break
             try:
@@ -51,15 +55,15 @@ class RejudgeErrorSubmission(CronJobBase):
                 logger.error('Rejudge TestcaseError contest submission fails')
 
         # 重测等待时长超过 1 分钟的提交
-        subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.Waiting).all()
-        for sub in subs:
+        waiting_subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.Waiting).all()
+        for sub in waiting_subs:
             if rejudge_count == self.MAX_REJUDGE_COUNT:
                 break
             try:
                 contest = Contest.objects.filter(problem_repository=sub.repository).first()
                 if contest is not None:
                     delta = (timezone.now() - sub.updated).total_seconds()
-                    if delta >= 60:
+                    if delta >= self.MAX_WAITING_SEC:
                         logger.info(f"Rejudge Waiting contest submission #{sub.id}.")
                         rejudge_submission(contest, sub)
                         rejudge_count += 1
@@ -68,6 +72,25 @@ class RejudgeErrorSubmission(CronJobBase):
             except Exception as ex:
                 logger.exception(ex)
                 logger.error('Rejudge Waiting contest submission fails')
+
+        # 重测运行时长超过 10 分钟的提交
+        running_subs: list[ContestSubmission] = ContestSubmission.objects.filter(verdict=Verdict.Running).all()
+        for sub in running_subs:
+            if rejudge_count == self.MAX_REJUDGE_COUNT:
+                break
+            try:
+                contest = Contest.objects.filter(problem_repository=sub.repository).first()
+                if contest is not None:
+                    delta = (timezone.now() - sub.updated).total_seconds()
+                    if delta >= self.MAX_RUNNING_SEC:
+                        logger.info(f"Rejudge Running contest submission #{sub.id}.")
+                        rejudge_submission(contest, sub)
+                        rejudge_count += 1
+                else:
+                    logger.error('Rejudge Running contest submission fails: can not find contest')
+            except Exception as ex:
+                logger.exception(ex)
+                logger.error('Rejudge Running contest submission fails')
 
         logger.info(f"Rejudge {rejudge_count} contest submissions")
 
