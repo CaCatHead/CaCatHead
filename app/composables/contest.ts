@@ -1,4 +1,4 @@
-import type { Contest, User } from './types';
+import type { Contest, FullUser, User } from './types';
 
 import { formatInterval } from './date';
 
@@ -52,8 +52,16 @@ export const formatContestDuration = (row: Contest) => {
   }
 };
 
-export const isContestAdmin = (contest: Contest, user: User | undefined) => {
-  return user && contest.owner.id === user.id;
+export const isContestAdmin = (
+  contest: Contest,
+  user: FullUser | undefined
+) => {
+  return (
+    user &&
+    (user.permissions.is_staff ||
+      user.permissions.is_superuser ||
+      contest.owner.id === user.id)
+  );
 };
 
 export function parseProblemIndex(pid: string) {
