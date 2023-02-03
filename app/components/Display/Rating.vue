@@ -49,7 +49,7 @@ const color = computed(() => {
     #7bc043,
     #0392cf
   );
-  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
   user-select: none;
 }
