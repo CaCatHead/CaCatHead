@@ -156,6 +156,19 @@ const commit = useAppConfig().COMMIT_SHA;
                       class="rounded-t hover:bg-gray-200/40"
                       >设置</nuxt-link
                     >
+                    <nuxt-link
+                      v-if="
+                        user.permissions.add_post ||
+                        user.permissions.is_staff ||
+                        user.permissions.is_superuser
+                      "
+                      to="/post/write"
+                      block
+                      p2
+                      text-link
+                      class="rounded-t hover:bg-gray-200/40"
+                      >创建博客</nuxt-link
+                    >
                     <span
                       cursor-pointer
                       to="/user/settings"

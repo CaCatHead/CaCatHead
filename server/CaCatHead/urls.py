@@ -50,7 +50,7 @@ urlpatterns = [
     path('api/posts/home', post_views.list_public_home_post),
     path('api/posts/public', post_views.list_public_post),
     path('api/post/<int:post_id>', post_views.get_post_content),
-    # path('api/post/<int:post_id>/edit'),
+    path('api/post/<int:post_id>/edit', post_views.edit_post),
     # path('api/post/<int:post_id>/permission'),
     path('api/post', post_views.create_post),
     # polygon
