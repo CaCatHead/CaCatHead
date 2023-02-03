@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import permission_required
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
 from CaCatHead.core.decorators import func_validate_request
@@ -48,7 +49,32 @@ def get_post_content(request: Request, post_id):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAdminUser])
+@permission_classes([IsAuthenticated])
+@permission_required('post.add_post', raise_exception=True)
+@func_validate_request(CreatePostPayloadSerializer)
+def edit_post(request: Request, post_id: int):
+    """
+    编辑公告
+    """
+    post: Post = Post.objects.filter_user_permission(user=request.user, permission=PostPermissions.Edit).filter(
+        id=post_id).first()
+    if post is not None:
+        post.title = request.data['title']
+        post.content.content = request.data['content']
+        if request.user.is_staff or request.user.is_superuser:
+            if 'is_public' in request.data:
+                post.is_public = request.data['is_public']
+            if 'is_home' in request.data:
+                post.is_home = request.data['is_home']
+        post.save()
+        post.content.save()
+        return make_response(post=PostContentSerializer(post).get_or_raise())
+    else:
+        raise NotFound(detail='未找到公告')
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 @permission_required('post.add_post', raise_exception=True)
 @func_validate_request(CreatePostPayloadSerializer)
 def create_post(request: Request):

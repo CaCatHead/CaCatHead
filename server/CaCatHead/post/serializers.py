@@ -42,3 +42,5 @@ class CreatePostPayloadSerializer(serializers.Serializer):
     sort_time = serializers.DateTimeField(required=False)
 
     is_public = serializers.BooleanField(required=False, default=False)
+
+    is_home = serializers.BooleanField(required=False, default=False)

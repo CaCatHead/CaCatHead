@@ -30,6 +30,7 @@ const save = async () => {
     });
 
     notify.success(`公告 ${post.value?.post.title} 编辑成功`);
+    await navigateTo(`/post/entry/${route.params.id}`);
   } catch {
     notify.danger(`公告 ${post.value?.post.title} 编辑失败`);
   }
