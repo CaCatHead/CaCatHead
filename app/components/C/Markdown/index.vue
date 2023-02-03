@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import 'katex/dist/katex.min.css';
 
+import { alias, highlight } from '@/composables/highlight';
+
 import { createMarkdown } from './render';
-import { alias } from '@/composables/highlight';
 
 const props = withDefaults(defineProps<{ content?: string }>(), {
   content: '',
@@ -14,7 +15,7 @@ const render = createMarkdown({
   highlight: (code, lang) => {
     code = code.trim();
     lang = alias.get(lang) ?? lang;
-    return highlight(code, lang).html;
+    return highlight(code, lang, { format: true }).html;
   },
 });
 
