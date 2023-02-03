@@ -8,7 +8,17 @@ defineProps<{ posts: Post[] }>();
   <div>
     <div v-for="post in posts" mb12>
       <h2 text-2xl font-bold>
-        <NuxtLink :to="`/post/entry/${post.id}`">{{ post.title }}</NuxtLink>
+        <NuxtLink :to="`/post/entry/${post.id}`" flex items-center>
+          <span>{{ post.title }}</span>
+          <span
+            ml1
+            :class="[
+              post.is_public
+                ? 'i-mdi-check text-success'
+                : 'i-mdi-close text-danger',
+            ]"
+          ></span>
+        </NuxtLink>
       </h2>
       <p mt2 text-sm font-light>
         <span>用户 </span>

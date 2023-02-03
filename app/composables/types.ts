@@ -111,6 +111,8 @@ export interface Post {
 
   owner: User;
 
+  is_public: boolean;
+
   created: string;
 
   updated: string;
