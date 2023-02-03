@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { Post } from '@/composables/types';
+
 const notify = useNotification();
 
 useHead({
-  title: '发布新公告',
+  title: '创建博客',
 });
 
 const title = ref('');
@@ -15,7 +17,7 @@ const save = async () => {
   }
 
   try {
-    await fetchAPI(`/api/post`, {
+    const data = await fetchAPI<{ post: Post }>(`/api/post`, {
       method: 'POST',
       body: {
         title: title.value,
@@ -26,6 +28,7 @@ const save = async () => {
     });
 
     notify.success(`公告 ${title.value} 发布成功`);
+    await navigateTo(`/post/entry/${data.post.id}`);
   } catch {
     notify.danger(`公告 ${title.value} 发布失败`);
   }

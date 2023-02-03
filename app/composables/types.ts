@@ -113,6 +113,8 @@ export interface Post {
 
   is_public: boolean;
 
+  is_home: boolean;
+
   created: string;
 
   updated: string;

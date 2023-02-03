@@ -31,7 +31,7 @@ class PostContentSerializer(BasePostSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'owner', 'content', 'created', 'updated', 'sort_time', 'title', 'is_public']
+        fields = ['id', 'owner', 'content', 'created', 'updated', 'sort_time', 'title', 'is_public', 'is_home']
 
 
 class CreatePostPayloadSerializer(serializers.Serializer):

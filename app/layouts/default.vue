@@ -167,7 +167,7 @@ const commit = useAppConfig().COMMIT_SHA;
                       p2
                       text-link
                       class="rounded-t hover:bg-gray-200/40"
-                      >发布新公告</nuxt-link
+                      >创建博客</nuxt-link
                     >
                     <span
                       cursor-pointer
