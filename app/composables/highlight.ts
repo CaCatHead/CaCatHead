@@ -164,7 +164,7 @@ export function highlight(
         );
         if (success) {
           format = true;
-          code = result;
+          code = result.trim();
         } else {
           format = false;
         }
