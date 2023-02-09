@@ -24,6 +24,7 @@ const save = async () => {
         content: content.value,
         sort_time: new Date().toISOString(),
         is_public: is_public.value,
+        is_home: false,
       },
     });
 

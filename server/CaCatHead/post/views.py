@@ -61,7 +61,7 @@ def edit_post(request: Request, post_id: int):
     if post is not None:
         post.title = request.data['title']
         post.content.content = request.data['content']
-        if request.user.is_staff or request.user.is_superuser:
+        if request.user.is_superuser:
             if 'is_public' in request.data:
                 post.is_public = request.data['is_public']
             if 'is_home' in request.data:
@@ -82,6 +82,11 @@ def create_post(request: Request):
     创建公告
     """
     post = Post(title=request.data['title'], sort_time=timezone.now(), is_public=False, owner=request.user)
+    if request.user.is_superuser:
+        if 'is_public' in request.data:
+            post.is_public = request.data['is_public']
+        if 'is_home' in request.data:
+            post.is_home = request.data['is_home']
     post.save()
     post_content = PostContent(post=post, content=request.data['content'])
     post_content.save()

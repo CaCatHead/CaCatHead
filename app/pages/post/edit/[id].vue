@@ -49,7 +49,7 @@ const save = async () => {
     </div>
     <div flex items-center space-x-4>
       <span font-bold>是否在首页</span>
-      <c-switch id="is_public" v-model="post.post.is_home"></c-switch>
+      <c-switch id="is_home" v-model="post.post.is_home"></c-switch>
     </div>
     <div>
       <c-button color="success" @click="save">保存</c-button>
