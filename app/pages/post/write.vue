@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Post } from '@/composables/types';
 
+const user = useUser();
+
 const notify = useNotification();
 
 useHead({
@@ -42,7 +44,7 @@ const save = async () => {
       <template #label><span font-bold>标题</span></template>
     </c-input>
     <markdown-editor v-model="content"></markdown-editor>
-    <div flex items-center space-x-4>
+    <div v-if="user?.permissions.is_superuser" flex items-center space-x-4>
       <span font-bold>是否公开</span>
       <c-switch id="is_public" v-model="is_public"></c-switch>
     </div>
