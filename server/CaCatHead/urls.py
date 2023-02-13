@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import RedirectView
 from knox import views as knox_views
 
 from CaCatHead.contest import views as contest_views
@@ -28,6 +29,8 @@ admin.site.site_title = 'CaCatHead 管理后台'
 
 urlpatterns = [
     # admin usage
+    path('admin/login/', RedirectView.as_view(url='/login', permanent=False), name='admin_login'),
+    path('admin/logout/', RedirectView.as_view(url='/api/auth/logout', permanent=False), name='admin_logout'),
     path('admin/', admin.site.urls),
     # test ping
     path('api/ping', user_views.ping),
