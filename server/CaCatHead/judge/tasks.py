@@ -51,6 +51,17 @@ def prepare_contest_problem_submission(payload: JudgeSubmissionPayload):
 
 
 @app.task()
+def prepare_problem_testcases(payload: JudgeSubmissionPayload):
+    logger.info(f'Start preparing testcases of problem #{payload.problem_id}.')
+    task = SubmissionTask(payload)
+    for index in range(len(task.testcase_detail)):
+        task.try_prepare_testcase(index)
+    task.clean_temp()
+    logger.info(f'Prepare problem #{payload.problem_id}. OK')
+    return {'ok': True}
+
+
+@app.task()
 def judge_repository_submission(payload: JudgeSubmissionPayload):
     logger.info(f'Receive a new repository submission #{payload.submission_id}.')
     task = SubmissionTask(payload)
