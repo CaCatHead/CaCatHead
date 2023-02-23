@@ -90,6 +90,7 @@ REST_AUTH = {
     'JWT_AUTH_HTTPONLY': False,
     'JWT_AUTH_COOKIE': 'cacathead-auth',
     'JWT_AUTH_REFRESH_COOKIE': 'cacathead-refresh-token',
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
     'TOKEN_MODEL': None,
     'USER_DETAILS_SERIALIZER': 'CaCatHead.user.serializers.FullUserSerializer',
 }
@@ -103,7 +104,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+        'CaCatHead.user.auth.JWTCookieAuthentication'
     ),
     'DEFAULT_THROTTLE_CLASSES': [
         'CaCatHead.core.decorators.DefaultAnonRateThrottle',
@@ -114,12 +115,6 @@ REST_FRAMEWORK = {
         'user': '20/second'
     },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
-}
-
-# django-rest-knox config
-REST_KNOX = {
-    'TOKEN_TTL': timedelta(days=30),
-    'AUTO_REFRESH': True
 }
 
 # django cron tasks
@@ -188,6 +183,11 @@ CACHES = {
     'redis': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
         'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
+    },
+    'auth': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'KEY_PREFIX': 'auth.',
     },
     'dummy': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
