@@ -305,35 +305,7 @@ class SubmissionTask:
 
         verdict = Verdict.Accepted
         for (index, testcase) in enumerate(self.testcase_detail):
-            try:
-                version = read_testcase_root_version(problem_judge_id=self.problem_judge_id)
-                if version == self.testcase_version:
-                    # 测试用例版本号匹配
-                    self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
-                else:
-                    shutil.rmtree(self.testcase_directory, ignore_errors=True)
-                    # 测试用例过期
-                    raise NoTestcaseException
-            except NoTestcaseException:
-                # Try downloading testcases from minio
-                problem_judge_id = self.problem_judge_id
-                testcase_version = self.testcase_version
-                self.log(f'Downloading Problem Judge #{problem_judge_id}. (version: {testcase_version}) testcases')
-                problem = Problem.objects.get(id=self.problem_id)
-                problem_directory = ProblemDirectory.try_make(problem=problem)
-                # 处理 MinIO 下载失败
-                download_ok = False
-                try:
-                    download_ok = problem_directory.download_testcases()
-                except Exception as ex:
-                    self.log(f'Download testcase error: %r', ex)
-                    download_ok = False
-                finally:
-                    if download_ok:
-                        write_testcase_root_version(problem=problem)
-                        self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
-                    else:
-                        raise NoTestcaseException
+            self.try_prepare_testcase(index)
 
             self.log(f'Run code on the testcase #{index}. in the sandbox')
             self.run_sandbox()
@@ -348,7 +320,7 @@ class SubmissionTask:
                     # XCPC 模式, 遇到非正确结果直接退出
                     verdict = detail['verdict']
                     break
-                else:
+                elif self.problem_type == ProblemTypes.Score:
                     # OI 模式, 遇到非正确结果继续判题
                     if verdict == detail['verdict']:
                         # OI 模式, 若错误结果一致, 则保持结果不变
@@ -362,6 +334,50 @@ class SubmissionTask:
 
         self.verdict = verdict
         self.log(f'Finish judging, verdict is {self.verdict}')
+
+    def check_testcase_valid(self):
+        version = read_testcase_root_version(problem_judge_id=self.problem_judge_id)
+        if version == self.testcase_version:
+            for (index, testcase) in enumerate(self.testcase_detail):
+                in_file_src = self.testcase_directory / testcase['input']
+                ans_file_src = self.testcase_directory / testcase['answer']
+                if not in_file_src.exists() or not ans_file_src.exists():
+                    return False
+            return True
+        else:
+            return False
+
+    def try_prepare_testcase(self, index: int):
+        testcase = self.testcase_detail[index]
+        try:
+            version = read_testcase_root_version(problem_judge_id=self.problem_judge_id)
+            if version == self.testcase_version:
+                # 测试用例版本号匹配
+                self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
+            else:
+                shutil.rmtree(self.testcase_directory, ignore_errors=True)
+                # 测试用例过期
+                raise NoTestcaseException
+        except NoTestcaseException:
+            # Try downloading testcases from minio
+            problem_judge_id = self.problem_judge_id
+            testcase_version = self.testcase_version
+            self.log(f'Downloading Problem Judge #{problem_judge_id}. (version: {testcase_version}) testcases')
+            problem = Problem.objects.get(id=self.problem_id)
+            problem_directory = ProblemDirectory.try_make(problem=problem)
+            # 处理 MinIO 下载失败
+            download_ok = False
+            try:
+                download_ok = problem_directory.download_testcases()
+            except Exception as ex:
+                self.log(f'Download testcase error: %r', ex)
+                download_ok = False
+            finally:
+                if download_ok:
+                    write_testcase_root_version(problem=problem)
+                    self.prepare_testcase_file(index, in_file=testcase['input'], ans_file=testcase['answer'])
+                else:
+                    raise NoTestcaseException
 
     def prepare_testcase_file(self, index: int, in_file: str, ans_file: str):
         self.log(f'Prepare testcase #{index}. (in = {in_file}, ans = {ans_file})')

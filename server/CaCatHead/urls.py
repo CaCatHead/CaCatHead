@@ -13,10 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from knox import views as knox_views
 from dj_rest_auth import views as auth_views
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import RedirectView
 
 from CaCatHead.contest import views as contest_views
 from CaCatHead.judge import views as judge_views
@@ -29,6 +29,8 @@ admin.site.site_title = 'CaCatHead 管理后台'
 
 urlpatterns = [
     # admin usage
+    path('admin/login/', RedirectView.as_view(url='/login', permanent=False), name='admin_login'),
+    path('admin/logout/', RedirectView.as_view(url='/api/auth/logout', permanent=False), name='admin_logout'),
     path('admin/', admin.site.urls),
     # test ping
     path('api/ping', user_views.ping),
