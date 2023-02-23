@@ -1,10 +1,10 @@
 ### List contests
 GET http://127.0.0.1:8000/api/contests
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Create a new contest
 POST http://127.0.0.1:8000/api/contest
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -14,15 +14,15 @@ Content-Type: application/json
 
 ### Get contest content
 GET http://127.0.0.1:8000/api/contest/5/content
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get contest public
 GET http://127.0.0.1:8000/api/contest/5/public
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Edit contest
 POST http://127.0.0.1:8000/api/contest/5/edit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### Edit contest problems
 POST http://127.0.0.1:8000/api/contest/5/edit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -43,11 +43,11 @@ Content-Type: application/json
 
 ### List contest registrations
 GET http://127.0.0.1:8000/api/contest/5/registrations
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Register contest
 POST http://127.0.0.1:8000/api/contest/5/register
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -59,7 +59,7 @@ Content-Type: application/json
 
 ### Submit contest code
 POST http://127.0.0.1:8000/api/contest/5/problem/1000/submit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -69,17 +69,17 @@ Content-Type: application/json
 
 ### List own submissions
 GET http://127.0.0.1:8000/api/contest/6/status
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### List all submissions
 GET http://127.0.0.1:8000/api/contest/5/submissions
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### List all submissions with page
 GET http://127.0.0.1:8000/api/contest/5/submissions?page=1
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get standings
 GET http://127.0.0.1:8000/api/contest/5/standings
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 

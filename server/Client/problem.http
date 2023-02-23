@@ -1,18 +1,18 @@
 ### Add problem
 POST http://127.0.0.1:8000/api/repo/2/problems/add/1
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### List problems
 GET http://127.0.0.1:8000/api/repo/2/problems
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get problem
 GET http://127.0.0.1:8000/api/repo/2/problem/1000
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Submit problem
 POST http://127.0.0.1:8000/api/repo/2/problem/1000/submit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -22,8 +22,8 @@ Content-Type: application/json
 
 ### List submissions
 GET http://127.0.0.1:8000/api/repo/2/submissions
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get submission info
 GET http://127.0.0.1:8000/api/repo/2/submission/1
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}

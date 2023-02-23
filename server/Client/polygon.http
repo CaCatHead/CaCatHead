@@ -1,14 +1,14 @@
 ### List all repos
 GET http://127.0.0.1:8000/api/repos
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### List own problems
 GET http://127.0.0.1:8000/api/polygon/own
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Create a new problem
 POST http://127.0.0.1:8000/api/polygon/create
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ### Upload a new problem
 POST http://127.0.0.1:8000/api/polygon/upload
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/zip
 Content-Disposition: form-data; filename="aplusb.zip"
 
@@ -25,11 +25,11 @@ Content-Disposition: form-data; filename="aplusb.zip"
 
 ### Get created problem
 GET http://127.0.0.1:8000/api/polygon/1
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Edit created problem
 POST http://127.0.0.1:8000/api/polygon/1/edit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -39,11 +39,11 @@ Content-Type: application/json
 
 ### Export problem zip
 GET http://127.0.0.1:8000/api/polygon/1/export
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Submit created problem ac code
 POST http://127.0.0.1:8000/api/polygon/1/submit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 ### Submit created problem wrong code
 POST http://127.0.0.1:8000/api/polygon/1/submit
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -63,23 +63,23 @@ Content-Type: application/json
 
 ### List problem submissions
 GET http://127.0.0.1:8000/api/polygon/1/submissions
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### List submissions
 GET http://127.0.0.1:8000/api/polygon/submissions
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get submission
 GET http://127.0.0.1:8000/api/polygon/submission/1
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Get permissions
 GET http://127.0.0.1:8000/api/polygon/1/permission
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Grant permissions
 POST http://127.0.0.1:8000/api/polygon/1/permission
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -89,7 +89,7 @@ Content-Type: application/json
 
 ### Revoke permissions
 POST http://127.0.0.1:8000/api/polygon/1/permission
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
