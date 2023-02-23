@@ -85,7 +85,7 @@ if DEBUG:
     REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
 
 REST_AUTH = {
-    'SESSION_LOGIN': False,
+    'SESSION_LOGIN': True,
     'USE_JWT': True,
     'JWT_AUTH_HTTPONLY': False,
     'JWT_AUTH_COOKIE': 'cacathead-auth',

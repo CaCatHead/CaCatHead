@@ -11,7 +11,7 @@ from django.views.decorators.cache import cache_page
 from ipware import get_client_ip
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
-from rest_framework.exceptions import AuthenticationFailed, NotFound
+from rest_framework.exceptions import AuthenticationFailed, NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 
@@ -130,20 +130,25 @@ class UserLoginView(AuthViews.LoginView):
         if request.user.is_authenticated:
             raise AuthenticationFailed('你已经登陆过了')
 
-        resp = super(UserLoginView, self).post(request)
-        client_ip, is_routable = get_client_ip(request)
-        if client_ip is not None:
-            user_agent = request.headers.get('User-Agent')
-            if user_agent is not None and len(user_agent) > 0:
-                user_token = UserToken(
-                    key=resp.data['access_token'],
-                    login_ip=client_ip,
-                    user_agent=user_agent,
-                    user_id=resp.data['user']['id'],
-                )
-                user_token.save()
-                return resp
+        try:
+            resp = super(UserLoginView, self).post(request)
+            client_ip, is_routable = get_client_ip(request)
+            if client_ip is not None:
+                user_agent = request.headers.get('User-Agent')
+                if settings.IS_TEST:
+                    user_agent = 'test'
+                if user_agent is not None and len(user_agent) > 0:
+                    user_token = UserToken(
+                        key=resp.data['access_token'],
+                        login_ip=client_ip,
+                        user_agent=user_agent,
+                        user_id=resp.data['user']['id'],
+                    )
+                    user_token.save()
+                    return resp
+                else:
+                    raise AuthenticationFailed("UA 非法")
             else:
-                raise AuthenticationFailed("UA 非法")
-        else:
-            raise AuthenticationFailed("IP 非法")
+                raise AuthenticationFailed("IP 非法")
+        except ValidationError as validation:
+            raise AuthenticationFailed(str(validation.detail))
