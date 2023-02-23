@@ -78,9 +78,9 @@ class UserAuthTests(TestCase):
         assert resp2.data['detail'] == '你已经登陆过了'
         resp3 = self.client.post('/api/auth/logout')
         assert resp3.status_code == 200
-        # resp4 = self.client.post('/api/user/profile')
-        # assert resp4.status_code == 401
-        # assert resp4.data['detail'] == "认证令牌无效。"
+
+        resp4 = self.client.post('/api/user/profile')
+        assert resp4.status_code == 405
 
     def test_multi_login_logoutall(self):
         """

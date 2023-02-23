@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from dj_rest_auth import views as auth_views
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView
@@ -40,7 +39,7 @@ urlpatterns = [
     # user auth
     path('api/auth/register', user_views.user_register),
     path('api/auth/login', user_views.UserLoginView.as_view()),
-    path('api/auth/logout', auth_views.LogoutView.as_view()),
+    path('api/auth/logout', user_views.UserLogoutView.as_view()),
     # path('api/auth/logoutall', auth_views.LogoutAllView.as_view()),
     # user profile
     path('api/user/profile', user_views.current_user_profile),

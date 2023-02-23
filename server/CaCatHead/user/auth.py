@@ -1,7 +1,25 @@
 from django.conf import settings
+from django.core.cache import caches
 from rest_framework.authentication import CSRFCheck
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
+from rest_framework.request import Request
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken
+
+
+def set_user_token(token: str, user_id: int):
+    cache = caches['auth']
+    cache.set(token, str(user_id), settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds())
+
+
+def delete_user_token(token: str):
+    cache = caches['auth']
+    cache.delete(token)
+
+
+def get_user_token(token: str):
+    cache = caches['auth']
+    return cache.get(token)
 
 
 class JWTCookieAuthentication(JWTAuthentication):
@@ -27,7 +45,7 @@ class JWTCookieAuthentication(JWTAuthentication):
             # CSRF failed, bail with explicit error message
             raise PermissionDenied(f'CSRF Failed: {reason}')
 
-    def authenticate(self, request):
+    def authenticate(self, request: Request):
         cookie_name = settings.REST_AUTH['JWT_AUTH_COOKIE']
         header = self.get_header(request)
         if header is None:
@@ -43,5 +61,14 @@ class JWTCookieAuthentication(JWTAuthentication):
         if raw_token is None:
             return None
 
-        validated_token = self.get_validated_token(raw_token)
-        return self.get_user(validated_token), validated_token
+        try:
+            validated_token = self.get_validated_token(raw_token)
+            if get_user_token(validated_token) is not None:
+                if request.path.startswith('/api/auth/logout'):
+                    delete_user_token(raw_token)
+                return self.get_user(validated_token), validated_token
+            else:
+                raise AuthenticationFailed('认证令牌无效。')
+        except InvalidToken:
+            delete_user_token(raw_token)
+            return None

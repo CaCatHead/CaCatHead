@@ -27,6 +27,7 @@ from CaCatHead.post.serializers import PostContentSerializer, PostSerializer
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.problem.serializers import ProblemRepositorySerializer
 from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
+from CaCatHead.user.auth import set_user_token
 from CaCatHead.user.models import UserToken
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
@@ -145,6 +146,7 @@ class UserLoginView(AuthViews.LoginView):
                         user_id=resp.data['user']['id'],
                     )
                     user_token.save()
+                    set_user_token(resp.data['access_token'], resp.data['user']['id'])
                     return resp
                 else:
                     raise AuthenticationFailed("UA 非法")
@@ -152,3 +154,10 @@ class UserLoginView(AuthViews.LoginView):
                 raise AuthenticationFailed("IP 非法")
         except ValidationError as validation:
             raise AuthenticationFailed(str(validation.detail))
+
+
+class UserLogoutView(AuthViews.LogoutView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request: Request, *args, **kwargs):
+        return super(UserLogoutView, self).post(request)
