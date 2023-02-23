@@ -5,6 +5,7 @@ from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
 from CaCatHead.core.tests import TestCase
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
+from CaCatHead.user.models import UserInfo
 from CaCatHead.user.tests import ROOT_USER
 
 Error_INFO_404 = '公告未找到'
@@ -17,6 +18,9 @@ class PostManagerTests(TestCase):
     def setUpTestData(cls):
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         user.save()
+        user_info = UserInfo(user=user, nickname='world', is_teacher=False)
+        user_info.save()
+
         cls.user = user
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
         Post.objects.grant_user_permission(user, PostPermissions.Read, 2)

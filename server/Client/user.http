@@ -29,8 +29,6 @@ Content-Type: application/json
   "password": "12345678"
 }
 
-> {% client.global.set("auth_token", response.body.token); %}
-
 ### Login world
 POST http://127.0.0.1:8000/api/auth/login
 Content-Type: application/json
@@ -44,11 +42,9 @@ Content-Type: application/json
 
 ### Logout
 POST http://127.0.0.1:8000/api/auth/logout
-Authorization: Token {{auth_token}}
 
 ### Profile
 GET http://127.0.0.1:8000/api/user/profile
-Authorization: Token {{auth_token}}
 
 ### Login validate error
 POST http://127.0.0.1:8000/api/auth/login

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Post, Contest } from '@/composables/types';
-
 const route = useRoute();
 
 const isDark = useDark();

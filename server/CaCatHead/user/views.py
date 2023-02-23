@@ -2,13 +2,13 @@ from datetime import datetime
 
 import gmpy2
 import pytz
+from dj_rest_auth import views as AuthViews
 from django.conf import settings
-from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
-from knox.views import LoginView as KnoxLoginView
+from ipware import get_client_ip
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.exceptions import AuthenticationFailed, NotFound
@@ -27,6 +27,7 @@ from CaCatHead.post.serializers import PostContentSerializer, PostSerializer
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.problem.serializers import ProblemRepositorySerializer
 from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
+from CaCatHead.user.models import UserToken
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
 from CaCatHead.user.services import register_student_user
@@ -115,7 +116,7 @@ def user_register(request: Request):
     return make_response(user=FullUserSerializer(user).data)
 
 
-class UserLoginView(KnoxLoginView):
+class UserLoginView(AuthViews.LoginView):
     """
     用户登录
     """
@@ -128,11 +129,21 @@ class UserLoginView(KnoxLoginView):
     def post(self, request: Request, _format=None):
         if request.user.is_authenticated:
             raise AuthenticationFailed('你已经登陆过了')
-        username = request.data['username']
-        password = request.data['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return super(UserLoginView, self).post(request, format=None)
+
+        resp = super(UserLoginView, self).post(request)
+        client_ip, is_routable = get_client_ip(request)
+        if client_ip is not None:
+            user_agent = request.headers.get('User-Agent')
+            if user_agent is not None and len(user_agent) > 0:
+                user_token = UserToken(
+                    key=resp.data['access_token'],
+                    login_ip=client_ip,
+                    user_agent=user_agent,
+                    user_id=resp.data['user']['id'],
+                )
+                user_token.save()
+                return resp
+            else:
+                raise AuthenticationFailed("UA 非法")
         else:
-            raise AuthenticationFailed()
+            raise AuthenticationFailed("IP 非法")

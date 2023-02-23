@@ -48,7 +48,7 @@ RMQ_USER = cacathead_config.rabbitmq.username
 RMQ_PASS = cacathead_config.rabbitmq.password
 
 # Trusted origin
-ALLOWED_HOSTS = ['127.0.0.1'] + cacathead_config.server.allowed_host
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] + cacathead_config.server.allowed_host
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1'] + cacathead_config.server.trusted_origin
 
 # Application definition
@@ -63,8 +63,8 @@ INSTALLED_APPS = [
     # See: https://www.django-rest-framework.org/
     'rest_framework',
     # Authentication Module for django rest auth
-    # See: https://github.com/James1345/django-rest-knox
-    'knox',
+    # See: https://dj-rest-auth.readthedocs.io/en/latest/index.html
+    'dj_rest_auth',
     # See: https://django-cron.readthedocs.io/en/latest/introduction.html
     'django_cron',
     # Custom apps
@@ -84,11 +84,27 @@ REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES = [
 if DEBUG:
     REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
 
+REST_AUTH = {
+    'SESSION_LOGIN': False,
+    'USE_JWT': True,
+    'JWT_AUTH_HTTPONLY': False,
+    'JWT_AUTH_COOKIE': 'cacathead-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'cacathead-refresh-token',
+    'TOKEN_MODEL': None,
+    'USER_DETAILS_SERIALIZER': 'CaCatHead.user.serializers.FullUserSerializer',
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES,
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'knox.auth.TokenAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    ),
     'DEFAULT_THROTTLE_CLASSES': [
         'CaCatHead.core.decorators.DefaultAnonRateThrottle',
         'CaCatHead.core.decorators.DefaultUserRateThrottle'
@@ -274,12 +290,12 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['request'],
+            'handlers': ['null' if IS_TEST else 'request'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.server': {
-            'handlers': ['request'],
+            'handlers': ['null' if IS_TEST else 'request'],
             'level': 'INFO',
             'propagate': False,
         },

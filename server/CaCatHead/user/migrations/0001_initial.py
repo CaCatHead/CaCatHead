@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('updated', models.DateTimeField(auto_now=True)),
-                ('nickname', models.CharField(blank=True, default='', max_length=50, verbose_name='昵称')),
+                ('nickname', models.CharField(blank=True, default='', max_length=50, unique=True, verbose_name='昵称')),
                 ('is_teacher', models.BooleanField(default=False, verbose_name='是否教师')),
                 (
                     'user',
