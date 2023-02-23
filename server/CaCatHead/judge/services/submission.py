@@ -320,7 +320,7 @@ class SubmissionTask:
                     # XCPC 模式, 遇到非正确结果直接退出
                     verdict = detail['verdict']
                     break
-                else:
+                elif self.problem_type == ProblemTypes.Score:
                     # OI 模式, 遇到非正确结果继续判题
                     if verdict == detail['verdict']:
                         # OI 模式, 若错误结果一致, 则保持结果不变
