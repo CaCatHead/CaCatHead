@@ -6,6 +6,8 @@ from rest_framework.request import Request
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
 
+from CaCatHead.user.models import UserToken
+
 
 def set_user_token(token: str, user_id: int):
     cache = caches['auth']
@@ -15,6 +17,7 @@ def set_user_token(token: str, user_id: int):
 def delete_user_token(token: str):
     cache = caches['auth']
     cache.delete(token)
+    UserToken.objects.filter(key=token).delete()
 
 
 def get_user_token(token: str):
