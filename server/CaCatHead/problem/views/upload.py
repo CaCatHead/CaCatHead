@@ -94,6 +94,7 @@ class ProblemDirectory:
     def save_config(self, problem: Problem):
         problem_info = self.config['problem']
         problem_info['title'] = problem.problem_info.problem_content.title
+        problem_info['problem_type'] = problem.problem_info.problem_judge.problem_type
         problem_info['time_limit'] = problem.problem_info.problem_judge.time_limit
         problem_info['memory_limit'] = problem.problem_info.problem_judge.memory_limit
         problem_info['description'] = problem.problem_info.problem_content.description
