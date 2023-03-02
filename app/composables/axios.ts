@@ -7,7 +7,7 @@ export const useAxiosFactory = () => {
     return axios.create({
       baseURL: API_BASE,
       headers: {
-        Authorization: token.value,
+        Authorization: 'Bearer ' + token.value,
       },
     });
   };
