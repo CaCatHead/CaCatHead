@@ -22,8 +22,8 @@ const tags = useLocalStorage(
 );
 
 const getTag = (p: PolygonProblem) => {
-  if (p.id in tags.value) {
-    return tags.value?.[p.id] ?? 'none';
+  if (p.display_id in tags.value) {
+    return tags.value?.[p.display_id] ?? 'none';
   } else {
     return 'none';
   }
@@ -32,9 +32,9 @@ const toggleLike = (p: PolygonProblem) => {
   if (tags.value) {
     const tag = getTag(p);
     if (tag === 'like') {
-      tags.value[p.id] = 'none';
+      tags.value[p.display_id] = 'none';
     } else {
-      tags.value[p.id] = 'like';
+      tags.value[p.display_id] = 'like';
     }
   }
 };
@@ -45,7 +45,7 @@ const prolems = computed(() => {
     const lt = getTag(l);
     const rt = getTag(r);
     if (lt == rt) {
-      return r.id - l.id;
+      return r.display_id - l.display_id;
     } else {
       return lt.localeCompare(rt);
     }
@@ -144,7 +144,7 @@ const upload = async () => {
 
       <template #title="{ row }">
         <nuxt-link
-          :to="`/polygon/problem/${row.id}/`"
+          :to="`/polygon/problem/${row.display_id}/`"
           text-sky-700
           text-op-80
           hover:text-op-100

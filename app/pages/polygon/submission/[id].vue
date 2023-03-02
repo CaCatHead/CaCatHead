@@ -70,11 +70,11 @@ const rejudge = async () => {
         </template>
         <template #problem="{ row }">
           <nuxt-link
-            :to="`/polygon/problem/${row.problem.id}`"
+            :to="`/polygon/problem/${row.problem.display_id}`"
             text-sky-700
             text-op-70
             hover:text-op-100
-            >#{{ row.problem.id }}. {{ row.problem.title }}</nuxt-link
+            >#{{ row.problem.display_id }}. {{ row.problem.title }}</nuxt-link
           >
         </template>
         <template #language="{ row }"
