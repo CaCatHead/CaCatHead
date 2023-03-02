@@ -103,7 +103,7 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
                 problem_info_display_id[problem.problem_info_id] = display_id
                 polygon_problems.append(problem)
         else:
-            raise NotFound(detail=f'未找到 Polygon 题目 #{polygon_id}.，或者权限不足')
+            raise NotFound(detail=f'未找到 Polygon 题目 #{polygon_id}，或者权限不足')
 
     # Polygon Problem Info 信息 -> 旧 Contest Problem 映射
     problem_info_contest_problem = {}
