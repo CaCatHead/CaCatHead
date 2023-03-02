@@ -114,7 +114,7 @@ const upload = async () => {
     <c-table :data="prolems">
       <template #headers>
         <c-table-header
-          name="id"
+          name="display_id"
           label="#"
           width="64px"
           row-class="text-center font-600"

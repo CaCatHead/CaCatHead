@@ -213,10 +213,10 @@ const save = async () => {
     const axios = await getAxios();
     const formData = new FormData();
     formData.append('file', new Blob([arch]));
-    await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
+    await axios.post(`/api/polygon/${problem.value.display_id}/upload`, formData, {
       headers: {
         'Content-Type': 'application/zip',
-        'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
+        'Content-Disposition': `form-data; filename="problem-${problem.value.display_id}.zip"`,
       },
       onUploadProgress(ev) {
         if (ev.progress !== undefined) {

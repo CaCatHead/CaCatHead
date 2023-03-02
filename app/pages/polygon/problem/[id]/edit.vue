@@ -9,7 +9,7 @@ const notify = useNotification();
 
 const submit = async () => {
   try {
-    await fetchAPI(`/api/polygon/${problem.value.id}/edit`, {
+    await fetchAPI(`/api/polygon/${problem.value.display_id}/edit`, {
       method: 'POST',
       body: {
         title: problem.value.title,
@@ -25,11 +25,11 @@ const submit = async () => {
     });
 
     notify.success(
-      `题目 #${problem.value.id}. ${problem.value.title} 修改成功`
+      `题目 #${problem.value.display_id}. ${problem.value.title} 修改成功`
     );
-    await navigateTo(`/polygon/problem/${problem.value.id}/`);
+    await navigateTo(`/polygon/problem/${problem.value.display_id}/`);
   } catch {
-    notify.danger(`题目 #${problem.value.id}. ${problem.value.title} 修改失败`);
+    notify.danger(`题目 #${problem.value.display_id}. ${problem.value.title} 修改失败`);
   }
 };
 </script>

@@ -165,7 +165,7 @@ def add_repo_problem(request: Request, repo_id: int, problem_id: int):
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.AddProblem)
     problem = Problem.objects.filter_user_permission(user=request.user,
                                                      problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      permission=ProblemPermissions.Copy).first()
     if problem is None:
         return make_error_response(status=status.HTTP_400_BAD_REQUEST)

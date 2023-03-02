@@ -1,3 +1,4 @@
+.,
 <script setup lang="ts">
 import type { FullPolygonProblem } from '@/composables/types';
 
@@ -26,23 +27,20 @@ const downloadZip = async () => {
   try {
     loading.start();
     const axios = await getAxios();
-    const response = await axios.get(
-      `/api/polygon/${problem.value.id}/export`,
-      {
-        headers: {
-          'Content-Type': 'application/zip',
-          'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
-        },
-        responseType: 'blob',
-        onDownloadProgress(ev) {
-          if (ev.progress) {
-            loading.update(ev.progress * 100);
-          } else {
-            loading.update();
-          }
-        },
-      }
-    );
+    const response = await axios.get(`/api/polygon/${route.params.id}/export`, {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `form-data; filename="problem-${problem.value.display_id}.zip"`,
+      },
+      responseType: 'blob',
+      onDownloadProgress(ev) {
+        if (ev.progress) {
+          loading.update(ev.progress * 100);
+        } else {
+          loading.update();
+        }
+      },
+    });
 
     const data = window.URL.createObjectURL(response.data as Blob);
     const el = document.createElement('a');
@@ -64,32 +62,36 @@ const onUpdateZip = async () => {
     formData.append('file', file);
     try {
       notify.success(
-        `开始上传题目 #${problem.value.id}. ${problem.value.title} 压缩包`
+        `开始上传题目 #${problem.value.display_id}. ${problem.value.title} 压缩包`
       );
 
       loading.start();
       const axios = await getAxios();
-      await axios.post(`/api/polygon/${problem.value.id}/upload`, formData, {
-        headers: {
-          'Content-Type': 'application/zip',
-          'Content-Disposition': `form-data; filename="problem-${problem.value.id}.zip"`,
-        },
-        onUploadProgress(ev) {
-          if (ev.progress !== undefined) {
-            loading.update(ev.progress * 100);
-          } else {
-            loading.update((ev.loaded / file.size) * 100.0);
-          }
-        },
-      });
+      await axios.post(
+        `/api/polygon/${problem.value.display_id}/upload`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/zip',
+            'Content-Disposition': `form-data; filename="problem-${problem.value.display_id}.zip"`,
+          },
+          onUploadProgress(ev) {
+            if (ev.progress !== undefined) {
+              loading.update(ev.progress * 100);
+            } else {
+              loading.update((ev.loaded / file.size) * 100.0);
+            }
+          },
+        }
+      );
 
       notify.success(
-        `题目 #${problem.value.id}. ${problem.value.title} 更新成功`
+        `题目 #${problem.value.display_id}. ${problem.value.title} 更新成功`
       );
     } catch (err: unknown) {
       console.error(err);
       notify.danger(
-        `题目 #${problem.value.id}. ${problem.value.title} 更新失败`
+        `题目 #${problem.value.display_id}. ${problem.value.title} 更新失败`
       );
     } finally {
       loading.stop();
@@ -101,12 +103,14 @@ const onUpdateZip = async () => {
 <template>
   <div class="polygon-problem">
     <Head>
-      <Title>Polygon #{{ problem.id }}. {{ problem.title }}</Title>
+      <Title>Polygon #{{ problem.display_id }}. {{ problem.title }}</Title>
     </Head>
 
     <div>
       <div flex pl2 lt-md="flex-col mb4">
-        <h2 text-2xl font-bold mb4>#{{ problem.id }}. {{ problem.title }}</h2>
+        <h2 text-2xl font-bold mb4>
+          #{{ problem.display_id }}. {{ problem.title }}
+        </h2>
         <div flex-auto></div>
         <div>
           <c-button mr2 variant="outline" color="info" @click="downloadZip"
@@ -121,7 +125,11 @@ const onUpdateZip = async () => {
           >
         </div>
       </div>
-      <c-nav :prefix="`/polygon/problem/${route.params.id}/`" mb4 lt-md:pb2>
+      <c-nav
+        :prefix="`/polygon/problem/${route.params.display_id}/`"
+        mb4
+        lt-md:pb2
+      >
         <c-nav-item to="">预览</c-nav-item>
         <c-nav-item to="edit">编辑题面</c-nav-item>
         <c-nav-item to="testcase">测试数据</c-nav-item>

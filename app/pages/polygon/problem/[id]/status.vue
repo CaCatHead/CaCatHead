@@ -8,7 +8,7 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 const { problem } = toRefs(props);
 
 const { data, refresh } = await useFetchAPI<{ submissions: Submission[] }>(
-  `/api/polygon/${problem.value.id}/submissions`
+  `/api/polygon/${problem.value.display_id}/submissions`
 );
 
 const submissions = computed(() => data.value?.submissions ?? []);
@@ -61,11 +61,11 @@ const rejudge = async (submission: Submission) => {
       </template>
       <template #problem="{ row }">
         <nuxt-link
-          :to="`/polygon/problem/${problem.id}/`"
+          :to="`/polygon/problem/${problem.display_id}/`"
           text-sky-700
           text-op-70
           hover:text-op-100
-          >#{{ problem.id }}. {{ problem.title }}</nuxt-link
+          >#{{ problem.display_id }}. {{ problem.title }}</nuxt-link
         >
       </template>
       <template #language="{ row }"

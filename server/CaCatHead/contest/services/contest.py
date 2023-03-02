@@ -94,7 +94,7 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
     for (display_id, polygon_id) in enumerate(problems):
         problem: Problem = Problem.objects.filter_user_permission(user=user,
                                                                   problemrepository=get_main_problem_repo(),
-                                                                  id=polygon_id,
+                                                                  display_id=polygon_id,
                                                                   permission=ProblemPermissions.Copy).first()
         if problem is not None:
             if problem.problem_info_id in problem_info_display_id:

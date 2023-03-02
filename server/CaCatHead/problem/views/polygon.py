@@ -62,7 +62,7 @@ def edit_polygon_problem_by_upload(request: Request, problem_id: int):
     上传题目压缩包更新题目
     """
     problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
     if problem is None:
@@ -81,7 +81,7 @@ def edit_polygon_problem(request: Request, problem_id: int):
     编辑自己创建的题目, 或者被授予编辑权限的题目
     """
     problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
     if problem is None:
@@ -99,7 +99,7 @@ def upload_polygon_problem_checker(request: Request, problem_id: int):
     编辑自己创建的题目, 或者被授予编辑权限的题目
     """
     problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
     if problem is None:
@@ -128,7 +128,7 @@ def get_polygon_problem(request: Request, problem_id: int):
     查看自己创建的题目, 公开的题目, 或者被授予阅读权限的题目
     """
     problem = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
-                                                 id=problem_id,
+                                                 display_id=problem_id,
                                                  user=request.user,
                                                  permission=ProblemPermissions.ReadProblem).first()
     return make_response(problem=FullProblemSerializer(problem).get_or_raise())
@@ -141,7 +141,7 @@ def export_polygon_problem_zip(request: Request, problem_id: int):
     导出题目 zip
     """
     problem = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
-                                                 id=problem_id,
+                                                 display_id=problem_id,
                                                  user=request.user,
                                                  permission=ProblemPermissions.Export).first()
     problem_directory = ProblemDirectory.make(problem)
@@ -159,7 +159,7 @@ def list_polygon_problems(request):
     problems = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
                                                   user=request.user,
                                                   permission=ProblemPermissions.ReadProblem).order_by(
-        '-updated').order_by('-id')
+        '-updated').order_by('-display_id')
     return make_response(problems=PolygonProblemSerializer(problems, many=True).data)
 
 
@@ -172,7 +172,7 @@ def submit_polygon_problem(request: Request, problem_id: int):
     向自己创建的题目，或者被授予提交权限的题目，提交代码
     """
     problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Submit).first()
     if problem is None:
@@ -211,7 +211,7 @@ def list_polygon_problem_submissions(request: Request, problem_id: int):
     列出该题目的所有提交列表
     """
     problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
-                                                     id=problem_id,
+                                                     display_id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.ReadSubmission).first()
     if problem is None:
@@ -262,7 +262,7 @@ class PolygonPermission(APIView):
     @staticmethod
     def get_problem_or_raise(request: Request, problem_id: int):
         problem = Problem.objects.filter(problemrepository=get_main_problem_repo(),
-                                         id=problem_id,
+                                         display_id=problem_id,
                                          owner=request.user).first()
         if problem is None:
             raise NotFound('题目未找到')
