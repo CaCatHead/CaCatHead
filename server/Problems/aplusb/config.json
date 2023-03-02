@@ -1,6 +1,7 @@
 {
   "problem": {
     "title": "A + B",
+    "problem_type": "classic_ac",
     "time_limit": 1000,
     "memory_limit": 262144,
     "description": "You are given two integers $a$ and $b$. Print $a+b$.",
@@ -74,5 +75,8 @@
       "score": 10,
       "sample": false
     }
-  ]
+  ],
+  "checker": {
+    "type": "lcmp"
+  }
 }

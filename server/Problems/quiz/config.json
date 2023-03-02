@@ -1,6 +1,7 @@
 {
   "problem": {
     "title": "计算机基础小问答",
+    "problem_type": "classic_ac",
     "time_limit": 1000,
     "memory_limit": 262144,
     "description": "现在有 10 个计算科学相关的基础知识是非题。\n\n1. **只使用路径压缩优化**的并查集，单次操作的时间复杂度是 $O(\\alpha(n))$，其中 $\\alpha(n)$ 为 [反阿克曼函数](https://en.wikipedia.org/wiki/Ackermann_function#Inverse)？\n2. 背包问题是 NP-Hard 问题？\n3. [阿克曼函数](https://en.wikipedia.org/wiki/Ackermann_function) 是 [原始递归函数](https://en.wikipedia.org/wiki/Primitive_recursive_function)？\n4. 在 Lambda 演算中，是否存在一个算法，判定任意两个 Lambda 项 $x, y$ 满足 $x =_\\beta y$？\n5. 存在一个有限状态自动机，能够接受所有平衡的括号串？\n6. 根据 Runs 定理，长度为 $n$ 的字符串至多拥有 $n$ 个 Runs？\n7. 可以使用线段树和懒标记的技巧，支持区间加斐波那契数列，维护区间和？\n8. 定义 $\\mathbb{N} \\to \\mathbb{N}$ 上的两个函数 $f,g$ 之间的关系 $\\bowtie$, $f \\bowtie g$ 当且仅当 $\\forall x,y \\in \\mathbb{N}. (f(x)=42)\\land(g(y)=42) \\Longrightarrow (x=y)$，那么关系 $\\bowtie$ 是否具有传递性，即是否满足 $\\forall f,g,h \\in \\mathbb{N} \\to \\mathbb{N}. (f \\bowtie g) \\land (g \\bowtie h) \\Longrightarrow (f \\bowtie h)$？\n9. 将 $6$ 个顶点的完全图中的每一条边染上红色或者蓝色，其中必然有一个三条边均为红色或者蓝色的三角形？\n10. 在《お隣の天使様にいつの間にか駄目人間にされていた件》中，藤宮周第一次给椎名真昼送的生日礼物是一个护手霜和一只布偶熊？",
@@ -18,5 +19,8 @@
       "score": 100,
       "sample": false
     }
-  ]
+  ],
+  "checker": {
+    "type": "lcmp"
+  }
 }
