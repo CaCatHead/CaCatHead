@@ -5,6 +5,7 @@ from django.db import migrations, models
 
 from CaCatHead.core.constants import NJUST_ICPC_GROUP
 from CaCatHead.user.models import UserInfo
+from CaCatHead.user.services import register_superuser
 
 
 def init_team_group(_apps, _schema_editor):
@@ -22,10 +23,7 @@ def init_superuser(_apps, _schema_editor):
     username = settings.CACATHEAD_ROOT_USER
     password = settings.CACATHEAD_ROOT_PASS
     email = 'root@example.com'
-    user = User.objects.create_superuser(username=username, email=email, password=password)
-    user_info = UserInfo(user=user, nickname=username, rank='rainbow', is_teacher=False)
-    user_info.save()
-    return user
+    return register_superuser(username, email, password)
 
 
 class Migration(migrations.Migration):
