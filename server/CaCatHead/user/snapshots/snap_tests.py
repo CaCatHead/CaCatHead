@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
 snapshots['UserAuthTests::test_flow 1'] = {
@@ -54,7 +55,7 @@ snapshots['UserAuthTests::test_login 1'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -70,7 +71,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -86,7 +87,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -102,7 +103,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -118,7 +119,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -134,7 +135,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -150,7 +151,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -166,7 +167,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -182,7 +183,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -198,7 +199,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -214,16 +215,14 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
 
-snapshots[
-    'UserAuthTests::test_password_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
+snapshots['UserAuthTests::test_password_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
 
-snapshots[
-    'UserAuthTests::test_username_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
+snapshots['UserAuthTests::test_username_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
 
 snapshots['UserRegisterTests::test_register 1'] = {
     'status': 'ok',
