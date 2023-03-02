@@ -47,8 +47,11 @@ RMQ_PORT = str(cacathead_config.rabbitmq.port)
 RMQ_USER = cacathead_config.rabbitmq.username
 RMQ_PASS = cacathead_config.rabbitmq.password
 
+# Redis
+REDIS_URL = f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}'
+
 # Trusted origin
-ALLOWED_HOSTS = ['127.0.0.1'] + cacathead_config.server.allowed_host
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] + cacathead_config.server.allowed_host
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1'] + cacathead_config.server.trusted_origin
 
 # Application definition
@@ -63,8 +66,8 @@ INSTALLED_APPS = [
     # See: https://www.django-rest-framework.org/
     'rest_framework',
     # Authentication Module for django rest auth
-    # See: https://github.com/James1345/django-rest-knox
-    'knox',
+    # See: https://dj-rest-auth.readthedocs.io/en/latest/index.html
+    'dj_rest_auth',
     # See: https://django-cron.readthedocs.io/en/latest/introduction.html
     'django_cron',
     # Custom apps
@@ -84,11 +87,28 @@ REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES = [
 if DEBUG:
     REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
 
+REST_AUTH = {
+    'SESSION_LOGIN': True,
+    'USE_JWT': True,
+    'JWT_AUTH_HTTPONLY': False,
+    'JWT_AUTH_COOKIE': 'cacathead-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'cacathead-refresh-token',
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
+    'TOKEN_MODEL': None,
+    'USER_DETAILS_SERIALIZER': 'CaCatHead.user.serializers.FullUserSerializer',
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': REST_FRAMEWORK_DEFAULT_RENDERER_CLASSES,
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'knox.auth.TokenAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'CaCatHead.user.auth.JWTCookieAuthentication'
+    ),
     'DEFAULT_THROTTLE_CLASSES': [
         'CaCatHead.core.decorators.DefaultAnonRateThrottle',
         'CaCatHead.core.decorators.DefaultUserRateThrottle'
@@ -98,12 +118,6 @@ REST_FRAMEWORK = {
         'user': '20/second'
     },
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
-}
-
-# django-rest-knox config
-REST_KNOX = {
-    'TOKEN_TTL': timedelta(days=30),
-    'AUTO_REFRESH': True
 }
 
 # django cron tasks
@@ -171,12 +185,23 @@ CACHES = {
     },
     'redis': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
+        'LOCATION': REDIS_URL,
+    },
+    'auth': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
+        'KEY_PREFIX': 'auth.',
     },
     'dummy': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+if DEBUG:
+    CACHES['auth'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'KEY_PREFIX': 'auth.',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -274,12 +299,12 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['request'],
+            'handlers': ['null' if IS_TEST else 'request'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.server': {
-            'handlers': ['request'],
+            'handlers': ['null' if IS_TEST else 'request'],
             'level': 'INFO',
             'propagate': False,
         },

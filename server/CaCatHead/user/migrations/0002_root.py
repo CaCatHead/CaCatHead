@@ -23,7 +23,7 @@ def init_superuser(_apps, _schema_editor):
     password = settings.CACATHEAD_ROOT_PASS
     email = 'root@example.com'
     user = User.objects.create_superuser(username=username, email=email, password=password)
-    user_info = UserInfo(user=user, nickname=username, is_teacher=False)
+    user_info = UserInfo(user=user, nickname=username, rank='rainbow', is_teacher=False)
     user_info.save()
     return user
 

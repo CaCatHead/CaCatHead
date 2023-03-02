@@ -3,6 +3,7 @@ import re
 from django.contrib.auth.models import User, Group
 from django.core import validators
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
@@ -26,6 +27,34 @@ class UserInfo(BaseModel):
         db_table = 'user_info'
         verbose_name = _("用户信息")
         verbose_name_plural = _("用户组")
+
+
+class UserToken(models.Model):
+    key = models.CharField(_("Key"), max_length=512, primary_key=True)
+
+    user = models.ForeignKey(
+        User, related_name='user_auth_token',
+        on_delete=models.CASCADE, verbose_name=_("User")
+    )
+
+    login_ip = models.CharField(max_length=64, verbose_name=_("登录 IP"))
+
+    login_time = models.DateTimeField(auto_now_add=True, verbose_name=_("登录时间"))
+
+    expiry_time = models.DateTimeField(verbose_name=_("过期时间"))
+
+    user_agent = models.CharField(max_length=512, verbose_name=_("登录 User Agent"))
+
+    class Meta:
+        db_table = 'user_token'
+        verbose_name = _("用户 Token")
+        verbose_name_plural = _("用户 Token 列表")
+
+    def is_valid(self):
+        return timezone.now() <= self.expiry_time
+
+    def __str__(self):
+        return f"{self.user.username} Token ({self.login_time})"
 
 
 class StudentInfo(BaseModel):

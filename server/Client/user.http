@@ -25,11 +25,13 @@ POST http://127.0.0.1:8000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "root",
+  "username": "cacathead",
   "password": "12345678"
 }
 
-> {% client.global.set("auth_token", response.body.token); %}
+> {%
+    client.global.set("auth_token", response.body.access_token);
+%}
 
 ### Login world
 POST http://127.0.0.1:8000/api/auth/login
@@ -40,15 +42,16 @@ Content-Type: application/json
   "password": "12345678"
 }
 
-> {% client.global.set("auth_token", response.body.token); %}
+> {%
+    client.global.set("auth_token", response.body.access_token);
+%}
 
 ### Logout
 POST http://127.0.0.1:8000/api/auth/logout
-Authorization: Token {{auth_token}}
 
 ### Profile
 GET http://127.0.0.1:8000/api/user/profile
-Authorization: Token {{auth_token}}
+Authorization: Bearer {{auth_token}}
 
 ### Login validate error
 POST http://127.0.0.1:8000/api/auth/login

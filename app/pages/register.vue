@@ -41,7 +41,7 @@ const register = async () => {
 </script>
 
 <template>
-  <div>
+  <form class="block" @submit.prevent="register">
     <h2 text-2xl font-bold>注册</h2>
     <div mt4>
       <c-input id="username" type="text" color="info" v-model="username">
@@ -63,5 +63,5 @@ const register = async () => {
     <div mt4>
       <c-button color="success" @click="register">注册</c-button>
     </div>
-  </div>
+  </form>
 </template>

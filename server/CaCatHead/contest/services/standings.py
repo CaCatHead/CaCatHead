@@ -62,11 +62,31 @@ def refresh_icpc_standing(registration: ContestRegistration):
     registration.standings = {'submissions': standings, 'penalty': penalty}
 
 
+def refresh_ioi_standing(registration: ContestRegistration):
+    contest = registration.contest
+    submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
+                                                   owner=registration.team,
+                                                   type=ContestSubmissionType.contestant
+                                                   ).order_by('relative_time', 'judged').all()
+    score = 0
+    accepted = set()
+    for sub in submissions:
+        pid = sub.problem.display_id
+        if sub.verdict == Verdict.Accepted:
+            if pid not in accepted:
+                accepted.add(pid)
+                score += sub.score
+        else:
+            pass
+
+    registration.score = score
+
+
 def refresh_registration_standing(registration: ContestRegistration):
     registration.is_participate = True
     contest = registration.contest
     if contest.type == ContestType.icpc:
         refresh_icpc_standing(registration)
     elif contest.type == ContestType.ioi:
-        pass
+        refresh_ioi_standing(registration)
     registration.save()

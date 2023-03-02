@@ -18,6 +18,8 @@ const props = withDefaults(
 
 const { color, variant: _variant, tag, disabled, icon } = toRefs(props);
 
+const attrs = useAttrs();
+
 const variant = computed(() => 'c-' + _variant.value);
 </script>
 
@@ -32,6 +34,7 @@ const variant = computed(() => 'c-' + _variant.value);
       variant,
       color,
     ]"
+    v-bind="attrs"
   >
     <slot name="icon"><span :class="[icon, 'text-xl']"></span></slot>
     <slot></slot>

@@ -16,7 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView
-from knox import views as knox_views
 
 from CaCatHead.contest import views as contest_views
 from CaCatHead.judge import views as judge_views
@@ -40,8 +39,8 @@ urlpatterns = [
     # user auth
     path('api/auth/register', user_views.user_register),
     path('api/auth/login', user_views.UserLoginView.as_view()),
-    path('api/auth/logout', knox_views.LogoutView.as_view()),
-    path('api/auth/logoutall', knox_views.LogoutAllView.as_view()),
+    path('api/auth/logout', user_views.UserLogoutView.as_view()),
+    # path('api/auth/logoutall', auth_views.LogoutAllView.as_view()),
     # user profile
     path('api/user/profile', user_views.current_user_profile),
     path('api/user/profile/<str:username>', user_views.get_user_info),

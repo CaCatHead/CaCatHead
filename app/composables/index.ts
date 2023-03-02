@@ -6,9 +6,7 @@ import { defineStore } from 'pinia';
 import type { FullUser, ProblemRepository } from './types';
 
 // Use cookie to store auth token
-export const useToken = () => useCookie('token', { maxAge: 30 * 24 * 60 * 60 });
-
-export const clearCookie = () => {};
+export const useToken = () => useCookie('cacathead-auth');
 
 // Fetch API
 export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
@@ -17,7 +15,6 @@ export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
       ...options?.headers,
-      Authorization: useToken().value ?? '',
     },
   });
 };
@@ -25,9 +22,7 @@ export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
 // Use url as the asyncData key
 export const useFetchAPI: typeof useFetch = (url: any, options: any) => {
   const token = useToken();
-  const headers = token.value
-    ? { ...options?.headers, Authorization: token.value }
-    : { ...options?.headers };
+  const headers = { ...useRequestHeaders(['cookie']), ...options?.headers };
 
   return useFetch(url, {
     key: token.value + '$' + url,
@@ -51,7 +46,6 @@ export const useUser = () => {
 
 // Store auth user
 export const useAuthUser = defineStore('AuthUser', () => {
-  const cookie = useToken();
   const user = ref<FullUser | undefined>();
   const repos = ref<ProblemRepository[]>([]);
 
@@ -60,6 +54,7 @@ export const useAuthUser = defineStore('AuthUser', () => {
   });
 
   const fetchUser = async (): Promise<FullUser | undefined> => {
+    const cookie = useToken();
     if (cookie.value) {
       try {
         const { data } = await useFetch<{
@@ -67,14 +62,11 @@ export const useAuthUser = defineStore('AuthUser', () => {
           repos: ProblemRepository[];
         }>(`/api/user/profile`, {
           key: `profile_${cookie.value}`,
-          headers: {
-            Authorization: cookie.value,
-          },
+          headers: useRequestHeaders(['cookie']),
           baseURL: useRuntimeConfig().API_BASE,
         });
 
-        if (data.value === null) {
-          cookie.value = '';
+        if (!data.value) {
           user.value = undefined;
           await navigateTo({ path: '/login' });
           return undefined;
@@ -92,16 +84,15 @@ export const useAuthUser = defineStore('AuthUser', () => {
   };
 
   const setToken = async (token: string, _expiry: string) => {
-    cookie.value = 'Token ' + token;
     await fetchUser();
   };
 
   const logout = async () => {
+    const cookie = useToken();
     await useFetchAPI('/api/auth/logout', {
       method: 'POST',
       key: `logout_${cookie.value}`,
     });
-    cookie.value = '';
     useCookie('csrftoken').value = '';
     useCookie('sessionid').value = '';
 
@@ -119,7 +110,6 @@ export const useAuthUser = defineStore('AuthUser', () => {
   return {
     user,
     repos,
-    token: cookie,
     setToken,
     isLogin,
     fetchUser,

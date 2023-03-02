@@ -5,6 +5,7 @@ from CaCatHead.core.constants import NJUST_ICPC_GROUP as NJUST_ICPC_GROUP_NAME
 from CaCatHead.core.tests import TestCase
 from CaCatHead.permission.constants import PostPermissions
 from CaCatHead.post.models import Post
+from CaCatHead.user.models import UserInfo
 from CaCatHead.user.tests import ROOT_USER
 
 Error_INFO_404 = '公告未找到'
@@ -17,6 +18,9 @@ class PostManagerTests(TestCase):
     def setUpTestData(cls):
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         user.save()
+        user_info = UserInfo(user=user, nickname='world', is_teacher=False)
+        user_info.save()
+
         cls.user = user
         Post.objects.grant_user_permission(user, PostPermissions.Read, 1)
         Post.objects.grant_user_permission(user, PostPermissions.Read, 2)
@@ -28,7 +32,7 @@ class PostManagerTests(TestCase):
         # 用户登陆
         resp = self.client.post('/api/auth/login', {"username": user.username, "password": '12345678'})
         assert resp.status_code == 200
-        authorization = "Token " + resp.data['token']
+        authorization = "Bearer " + resp.data['access_token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
 
     def user_view_post(self, post_id: int):
@@ -140,17 +144,23 @@ class PostViewTests(TestCase):
         admin = User.objects.create_user(username='admin', email='admin@example.com', password='12345678')
         admin.is_staff = True
         admin.save()
+        admin_info = UserInfo(user=admin, nickname='admin', is_teacher=False)
+        admin_info.save()
+
         cls.admin = admin
 
+        # TODO: use common logic here
         user = User.objects.create_user(username='world', email='world@example.com', password='12345678')
         user.save()
+        user_info = UserInfo(user=user, nickname='world', is_teacher=False)
+        user_info.save()
         cls.user = user
 
     def user_login(self, user: User):
         # 用户登陆
         resp = self.client.post('/api/auth/login', {"username": user.username, "password": '12345678'})
         assert resp.status_code == 200
-        authorization = "Token " + resp.data['token']
+        authorization = "Bearer " + resp.data['access_token']
         self.client.credentials(HTTP_AUTHORIZATION=authorization)
 
     def visitor_view_post(self, post_id: int):

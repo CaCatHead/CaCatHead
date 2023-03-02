@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
@@ -18,6 +17,7 @@ from CaCatHead.contest.services.contest import make_contest, edit_contest_payloa
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
+from CaCatHead.contest.utils import contest_phase, ContestPhase
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -173,24 +173,30 @@ class ContestRegistrationView(APIView):
 def user_register_contest(request: Request, contest_id: int):
     # 用户有注册比赛的权限
     contest = check_register_contest(user=request.user, contest_id=contest_id)
-    # 比赛结束后，无法注册
-    if timezone.now() > contest.end_time:
-        raise BadRequest(detail='比赛已结束')
-    # 检查比赛邀请码是否输入正确
-    if contest.password is not None and len(contest.password) > 0:
-        if 'password' in request.data:
-            password = request.data['password']
-            if password != contest.password:
-                raise BadRequest(detail='比赛邀请码错误')
-        else:
-            raise BadRequest(detail='请填写比赛邀请码')
-    # TODO: 检查用户是否已经注册该比赛
-    name = request.data['name']
-    if not check_username_format(name):
-        raise BadRequest(detail="队伍名格式错误")
-    registration = single_user_register(user=request.user, contest=contest, name=name,
-                                        extra_info=request.data['extra_info'])
-    return make_response(registration=ContestRegistrationSerializer(registration).data)
+
+    match contest_phase(contest):
+        # 比赛尚未开始或者正在进行
+        case ContestPhase.Before | ContestPhase.Coding:
+            # 检查比赛邀请码是否输入正确
+            if contest.password is not None and len(contest.password) > 0:
+                if 'password' in request.data:
+                    password = request.data['password']
+                    if password != contest.password:
+                        raise BadRequest(detail='比赛邀请码错误')
+                else:
+                    raise BadRequest(detail='请填写比赛邀请码')
+
+            # TODO: 检查用户是否已经注册该比赛
+            name = request.data['name']
+            if not check_username_format(name):
+                raise BadRequest(detail="队伍名格式错误")
+            registration = single_user_register(user=request.user, contest=contest, name=name,
+                                                extra_info=request.data['extra_info'])
+            return make_response(registration=ContestRegistrationSerializer(registration).data)
+
+        # 比赛结束后，无法注册
+        case ContestPhase.Finished:
+            raise BadRequest(detail='比赛已结束')
 
 
 @api_view(['POST'])
@@ -204,16 +210,17 @@ def user_unregister_contest(request: Request, contest_id: int):
         registration.delete()
         return make_response()
 
-    # 比赛开始后，无法取消注册
-    if timezone.now() >= contest.start_time:
-        raise BadRequest(detail='比赛已开始')
-
-    # 只有队长可以取消注册
-    if registration.team.owner == request.user:
-        registration.delete()
-        return make_response()
-    else:
-        raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
+    match contest_phase(contest):
+        case ContestPhase.Before:
+            # 只有队长可以取消注册
+            if registration.team.owner == request.user:
+                registration.delete()
+                return make_response()
+            else:
+                raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
+        case ContestPhase.Coding | ContestPhase.Finished:
+            # 比赛开始后，无法取消注册
+            raise BadRequest(detail='比赛已开始')
 
 
 @api_view(['POST'])
