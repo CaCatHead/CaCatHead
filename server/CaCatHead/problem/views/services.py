@@ -44,22 +44,23 @@ def make_problem(title: str, user: User, display_id=None):
     problem_info = ProblemInfo(problem_content=problem_content, problem_judge=problem_judge, owner=user)
     problem_info.save()
 
+    main_repo = get_main_problem_repo()
     if display_id is None:
-        display_id = MAIN_PROBLEM_REPOSITORY.problems.aggregate(models.Max('display_id'))['display_id__max']
+        display_id = main_repo.problems.aggregate(models.Max('display_id'))['display_id__max']
         if display_id is None:
             display_id = DEFAULT_DISPLAY_ID
         else:
             display_id += 1
 
     try:
-        problem = Problem(repository=MAIN_PROBLEM_REPOSITORY,
+        problem = Problem(repository=main_repo,
                           display_id=display_id,
                           title=title,
                           problem_info=problem_info,
                           owner=user,
                           is_public=False)
         problem.save()
-        MAIN_PROBLEM_REPOSITORY.problems.add(problem)
+        main_repo.problems.add(problem)
         return problem
     except Exception:
         problem_info.delete()
