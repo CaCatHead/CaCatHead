@@ -206,6 +206,15 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             edit_problem(problem, problem_config)
         else:
             raise BadRequest(detail={'detail': serializer.errors})
+    if 'checker' in config_json:
+        checker_config = config_json['checker']
+        checker_type = checker_config['type']
+        if checker_type == DefaultCheckers.custom:
+            upload_custom_checker(problem, checker_config['code'], checker_config['language'])
+        else:
+            problem.problem_info.problem_judge.checker = checker_type
+            problem.problem_info.problem_judge.save()
+
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):
