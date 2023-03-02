@@ -44,10 +44,16 @@ const login = async () => {
 </script>
 
 <template>
-  <div>
+  <form class="block" @submit.prevent="login">
     <h2 text-2xl font-bold>登录</h2>
     <div mt4>
-      <c-input id="username" type="text" color="info" v-model="username">
+      <c-input
+        id="username"
+        type="text"
+        color="info"
+        v-model="username"
+        :tab-index="1"
+      >
         <template #label><label for="username">用户名</label></template>
       </c-input>
       <c-input
@@ -56,12 +62,13 @@ const login = async () => {
         type="password"
         color="info"
         v-model="password"
+        :tab-index="2"
       >
         <template #label><label for="password">密码</label></template>
       </c-input>
     </div>
     <div mt4>
-      <c-button color="success" @click="login">登录</c-button>
+      <c-button color="success" @click="login" :tab-index="3">登录</c-button>
     </div>
-  </div>
+  </form>
 </template>

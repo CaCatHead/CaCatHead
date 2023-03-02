@@ -6,6 +6,7 @@ const props = withDefaults(
     placeholder?: string;
     modelValue: T;
     type: string;
+    tabIndex?: number;
     color?: string;
   }>(),
   {
