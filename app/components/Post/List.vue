@@ -30,12 +30,9 @@ defineProps<{ posts: Post[] }>();
           ></time-interval
         ></span>
       </p>
-      <p v-if="post.content" mt4 pl4 py2 border="l-4 base">
-        <client-only>
-          <!-- SSR 渲染的结果有问题，所以强制 CSR -->
-          <c-markdown :content="post.content"></c-markdown>
-        </client-only>
-      </p>
+      <div v-if="post.content" mt4 pl4 py2 border="l-4 base">
+        <c-markdown :content="post.content"></c-markdown>
+      </div>
 
       <div
         v-if="post.content"
