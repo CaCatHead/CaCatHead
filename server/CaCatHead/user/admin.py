@@ -25,7 +25,7 @@ class StudentInfoInline(admin.StackedInline):
 class UserTokenAdmin(admin.ModelAdmin):
     list_display = ('user', 'expiry_time', 'login_time', 'login_ip', 'user_agent')
 
-    list_display_links = ('user', )
+    list_display_links = ('user',)
 
     search_fields = ('user', 'login_ip', 'user_agent')
 

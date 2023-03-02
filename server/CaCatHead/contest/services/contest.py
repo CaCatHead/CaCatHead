@@ -11,7 +11,8 @@ from CaCatHead.contest.models import Contest, ContestType, ContestSettings
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
-from CaCatHead.problem.views import copy_repo_problem, MAIN_PROBLEM_REPOSITORY
+from CaCatHead.problem.views import copy_repo_problem
+from CaCatHead.problem.views.services import get_main_problem_repo
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +93,7 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
     # 查找对应的 Polygon Problems，检查是否拥有加入题库的权限
     for (display_id, polygon_id) in enumerate(problems):
         problem: Problem = Problem.objects.filter_user_permission(user=user,
-                                                                  problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                                  problemrepository=get_main_problem_repo(),
                                                                   id=polygon_id,
                                                                   permission=ProblemPermissions.Copy).first()
         if problem is not None:

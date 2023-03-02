@@ -26,7 +26,7 @@ from CaCatHead.post.models import Post
 from CaCatHead.post.serializers import PostContentSerializer, PostSerializer
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.problem.serializers import ProblemRepositorySerializer
-from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
+from CaCatHead.problem.views import get_main_problem_repo
 from CaCatHead.user.models import UserToken
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
@@ -81,7 +81,7 @@ def current_user_profile(request: Request):
     获取当前用户信息
     """
     user = request.user
-    main_repo = MAIN_PROBLEM_REPOSITORY
+    main_repo = get_main_problem_repo()
     if main_repo is None:
         main_repo = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
     repos = ProblemRepository.objects.filter_user_public(user=request.user,

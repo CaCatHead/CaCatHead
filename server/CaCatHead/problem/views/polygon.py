@@ -17,7 +17,7 @@ from CaCatHead.problem.models import Problem, DefaultCheckers
 from CaCatHead.problem.serializers import CreateProblemPayload, \
     EditProblemPayload, FullProblemSerializer, EditPermissionPayload, PolygonProblemSerializer, \
     SubmitCheckerPayload
-from CaCatHead.problem.views.services import make_problem, edit_problem, MAIN_PROBLEM_REPOSITORY, \
+from CaCatHead.problem.views.services import make_problem, edit_problem, get_main_problem_repo, \
     make_problem_by_uploading, edit_problem_by_uploading, upload_custom_checker
 from CaCatHead.problem.views.submit import submit_polygon_problem_code, \
     rejudge_polygon_problem_code
@@ -61,7 +61,7 @@ def edit_polygon_problem_by_upload(request: Request, problem_id: int):
     """
     上传题目压缩包更新题目
     """
-    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
@@ -80,7 +80,7 @@ def edit_polygon_problem(request: Request, problem_id: int):
     """
     编辑自己创建的题目, 或者被授予编辑权限的题目
     """
-    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
@@ -98,7 +98,7 @@ def upload_polygon_problem_checker(request: Request, problem_id: int):
     """
     编辑自己创建的题目, 或者被授予编辑权限的题目
     """
-    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Edit).first()
@@ -127,7 +127,7 @@ def get_polygon_problem(request: Request, problem_id: int):
     """
     查看自己创建的题目, 公开的题目, 或者被授予阅读权限的题目
     """
-    problem = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
                                                  id=problem_id,
                                                  user=request.user,
                                                  permission=ProblemPermissions.ReadProblem).first()
@@ -140,7 +140,7 @@ def export_polygon_problem_zip(request: Request, problem_id: int):
     """
     导出题目 zip
     """
-    problem = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
                                                  id=problem_id,
                                                  user=request.user,
                                                  permission=ProblemPermissions.Export).first()
@@ -156,7 +156,7 @@ def list_polygon_problems(request):
     """
     列出自己可见的题目
     """
-    problems = Problem.objects.filter_user_public(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problems = Problem.objects.filter_user_public(problemrepository=get_main_problem_repo(),
                                                   user=request.user,
                                                   permission=ProblemPermissions.ReadProblem).order_by(
         '-updated').order_by('-id')
@@ -171,7 +171,7 @@ def submit_polygon_problem(request: Request, problem_id: int):
     """
     向自己创建的题目，或者被授予提交权限的题目，提交代码
     """
-    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.Submit).first()
@@ -179,7 +179,7 @@ def submit_polygon_problem(request: Request, problem_id: int):
         raise NotFound('题目未找到')
     else:
         submission = submit_polygon_problem_code(user=request.user,
-                                                 repo=MAIN_PROBLEM_REPOSITORY,
+                                                 repo=get_main_problem_repo(),
                                                  problem=problem,
                                                  payload=request.data)
         return make_response(submission=FullSubmissionSerializer(submission).data)
@@ -191,10 +191,10 @@ def rejudge_polygon_problem(request: Request, submission_id: int):
     """
     重测提交
     """
-    view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    view_subquery = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                            user=request.user,
                                                            permission=ProblemPermissions.ReadSubmission)
-    submission = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
+    submission = Submission.objects.filter(repository=get_main_problem_repo(),
                                            problem__in=Subquery(view_subquery.values('id')),
                                            id=submission_id).first()
     if submission is None:
@@ -210,14 +210,14 @@ def list_polygon_problem_submissions(request: Request, problem_id: int):
     """
     列出该题目的所有提交列表
     """
-    problem = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    problem = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      user=request.user,
                                                      permission=ProblemPermissions.ReadSubmission).first()
     if problem is None:
         raise NotFound('题目未找到')
     else:
-        submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY, problem=problem)
+        submissions = Submission.objects.filter(repository=get_main_problem_repo(), problem=problem)
         return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
 
 
@@ -227,10 +227,10 @@ def get_polygon_submission(request: Request, submission_id: int):
     """
     获取提交
     """
-    view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    view_subquery = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                            user=request.user,
                                                            permission=ProblemPermissions.ReadSubmission)
-    submission = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
+    submission = Submission.objects.filter(repository=get_main_problem_repo(),
                                            problem__in=Subquery(view_subquery.values('id')),
                                            id=submission_id).first()
     if submission is None:
@@ -245,10 +245,10 @@ def list_polygon_submissions(request: Request):
     """
     获取提交列表
     """
-    view_subquery = Problem.objects.filter_user_permission(problemrepository=MAIN_PROBLEM_REPOSITORY,
+    view_subquery = Problem.objects.filter_user_permission(problemrepository=get_main_problem_repo(),
                                                            user=request.user,
                                                            permission=ProblemPermissions.ReadSubmission)
-    submissions = Submission.objects.filter(repository=MAIN_PROBLEM_REPOSITORY,
+    submissions = Submission.objects.filter(repository=get_main_problem_repo(),
                                             problem__in=Subquery(view_subquery.values('id')))
     return make_response(submissions=SubmissionSerializer(submissions, many=True).data)
 
@@ -261,7 +261,7 @@ class PolygonPermission(APIView):
 
     @staticmethod
     def get_problem_or_raise(request: Request, problem_id: int):
-        problem = Problem.objects.filter(problemrepository=MAIN_PROBLEM_REPOSITORY,
+        problem = Problem.objects.filter(problemrepository=get_main_problem_repo(),
                                          id=problem_id,
                                          owner=request.user).first()
         if problem is None:

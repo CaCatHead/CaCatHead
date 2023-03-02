@@ -14,13 +14,21 @@ from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_DISPLAY_ID = 1000
+
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
 except Exception as ex:
-    logger.error(f'Can not find main problem repository {MAIN_PROBLEM_REPOSITORY_NAME}: %r', ex)
     MAIN_PROBLEM_REPOSITORY = None
 
-DEFAULT_DISPLAY_ID = 1000
+
+def get_main_problem_repo():
+    global MAIN_PROBLEM_REPOSITORY
+    if MAIN_PROBLEM_REPOSITORY is None:
+        MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
+        return MAIN_PROBLEM_REPOSITORY
+    else:
+        return MAIN_PROBLEM_REPOSITORY
 
 
 def make_problem(title: str, user: User, display_id=None):

@@ -14,8 +14,7 @@ from CaCatHead.permission.serializers import UserPermissionSerializer, GroupPerm
 from CaCatHead.problem.models import ProblemRepository, Problem
 from CaCatHead.problem.serializers import ProblemRepositorySerializer, ProblemSerializer, FullProblemSerializer, \
     EditPermissionPayload, ProblemContentSerializer
-from CaCatHead.problem.views.services import MAIN_PROBLEM_REPOSITORY
-from CaCatHead.problem.views.services import copy_repo_problem
+from CaCatHead.problem.views.services import copy_repo_problem, get_main_problem_repo
 from CaCatHead.problem.views.submit import submit_repository_problem_code
 from CaCatHead.submission.models import Submission
 from CaCatHead.submission.serializers import FullSubmissionSerializer, SubmissionSerializer, SubmitCodePayload
@@ -31,7 +30,7 @@ def list_repos(request):
     """
     repos = ProblemRepository.objects.filter_user_public(user=request.user,
                                                          permission=ProblemRepositoryPermissions.ListProblems).filter(
-        ~Q(id=MAIN_PROBLEM_REPOSITORY.id)).filter(is_contest=False)
+        ~Q(id=get_main_problem_repo().id)).filter(is_contest=False)
     return make_response(repos=ProblemRepositorySerializer(repos, many=True).data)
 
 
@@ -47,7 +46,7 @@ def check_repo(request: Request, repo_id: int, permission: str):
                                                                 permission=permission).filter(is_contest=False).first()
     if repo is None:
         raise NotFound(detail='题库未找到')
-    elif repo == MAIN_PROBLEM_REPOSITORY:
+    elif repo == get_main_problem_repo():
         raise NotFound(detail='主题库不允许直接使用')
     else:
         return repo
@@ -165,7 +164,7 @@ def add_repo_problem(request: Request, repo_id: int, problem_id: int):
     """
     repo = check_repo(request, repo_id, ProblemRepositoryPermissions.AddProblem)
     problem = Problem.objects.filter_user_permission(user=request.user,
-                                                     problemrepository=MAIN_PROBLEM_REPOSITORY,
+                                                     problemrepository=get_main_problem_repo(),
                                                      id=problem_id,
                                                      permission=ProblemPermissions.Copy).first()
     if problem is None:
