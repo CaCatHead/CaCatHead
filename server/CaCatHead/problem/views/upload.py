@@ -12,7 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
 from CaCatHead.core.minio import upload_minio_testcase, download_minio_testcase
-from CaCatHead.problem.models import Problem
+from CaCatHead.problem.models import Problem, DefaultCheckers
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
 logger = logging.getLogger(__name__)
@@ -105,6 +105,17 @@ class ProblemDirectory:
         problem_info['source'] = problem.problem_info.problem_content.source
         problem_info['extra_content'] = problem.problem_info.problem_content.extra_content
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
+
+        if 'checker' in self.config:
+            checker_info = self.config['checker']
+        else:
+            checker_info = {}
+            self.config['checker'] = checker_info
+        checker_info['type'] = problem.problem_info.problem_judge.checker
+        if problem.problem_info.problem_judge.checker == DefaultCheckers.custom:
+            checker_info['language'] = problem.problem_info.problem_judge.custom_checker.language
+            checker_info['code'] = problem.problem_info.problem_judge.custom_checker.code
+
         json.dump(self.config, open(self.root / 'config.json', 'w', encoding='UTF-8'), indent=2, ensure_ascii=False)
 
     def upload_testcases(self) -> bool:
