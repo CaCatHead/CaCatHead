@@ -125,11 +125,7 @@ const onUpdateZip = async () => {
           >
         </div>
       </div>
-      <c-nav
-        :prefix="`/polygon/problem/${route.params.display_id}/`"
-        mb4
-        lt-md:pb2
-      >
+      <c-nav :prefix="`/polygon/problem/${route.params.id}/`" mb4 lt-md:pb2>
         <c-nav-item to="">预览</c-nav-item>
         <c-nav-item to="edit">编辑题面</c-nav-item>
         <c-nav-item to="testcase">测试数据</c-nav-item>
