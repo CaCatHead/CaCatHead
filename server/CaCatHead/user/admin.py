@@ -7,6 +7,7 @@ from CaCatHead.contest.models import Contest
 from CaCatHead.post.models import Post
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.user import models
+from CaCatHead.user.models import UserToken
 
 
 class UserInfoInline(admin.StackedInline):
@@ -19,6 +20,14 @@ class StudentInfoInline(admin.StackedInline):
     model = models.StudentInfo
     verbose_name_plural = '学生信息组'
     can_delete = False
+
+
+class UserTokenAdmin(admin.ModelAdmin):
+    list_display = ('key', 'user', 'expiry_time', 'login_time', 'login_ip', 'user_agent')
+
+    list_display_links = ('key',)
+
+    search_fields = ('user',)
 
 
 class UserAdmin(BaseUserAdmin):
@@ -73,6 +82,7 @@ class UserAdmin(BaseUserAdmin):
 
 # Re-register UserAdmin
 admin.site.unregister(User)
+admin.site.register(UserToken, UserTokenAdmin)
 admin.site.register(User, UserAdmin)
 
 # from rbac import rbacRole
