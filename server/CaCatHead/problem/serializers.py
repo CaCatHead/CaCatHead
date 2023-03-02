@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import NotFound
 
 from CaCatHead.problem.models import ProblemRepository, Problem, ProblemInfo, ProblemContent, ProblemJudge, \
-    DefaultCheckers, SourceCode
+    DefaultCheckers, SourceCode, ProblemTypes
 from CaCatHead.user.serializers import UserSerializer
 
 
@@ -13,6 +13,7 @@ class CreateProblemPayload(serializers.Serializer):
 
 class EditProblemPayload(serializers.Serializer):
     title = serializers.CharField(max_length=512, allow_blank=True, required=False)
+    problem_type = serializers.ChoiceField(required=False, choices=ProblemTypes.choices)
     display_id = serializers.IntegerField(required=False)
     time_limit = serializers.IntegerField(required=False)
     memory_limit = serializers.IntegerField(required=False)

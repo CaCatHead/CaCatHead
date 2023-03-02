@@ -73,6 +73,9 @@ def edit_problem(problem: Problem, payload: dict):
     if 'title' in payload:
         problem.title = payload['title']
         problem.problem_info.problem_content.title = payload['title']
+    if 'problem_type' in payload:
+        problem.problem_type = payload['problem_type']
+        problem.problem_info.problem_judge.problem_type = payload['problem_type']
     if 'display_id' in payload:
         problem.display_id = payload['display_id']
     if 'time_limit' in payload:
