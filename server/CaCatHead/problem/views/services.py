@@ -216,7 +216,6 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             problem.problem_info.problem_judge.save()
 
 
-
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):
     """
     移动 Polygon Problem 到 repo
