@@ -54,7 +54,7 @@ snapshots['UserAuthTests::test_login 1'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -70,7 +70,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 1'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -86,7 +86,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 10'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -102,7 +102,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 2'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -118,7 +118,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 3'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -134,7 +134,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 4'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -150,7 +150,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 5'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -166,7 +166,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 6'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -182,7 +182,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 7'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -198,7 +198,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 8'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }
@@ -214,7 +214,7 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
         'is_superuser': True,
         'polygon': True
     },
-    'rank': 'newbie',
+    'rank': 'rainbow',
     'rating': None,
     'username': 'cacathead'
 }

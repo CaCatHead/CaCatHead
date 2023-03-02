@@ -12,7 +12,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.utils import timezone
 
 from CaCatHead.core.minio import upload_minio_testcase, download_minio_testcase
-from CaCatHead.problem.models import Problem
+from CaCatHead.problem.models import Problem, DefaultCheckers
 from CaCatHead.problem.serializers import TestcaseInfoPayload
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class ProblemDirectory:
         self.root.mkdir(parents=True, exist_ok=True)
         config_path = root / 'config.json'
         if not config_path.exists():
-            json.dump({'problem': {}, 'testcases': []}, open(config_path, 'w'))
+            json.dump({'problem': {}, 'testcases': [], 'checker': {}}, open(config_path, 'w'))
         self.config = json.load(open(config_path, encoding='UTF-8'))
 
     @classmethod
@@ -94,6 +94,7 @@ class ProblemDirectory:
     def save_config(self, problem: Problem):
         problem_info = self.config['problem']
         problem_info['title'] = problem.problem_info.problem_content.title
+        problem_info['problem_type'] = problem.problem_info.problem_judge.problem_type
         problem_info['time_limit'] = problem.problem_info.problem_judge.time_limit
         problem_info['memory_limit'] = problem.problem_info.problem_judge.memory_limit
         problem_info['description'] = problem.problem_info.problem_content.description
@@ -104,6 +105,17 @@ class ProblemDirectory:
         problem_info['source'] = problem.problem_info.problem_content.source
         problem_info['extra_content'] = problem.problem_info.problem_content.extra_content
         problem_info['extra_judge'] = problem.problem_info.problem_judge.extra_info
+
+        if 'checker' in self.config:
+            checker_info = self.config['checker']
+        else:
+            checker_info = {}
+            self.config['checker'] = checker_info
+        checker_info['type'] = problem.problem_info.problem_judge.checker
+        if problem.problem_info.problem_judge.checker == DefaultCheckers.custom:
+            checker_info['language'] = problem.problem_info.problem_judge.custom_checker.language
+            checker_info['code'] = problem.problem_info.problem_judge.custom_checker.code
+
         json.dump(self.config, open(self.root / 'config.json', 'w', encoding='UTF-8'), indent=2, ensure_ascii=False)
 
     def upload_testcases(self) -> bool:

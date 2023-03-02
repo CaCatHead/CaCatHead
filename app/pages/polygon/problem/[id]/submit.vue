@@ -6,14 +6,14 @@ const props = defineProps<{ problem: FullPolygonProblem }>();
 const { problem } = toRefs(props);
 
 const submit = async (payload: { code: string; language: string }) => {
-  await fetchAPI(`/api/polygon/${problem.value.id}/submit`, {
+  await fetchAPI(`/api/polygon/${problem.value.display_id}/submit`, {
     method: 'POST',
     body: {
       language: payload.language,
       code: payload.code,
     },
   });
-  await navigateTo(`/polygon/problem/${problem.value.id}/status`);
+  await navigateTo(`/polygon/problem/${problem.value.display_id}/status`);
 };
 </script>
 

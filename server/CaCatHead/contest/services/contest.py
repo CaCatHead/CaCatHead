@@ -11,7 +11,8 @@ from CaCatHead.contest.models import Contest, ContestType, ContestSettings
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem
-from CaCatHead.problem.views import copy_repo_problem, MAIN_PROBLEM_REPOSITORY
+from CaCatHead.problem.views import copy_repo_problem
+from CaCatHead.problem.views.services import get_main_problem_repo
 
 logger = logging.getLogger(__name__)
 
@@ -92,8 +93,8 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
     # 查找对应的 Polygon Problems，检查是否拥有加入题库的权限
     for (display_id, polygon_id) in enumerate(problems):
         problem: Problem = Problem.objects.filter_user_permission(user=user,
-                                                                  problemrepository=MAIN_PROBLEM_REPOSITORY,
-                                                                  id=polygon_id,
+                                                                  problemrepository=get_main_problem_repo(),
+                                                                  display_id=polygon_id,
                                                                   permission=ProblemPermissions.Copy).first()
         if problem is not None:
             if problem.problem_info_id in problem_info_display_id:
@@ -102,7 +103,7 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
                 problem_info_display_id[problem.problem_info_id] = display_id
                 polygon_problems.append(problem)
         else:
-            raise NotFound(detail=f'未找到 Polygon 题目 #{polygon_id}.，或者权限不足')
+            raise NotFound(detail=f'未找到 Polygon 题目 #{polygon_id}，或者权限不足')
 
     # Polygon Problem Info 信息 -> 旧 Contest Problem 映射
     problem_info_contest_problem = {}

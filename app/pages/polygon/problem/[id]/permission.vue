@@ -13,7 +13,7 @@ const { problem } = toRefs(props);
 const { data, refresh } = await useFetchAPI<{
   user_permissions: UserPermission[];
   group_permissions: any[];
-}>(`/api/polygon/${problem.value.id}/permission`);
+}>(`/api/polygon/${problem.value.display_id}/permission`);
 
 const userPerms = ref([] as any[]);
 watch(
@@ -47,7 +47,7 @@ watch(
 
 const username = ref('');
 const grantUserPerm = async (username: string, perm: ProblemPermissions) => {
-  await fetchAPI(`/api/polygon/${problem.value.id}/permission`, {
+  await fetchAPI(`/api/polygon/${problem.value.display_id}/permission`, {
     method: 'POST',
     body: {
       username,
@@ -62,7 +62,7 @@ const toggleUserPerm = async (
   flag: boolean
 ) => {
   const payload = flag ? { grant: perm } : { revoke: perm };
-  await fetchAPI(`/api/polygon/${problem.value.id}/permission`, {
+  await fetchAPI(`/api/polygon/${problem.value.display_id}/permission`, {
     method: 'POST',
     body: {
       username,

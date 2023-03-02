@@ -14,13 +14,21 @@ from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_DISPLAY_ID = 1000
+
 try:
     MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
 except Exception as ex:
-    logger.error(f'Can not find main problem repository {MAIN_PROBLEM_REPOSITORY_NAME}: %r', ex)
     MAIN_PROBLEM_REPOSITORY = None
 
-DEFAULT_DISPLAY_ID = 1000
+
+def get_main_problem_repo():
+    global MAIN_PROBLEM_REPOSITORY
+    if MAIN_PROBLEM_REPOSITORY is None:
+        MAIN_PROBLEM_REPOSITORY = ProblemRepository.objects.get(name=MAIN_PROBLEM_REPOSITORY_NAME)
+        return MAIN_PROBLEM_REPOSITORY
+    else:
+        return MAIN_PROBLEM_REPOSITORY
 
 
 def make_problem(title: str, user: User, display_id=None):
@@ -36,22 +44,23 @@ def make_problem(title: str, user: User, display_id=None):
     problem_info = ProblemInfo(problem_content=problem_content, problem_judge=problem_judge, owner=user)
     problem_info.save()
 
+    main_repo = get_main_problem_repo()
     if display_id is None:
-        display_id = MAIN_PROBLEM_REPOSITORY.problems.aggregate(models.Max('display_id'))['display_id__max']
+        display_id = main_repo.problems.aggregate(models.Max('display_id'))['display_id__max']
         if display_id is None:
             display_id = DEFAULT_DISPLAY_ID
         else:
             display_id += 1
 
     try:
-        problem = Problem(repository=MAIN_PROBLEM_REPOSITORY,
+        problem = Problem(repository=main_repo,
                           display_id=display_id,
                           title=title,
                           problem_info=problem_info,
                           owner=user,
                           is_public=False)
         problem.save()
-        MAIN_PROBLEM_REPOSITORY.problems.add(problem)
+        main_repo.problems.add(problem)
         return problem
     except Exception:
         problem_info.delete()
@@ -64,6 +73,9 @@ def edit_problem(problem: Problem, payload: dict):
     if 'title' in payload:
         problem.title = payload['title']
         problem.problem_info.problem_content.title = payload['title']
+    if 'problem_type' in payload:
+        problem.problem_type = payload['problem_type']
+        problem.problem_info.problem_judge.problem_type = payload['problem_type']
     if 'display_id' in payload:
         problem.display_id = payload['display_id']
     if 'time_limit' in payload:
@@ -194,6 +206,14 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             edit_problem(problem, problem_config)
         else:
             raise BadRequest(detail={'detail': serializer.errors})
+    if 'checker' in config_json:
+        checker_config = config_json['checker']
+        checker_type = checker_config['type']
+        if checker_type == DefaultCheckers.custom:
+            upload_custom_checker(problem, checker_config['code'], checker_config['language'])
+        else:
+            problem.problem_info.problem_judge.checker = checker_type
+            problem.problem_info.problem_judge.save()
 
 
 def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):

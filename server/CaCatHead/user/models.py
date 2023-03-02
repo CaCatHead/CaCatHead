@@ -54,7 +54,7 @@ class UserToken(models.Model):
         return timezone.now() <= self.expiry_time
 
     def __str__(self):
-        return f"{self.user.username} Token ({self.login_time})"
+        return f"{self.user.username} ({self.login_time})"
 
 
 class StudentInfo(BaseModel):

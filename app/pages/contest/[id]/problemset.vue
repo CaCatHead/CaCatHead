@@ -46,8 +46,8 @@ const addProblem = async () => {
     const { problem } = await fetchAPI<{ problem: FullPolygonProblem }>(
       `/api/polygon/${pid.value}`
     );
-    problems.value.push({ polygon_id: problem.id, ...problem });
-    notify.success(`题目 #${problem.id}. ${problem.title} 查询成功`);
+    problems.value.push({ polygon_id: problem.display_id, ...problem });
+    notify.success(`题目 #${problem.display_id}. ${problem.title} 查询成功`);
 
     pid.value += 1;
   } catch (error: any) {

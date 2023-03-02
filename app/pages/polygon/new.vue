@@ -11,7 +11,7 @@ const submit = async () => {
       body: { title: title.value ?? 'Unknown' },
     }
   );
-  await navigateTo(`/polygon/problem/${problem.id}`);
+  await navigateTo(`/polygon/problem/${problem.display_id}`);
 };
 </script>
 
