@@ -53,6 +53,9 @@ class UserToken(models.Model):
     def is_valid(self):
         return timezone.now() <= self.expiry_time
 
+    def __str__(self):
+        return f"{self.user.username} Token ({self.login_time})"
+
 
 class StudentInfo(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
