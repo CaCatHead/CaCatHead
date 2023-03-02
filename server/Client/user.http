@@ -25,7 +25,7 @@ POST http://127.0.0.1:8000/api/auth/login
 Content-Type: application/json
 
 {
-  "username": "root",
+  "username": "cacathead",
   "password": "12345678"
 }
 
@@ -51,6 +51,7 @@ POST http://127.0.0.1:8000/api/auth/logout
 
 ### Profile
 GET http://127.0.0.1:8000/api/user/profile
+Authorization: Bearer {{auth_token}}
 
 ### Login validate error
 POST http://127.0.0.1:8000/api/auth/login

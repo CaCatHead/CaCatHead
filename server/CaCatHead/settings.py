@@ -47,6 +47,9 @@ RMQ_PORT = str(cacathead_config.rabbitmq.port)
 RMQ_USER = cacathead_config.rabbitmq.username
 RMQ_PASS = cacathead_config.rabbitmq.password
 
+# Redis
+REDIS_URL = f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}'
+
 # Trusted origin
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] + cacathead_config.server.allowed_host
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1'] + cacathead_config.server.trusted_origin
@@ -182,17 +185,23 @@ CACHES = {
     },
     'redis': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': f'redis://{cacathead_config.redis.host}:{cacathead_config.redis.port}',
+        'LOCATION': REDIS_URL,
     },
     'auth': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
         'KEY_PREFIX': 'auth.',
     },
     'dummy': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+if DEBUG:
+    CACHES['auth'] = {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'KEY_PREFIX': 'auth.',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

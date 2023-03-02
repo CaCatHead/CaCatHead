@@ -27,7 +27,6 @@ from CaCatHead.post.serializers import PostContentSerializer, PostSerializer
 from CaCatHead.problem.models import ProblemRepository
 from CaCatHead.problem.serializers import ProblemRepositorySerializer
 from CaCatHead.problem.views import MAIN_PROBLEM_REPOSITORY
-from CaCatHead.user.auth import set_user_token
 from CaCatHead.user.models import UserToken
 from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSerializer, FullUserSerializer, \
     UserPublicSerializer
@@ -142,11 +141,11 @@ class UserLoginView(AuthViews.LoginView):
                     user_token = UserToken(
                         key=resp.data['access_token'],
                         login_ip=client_ip,
+                        expiry_time=timezone.now() + settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
                         user_agent=user_agent,
                         user_id=resp.data['user']['id'],
                     )
                     user_token.save()
-                    set_user_token(resp.data['access_token'], resp.data['user']['id'])
                     return resp
                 else:
                     raise AuthenticationFailed("UA 非法")

@@ -9,20 +9,36 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from CaCatHead.user.models import UserToken
 
 
-def set_user_token(token: str, user_id: int):
-    cache = caches['auth']
-    cache.set(token, str(user_id), settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds())
+def auth_cache():
+    return caches['auth']
+
+
+def set_user_token(token: str, user_id: int, life_time=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()):
+    cache = auth_cache()
+    cache.set(token, str(user_id), life_time)
 
 
 def delete_user_token(token: str):
-    cache = caches['auth']
+    cache = auth_cache()
     cache.delete(token)
     UserToken.objects.filter(key=token).delete()
 
 
 def get_user_token(token: str):
-    cache = caches['auth']
-    return cache.get(token)
+    cache = auth_cache()
+    user_id = cache.get(token)
+    if user_id is not None:
+        return user_id
+    else:
+        user_token = UserToken.objects.filter(key=token).first()
+        if user_token is not None:
+            if user_token.is_valid():
+                set_user_token(token, user_token.user_id)
+                return user_token.user_id
+            else:
+                return None
+        else:
+            return None
 
 
 class JWTCookieAuthentication(JWTAuthentication):
