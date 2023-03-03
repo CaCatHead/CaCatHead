@@ -9,10 +9,11 @@ from rest_framework.exceptions import NotFound
 
 from CaCatHead.contest.models import Contest, ContestType, ContestSettings
 from CaCatHead.core.exceptions import BadRequest
-from CaCatHead.permission.constants import ProblemPermissions
+from CaCatHead.permission.constants import ProblemPermissions, ContestPermissions
 from CaCatHead.problem.models import ProblemRepository, Problem, ProblemTypes
 from CaCatHead.problem.views import copy_repo_problem
 from CaCatHead.problem.views.services import get_main_problem_repo
+from CaCatHead.user.services import get_general_user_group
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,10 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest.problem_repository = problem_repository
 
     contest.save()
+
+    # 默认开启注册权限
+    Contest.objects.grant_group_permission(get_general_user_group(), ContestPermissions.RegisterContest, contest.id)
+
     return contest
 
 
