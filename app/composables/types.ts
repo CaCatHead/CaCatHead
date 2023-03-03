@@ -73,7 +73,7 @@ export interface Contest {
 
   title: string;
 
-  type: string;
+  type: 'icpc' | 'ioi';
 
   start_time: string;
 

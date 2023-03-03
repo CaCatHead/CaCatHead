@@ -32,55 +32,30 @@ const handlePageChange = async (toPage: number) => {
       <c-table :data="data?.submissions ?? []">
         <template #headers>
           <c-table-header name="id" label="#" width="64px"></c-table-header>
-          <c-table-header
-            name="created"
-            label="提交时间"
-            width="96px"
-          ></c-table-header>
+          <c-table-header name="created" label="提交时间" width="96px"></c-table-header>
           <c-table-header name="problem" label="题目"></c-table-header>
-          <c-table-header
-            name="language"
-            label="语言"
-            width="48px"
-          ></c-table-header>
+          <c-table-header name="language" label="语言" width="48px"></c-table-header>
           <c-table-header name="verdict" label="结果"></c-table-header>
-          <c-table-header
-            name="score"
-            label="得分"
-            width="60px"
-          ></c-table-header>
+          <c-table-header v-if="contest.type !== 'icpc'" name="score" label="得分" width="60px"></c-table-header>
           <c-table-header name="time_used" label="时间"></c-table-header>
           <c-table-header name="memory_used" label="内存"></c-table-header>
         </template>
 
         <template #id="{ row }">
-          <nuxt-link
-            :to="`/contest/${route.params.id}/submission/${row.id}`"
-            text-sky-700
-            text-op-70
-            hover:text-op-100
-            >{{ row.id }}</nuxt-link
-          >
+          <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`" text-sky-700 text-op-70 hover:text-op-100>{{
+            row.id }}</nuxt-link>
         </template>
         <template #created="{ row }">
           <div text-xs>{{ formatDateTimeDay(row.created) }}</div>
           <div text-xs>{{ formatDateTimeTime(row.created) }}</div>
         </template>
         <template #problem="{ row }">
-          <nuxt-link
-            :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
-              row.problem.display_id
-            )}/`"
-            text-sky-700
-            text-op-70
-            hover:text-op-100
-            >{{ displyaIdToIndex(row.problem.display_id) }}.
-            {{ row.problem.title }}</nuxt-link
-          >
+          <nuxt-link :to="`/contest/${route.params.id}/problem/${displyaIdToIndex(
+            row.problem.display_id
+          )}/`" text-sky-700 text-op-70 hover:text-op-100>{{ displyaIdToIndex(row.problem.display_id) }}.
+            {{ row.problem.title }}</nuxt-link>
         </template>
-        <template #language="{ row }"
-          ><display-language :language="row.language"
-        /></template>
+        <template #language="{ row }"><display-language :language="row.language" /></template>
         <template #verdict="{ row }">
           <nuxt-link :to="`/contest/${route.params.id}/submission/${row.id}`">
             <display-verdict :verdict="row.verdict"></display-verdict>
@@ -94,14 +69,8 @@ const handlePageChange = async (toPage: number) => {
         </template>
       </c-table>
 
-      <c-table-page
-        mt4
-        v-if="(data?.num_pages ?? 1) > 1"
-        :count="data!.count"
-        :page="page - 1"
-        :page-size="data!.page_size"
-        @change="handlePageChange"
-      ></c-table-page>
+      <c-table-page mt4 v-if="(data?.num_pages ?? 1) > 1" :count="data!.count" :page="page - 1"
+        :page-size="data!.page_size" @change="handlePageChange"></c-table-page>
     </div>
   </contest-layout>
 </template>
