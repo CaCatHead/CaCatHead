@@ -227,6 +227,7 @@ function cacheControlHeader(time: number) {
 function getAppConfig() {
   const defaults = {
     title: 'CaCatHead',
+    description: 'CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。',
     logo: '/favicon.png',
   };
   try {
@@ -234,8 +235,9 @@ function getAppConfig() {
     const t = fs.readFileSync(path.join(d, '../cacathead.json'), 'utf-8');
     const c = JSON.parse(t);
     return {
-      title: c.title ?? defaults.title,
-      logo: c.logo ?? defaults.logo,
+      title: (c.title as string) ?? defaults.title,
+      description: defaults.description,
+      logo: (c.logo as string) ?? defaults.logo,
     };
   } catch {
     return defaults;

@@ -5,6 +5,8 @@ useHead({
   title: '主页',
 });
 
+const description = useAppConfig().description;
+
 const { data } = await useFetchAPI<{
   top_users: User[];
   posts: Post[];
@@ -21,10 +23,10 @@ const posts = ref(data.value?.posts ?? []);
       <PostList :posts="posts"></PostList>
     </div>
     <div w="3/8" lt-md:w-full space-y-8>
-      <div shadow-box rounded>
+      <div shadow-box rounded v-if="description && description.length > 0">
         <h3 border="b-1 base" p4 text-xl font-bold>公告牌</h3>
         <div p4>
-          <p>CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。</p>
+          <p>{{ description }}</p>
           <p mt4>
             <nuxt-img src="/ccpc.png" alt="Cat CPC" preset="default" />
           </p>
