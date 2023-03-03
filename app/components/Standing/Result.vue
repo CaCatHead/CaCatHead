@@ -30,7 +30,7 @@ function toNumDuration(seconds: number) {
     select-none
     cursor-pointer
     :class="[
-      'w-auto',
+      'w-full',
       'inline-block',
       result.first && 'bg-[#E0FFE4] dark:bg-[#065c00]',
     ]"
