@@ -61,7 +61,13 @@ const registrations = computed(() => {
   const items = list.map(r => {
     const problems: Record<
       string,
-      { ok: boolean; time: number; dirty: number; first: boolean }
+      {
+        ok: boolean;
+        time: number;
+        dirty: number;
+        score: number;
+        first: boolean;
+      }
     > = {};
 
     for (const sub of r.standings?.submissions ?? []) {
@@ -69,7 +75,13 @@ const registrations = computed(() => {
       if (sub.v === Verdict.Accepted) {
         if (!problems[pid]?.ok) {
           if (!problems[pid]) {
-            problems[pid] = { ok: true, time: sub.r, dirty: 0, first: false };
+            problems[pid] = {
+              ok: true,
+              time: sub.r,
+              dirty: 0,
+              score: 0,
+              first: false,
+            };
           } else {
             problems[pid].ok = true;
             problems[pid].time = sub.r;
@@ -80,7 +92,13 @@ const registrations = computed(() => {
         }
       } else {
         if (!problems[pid]) {
-          problems[pid] = { ok: false, time: sub.r, dirty: 1, first: false };
+          problems[pid] = {
+            ok: false,
+            time: sub.r,
+            dirty: 1,
+            score: 0,
+            first: false,
+          };
         } else {
           if (!problems[pid].ok) {
             problems[pid].dirty += 1;
@@ -95,11 +113,18 @@ const registrations = computed(() => {
         problems[index].dirty = +value;
       }
     }
+    for (const [key, value] of Object.entries(r.standings?.scores ?? {})) {
+      const index = displyaIdToIndex(+key);
+      if (index in problems) {
+        problems[index].score = +value;
+      }
+    }
 
     return {
       ...r,
       rank: -1,
       standings: {
+        scores: r.standings.scores,
         submissions: r.standings.submissions,
         problems,
       },
@@ -190,6 +215,7 @@ const formatProgress = (value: number) => {
       <template v-for="idx in alphabet" #[idx]="{ row }">
         <standing-result
           class="w-full h-full"
+          :type="contest.type"
           :result="row.standings?.problems[idx]"
           @click="handleShowSubmissions(row, idx)"
         ></standing-result>

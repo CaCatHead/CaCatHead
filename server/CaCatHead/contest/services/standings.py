@@ -44,6 +44,7 @@ def refresh_icpc_standing(registration: ContestRegistration):
     dirty = 0  # 罚时，单位：秒
     standings = []
     accepted = set()
+    scores = dict()  # 每个题目的得分
     penalty = dict()
     penalty_unit = 20 * 60  # 单次罚时：20 分钟
     for sub in submissions:
@@ -74,6 +75,12 @@ def refresh_icpc_standing(registration: ContestRegistration):
                 else:
                     penalty[pid] += 1
 
+        # 记录每个题的最高得分
+        if pid not in scores:
+            scores[pid] = sub.score
+        else:
+            scores[pid] = max(sub.score, scores[pid])
+
         # 只有 AC 或者错误提交，才会记录到排行榜的提交中
         if is_submission_concerned(sub):
             # 压缩榜单需要记录的信息
@@ -81,7 +88,7 @@ def refresh_icpc_standing(registration: ContestRegistration):
 
     registration.score = score
     registration.dirty = dirty
-    registration.standings = {'submissions': standings, 'penalty': penalty}
+    registration.standings = {'submissions': standings, 'scores': scores, 'penalty': penalty}
 
 
 def refresh_ioi_standing(registration: ContestRegistration):
@@ -122,7 +129,7 @@ def refresh_ioi_standing(registration: ContestRegistration):
             # 压缩榜单需要记录的信息
             standings.append(extract_submission(sub))
 
-    for _, value in scores:
+    for _, value in scores.items():
         score += value
     registration.score = score
     registration.dirty = dirty
