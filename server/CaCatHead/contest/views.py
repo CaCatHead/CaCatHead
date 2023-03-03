@@ -17,7 +17,7 @@ from CaCatHead.contest.services.contest import make_contest, edit_contest_payloa
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
-from CaCatHead.contest.utils import contest_phase, ContestPhase
+from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -58,19 +58,18 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
         contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
                                                      id=contest_id).first()
         if contest is not None:
-            if contest.is_started():
-                if contest.is_ended():
-                    # 比赛已经结束
+            match contest_phase(contest):
+                case ContestPhase.Before:
+                    raise NotFound(detail='比赛尚未开始')
+                case ContestPhase.Coding:
+                    match contest_role(contest, user):
+                        case ContestRole.Visitor:
+                            raise NotFound(detail='你尚未注册该比赛')
+                        case ContestRole.Participant | ContestRole.Admin:
+                            return contest
+                case ContestPhase.Finished:
                     return contest
-                elif ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
-                    # 比赛正在进行
-                    return contest
-                else:
-                    raise NotFound(detail='你尚未注册该比赛')
-            else:
-                raise NotFound(detail='比赛尚未开始')
-        else:
-            raise NotFound(detail='比赛未找到')
+        raise NotFound(detail='比赛未找到')
 
 
 def check_register_contest(user: User, contest_id: int) -> Contest:
