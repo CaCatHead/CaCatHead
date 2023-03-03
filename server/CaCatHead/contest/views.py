@@ -17,7 +17,8 @@ from CaCatHead.contest.services.contest import make_contest, edit_contest_payloa
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
-from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole
+from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole, contest_standings_phase, \
+    ContestStandingsPhase
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -380,20 +381,27 @@ def user_view_standings(request: Request, contest_id: int):
     registrations = ContestRegistration.objects.filter(contest=contest)
     response = make_response(registrations=ContestStandingSerializer(registrations, many=True).data)
 
-    if contest.has_admin_permission(request.user):
-        # 管理员可以查看榜单
-        return response
-    elif contest.is_running():
-        # 比赛进行中，必须打开设置才能查看榜单
-        if contest.enable_settings(ContestSettings.view_standings):
+    match contest_role(contest, request.user):
+        case ContestRole.Admin:
+            # 管理员可以查看榜单
             return response
-        else:
-            raise BadRequest(detail='您无权访问比赛榜单')
-    elif contest.is_ended():
-        # 比赛结束，可以查看榜单
-        return response
-    else:
-        raise BadRequest(detail='您无权访问比赛榜单')
+        case _:
+            match contest_standings_phase(contest):
+                case ContestStandingsPhase.Before:
+                    raise BadRequest(detail='您无权在比赛前访问榜单')
+                case ContestStandingsPhase.Running:
+                    # 比赛进行中，必须打开设置才能查看榜单
+                    if contest.enable_settings(ContestSettings.view_standings):
+                        return response
+                    else:
+                        raise BadRequest(detail='您无权访问比赛榜单')
+                case ContestStandingsPhase.Frozen:
+                    # TODO: frozen standings
+                    return response
+                case ContestStandingsPhase.Finished:
+                    # 比赛结束，可以查看榜单
+                    return response
+    raise BadRequest(detail='您无权访问比赛榜单')
 
 
 class RatingView(APIView):

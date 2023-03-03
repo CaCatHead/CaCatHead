@@ -18,6 +18,13 @@ class ContestPhase(Enum):
     Finished = 'contest_phase.finished'
 
 
+class ContestStandingsPhase(Enum):
+    Before = 'contest_standings_phase.before'
+    Running = 'contest_standings_phase.running'
+    Frozen = 'contest_standings_phase.frozen'
+    Finished = 'contest_standings_phase.finished'
+
+
 def contest_role(contest: Contest, user: User) -> ContestRole:
     if contest.has_admin_permission(user):
         return ContestRole.Admin
@@ -35,3 +42,19 @@ def contest_phase(contest: Contest) -> ContestPhase:
         return ContestPhase.Coding
     else:
         return ContestPhase.Finished
+
+
+def contest_standings_phase(contest: Contest) -> ContestStandingsPhase:
+    now = timezone.now()
+    if now < contest.start_time:
+        return ContestStandingsPhase.Before
+    elif now <= contest.end_time:
+        if contest.freeze_time is not None:
+            if now <= contest.freeze_time:
+                return ContestStandingsPhase.Running
+            else:
+                return ContestStandingsPhase.Frozen
+        else:
+            return ContestStandingsPhase.Running
+    else:
+        return ContestStandingsPhase.Finished
