@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const title = useAppConfig().title;
+
 const route = useRoute();
 
 const isDark = useDark();
@@ -105,7 +107,7 @@ const commit = useAppConfig().COMMIT_SHA;
               h-full
               preset="default"
             />
-            <span ml4 lt-md:ml1 text-2xl font-bold>CaCatHead</span>
+            <span ml4 lt-md:ml1 text-2xl font-bold>{{ title }}</span>
           </NuxtLink>
           <div flex-auto></div>
           <div>

@@ -24,6 +24,8 @@ RUN pnpm install --registry https://registry.npmmirror.com/
 
 ADD ./app /root/CaCatHead/app/
 
+ADD ./deploy/app/cacathead.json /root/CaCatHead/app/
+
 ADD ./deploy/app/public /root/CaCatHead/app/public/
 
 ARG SHIKI_CDN

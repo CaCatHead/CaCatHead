@@ -9,6 +9,8 @@ import {
 } from 'unocss';
 
 import * as fs from 'fs-extra';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // This is the django server
 const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
@@ -56,6 +58,7 @@ export default defineNuxtConfig({
   appConfig: {
     SHIKI_CDN,
     COMMIT_SHA,
+    ...getAppConfig(),
   },
   runtimeConfig: {
     API_BASE,
@@ -218,5 +221,20 @@ function cacheControlHeader(time: number) {
     };
   } else {
     return {};
+  }
+}
+
+function getAppConfig() {
+  try {
+    const d = fileURLToPath(import.meta.url);
+    const t = fs.readFileSync(path.join(d, '../cacathead.json'), 'utf-8');
+    const c = JSON.parse(t);
+    return {
+      title: c.title,
+    };
+  } catch {
+    return {
+      title: 'CaCatHead',
+    };
   }
 }
