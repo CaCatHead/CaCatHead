@@ -56,8 +56,7 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
     if contains('end_time'):
         end_time = payload['end_time']
         if end_time > contest.start_time:
-            if contest.freeze_time is None or 'freeze_time' in payload or end_time >= contest.freeze_time:
-                contest.end_time = end_time
+            contest.end_time = end_time
     if contains('freeze_time'):
         freeze_time = payload['freeze_time']
         if contest.start_time <= freeze_time <= contest.end_time:
