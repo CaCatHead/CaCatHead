@@ -78,7 +78,12 @@ def check_register_contest(user: User, contest_id: int) -> Contest:
                                                      permission=ContestPermissions.RegisterContest,
                                                      id=contest_id).first()
     if contest is not None:
-        return check_read_contest(user, contest_id)
+        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
+                                                     id=contest_id).first()
+        if contest is not None:
+            return contest
+        else:
+            raise NotFound(detail='比赛未找到或权限不足')
     else:
         raise NotFound(detail='比赛未找到或权限不足')
 
