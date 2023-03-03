@@ -72,6 +72,10 @@ const goSubmit = async (problem: Problem) => {
         </div>
         <ul mt4 space-y-2>
           <li>
+            <span font-bold mr2>赛制:</span>
+            <span>{{ contest.type.toLocaleUpperCase() }}</span>
+          </li>
+          <li>
             <span font-bold mr2>开始时间:</span
             ><span>{{ formatDateTime(contest.start_time) }}</span>
           </li>

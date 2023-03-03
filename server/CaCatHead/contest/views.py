@@ -17,7 +17,8 @@ from CaCatHead.contest.services.contest import make_contest, edit_contest_payloa
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
-from CaCatHead.contest.utils import contest_phase, ContestPhase
+from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole, contest_standings_phase, \
+    ContestStandingsPhase
 from CaCatHead.core.constants import Verdict
 from CaCatHead.core.decorators import func_validate_request, SubmitRateThrottle
 from CaCatHead.core.exceptions import BadRequest
@@ -58,27 +59,26 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
         contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
                                                      id=contest_id).first()
         if contest is not None:
-            if contest.is_started():
-                if contest.is_ended():
-                    # 比赛已经结束
+            match contest_phase(contest):
+                case ContestPhase.Before:
+                    raise NotFound(detail='比赛尚未开始')
+                case ContestPhase.Coding:
+                    match contest_role(contest, user):
+                        case ContestRole.Visitor:
+                            raise NotFound(detail='你尚未注册该比赛')
+                        case ContestRole.Participant | ContestRole.Admin:
+                            return contest
+                case ContestPhase.Finished:
                     return contest
-                elif ContestRegistration.objects.filter_register_user(contest).filter(id=user.id).count() > 0:
-                    # 比赛正在进行
-                    return contest
-                else:
-                    raise NotFound(detail='你尚未注册该比赛')
-            else:
-                raise NotFound(detail='比赛尚未开始')
-        else:
-            raise NotFound(detail='比赛未找到')
+        raise NotFound(detail='比赛未找到')
 
 
 def check_register_contest(user: User, contest_id: int) -> Contest:
-    contest = Contest.objects.filter_user_public(user=user,
-                                                 permission=ContestPermissions.RegisterContest,
-                                                 id=contest_id).first()
+    contest = Contest.objects.filter_user_permission(user=user,
+                                                     permission=ContestPermissions.RegisterContest,
+                                                     id=contest_id).first()
     if contest is not None:
-        return contest
+        return check_read_contest(user, contest_id)
     else:
         raise NotFound(detail='比赛未找到或权限不足')
 
@@ -381,20 +381,27 @@ def user_view_standings(request: Request, contest_id: int):
     registrations = ContestRegistration.objects.filter(contest=contest)
     response = make_response(registrations=ContestStandingSerializer(registrations, many=True).data)
 
-    if contest.has_admin_permission(request.user):
-        # 管理员可以查看榜单
-        return response
-    elif contest.is_running():
-        # 比赛进行中，必须打开设置才能查看榜单
-        if contest.enable_settings(ContestSettings.view_standings):
+    match contest_role(contest, request.user):
+        case ContestRole.Admin:
+            # 管理员可以查看榜单
             return response
-        else:
-            raise BadRequest(detail='您无权访问比赛榜单')
-    elif contest.is_ended():
-        # 比赛结束，可以查看榜单
-        return response
-    else:
-        raise BadRequest(detail='您无权访问比赛榜单')
+        case _:
+            match contest_standings_phase(contest):
+                case ContestStandingsPhase.Before:
+                    raise BadRequest(detail='您无权在比赛前访问榜单')
+                case ContestStandingsPhase.Running:
+                    # 比赛进行中，必须打开设置才能查看榜单
+                    if contest.enable_settings(ContestSettings.view_standings):
+                        return response
+                    else:
+                        raise BadRequest(detail='您无权访问比赛榜单')
+                case ContestStandingsPhase.Frozen:
+                    # TODO: frozen standings
+                    return response
+                case ContestStandingsPhase.Finished:
+                    # 比赛结束，可以查看榜单
+                    return response
+    raise BadRequest(detail='您无权访问比赛榜单')
 
 
 class RatingView(APIView):

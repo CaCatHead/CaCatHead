@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from CaCatHead.contest.models import Contest, ContestRegistration, Team, RatingLog
+from CaCatHead.contest.models import Contest, ContestRegistration, Team, RatingLog, ContestType
 from CaCatHead.problem.serializers import ProblemContentSerializer
 from CaCatHead.user.serializers import UserSerializer
 
@@ -13,6 +13,8 @@ class CreateContestPayloadSerializer(serializers.Serializer):
 
 class EditContestPayloadSerializer(serializers.Serializer):
     title = serializers.CharField(required=False, allow_null=True, max_length=64)
+
+    type = serializers.ChoiceField(required=False, allow_null=True, choices=ContestType.choices)
 
     description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 

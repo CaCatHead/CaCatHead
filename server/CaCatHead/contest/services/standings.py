@@ -3,6 +3,37 @@ from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 
 
+def is_submission_accepted(submission: ContestSubmission):
+    return submission.verdict == Verdict.Accepted
+
+
+def is_submission_wrong(submission: ContestSubmission):
+    return submission.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+
+
+def is_submission_concerned(submission: ContestSubmission):
+    """
+    只有 AC 或者错误提交，才会记录到排行榜的提交中
+    """
+    return submission.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
+                                  Verdict.IdlenessLimitExceeded,
+                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+
+
+def extract_submission(submission: ContestSubmission):
+    """
+    压缩榜单需要记录的信息
+    """
+    return {
+        'i': submission.id,
+        'p': submission.problem.display_id,
+        'v': submission.verdict,
+        'c': submission.created.isoformat(),
+        'r': submission.relative_time
+    }
+
+
 def refresh_icpc_standing(registration: ContestRegistration):
     contest = registration.contest
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository,
@@ -13,11 +44,12 @@ def refresh_icpc_standing(registration: ContestRegistration):
     dirty = 0  # 罚时，单位：秒
     standings = []
     accepted = set()
+    scores = dict()  # 每个题目的得分
     penalty = dict()
     penalty_unit = 20 * 60  # 单次罚时：20 分钟
     for sub in submissions:
         pid = sub.problem.display_id
-        if sub.verdict == Verdict.Accepted:
+        if is_submission_accepted(sub):
             # 第一次通过
             if pid not in accepted:
                 accepted.add(pid)
@@ -27,8 +59,7 @@ def refresh_icpc_standing(registration: ContestRegistration):
                     dirty += penalty[pid] * penalty_unit
                 else:
                     penalty[pid] = 0
-        elif sub.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                             Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+        elif is_submission_wrong(sub):
             skip_wrong = False
             try:
                 # WA1 不计入罚时
@@ -44,22 +75,20 @@ def refresh_icpc_standing(registration: ContestRegistration):
                 else:
                     penalty[pid] += 1
 
+        # 记录每个题的最高得分
+        if pid not in scores:
+            scores[pid] = sub.score
+        else:
+            scores[pid] = max(sub.score, scores[pid])
+
         # 只有 AC 或者错误提交，才会记录到排行榜的提交中
-        if sub.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                           Verdict.IdlenessLimitExceeded,
-                           Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]:
+        if is_submission_concerned(sub):
             # 压缩榜单需要记录的信息
-            standings.append({
-                'i': sub.id,
-                'p': sub.problem.display_id,
-                'v': sub.verdict,
-                'c': sub.created.isoformat(),
-                'r': sub.relative_time
-            })
+            standings.append(extract_submission(sub))
 
     registration.score = score
     registration.dirty = dirty
-    registration.standings = {'submissions': standings, 'penalty': penalty}
+    registration.standings = {'submissions': standings, 'scores': scores, 'penalty': penalty}
 
 
 def refresh_ioi_standing(registration: ContestRegistration):
@@ -68,18 +97,43 @@ def refresh_ioi_standing(registration: ContestRegistration):
                                                    owner=registration.team,
                                                    type=ContestSubmissionType.contestant
                                                    ).order_by('relative_time', 'judged').all()
-    score = 0
-    accepted = set()
+    score = 0  # 通过题数
+    dirty = 0  # 罚时，单位：秒
+    accepted = set()  # 通过的题目编号
+    scores = dict()  # 每个题目的得分
+    penalty = dict()  # 每个题目的 dirty 数量
+    standings = []  # 所有提交
     for sub in submissions:
         pid = sub.problem.display_id
-        if sub.verdict == Verdict.Accepted:
+        if is_submission_accepted(sub):
             if pid not in accepted:
                 accepted.add(pid)
-                score += sub.score
-        else:
-            pass
+                dirty += sub.relative_time
+                if pid not in penalty:
+                    penalty[pid] = 0
+        elif is_submission_wrong(sub):
+            # 添加罚时次数
+            if pid not in penalty:
+                penalty[pid] = 1
+            else:
+                penalty[pid] += 1
 
+        # 记录每个题的最高得分
+        if pid not in scores:
+            scores[pid] = sub.score
+        else:
+            scores[pid] = max(sub.score, scores[pid])
+
+        # 只有 AC 或者错误提交，才会记录到排行榜的提交中
+        if is_submission_concerned(sub):
+            # 压缩榜单需要记录的信息
+            standings.append(extract_submission(sub))
+
+    for _, value in scores.items():
+        score += value
     registration.score = score
+    registration.dirty = dirty
+    registration.standings = {'submissions': standings, 'scores': scores, 'penalty': penalty}
 
 
 def refresh_registration_standing(registration: ContestRegistration):

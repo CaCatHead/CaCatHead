@@ -44,9 +44,9 @@ const login = async () => {
 </script>
 
 <template>
-  <form class="block" @submit.prevent="login">
+  <div>
     <h2 text-2xl font-bold>登录</h2>
-    <div mt4>
+    <form class="block" @submit.prevent="login" mt4>
       <c-input
         id="username"
         type="text"
@@ -66,9 +66,9 @@ const login = async () => {
       >
         <template #label><label for="password">密码</label></template>
       </c-input>
-    </div>
+    </form>
     <div mt4>
       <c-button color="success" @click="login" :tab-index="3">登录</c-button>
     </div>
-  </form>
+  </div>
 </template>

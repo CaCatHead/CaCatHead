@@ -13,7 +13,7 @@ useHead({
   title: `比赛设置 - ${contest.value.title}`,
 });
 
-const title = ref(contest.value.title);
+
 
 const formatDatetime = (date: string) => {
   return format(new Date(date), `yyyy-MM-dd'T'HH:mm:SS`);
@@ -29,11 +29,13 @@ const formatDuration = () => {
   return h * 60 + m;
 };
 
+const title = ref(contest.value.title);
+
+const type = ref(contest.value.type);
+
 const start_time = ref(formatDatetime(contest.value.start_time));
 
 const duration = ref(formatDuration());
-
-// const problems = ref('');
 
 const description = ref(contest.value.description);
 
@@ -59,6 +61,7 @@ const submit = async () => {
         method: 'POST',
         body: {
           title: title.value,
+          type: type.value,
           description: description.value,
           start_time: start,
           end_time: end,
@@ -91,15 +94,16 @@ const submit = async () => {
     <c-input type="text" id="title" v-model="title">
       <template #label><span font-bold>比赛标题</span></template>
     </c-input>
+    <div>
+      <div font-bold mb2>比赛类型</div>
+      <c-select id="type" v-model="type" :options="['icpc', 'ioi']" :empty="false"></c-select>
+    </div>
     <c-input type="datetime-local" id="start_time" v-model="start_time">
       <template #label><span font-bold>比赛开始时间</span></template>
     </c-input>
     <c-input type="number" id="duration" v-model="duration">
       <template #label><span font-bold>比赛持续时间 (分钟)</span></template>
     </c-input>
-    <!-- <c-input type="text" id="problems" v-model="problems">
-      <template #label>题目列表 (使用 Polygon 题目编号, 逗号分隔)</template>
-    </c-input> -->
     <div flex items-center space-x-4>
       <span font-bold>是否公开</span>
       <c-switch id="is_public" v-model="is_public"></c-switch>
@@ -110,17 +114,11 @@ const submit = async () => {
     </div>
     <div flex items-center space-x-4>
       <span font-bold>是否开启赛后查看提交</span>
-      <c-switch
-        id="view_submissions_after_contest"
-        v-model="view_submissions_after_contest"
-      ></c-switch>
+      <c-switch id="view_submissions_after_contest" v-model="view_submissions_after_contest"></c-switch>
     </div>
     <div flex items-center space-x-4>
       <span font-bold>是否开启显示提交详情</span>
-      <c-switch
-        id="view_submission_checker_info"
-        v-model="view_submission_checker_info"
-      ></c-switch>
+      <c-switch id="view_submission_checker_info" v-model="view_submission_checker_info"></c-switch>
     </div>
     <div>
       <h4 mb2 font-bold>比赛描述</h4>
@@ -132,3 +130,9 @@ const submit = async () => {
     </div>
   </div>
 </template>
+
+<style>
+.c-select {
+  padding-left: 1rem !important;
+}
+</style>

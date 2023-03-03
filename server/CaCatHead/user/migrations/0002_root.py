@@ -3,14 +3,16 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db import migrations, models
 
-from CaCatHead.core.constants import NJUST_ICPC_GROUP
+from CaCatHead.core.constants import NJUST_ICPC_GROUP, GENERAL_USER_GROUP
 from CaCatHead.user.services import register_superuser
 
 
 def init_team_group(_apps, _schema_editor):
     """
-    初始化集训队成员 Group
+    初始化默认 Group
     """
+    user_group = Group(name=GENERAL_USER_GROUP)
+    user_group.save()
     team_group = Group(name=NJUST_ICPC_GROUP)
     team_group.save()
 

@@ -9,10 +9,11 @@ from rest_framework.exceptions import NotFound
 
 from CaCatHead.contest.models import Contest, ContestType, ContestSettings
 from CaCatHead.core.exceptions import BadRequest
-from CaCatHead.permission.constants import ProblemPermissions
-from CaCatHead.problem.models import ProblemRepository, Problem
+from CaCatHead.permission.constants import ProblemPermissions, ContestPermissions
+from CaCatHead.problem.models import ProblemRepository, Problem, ProblemTypes
 from CaCatHead.problem.views import copy_repo_problem
 from CaCatHead.problem.views.services import get_main_problem_repo
+from CaCatHead.user.services import get_general_user_group
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,10 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest.problem_repository = problem_repository
 
     contest.save()
+
+    # 默认开启注册权限
+    Contest.objects.grant_group_permission(get_general_user_group(), ContestPermissions.RegisterContest, contest.id)
+
     return contest
 
 
@@ -47,6 +52,8 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
 
     if contains('title'):
         contest.title = payload['title']
+    if contains('type'):
+        contest.type = payload['type']
     if contains('description'):
         contest.description = payload['description']
     if contains('start_time'):
@@ -54,8 +61,7 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
     if contains('end_time'):
         end_time = payload['end_time']
         if end_time > contest.start_time:
-            if contest.freeze_time is None or 'freeze_time' in payload or end_time >= contest.freeze_time:
-                contest.end_time = end_time
+            contest.end_time = end_time
     if contains('freeze_time'):
         freeze_time = payload['freeze_time']
         if contest.start_time <= freeze_time <= contest.end_time:
@@ -135,11 +141,17 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
 
     # 向题库中添加题目
     for (display_id, polygon_problem) in enumerate(polygon_problems):
+        # 推导题目类型，目前只支持 AC 和 Score 两种题目
+        problem_type = ProblemTypes.AC
+        if contest.type == ContestType.ioi:
+            problem_type = ProblemTypes.Score
+
         if polygon_problem.problem_info_id in problem_info_contest_problem:
             # 复用比赛中的旧题目
             new_problem = problem_info_contest_problem[polygon_problem.problem_info_id]
             new_problem.display_id = display_id
             new_problem.title = polygon_problem.title
+            new_problem.problem_type = problem_type  # 支持交互题
             new_problem.time_limit = polygon_problem.time_limit
             new_problem.memory_limit = polygon_problem.memory_limit
             new_problem.save()
@@ -147,8 +159,8 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
         else:
             # 添加新的比赛题目
             copy_repo_problem(user=contest.owner, repo=contest.problem_repository,
-                              problem=polygon_problem, display_id=display_id)
+                              problem=polygon_problem, display_id=display_id, problem_type=problem_type)
 
-    contest.extra_info['polygon_problems'] = [{'id': p.id} for p in polygon_problems]
+    contest.extra_info['polygon_problems'] = [{'display_id': p.display_id} for p in polygon_problems]
 
     return contest

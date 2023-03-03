@@ -27,7 +27,7 @@ const pid = ref(1);
 
 const problems = ref(
   [...contest.value.problems].map((p, idx) => ({
-    polygon_id: unref(extra_info?.polygon_problems?.[idx].id) ?? -1,
+    polygon_id: unref(extra_info?.polygon_problems?.[idx].display_id) ?? -1,
     ...p,
   }))
 );
@@ -125,36 +125,19 @@ const save = async () => {
           <span font-bold>Polygon 题目编号</span>
         </template>
         <template #end>
-          <c-button ml4 color="success" variant="outline" @click="addProblem"
-            >添加</c-button
-          >
+          <c-button ml4 color="success" variant="outline" @click="addProblem">添加</c-button>
         </template>
       </c-input>
     </div>
-    <problem-list
-      :problems="problems"
-      :problem-index="(_row, index) => displyaIdToIndex(index)"
-      :problem-link="
-        row =>
-          `/contest/${route.params.id}/problem/${displyaIdToIndex(
-            row.display_id
-          )}`
-      "
-      operation-width="100px"
-    >
+    <problem-list :problems="problems" :problem-index="(_row, index) => displyaIdToIndex(index)" :problem-link="
+      row =>
+        `/contest/${route.params.id}/problem/${displyaIdToIndex(
+          row.display_id
+        )}`
+    " operation-width="100px">
       <template #operation="{ row, index }">
-        <c-button
-          color="warning"
-          variant="text"
-          icon="i-carbon-fire"
-          @click="prepareProblem(row, index)"
-        ></c-button>
-        <c-button
-          color="danger"
-          variant="text"
-          icon="i-carbon-delete"
-          @click="removeProblem(row, index)"
-        ></c-button>
+        <c-button color="warning" variant="text" icon="i-carbon-fire" @click="prepareProblem(row, index)"></c-button>
+        <c-button color="danger" variant="text" icon="i-carbon-delete" @click="removeProblem(row, index)"></c-button>
       </template>
     </problem-list>
     <div w-full>

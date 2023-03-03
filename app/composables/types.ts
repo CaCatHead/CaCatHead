@@ -73,6 +73,8 @@ export interface Contest {
 
   title: string;
 
+  type: 'icpc' | 'ioi';
+
   start_time: string;
 
   end_time: string;
@@ -83,7 +85,7 @@ export interface Contest {
 }
 
 export interface ContestExtraInfo {
-  polygon_problems?: Array<{ id: number }>;
+  polygon_problems?: Array<{ display_id: number }>;
 }
 
 export type FullContest = Contest & {
@@ -294,6 +296,7 @@ export interface ContestStanding {
   is_participate: boolean;
 
   standings: {
+    scores: Record<string, number>;
     penalty?: Record<string, number>;
     submissions?: ContestStandingSubmission[];
   };
