@@ -29,7 +29,11 @@ function toNumDuration(seconds: number) {
     sm:p4
     select-none
     cursor-pointer
-    :class="[result.first && 'bg-[#E0FFE4] dark:bg-[#065c00]']"
+    :class="[
+      'w-auto',
+      'inline-block',
+      result.first && 'bg-[#E0FFE4] dark:bg-[#065c00]',
+    ]"
   >
     <div v-if="result.ok" inline-block>
       <div

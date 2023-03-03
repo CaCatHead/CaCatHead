@@ -214,7 +214,6 @@ const formatProgress = (value: number) => {
 
       <template v-for="idx in alphabet" #[idx]="{ row }">
         <standing-result
-          class="w-full h-full"
           :type="contest.type"
           :result="row.standings?.problems[idx]"
           @click="handleShowSubmissions(row, idx)"
