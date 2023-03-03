@@ -8,7 +8,7 @@ from django.utils import timezone
 from CaCatHead.core.constants import MAIN_PROBLEM_REPOSITORY as MAIN_PROBLEM_REPOSITORY_NAME
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.problem.models import Problem, ProblemInfo, ProblemContent, ProblemJudge, \
-    ProblemRepository, SourceCode, SourceCodeTypes, DefaultCheckers
+    ProblemRepository, SourceCode, SourceCodeTypes, DefaultCheckers, ProblemTypes
 from CaCatHead.problem.serializers import EditProblemPayload, TestcaseInfoPayload
 from CaCatHead.problem.views.upload import upload_problem_arch, ProblemDirectory
 
@@ -216,7 +216,8 @@ def save_arch_to_database(problem: Problem, problem_directory: ProblemDirectory)
             problem.problem_info.problem_judge.save()
 
 
-def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, display_id=None):
+def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem,
+                      display_id: int = None, problem_type: ProblemTypes = None):
     """
     移动 Polygon Problem 到 repo
     """
@@ -237,6 +238,9 @@ def copy_repo_problem(user: User, repo: ProblemRepository, problem: Problem, dis
                           extra_info=problem.extra_info,
                           owner=user,
                           is_public=False)
+    if problem_type is not None:
+        new_problem.problem_type = problem_type
+
     new_problem.save()
     repo.problems.add(new_problem)
     return new_problem

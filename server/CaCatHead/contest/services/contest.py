@@ -10,7 +10,7 @@ from rest_framework.exceptions import NotFound
 from CaCatHead.contest.models import Contest, ContestType, ContestSettings
 from CaCatHead.core.exceptions import BadRequest
 from CaCatHead.permission.constants import ProblemPermissions
-from CaCatHead.problem.models import ProblemRepository, Problem
+from CaCatHead.problem.models import ProblemRepository, Problem, ProblemTypes
 from CaCatHead.problem.views import copy_repo_problem
 from CaCatHead.problem.views.services import get_main_problem_repo
 
@@ -136,11 +136,17 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
 
     # 向题库中添加题目
     for (display_id, polygon_problem) in enumerate(polygon_problems):
+        # 推导题目类型，目前只支持 AC 和 Score 两种题目
+        problem_type = ProblemTypes.AC
+        if contest.type == ContestType.ioi:
+            problem_type = ProblemTypes.Score
+
         if polygon_problem.problem_info_id in problem_info_contest_problem:
             # 复用比赛中的旧题目
             new_problem = problem_info_contest_problem[polygon_problem.problem_info_id]
             new_problem.display_id = display_id
             new_problem.title = polygon_problem.title
+            new_problem.problem_type = problem_type  # 支持交互题
             new_problem.time_limit = polygon_problem.time_limit
             new_problem.memory_limit = polygon_problem.memory_limit
             new_problem.save()
@@ -148,7 +154,7 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
         else:
             # 添加新的比赛题目
             copy_repo_problem(user=contest.owner, repo=contest.problem_repository,
-                              problem=polygon_problem, display_id=display_id)
+                              problem=polygon_problem, display_id=display_id, problem_type=problem_type)
 
     contest.extra_info['polygon_problems'] = [{'id': p.id} for p in polygon_problems]
 
