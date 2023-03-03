@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const logo = useAppConfig().logo;
 const title = useAppConfig().title;
 
 const route = useRoute();
@@ -102,7 +103,7 @@ const commit = useAppConfig().COMMIT_SHA;
         <div h-full flex items-center>
           <NuxtLink to="/" h-full flex items-center select-none cursor-pointer>
             <nuxt-img
-              src="/favicon.png"
+              :src="logo"
               alt="CaCatHead Icon"
               h-full
               preset="default"

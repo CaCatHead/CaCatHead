@@ -225,16 +225,19 @@ function cacheControlHeader(time: number) {
 }
 
 function getAppConfig() {
+  const defaults = {
+    title: 'CaCatHead',
+    logo: '/favicon.png',
+  };
   try {
     const d = fileURLToPath(import.meta.url);
     const t = fs.readFileSync(path.join(d, '../cacathead.json'), 'utf-8');
     const c = JSON.parse(t);
     return {
-      title: c.title,
+      title: c.title ?? defaults.title,
+      logo: c.logo ?? defaults.logo,
     };
   } catch {
-    return {
-      title: 'CaCatHead',
-    };
+    return defaults;
   }
 }
