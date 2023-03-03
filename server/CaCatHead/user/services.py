@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import User, Group
 from django.db import IntegrityError
 
@@ -5,6 +7,8 @@ from .models import UserInfo, StudentInfo
 from ..contest.services.registration import make_single_user_team
 from ..core.constants import GENERAL_USER_GROUP
 from ..core.exceptions import BadRequest
+
+logger = logging.getLogger(__name__)
 
 
 def get_general_user_group() -> Group:
@@ -38,6 +42,7 @@ def register_student_user(username: str, email: str, password: str):
 
         return user
     except IntegrityError as error:
+        logger.error(error)
         message = '未知的数据库错误'
         if type(error.args) == tuple and len(error.args) > 0:
             if error.args[0] == 'UNIQUE constraint failed: auth_user.username':
@@ -63,6 +68,7 @@ def register_superuser(username: str, email: str, password: str):
 
         return user
     except IntegrityError as error:
+        logger.error(error)
         message = '未知的数据库错误'
         if type(error.args) == tuple and len(error.args) > 0:
             if error.args[0] == 'UNIQUE constraint failed: auth_user.username':
