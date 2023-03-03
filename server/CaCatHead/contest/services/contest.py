@@ -156,6 +156,6 @@ def edit_contest_problems(user: User, contest: Contest, problems: list[str]):
             copy_repo_problem(user=contest.owner, repo=contest.problem_repository,
                               problem=polygon_problem, display_id=display_id, problem_type=problem_type)
 
-    contest.extra_info['polygon_problems'] = [{'id': p.id} for p in polygon_problems]
+    contest.extra_info['polygon_problems'] = [{'display_id': p.display_id} for p in polygon_problems]
 
     return contest

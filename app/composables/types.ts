@@ -85,7 +85,7 @@ export interface Contest {
 }
 
 export interface ContestExtraInfo {
-  polygon_problems?: Array<{ id: number }>;
+  polygon_problems?: Array<{ display_id: number }>;
 }
 
 export type FullContest = Contest & {
