@@ -1,9 +1,9 @@
 from enum import Enum
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from CaCatHead.contest.models import Contest, ContestRegistration
-from CaCatHead.core.celery.config import timezone
 
 
 class ContestRole(Enum):
