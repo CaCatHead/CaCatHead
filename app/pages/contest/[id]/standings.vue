@@ -160,6 +160,7 @@ const registrations = computed(() => {
 });
 
 const timestamp = useServerTimestamp();
+const startTime = new Date(contest.value.start_time!).getTime();
 const endTime = new Date(contest.value.end_time!).getTime();
 const formatProgress = (value: number) => {
   function alignNumber(value: number) {
@@ -180,7 +181,23 @@ const formatProgress = (value: number) => {
       <div hidden lt-sm:block>排行榜</div>
     </h3>
     <client-only>
-      <div v-if="timestamp <= endTime" mt4 text-center text-base-500 font-mono>
+      <div
+        v-if="timestamp <= startTime"
+        mt4
+        text-center
+        text-base-500
+        font-mono
+      >
+        <span>比赛开始还有 </span>
+        <span>{{ formatProgress(startTime - timestamp) }}</span>
+      </div>
+      <div
+        v-else-if="timestamp <= endTime"
+        mt4
+        text-center
+        text-base-500
+        font-mono
+      >
         <span>比赛结束还有 </span>
         <span>{{ formatProgress(endTime - timestamp) }}</span>
       </div>
