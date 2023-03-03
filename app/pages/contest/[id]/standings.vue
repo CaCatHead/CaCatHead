@@ -133,6 +133,18 @@ const registrations = computed(() => {
 
   return items;
 });
+
+const timestamp = useServerTimestamp();
+const endTime = new Date(contest.value.end_time!).getTime();
+const formatProgress = (value: number) => {
+  function alignNumber(value: number) {
+    return (value < 10 ? '0' : '') + value;
+  }
+  const h = Math.floor(value / 3600000);
+  const m = Math.floor((value % 3600000) / 60000);
+  const s = Math.floor((value % 60000) / 1000);
+  return `${h}:${alignNumber(m)}:${alignNumber(s)}`;
+};
 </script>
 
 <template>
@@ -142,6 +154,16 @@ const registrations = computed(() => {
       <div hidden lt-sm:block>{{ contest.title }}</div>
       <div hidden lt-sm:block>排行榜</div>
     </h3>
+    <client-only>
+      <div v-if="timestamp <= endTime" mt4 text-center text-base-500 font-mono>
+        <span>比赛结束还有 </span>
+        <span>{{ formatProgress(endTime - timestamp) }}</span>
+      </div>
+      <div v-else mt4 text-center text-base-500>比赛已结束</div>
+      <template #fallback>
+        <div mt4 h8></div>
+      </template>
+    </client-only>
     <c-table :data="registrations" mt8 :row-class="checkMyself">
       <template #headers>
         <c-table-header name="rank" width="80">#</c-table-header>
