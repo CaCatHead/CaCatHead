@@ -105,12 +105,14 @@ public class Main {
       <q-a>
         <template #q>这是什么网站？</template>
         <template #a
-          >这是<a
+          >这是 {{ title }}，由开源的在线评测系统
+          <a
             href="https://github.com/CaCatHead/CaCatHead"
             text-link
             target="_blank"
             >猫猫头</a
-          >，是一个开源的在线评测系统。虽然目前尚未开源，因为项目仍在快速迭代中，计划在到达一定完成度后开源。</template
+          >
+          驱动。虽然目前尚未开源，因为项目仍在快速迭代中，计划在到达一定完成度后开源。</template
         >
       </q-a>
       <q-a v-if="!!data?.nodes">
