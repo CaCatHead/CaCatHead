@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const images = useAppConfig().images;
+const title = useAppConfig().title;
+
 const route = useRoute();
 
 const isDark = useDark();
@@ -100,12 +103,12 @@ const commit = useAppConfig().COMMIT_SHA;
         <div h-full flex items-center>
           <NuxtLink to="/" h-full flex items-center select-none cursor-pointer>
             <nuxt-img
-              src="/favicon.png"
+              :src="images.logo"
               alt="CaCatHead Icon"
               h-full
               preset="default"
             />
-            <span ml4 lt-md:ml1 text-2xl font-bold>CaCatHead</span>
+            <span ml4 lt-md:ml1 text-2xl font-bold>{{ title }}</span>
           </NuxtLink>
           <div flex-auto></div>
           <div>

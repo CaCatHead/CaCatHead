@@ -5,6 +5,8 @@ useHead({
   title: '帮助',
 });
 
+const title = useAppConfig().title;
+
 const { data } = await useFetchAPI<{ nodes: JudgeNode[] }>(`/api/judge/nodes`);
 
 const compiler = [
@@ -103,12 +105,14 @@ public class Main {
       <q-a>
         <template #q>这是什么网站？</template>
         <template #a
-          >这是<a
+          >这是 {{ title }}，由开源的在线评测系统
+          <a
             href="https://github.com/CaCatHead/CaCatHead"
             text-link
             target="_blank"
             >猫猫头</a
-          >，是一个开源的在线评测系统。虽然目前尚未开源，因为项目仍在快速迭代中，计划在到达一定完成度后开源。</template
+          >
+          驱动。虽然目前尚未开源，因为项目仍在快速迭代中，计划在到达一定完成度后开源。</template
         >
       </q-a>
       <q-a v-if="!!data?.nodes">
@@ -127,7 +131,7 @@ public class Main {
         </template>
       </q-a>
       <q-a>
-        <template #q>CaCatHead Online Judge 支持哪些语言？</template>
+        <template #q>{{ title }} 在线评测系统支持哪些语言？</template>
         <template #a>
           <div space-y-2 w-full>
             <div>目前为止，你可以使用 C, C++, Java。</div>

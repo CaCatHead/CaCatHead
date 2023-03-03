@@ -1,6 +1,6 @@
 # SSL Certificate
 
-This directory contains SSL certificate and certificate key. 
+This directory contains SSL certificate and certificate key.
 
 It will be mapped into `/root/cert` of the nginx container.
 

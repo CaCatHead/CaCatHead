@@ -70,6 +70,10 @@ export default defineConfig({
               text: '使用文档',
               link: '/usage/',
             },
+            {
+              text: '系统配置',
+              link: '/usage/config',
+            },
           ],
         },
         {

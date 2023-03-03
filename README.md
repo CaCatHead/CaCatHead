@@ -56,19 +56,13 @@ $ echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbit
 ### Deploy locally
 
 ```bash
-# Deploy docker
-$ docker compose up -d
-# or
+# Deploy docker compose
 $ ./manage.sh up
 
 # See container logs
-$ docker compose logs -f
-# or
 $ ./manage.sh logs
 
 # Rebuild and Restart service
-$ docker compose up --build -d
-# or
 $ ./manage.sh up
 ```
 
@@ -114,8 +108,6 @@ server:
 Finally, docker compose up.
 
 ```bash
-$ docker compose up --build -d
-# or
 $ ./manage.sh up
 ```
 

@@ -9,6 +9,8 @@ import {
 } from 'unocss';
 
 import * as fs from 'fs-extra';
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // This is the django server
 const API_BASE = process.env['API_BASE'] ?? 'http://127.0.0.1:8000';
@@ -56,6 +58,7 @@ export default defineNuxtConfig({
   appConfig: {
     SHIKI_CDN,
     COMMIT_SHA,
+    ...getAppConfig(),
   },
   runtimeConfig: {
     API_BASE,
@@ -218,5 +221,43 @@ function cacheControlHeader(time: number) {
     };
   } else {
     return {};
+  }
+}
+
+function getAppConfig() {
+  const defaults = {
+    title: 'CaCatHead',
+    description: 'CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。',
+    images: {
+      logo: '/favicon.png',
+      announcement: '/ccpc.png',
+    },
+    home: {
+      rating: true,
+      recentPost: true,
+      recentContest: true,
+    },
+  };
+  try {
+    const d = fileURLToPath(import.meta.url);
+    const t = fs.readFileSync(path.join(d, '../cacathead.json'), 'utf-8');
+    const c = JSON.parse(t);
+    return {
+      title: (c.title as string) ?? defaults.title,
+      description: defaults.description,
+      images: {
+        logo: (c.images.logo as string) ?? defaults.images.logo,
+        announcement:
+          (c.images.announcement as string) ?? defaults.images.announcement,
+      },
+      home: {
+        rating: (c.home.rating as boolean) ?? defaults.home.rating,
+        recentPost: (c.home.recentPost as boolean) ?? defaults.home.recentPost,
+        recentContest:
+          (c.home.recentContest as boolean) ?? defaults.home.recentContest,
+      },
+    };
+  } catch {
+    return defaults;
   }
 }

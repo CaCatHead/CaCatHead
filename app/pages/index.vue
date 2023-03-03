@@ -5,6 +5,10 @@ useHead({
   title: '主页',
 });
 
+const images = useAppConfig().images;
+const description = useAppConfig().description;
+const home = useAppConfig().home;
+
 const { data } = await useFetchAPI<{
   top_users: User[];
   posts: Post[];
@@ -21,17 +25,21 @@ const posts = ref(data.value?.posts ?? []);
       <PostList :posts="posts"></PostList>
     </div>
     <div w="3/8" lt-md:w-full space-y-8>
-      <div shadow-box rounded>
+      <div shadow-box rounded v-if="description && description.length > 0">
         <h3 border="b-1 base" p4 text-xl font-bold>公告牌</h3>
         <div p4>
-          <p>CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。</p>
+          <p>{{ description }}</p>
           <p mt4>
-            <nuxt-img src="/ccpc.png" alt="Cat CPC" preset="default" />
+            <nuxt-img
+              :src="images.announcement"
+              alt="CaCatHead Announcement"
+              preset="default"
+            />
           </p>
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.recentContest" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-calendar></span>
           <span>最近比赛</span>
@@ -55,7 +63,7 @@ const posts = ref(data.value?.posts ?? []);
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.rating" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-user-avatar></span>
           <span>牛逼网友</span>
@@ -76,7 +84,7 @@ const posts = ref(data.value?.posts ?? []);
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.recentPost" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-recently-viewed></span>
           <span>最新动态</span>

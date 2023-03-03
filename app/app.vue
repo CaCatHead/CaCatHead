@@ -1,9 +1,9 @@
 <script setup lang="ts">
+const BaseTitle = useAppConfig().title;
+
 useHead({
   titleTemplate(title) {
-    return title && title !== 'CaCatHead'
-      ? `${title} - CaCatHead`
-      : 'CaCatHead';
+    return title && title !== BaseTitle ? `${title} - ${BaseTitle}` : BaseTitle;
   },
 });
 </script>
