@@ -73,6 +73,8 @@ export interface Contest {
 
   title: string;
 
+  type: string;
+
   start_time: string;
 
   end_time: string;
