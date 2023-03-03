@@ -7,6 +7,7 @@ useHead({
 
 const images = useAppConfig().images;
 const description = useAppConfig().description;
+const home = useAppConfig().home;
 
 const { data } = await useFetchAPI<{
   top_users: User[];
@@ -38,7 +39,7 @@ const posts = ref(data.value?.posts ?? []);
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.recentContest" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-calendar></span>
           <span>最近比赛</span>
@@ -62,7 +63,7 @@ const posts = ref(data.value?.posts ?? []);
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.rating" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-user-avatar></span>
           <span>牛逼网友</span>
@@ -83,7 +84,7 @@ const posts = ref(data.value?.posts ?? []);
         </div>
       </div>
 
-      <div shadow-box rounded>
+      <div v-if="home.recentPost" shadow-box rounded>
         <h3 border="b-1 base" p4 text-xl font-bold flex items-center gap1>
           <span i-carbon-recently-viewed></span>
           <span>最新动态</span>

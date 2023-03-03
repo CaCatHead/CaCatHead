@@ -232,6 +232,11 @@ function getAppConfig() {
       logo: '/favicon.png',
       announcement: '/ccpc.png',
     },
+    home: {
+      rating: true,
+      recentPost: true,
+      recentContest: true,
+    },
   };
   try {
     const d = fileURLToPath(import.meta.url);
@@ -244,6 +249,12 @@ function getAppConfig() {
         logo: (c.images.logo as string) ?? defaults.images.logo,
         announcement:
           (c.images.announcement as string) ?? defaults.images.announcement,
+      },
+      home: {
+        rating: (c.home.rating as boolean) ?? defaults.home.rating,
+        recentPost: (c.home.recentPost as boolean) ?? defaults.home.recentPost,
+        recentContest:
+          (c.home.recentContest as boolean) ?? defaults.home.recentContest,
       },
     };
   } catch {
