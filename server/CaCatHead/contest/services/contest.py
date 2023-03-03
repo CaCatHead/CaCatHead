@@ -47,6 +47,8 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
 
     if contains('title'):
         contest.title = payload['title']
+    if contains('type'):
+        contest.type = payload['type']
     if contains('description'):
         contest.description = payload['description']
     if contains('start_time'):
