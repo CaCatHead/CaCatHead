@@ -228,7 +228,10 @@ function getAppConfig() {
   const defaults = {
     title: 'CaCatHead',
     description: 'CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。',
-    logo: '/favicon.png',
+    images: {
+      logo: '/favicon.png',
+      announcement: '/ccpc.png',
+    },
   };
   try {
     const d = fileURLToPath(import.meta.url);
@@ -237,7 +240,11 @@ function getAppConfig() {
     return {
       title: (c.title as string) ?? defaults.title,
       description: defaults.description,
-      logo: (c.logo as string) ?? defaults.logo,
+      images: {
+        logo: (c.images.logo as string) ?? defaults.images.logo,
+        announcement:
+          (c.images.announcement as string) ?? defaults.images.announcement,
+      },
     };
   } catch {
     return defaults;

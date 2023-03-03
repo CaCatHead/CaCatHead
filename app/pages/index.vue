@@ -5,6 +5,7 @@ useHead({
   title: '主页',
 });
 
+const images = useAppConfig().images;
 const description = useAppConfig().description;
 
 const { data } = await useFetchAPI<{
@@ -28,7 +29,11 @@ const posts = ref(data.value?.posts ?? []);
         <div p4>
           <p>{{ description }}</p>
           <p mt4>
-            <nuxt-img src="/ccpc.png" alt="Cat CPC" preset="default" />
+            <nuxt-img
+              :src="images.announcement"
+              alt="CaCatHead Announcement"
+              preset="default"
+            />
           </p>
         </div>
       </div>

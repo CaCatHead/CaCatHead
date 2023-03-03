@@ -1,5 +1,8 @@
 {
   "title": "CaCatHead",
   "description": "CaCatHead 是一个开源的在线评测系统，目前仍在开发过程中。",
-  "logo": "/favicon.png"
+  "images": {
+    "logo": "/favicon.png",
+    "announcement": "/ccpc.png"
+  }
 }
