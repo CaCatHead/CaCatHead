@@ -34,6 +34,7 @@ const Verdicts = [
   Verdict.OutputLimitExceeded,
   Verdict.RuntimeError,
   Verdict.CompileError,
+  Verdict.PartiallyCorrect,
   Verdict.SystemError,
   Verdict.JudgeError,
   Verdict.TestCaseError,
