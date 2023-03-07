@@ -293,6 +293,12 @@ public class Main {
             </li>
             <li>
               <display-verdict
+                :verdict="Verdict.PartiallyCorrect"
+              ></display-verdict
+              >：<span>在 OI 赛制下，提交返回了多种不同的错误结果；</span>
+            </li>
+            <li>
+              <display-verdict
                 :verdict="Verdict.OutputLimitExceeded"
               ></display-verdict
               >：<span
