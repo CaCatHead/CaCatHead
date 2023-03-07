@@ -227,7 +227,14 @@ const formatProgress = (value: number) => {
       <template #name="{ row }">
         <team-link :team="row.team" :name="row.name"></team-link>
       </template>
-      <template #penalty="{ row }">{{ toNumDuration(row.dirty) }}</template>
+      <template #score="{ row }">
+        <span font-bold>{{ row.score }}</span></template
+      >
+      <template #penalty="{ row }"
+        ><span light:text-gray-600>{{
+          toNumDuration(row.dirty)
+        }}</span></template
+      >
 
       <template v-for="idx in alphabet" #[idx]="{ row }">
         <standing-result
