@@ -40,6 +40,9 @@ const color = computed(() => {
   color: black;
   font-weight: bold;
 }
+.dark .rating {
+  color: white;
+}
 
 .rating.rainbow {
   background-image: linear-gradient(
@@ -56,6 +59,9 @@ const color = computed(() => {
 
 .rating.legendary-grandmaster::first-letter {
   color: black !important;
+}
+.dark .rating.legendary-grandmaster::first-letter {
+  color: white !important;
 }
 
 .rating.legendary-grandmaster,
