@@ -205,8 +205,13 @@ def user_register_contest(request: Request, contest_id: int):
 @permission_classes([IsAuthenticated])
 def import_registrations(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
-    generate_registrations(contest, request.data)
-    return make_response()
+
+    match contest_phase(contest):
+        case ContestPhase.Before:
+            generate_registrations(contest, request.data)
+            return make_response()
+        case ContestPhase.Coding | ContestPhase.Finished:
+            raise BadRequest(detail='比赛开始后无法导入队伍')
 
 
 @api_view(['POST'])
