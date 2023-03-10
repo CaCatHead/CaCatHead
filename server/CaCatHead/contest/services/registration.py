@@ -1,6 +1,12 @@
+import logging
+
 from django.contrib.auth.models import User
 
 from CaCatHead.contest.models import Team, ContestRegistration, Contest
+from CaCatHead.core.exceptions import BadRequest
+from CaCatHead.user.services import register_student_user
+
+logger = logging.getLogger(__name__)
 
 
 def make_single_user_team(user: User) -> Team:
@@ -28,3 +34,22 @@ def single_user_register(user: User, contest: Contest, name: str = None, extra_i
     registration.extra_info = extra_info
     registration.save()
     return registration
+
+
+def generate_registrations(contest: Contest, payload):
+    registrations = payload['registrations']
+    if not isinstance(registrations, list):
+        raise BadRequest('输入表格格式非法')
+
+    for p in registrations:
+        username = p['username']
+        password = p['password']
+        nickname = p['team']
+        meta = p['meta']
+
+        try:
+            user = register_student_user(username, f'{username}@cacathead.cn', password, nickname=nickname)
+            single_user_register(user, contest, nickname, meta)
+        except Exception as ex:
+            logger.error(ex)
+            raise BadRequest(f'{nickname} 注册失败')

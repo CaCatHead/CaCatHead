@@ -15,7 +15,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
     UserRegisterPayloadSerializer, ContestStandingSerializer, RatingLogSerializer
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
-from CaCatHead.contest.services.registration import single_user_register, make_single_user_team
+from CaCatHead.contest.services.registration import single_user_register, make_single_user_team, generate_registrations
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
 from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole, contest_standings_phase, \
     ContestStandingsPhase
@@ -205,6 +205,7 @@ def user_register_contest(request: Request, contest_id: int):
 @permission_classes([IsAuthenticated])
 def import_registrations(request: Request, contest_id: int):
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
+    generate_registrations(contest, request.data)
     return make_response()
 
 

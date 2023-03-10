@@ -29,18 +29,28 @@ const uploadTeams = async () => {
     trim: true,
   }) as any[];
 
-  const list: Array<{ name: string; meta: Record<string, string> }> = [];
+  const list: Array<{
+    team: string;
+    username: string;
+    password: string;
+    meta: Record<string, string>;
+  }> = [];
   for (const item of result) {
     const add = (key: string) => {
       if (key in item) {
-        const name = item[key];
+        const team = item[key];
+        const username = item['用户名'] ?? `contest${route.params.id}_${team}`;
+        const password = item['密码'];
         delete item[key];
-        list.push({ name, meta: { ...item } });
+        delete item['用户名'];
+        delete item['密码'];
+        list.push({ team, username, password, meta: { ...item } });
         return true;
       } else {
         return false;
       }
     };
+
     add('队名') ||
       add('队伍') ||
       add('姓名') ||
