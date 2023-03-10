@@ -7,7 +7,7 @@ import type {
 
 const route = useRoute();
 
-const { data: contest } = await useFetchAPI<{
+const { data: contest, refresh: refreshContest } = await useFetchAPI<{
   contest: FullContest;
   solved: Record<string, boolean>;
   registration: Registration | null;
@@ -61,6 +61,7 @@ if (
       :registration="contest.registration"
       :admin="contest.is_admin"
       :extra_info="contest.extra_info"
+      @refresh-contest="() => refreshContest()"
     />
   </div>
 </template>

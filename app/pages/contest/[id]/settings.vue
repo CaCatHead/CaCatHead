@@ -7,6 +7,8 @@ const route = useRoute();
 
 const props = defineProps<{ contest: FullContest }>();
 
+const emit = defineEmits(['refresh-contest']);
+
 const { contest } = toRefs(props);
 
 useHead({
@@ -75,6 +77,7 @@ const submit = async () => {
 
     contest.value.title = title.value;
     contest.value.description = description.value;
+    emit('refresh-contest');
 
     notify.success(`比赛 ${contest.value.title} 修改成功`);
     await navigateTo(`/contest/${route.params.id}`);
