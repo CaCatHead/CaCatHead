@@ -71,6 +71,10 @@ export default defineConfig({
               link: '/usage/',
             },
             {
+              text: '使用文档',
+              link: '/usage/contest',
+            },
+            {
               text: '系统配置',
               link: '/usage/config',
             },
