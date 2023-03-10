@@ -219,11 +219,9 @@ snapshots['UserAuthTests::test_multi_login_logoutall 9'] = {
     'username': 'cacathead'
 }
 
-snapshots[
-    'UserAuthTests::test_password_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
+snapshots['UserAuthTests::test_password_error 1'] = '用户名或者密码错误'
 
-snapshots[
-    'UserAuthTests::test_username_error 1'] = "{'non_field_errors': [ErrorDetail(string='无法使用提供的认证信息登录。', code='invalid')]}"
+snapshots['UserAuthTests::test_username_error 1'] = '用户名或者密码错误'
 
 snapshots['UserRegisterTests::test_register 1'] = {
     'status': 'ok',
