@@ -24,7 +24,7 @@ export const fetchAPI = <T>(
     // @ts-ignore
     async onResponseError({ response }) {
       if (!options?.notify) return;
-      if (response.status === 400) {
+      if (response.status === 400 || response.status === 404) {
         console.log(response._data);
         if (typeof response?._data?.detail === 'string') {
           options.notify.danger(response?._data?.detail);

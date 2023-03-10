@@ -73,21 +73,6 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
         raise NotFound(detail='比赛未找到')
 
 
-def check_register_contest(user: User, contest_id: int) -> Contest:
-    contest = Contest.objects.filter_user_permission(user=user,
-                                                     permission=ContestPermissions.RegisterContest,
-                                                     id=contest_id).first()
-    if contest is not None:
-        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
-                                                     id=contest_id).first()
-        if contest is not None:
-            return contest
-        else:
-            raise NotFound(detail='比赛未找到或权限不足')
-    else:
-        raise NotFound(detail='比赛未找到或权限不足')
-
-
 def check_contest(user: User, contest_id: int, permission: str) -> Contest:
     contest = Contest.objects.filter_user_permission(user=user, permission=permission, id=contest_id).first()
     if contest is not None:
@@ -180,6 +165,23 @@ class ContestRegistrationView(APIView):
 
     def post(self, request: Request, contest_id: int):
         return make_response()
+
+
+def check_register_contest(user: User, contest_id: int) -> Contest:
+    contest = Contest.objects.filter_user_permission(user=user,
+                                                     permission=ContestPermissions.RegisterContest,
+                                                     id=contest_id).first()
+    if contest is not None:
+        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
+                                                     id=contest_id).first()
+        if contest is not None:
+            return contest
+        else:
+            raise NotFound(detail='比赛访问权限不足')
+    elif Contest.objects.filter(id=contest_id).first() is not None:
+        raise NotFound(detail='没有该比赛的注册权限')
+    else:
+        raise NotFound(detail='比赛未找到')
 
 
 @api_view(['POST'])
