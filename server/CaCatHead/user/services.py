@@ -65,7 +65,7 @@ def register_superuser(username: str, email: str, password: str):
         student_info.save()
 
         # 创建代表用户自己的团队，用于个人参加比赛
-        make_single_user_team(user)
+        # make_single_user_team(user)
 
         return user
     except IntegrityError as error:
