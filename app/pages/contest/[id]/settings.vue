@@ -69,6 +69,7 @@ const submit = async () => {
           end_time: end,
           is_public: is_public.value,
           enable_registering: enable_registering.value,
+          enable_unregistering: enable_unregistering.value,
           view_standings: view_standings.value,
           view_submissions_after_contest: view_submissions_after_contest.value,
           view_submission_checker_info: view_submission_checker_info.value,
