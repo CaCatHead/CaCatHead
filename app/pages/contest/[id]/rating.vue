@@ -5,7 +5,7 @@ const notify = useNotification();
 
 const route = useRoute();
 
-const props = defineProps<{ contest: FullContest }>();
+const props = defineProps<{ contest: FullContest; admin: boolean }>();
 
 const { contest } = toRefs(props);
 
@@ -59,7 +59,7 @@ const deleteRating = async () => {
 
 <template>
   <div space-y-4>
-    <div space-x-2>
+    <div v-if="props.admin" space-x-2>
       <c-button color="info" @click="refreshRating">刷新 Rating</c-button>
       <c-button color="danger" @click="deleteRating">删除 Rating</c-button>
     </div>
