@@ -73,21 +73,6 @@ def check_read_contest(user: User, contest_id: int) -> Contest:
         raise NotFound(detail='比赛未找到')
 
 
-def check_register_contest(user: User, contest_id: int) -> Contest:
-    contest = Contest.objects.filter_user_permission(user=user,
-                                                     permission=ContestPermissions.RegisterContest,
-                                                     id=contest_id).first()
-    if contest is not None:
-        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
-                                                     id=contest_id).first()
-        if contest is not None:
-            return contest
-        else:
-            raise NotFound(detail='比赛未找到或权限不足')
-    else:
-        raise NotFound(detail='比赛未找到或权限不足')
-
-
 def check_contest(user: User, contest_id: int, permission: str) -> Contest:
     contest = Contest.objects.filter_user_permission(user=user, permission=permission, id=contest_id).first()
     if contest is not None:
@@ -100,6 +85,9 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 @cache_page(5)
 @vary_on_headers("Authorization", )
 def get_contest_public(request: Request, contest_id: int):
+    """
+    获取公开状态的比赛
+    """
     contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
                                                  id=contest_id).first()
     if contest is None:
@@ -113,9 +101,13 @@ def get_contest_public(request: Request, contest_id: int):
 @cache_page(5)
 @vary_on_headers("Authorization", )
 def get_contest(request: Request, contest_id: int):
+    """
+    获取比赛详细内容
+    """
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
 
+    # 获取比赛题目通过情况
     user: User = request.user
     if user.is_authenticated:
         teams = [make_single_user_team(request.user).id]
@@ -152,6 +144,9 @@ def get_contest(request: Request, contest_id: int):
 @permission_classes([IsAuthenticated])
 @func_validate_request(EditContestPayloadSerializer)
 def edit_contest(request: Request, contest_id: int):
+    """
+    编辑比赛信息
+    """
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
     contest = edit_contest_payload(request.user, contest, request.data)
     return make_response(contest=ContestContentSerializer(contest).data)
@@ -170,6 +165,23 @@ class ContestRegistrationView(APIView):
 
     def post(self, request: Request, contest_id: int):
         return make_response()
+
+
+def check_register_contest(user: User, contest_id: int) -> Contest:
+    contest = Contest.objects.filter_user_permission(user=user,
+                                                     permission=ContestPermissions.RegisterContest,
+                                                     id=contest_id).first()
+    if contest is not None:
+        contest = Contest.objects.filter_user_public(user=user, permission=ContestPermissions.ReadContest,
+                                                     id=contest_id).first()
+        if contest is not None:
+            return contest
+        else:
+            raise NotFound(detail='比赛访问权限不足')
+    elif Contest.objects.filter(id=contest_id).first() is not None:
+        raise NotFound(detail='没有该比赛的注册权限')
+    else:
+        raise NotFound(detail='比赛未找到')
 
 
 @api_view(['POST'])
@@ -217,12 +229,16 @@ def user_unregister_contest(request: Request, contest_id: int):
 
     match contest_phase(contest):
         case ContestPhase.Before:
-            # 只有队长可以取消注册
-            if registration.team.owner == request.user:
-                registration.delete()
-                return make_response()
+            # 必须开启取消注册
+            if contest.enable_settings(ContestSettings.enable_unregistering):
+                # 只有队长可以取消注册
+                if registration.team.owner == request.user:
+                    registration.delete()
+                    return make_response()
+                else:
+                    raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
             else:
-                raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
+                raise BadRequest(detail='该比赛禁止取消注册')
         case ContestPhase.Coding | ContestPhase.Finished:
             # 比赛开始后，无法取消注册
             raise BadRequest(detail='比赛已开始')
@@ -413,7 +429,7 @@ class RatingView(APIView):
     """
     比赛 Rating
     """
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, contest_id: int):
         contest = check_read_contest(request.user, contest_id)

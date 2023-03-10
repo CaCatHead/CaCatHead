@@ -7,7 +7,7 @@ import type {
 
 const route = useRoute();
 
-const { data: contest } = await useFetchAPI<{
+const { data: contest, refresh: refreshContest } = await useFetchAPI<{
   contest: FullContest;
   solved: Record<string, boolean>;
   registration: Registration | null;
@@ -37,19 +37,32 @@ if (
       <c-nav-item to="">面板</c-nav-item>
       <c-nav-item to="submit" v-if="user">提交代码</c-nav-item>
       <c-nav-item to="status" v-if="user">我的提交</c-nav-item>
-      <c-nav-item to="submissions" v-if="
-        contest.is_admin ||
-        (isContestEnd(contest.contest) &&
-          contest.contest?.settings?.view_submissions_after_contest)
-      ">所有提交</c-nav-item>
+      <c-nav-item
+        to="submissions"
+        v-if="
+          contest.is_admin ||
+          (isContestEnd(contest.contest) &&
+            contest.contest?.settings?.view_submissions_after_contest)
+        "
+        >所有提交</c-nav-item
+      >
       <c-nav-item to="standings">排行榜</c-nav-item>
+      <c-nav-item to="rating" v-if="isContestEnd(contest.contest)"
+        >Rating</c-nav-item
+      >
       <c-nav-item to="settings" v-if="contest.is_admin">比赛设置</c-nav-item>
-      <c-nav-item to="problemset" v-if="contest.is_admin">题目列表设置</c-nav-item>
-      <c-nav-item to="rating" v-if="contest.is_admin">Rating 管理</c-nav-item>
+      <c-nav-item to="problemset" v-if="contest.is_admin">题目列表</c-nav-item>
+      <c-nav-item to="team" v-if="contest.is_admin">队伍管理</c-nav-item>
       <c-nav-item to="permissions" v-if="contest.is_admin">权限管理</c-nav-item>
     </c-nav>
-    <NuxtPage :contest="contest.contest" :solved="contest.solved" :registration="contest.registration"
-      :admin="contest.is_admin" :extra_info="contest.extra_info" />
+    <NuxtPage
+      :contest="contest.contest"
+      :solved="contest.solved"
+      :registration="contest.registration"
+      :admin="contest.is_admin"
+      :extra_info="contest.extra_info"
+      @refresh-contest="() => refreshContest()"
+    />
   </div>
 </template>
 
