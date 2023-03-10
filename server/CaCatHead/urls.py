@@ -87,6 +87,7 @@ urlpatterns = [
     path('api/contest', contest_views.create_contest),  # 创建比赛
     path('api/contest/<int:contest_id>/edit', contest_views.edit_contest),  # 编辑比赛信息
     path('api/contest/<int:contest_id>/registrations', contest_views.ContestRegistrationView.as_view()),  # 编辑比赛人员列表
+    path('api/contest/<int:contest_id>/registrations/import', contest_views.import_registrations),  # 生成比赛账号密码
     # path('api/contest/<int:contest_id>/permission'),  # 将比赛向他人授权
     path('api/contest/<int:contest_id>/register', contest_views.user_register_contest),  # 参加比赛
     path('api/contest/<int:contest_id>/unregister', contest_views.user_unregister_contest),  # 取消注册比赛

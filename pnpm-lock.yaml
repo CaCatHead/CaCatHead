@@ -37,6 +37,7 @@ importers:
       ace-builds: ^1.15.0
       ansi_up: ^5.1.0
       axios: ^1.2.4
+      csv-parse: ^5.3.6
       date-fns: ^2.29.3
       fflate: ^0.7.4
       github-markdown-css: ^5.1.0
@@ -58,6 +59,7 @@ importers:
       '@vueuse/nuxt': 9.11.1_nuxt@3.1.1
       ace-builds: 1.15.0
       axios: 1.2.4
+      csv-parse: 5.3.6
       date-fns: 2.29.3
       fflate: 0.7.4
       github-markdown-css: 5.1.0
@@ -3735,6 +3737,10 @@ packages:
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
 
+  /csv-parse/5.3.6:
+    resolution: {integrity: sha512-WI330GjCuEioK/ii8HM2YE/eV+ynpeLvU+RXw4R8bRU8R0laK5zO3fDsc4gH8s472e3Ga38rbIjCAiQh+tEHkw==}
+    dev: false
+
   /cuint/0.2.2:
     resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}
 
@@ -4240,6 +4246,18 @@ packages:
       debug:
         optional: true
 
+  /follow-redirects/1.15.2_debug@4.3.4:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+    dev: true
+
   /fontaine/0.2.3:
     resolution: {integrity: sha512-qUTZfWEdPqfqAqX+3Oati/M8s/81uproVVQ3cpEcpmmzPB37/bZGwEm/92ZIIwYg/JFkQEpFRjnwg0HTiJ/FGQ==}
     dependencies:
@@ -4620,7 +4638,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.4
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug

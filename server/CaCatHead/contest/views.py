@@ -152,21 +152,6 @@ def edit_contest(request: Request, contest_id: int):
     return make_response(contest=ContestContentSerializer(contest).data)
 
 
-class ContestRegistrationView(APIView):
-    """
-    编辑比赛注册者列表
-    """
-
-    def get(self, request: Request, contest_id: int):
-        contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
-        registrations = ContestRegistration.objects.filter_registration(contest).all()
-
-        return make_response(registrations=ContestRegistrationSerializer(registrations, many=True).data)
-
-    def post(self, request: Request, contest_id: int):
-        return make_response()
-
-
 def check_register_contest(user: User, contest_id: int) -> Contest:
     contest = Contest.objects.filter_user_permission(user=user,
                                                      permission=ContestPermissions.RegisterContest,
@@ -218,6 +203,13 @@ def user_register_contest(request: Request, contest_id: int):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+def import_registrations(request: Request, contest_id: int):
+    contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
+    return make_response()
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def user_unregister_contest(request: Request, contest_id: int):
     contest = check_register_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest, request.user)
@@ -242,6 +234,21 @@ def user_unregister_contest(request: Request, contest_id: int):
         case ContestPhase.Coding | ContestPhase.Finished:
             # 比赛开始后，无法取消注册
             raise BadRequest(detail='比赛已开始')
+
+
+class ContestRegistrationView(APIView):
+    """
+    编辑比赛注册者列表
+    """
+
+    def get(self, request: Request, contest_id: int):
+        contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
+        registrations = ContestRegistration.objects.filter_registration(contest).all()
+
+        return make_response(registrations=ContestRegistrationSerializer(registrations, many=True).data)
+
+    def post(self, request: Request, contest_id: int):
+        return make_response()
 
 
 @api_view(['POST'])
