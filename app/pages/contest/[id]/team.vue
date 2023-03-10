@@ -19,7 +19,7 @@ const uploadTeams = async () => {};
 
 <template>
   <div>
-    <div>
+    <div space-x-2>
       <c-file-input
         id="teams"
         v-model="file"
@@ -28,5 +28,6 @@ const uploadTeams = async () => {};
         >导入队伍列表</c-file-input
       >
     </div>
+    <div></div>
   </div>
 </template>

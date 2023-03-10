@@ -100,6 +100,9 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 @cache_page(5)
 @vary_on_headers("Authorization", )
 def get_contest_public(request: Request, contest_id: int):
+    """
+    获取公开状态的比赛
+    """
     contest = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest,
                                                  id=contest_id).first()
     if contest is None:
@@ -113,9 +116,13 @@ def get_contest_public(request: Request, contest_id: int):
 @cache_page(5)
 @vary_on_headers("Authorization", )
 def get_contest(request: Request, contest_id: int):
+    """
+    获取比赛详细内容
+    """
     contest = check_read_contest(user=request.user, contest_id=contest_id)
     registration = ContestRegistration.objects.get_registration(contest=contest, user=request.user)
 
+    # 获取比赛题目通过情况
     user: User = request.user
     if user.is_authenticated:
         teams = [make_single_user_team(request.user).id]
@@ -152,6 +159,9 @@ def get_contest(request: Request, contest_id: int):
 @permission_classes([IsAuthenticated])
 @func_validate_request(EditContestPayloadSerializer)
 def edit_contest(request: Request, contest_id: int):
+    """
+    编辑比赛信息
+    """
     contest = check_contest(user=request.user, contest_id=contest_id, permission=ContestPermissions.EditContest)
     contest = edit_contest_payload(request.user, contest, request.data)
     return make_response(contest=ContestContentSerializer(contest).data)

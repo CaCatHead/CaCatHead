@@ -26,8 +26,10 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest.owner = user
     contest.start_time = timezone.now() + timedelta(days=1)
     contest.end_time = contest.start_time + timedelta(hours=2)
-    contest.settings = {ContestSettings.view_standings: True,
-                        ContestSettings.view_submissions_after_contest: False}
+    contest.settings = {ContestSettings.enable_registering: True,
+                        ContestSettings.view_standings: True,
+                        ContestSettings.view_submissions_after_contest: False,
+                        ContestSettings.view_submission_checker_info: False}
 
     problem_repository = ProblemRepository()
     problem_repository.name = f'{title} 比赛题库'
@@ -46,7 +48,11 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
 
 
 def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
-    # payload see CaCatHead.contest.serializers.EditContestPayloadSerializer
+    """
+    使用传入的 Payload，更新比赛信息
+    Payload 见 CaCatHead.contest.serializers.EditContestPayloadSerializer
+    """
+
     def contains(key: str):
         return key in payload and payload[key] is not None
 
@@ -68,14 +74,33 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
             contest.freeze_time = freeze_time
     if contains('password'):
         contest.password = payload['password']
-    if 'is_public' in payload:
+    if contains('is_public'):
         contest.is_public = payload['is_public']
 
-    if 'view_standings' in payload:
+    # 开关普通用户注册权限
+    if contains('enable_registering'):
+        # Deprecate: 修复之前错误的状态
+        if ContestSettings.enable_registering not in contest.settings:
+            contest.settings[ContestSettings.enable_registering] = True
+
+        old_flag = contest.settings[ContestSettings.enable_registering]
+        new_flag = payload['enable_registering']
+        if old_flag != new_flag:
+            if new_flag:
+                Contest.objects.grant_group_permission(get_general_user_group(),
+                                                       ContestPermissions.RegisterContest,
+                                                       contest.id)
+            else:
+                Contest.objects.revoke_group_permission(get_general_user_group(),
+                                                        ContestPermissions.RegisterContest,
+                                                        contest.id)
+            contest.settings[ContestSettings.enable_registering] = payload['enable_registering']
+
+    if contains('view_standings'):
         contest.settings[ContestSettings.view_standings] = payload['view_standings']
-    if 'view_submissions_after_contest' in payload:
+    if contains('view_submissions_after_contest'):
         contest.settings[ContestSettings.view_submissions_after_contest] = payload['view_submissions_after_contest']
-    if 'view_submission_checker_info' in payload:
+    if contains('view_submission_checker_info'):
         contest.settings[ContestSettings.view_submission_checker_info] = payload['view_submission_checker_info']
 
     if 'problems' in payload and payload['problems'] is not None and isinstance(payload['problems'], list):

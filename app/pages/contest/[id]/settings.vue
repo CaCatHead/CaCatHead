@@ -13,8 +13,6 @@ useHead({
   title: `比赛设置 - ${contest.value.title}`,
 });
 
-
-
 const formatDatetime = (date: string) => {
   return format(new Date(date), `yyyy-MM-dd'T'HH:mm:SS`);
 };
@@ -40,6 +38,7 @@ const duration = ref(formatDuration());
 const description = ref(contest.value.description);
 
 const is_public = ref(contest.value.is_public);
+const enable_registering = ref(contest.value?.settings?.enable_registering);
 const view_standings = ref(contest.value?.settings?.view_standings);
 const view_submissions_after_contest = ref(
   contest.value?.settings?.view_submissions_after_contest
@@ -66,6 +65,7 @@ const submit = async () => {
           start_time: start,
           end_time: end,
           is_public: is_public.value,
+          enable_registering: enable_registering.value,
           view_standings: view_standings.value,
           view_submissions_after_contest: view_submissions_after_contest.value,
           view_submission_checker_info: view_submission_checker_info.value,
@@ -79,8 +79,8 @@ const submit = async () => {
     notify.success(`比赛 ${contest.value.title} 修改成功`);
     await navigateTo(`/contest/${route.params.id}`);
   } catch (err: any) {
-    if ('response' in err) {
-      notify.danger(err.data.detail);
+    if ('response' in err && typeof err._data?.detail === 'string') {
+      notify.danger(err._data?.detail);
     } else {
       notify.danger('未知错误');
     }
@@ -96,7 +96,12 @@ const submit = async () => {
     </c-input>
     <div>
       <div font-bold mb2>比赛类型</div>
-      <c-select id="type" v-model="type" :options="['icpc', 'ioi']" :empty="false"></c-select>
+      <c-select
+        id="type"
+        v-model="type"
+        :options="['icpc', 'ioi']"
+        :empty="false"
+      ></c-select>
     </div>
     <c-input type="datetime-local" id="start_time" v-model="start_time">
       <template #label><span font-bold>比赛开始时间</span></template>
@@ -109,16 +114,26 @@ const submit = async () => {
       <c-switch id="is_public" v-model="is_public"></c-switch>
     </div>
     <div flex items-center space-x-4>
+      <span font-bold>是否允许公开注册</span>
+      <c-switch id="enable_registering" v-model="enable_registering"></c-switch>
+    </div>
+    <div flex items-center space-x-4>
       <span font-bold>是否开启赛时榜单</span>
       <c-switch id="view_standings" v-model="view_standings"></c-switch>
     </div>
     <div flex items-center space-x-4>
       <span font-bold>是否开启赛后查看提交</span>
-      <c-switch id="view_submissions_after_contest" v-model="view_submissions_after_contest"></c-switch>
+      <c-switch
+        id="view_submissions_after_contest"
+        v-model="view_submissions_after_contest"
+      ></c-switch>
     </div>
     <div flex items-center space-x-4>
       <span font-bold>是否开启显示提交详情</span>
-      <c-switch id="view_submission_checker_info" v-model="view_submission_checker_info"></c-switch>
+      <c-switch
+        id="view_submission_checker_info"
+        v-model="view_submission_checker_info"
+      ></c-switch>
     </div>
     <div>
       <h4 mb2 font-bold>比赛描述</h4>

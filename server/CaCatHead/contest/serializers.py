@@ -31,6 +31,8 @@ class EditContestPayloadSerializer(serializers.Serializer):
     problems = serializers.ListSerializer(child=serializers.IntegerField(), required=False, allow_null=True,
                                           allow_empty=True)
 
+    enable_registering = serializers.BooleanField(required=False, allow_null=True)
+
     view_standings = serializers.BooleanField(required=False, allow_null=True)
 
     view_submissions_after_contest = serializers.BooleanField(required=False, allow_null=True)
