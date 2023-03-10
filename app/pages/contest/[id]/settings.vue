@@ -41,6 +41,7 @@ const description = ref(contest.value.description);
 
 const is_public = ref(contest.value.is_public);
 const enable_registering = ref(contest.value?.settings?.enable_registering);
+const enable_unregistering = ref(contest.value?.settings?.enable_unregistering);
 const view_standings = ref(contest.value?.settings?.view_standings);
 const view_submissions_after_contest = ref(
   contest.value?.settings?.view_submissions_after_contest
@@ -112,32 +113,46 @@ const submit = async () => {
     <c-input type="number" id="duration" v-model="duration">
       <template #label><span font-bold>比赛持续时间 (分钟)</span></template>
     </c-input>
-    <div flex items-center space-x-4>
-      <span font-bold>是否公开</span>
-      <c-switch id="is_public" v-model="is_public"></c-switch>
+    <hr />
+    <div space-y-2 style="--settings-width: 11rem">
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否公开</span>
+        <c-switch id="is_public" v-model="is_public"></c-switch>
+      </div>
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否允许公开注册</span>
+        <c-switch
+          id="enable_registering"
+          v-model="enable_registering"
+        ></c-switch>
+      </div>
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否允许取消注册</span>
+        <c-switch
+          id="enable_unregistering"
+          v-model="enable_unregistering"
+        ></c-switch>
+      </div>
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否开启赛时榜单</span>
+        <c-switch id="view_standings" v-model="view_standings"></c-switch>
+      </div>
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否开启赛后查看提交</span>
+        <c-switch
+          id="view_submissions_after_contest"
+          v-model="view_submissions_after_contest"
+        ></c-switch>
+      </div>
+      <div flex items-center space-x-4>
+        <span font-bold w="$settings-width">是否开启赛后提交详情</span>
+        <c-switch
+          id="view_submission_checker_info"
+          v-model="view_submission_checker_info"
+        ></c-switch>
+      </div>
     </div>
-    <div flex items-center space-x-4>
-      <span font-bold>是否允许公开注册</span>
-      <c-switch id="enable_registering" v-model="enable_registering"></c-switch>
-    </div>
-    <div flex items-center space-x-4>
-      <span font-bold>是否开启赛时榜单</span>
-      <c-switch id="view_standings" v-model="view_standings"></c-switch>
-    </div>
-    <div flex items-center space-x-4>
-      <span font-bold>是否开启赛后查看提交</span>
-      <c-switch
-        id="view_submissions_after_contest"
-        v-model="view_submissions_after_contest"
-      ></c-switch>
-    </div>
-    <div flex items-center space-x-4>
-      <span font-bold>是否开启显示提交详情</span>
-      <c-switch
-        id="view_submission_checker_info"
-        v-model="view_submission_checker_info"
-      ></c-switch>
-    </div>
+    <hr />
     <div>
       <h4 mb2 font-bold>比赛描述</h4>
       <markdown-editor v-model="description"></markdown-editor>
