@@ -41,7 +41,12 @@ const uploadTeams = async () => {
         return false;
       }
     };
-    add('队名') || add('姓名') || add('学号');
+    add('队名') ||
+      add('队伍') ||
+      add('姓名') ||
+      add('学号') ||
+      add('名称') ||
+      add('名字');
   }
 
   await fetchAPI(`/api/contest/${route.params.id}/registrations/import`, {
