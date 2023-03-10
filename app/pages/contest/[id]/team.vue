@@ -66,6 +66,9 @@ const uploadTeams = async () => {
     },
     notify,
   });
+
+  notify.success(`成功导入 ${list.length} 支队伍`);
+  await navigateTo(`/contest/${route.params}/standings`);
 };
 </script>
 
