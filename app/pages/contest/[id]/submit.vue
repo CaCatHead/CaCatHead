@@ -44,6 +44,7 @@ const submit = useThrottleFn(
           code,
           language,
         },
+        notify,
       });
       notify.success(`代码提交成功`);
       await navigateTo(`/contest/${route.params.id}/status`);

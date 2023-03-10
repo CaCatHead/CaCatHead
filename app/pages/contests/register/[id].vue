@@ -47,6 +47,7 @@ const register = async () => {
         name: name.value,
         extra_info: {},
       },
+      notify,
     });
     notify.success(`比赛 ${contest.value?.contest.title} 注册成功`);
     await navigateTo(`/contests`);
@@ -59,6 +60,7 @@ const unregister = async () => {
   try {
     await fetchAPI(`/api/contest/${route.params.id}/unregister`, {
       method: 'POST',
+      notify,
     });
     notify.success(`比赛 ${contest.value?.contest.title} 取消注册成功`);
     await navigateTo(`/contests`);

@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import gmpy2
@@ -32,6 +33,8 @@ from CaCatHead.user.serializers import LoginPayloadSerializer, RegisterPayloadSe
     UserPublicSerializer
 from CaCatHead.user.services import register_student_user
 from CaCatHead.utils import make_response, check_username_format
+
+logger = logging.getLogger(__name__)
 
 
 @api_view()
@@ -129,6 +132,8 @@ class UserLoginView(AuthViews.LoginView):
     def post(self, request: Request, _format=None):
         if request.user.is_authenticated:
             raise AuthenticationFailed('你已经登陆过了')
+        if not check_username_format(request.data['username']):
+            raise BadRequest(detail="用户名格式错误")
 
         try:
             resp = super(UserLoginView, self).post(request)
@@ -152,7 +157,12 @@ class UserLoginView(AuthViews.LoginView):
             else:
                 raise AuthenticationFailed("IP 非法")
         except ValidationError as validation:
-            raise AuthenticationFailed(str(validation.detail))
+            if 'non_field_errors' in validation.detail and isinstance(validation.detail['non_field_errors'], list):
+                errors = validation.detail['non_field_errors']
+                if len(errors) > 0 and str(errors[0]) == '无法使用提供的认证信息登录。':
+                    raise AuthenticationFailed(detail='用户名或者密码错误')
+            logger.error(validation)
+            raise AuthenticationFailed(detail=str(validation.detail))
 
 
 class UserLogoutView(AuthViews.LogoutView):
