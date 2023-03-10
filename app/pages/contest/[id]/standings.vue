@@ -61,7 +61,13 @@ const registrations = computed(() => {
   const items = list.map(r => {
     const problems: Record<
       string,
-      { ok: boolean; time: number; dirty: number; first: boolean }
+      {
+        ok: boolean;
+        time: number;
+        dirty: number;
+        score: number;
+        first: boolean;
+      }
     > = {};
 
     for (const sub of r.standings?.submissions ?? []) {
@@ -69,7 +75,13 @@ const registrations = computed(() => {
       if (sub.v === Verdict.Accepted) {
         if (!problems[pid]?.ok) {
           if (!problems[pid]) {
-            problems[pid] = { ok: true, time: sub.r, dirty: 0, first: false };
+            problems[pid] = {
+              ok: true,
+              time: sub.r,
+              dirty: 0,
+              score: 0,
+              first: false,
+            };
           } else {
             problems[pid].ok = true;
             problems[pid].time = sub.r;
@@ -80,7 +92,13 @@ const registrations = computed(() => {
         }
       } else {
         if (!problems[pid]) {
-          problems[pid] = { ok: false, time: sub.r, dirty: 1, first: false };
+          problems[pid] = {
+            ok: false,
+            time: sub.r,
+            dirty: 1,
+            score: 0,
+            first: false,
+          };
         } else {
           if (!problems[pid].ok) {
             problems[pid].dirty += 1;
@@ -95,11 +113,18 @@ const registrations = computed(() => {
         problems[index].dirty = +value;
       }
     }
+    for (const [key, value] of Object.entries(r.standings?.scores ?? {})) {
+      const index = displyaIdToIndex(+key);
+      if (index in problems) {
+        problems[index].score = +value;
+      }
+    }
 
     return {
       ...r,
       rank: -1,
       standings: {
+        scores: r.standings.scores,
         submissions: r.standings.submissions,
         problems,
       },
@@ -133,6 +158,19 @@ const registrations = computed(() => {
 
   return items;
 });
+
+const timestamp = useServerTimestamp();
+const startTime = new Date(contest.value.start_time!).getTime();
+const endTime = new Date(contest.value.end_time!).getTime();
+const formatProgress = (value: number) => {
+  function alignNumber(value: number) {
+    return (value < 10 ? '0' : '') + value;
+  }
+  const h = Math.floor(value / 3600000);
+  const m = Math.floor((value % 3600000) / 60000);
+  const s = Math.floor((value % 60000) / 1000);
+  return `${h}:${alignNumber(m)}:${alignNumber(s)}`;
+};
 </script>
 
 <template>
@@ -142,6 +180,32 @@ const registrations = computed(() => {
       <div hidden lt-sm:block>{{ contest.title }}</div>
       <div hidden lt-sm:block>排行榜</div>
     </h3>
+    <client-only>
+      <div
+        v-if="timestamp <= startTime"
+        mt4
+        text-center
+        text-base-500
+        font-mono
+      >
+        <span>比赛开始还有 </span>
+        <span>{{ formatProgress(startTime - timestamp) }}</span>
+      </div>
+      <div
+        v-else-if="timestamp <= endTime"
+        mt4
+        text-center
+        text-base-500
+        font-mono
+      >
+        <span>比赛结束还有 </span>
+        <span>{{ formatProgress(endTime - timestamp) }}</span>
+      </div>
+      <div v-else mt4 text-center text-base-500>比赛已结束</div>
+      <template #fallback>
+        <div mt4 h8></div>
+      </template>
+    </client-only>
     <c-table :data="registrations" mt8 :row-class="checkMyself">
       <template #headers>
         <c-table-header name="rank" width="80">#</c-table-header>
@@ -163,11 +227,18 @@ const registrations = computed(() => {
       <template #name="{ row }">
         <team-link :team="row.team" :name="row.name"></team-link>
       </template>
-      <template #penalty="{ row }">{{ toNumDuration(row.dirty) }}</template>
+      <template #score="{ row }">
+        <span font-bold>{{ row.score }}</span></template
+      >
+      <template #penalty="{ row }"
+        ><span light:text-gray-600>{{
+          toNumDuration(row.dirty)
+        }}</span></template
+      >
 
       <template v-for="idx in alphabet" #[idx]="{ row }">
         <standing-result
-          class="w-full h-full"
+          :type="contest.type"
           :result="row.standings?.problems[idx]"
           @click="handleShowSubmissions(row, idx)"
         ></standing-result>

@@ -13,7 +13,10 @@ const color = computed(() => {
     return '#2185D0';
   } else if (verdict === Verdict.Accepted) {
     return '#21BA45';
-  } else if (verdict === Verdict.WrongAnswer) {
+  } else if (
+    verdict === Verdict.WrongAnswer ||
+    verdict === Verdict.PartiallyCorrect
+  ) {
     return '#DB2828';
   } else if (verdict === Verdict.RuntimeError) {
     return '#FBBD08';
@@ -58,6 +61,8 @@ const message = computed(() => {
     return 'Judge Error';
   } else if (verdict === Verdict.TestCaseError) {
     return 'Testcase Error';
+  } else if (verdict === Verdict.PartiallyCorrect) {
+    return 'Partially Correct';
   }
   return 'System Error';
 });
