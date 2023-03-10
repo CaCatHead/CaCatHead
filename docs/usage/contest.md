@@ -6,9 +6,9 @@
 
 ```csv
 用户名,密码,姓名,学号
-contest_01_01,123456,cat,123
-contest_01_02,123456,bear,456
-contest_01_03,123456,tiger,789
+contest1_01,123456,contest1_cat,123
+contest1_02,123456,contest1_bear,456
+contest1_03,123456,contest1_tiger,789
 ```
 
 其中，用户名、密码和姓名，这三个字段是必须的；其他列可以随意填写，多余的列会被记录在该用户的注册信息内。
