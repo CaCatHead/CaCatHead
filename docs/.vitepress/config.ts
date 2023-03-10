@@ -71,7 +71,7 @@ export default defineConfig({
               link: '/usage/',
             },
             {
-              text: '使用文档',
+              text: '比赛系统',
               link: '/usage/contest',
             },
             {
