@@ -5,18 +5,35 @@ import { defineStore } from 'pinia';
 
 import type { FullUser, ProblemRepository } from './types';
 
+import { useNotification } from './notify';
+
 // Use cookie to store auth token
 export const useToken = () => useCookie('cacathead-auth');
 
 // Fetch API
-export const fetchAPI = <T>(url: string, options?: FetchOptions) => {
+export const fetchAPI = <T>(
+  url: string,
+  options?: FetchOptions & { notify?: ReturnType<typeof useNotification> }
+) => {
   return $fetch<T>(url, {
     ...options,
     baseURL: useRuntimeConfig().API_BASE,
     headers: {
       ...options?.headers,
     },
-  });
+    // @ts-ignore
+    async onResponseError({ response }) {
+      if (!options?.notify) return;
+      if (response.status === 400) {
+        console.log(response._data);
+        if (typeof response?._data?.detail === 'string') {
+          options.notify.danger(response?._data?.detail);
+        } else {
+          options.notify.danger('未知错误');
+        }
+      }
+    },
+  } as any);
 };
 
 // Use url as the asyncData key

@@ -109,6 +109,7 @@ const submit = useThrottleFn(async () => {
             code,
             language: language.value,
           },
+          notify,
         }
       );
       notify.success(`代码提交成功`);
