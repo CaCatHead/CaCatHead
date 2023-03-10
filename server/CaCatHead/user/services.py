@@ -3,10 +3,9 @@ import logging
 from django.contrib.auth.models import User, Group
 from django.db import IntegrityError
 
-from .models import UserInfo, StudentInfo
-from ..contest.services.registration import make_single_user_team
-from ..core.constants import GENERAL_USER_GROUP
-from ..core.exceptions import BadRequest
+from CaCatHead.core.constants import GENERAL_USER_GROUP
+from CaCatHead.core.exceptions import BadRequest
+from CaCatHead.user.models import UserInfo, StudentInfo
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ def get_general_user_group() -> Group:
     return Group.objects.filter(name=GENERAL_USER_GROUP).first()
 
 
-def register_student_user(username: str, email: str, password: str):
+def register_student_user(username: str, email: str, password: str, nickname: str = None):
     """
     Create and save a student User
     """
@@ -29,16 +28,18 @@ def register_student_user(username: str, email: str, password: str):
                     )
         user.set_password(password)
         user.save()
-        user_info = UserInfo(user=user, nickname=username, is_teacher=False)
+        if nickname is None:
+            nickname = username
+        user_info = UserInfo(user=user, nickname=nickname, is_teacher=False)
         user_info.save()
-        student_info = StudentInfo(user=user, student_name=username)
+        student_info = StudentInfo(user=user, student_name=nickname)
         student_info.save()
 
         # 非超级用户都加入默认用户组
         user.groups.add(get_general_user_group())
 
         # 创建代表用户自己的团队，用于个人参加比赛
-        make_single_user_team(user)
+        # make_single_user_team(user)
 
         return user
     except IntegrityError as error:
@@ -64,7 +65,7 @@ def register_superuser(username: str, email: str, password: str):
         student_info.save()
 
         # 创建代表用户自己的团队，用于个人参加比赛
-        make_single_user_team(user)
+        # make_single_user_team(user)
 
         return user
     except IntegrityError as error:
