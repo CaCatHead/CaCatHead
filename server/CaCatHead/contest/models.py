@@ -16,6 +16,7 @@ class ContestType(models.TextChoices):
 
 class ContestSettings(models.TextChoices):
     enable_registering = 'enable_registering'
+    enable_unregistering = 'enable_unregistering'
     view_standings = 'view_standings'
     view_submission_checker_info = 'view_submission_checker_info'
     view_submissions_after_contest = 'view_submissions_after_contest'

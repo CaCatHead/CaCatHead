@@ -27,6 +27,7 @@ def make_contest(user: User, title: str, type=ContestType.icpc) -> Contest:
     contest.start_time = timezone.now() + timedelta(days=1)
     contest.end_time = contest.start_time + timedelta(hours=2)
     contest.settings = {ContestSettings.enable_registering: True,
+                        ContestSettings.enable_unregistering: True,
                         ContestSettings.view_standings: True,
                         ContestSettings.view_submissions_after_contest: False,
                         ContestSettings.view_submission_checker_info: False}
@@ -95,6 +96,9 @@ def edit_contest_payload(user: User, contest: Contest, payload) -> Contest:
                                                         ContestPermissions.RegisterContest,
                                                         contest.id)
             contest.settings[ContestSettings.enable_registering] = payload['enable_registering']
+    # 开关用户取消注册
+    if contains('enable_unregistering'):
+        contest.settings[ContestSettings.enable_unregistering] = payload['enable_unregistering']
 
     if contains('view_standings'):
         contest.settings[ContestSettings.view_standings] = payload['view_standings']

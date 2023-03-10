@@ -227,12 +227,16 @@ def user_unregister_contest(request: Request, contest_id: int):
 
     match contest_phase(contest):
         case ContestPhase.Before:
-            # 只有队长可以取消注册
-            if registration.team.owner == request.user:
-                registration.delete()
-                return make_response()
+            # 必须开启取消注册
+            if contest.enable_settings(ContestSettings.enable_unregistering):
+                # 只有队长可以取消注册
+                if registration.team.owner == request.user:
+                    registration.delete()
+                    return make_response()
+                else:
+                    raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
             else:
-                raise BadRequest(detail='只有队伍的队长可以取消比赛注册')
+                raise BadRequest(detail='该比赛禁止取消注册')
         case ContestPhase.Coding | ContestPhase.Finished:
             # 比赛开始后，无法取消注册
             raise BadRequest(detail='比赛已开始')

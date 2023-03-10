@@ -33,6 +33,8 @@ class EditContestPayloadSerializer(serializers.Serializer):
 
     enable_registering = serializers.BooleanField(required=False, allow_null=True)
 
+    enable_unregistering = serializers.BooleanField(required=False, allow_null=True)
+
     view_standings = serializers.BooleanField(required=False, allow_null=True)
 
     view_submissions_after_contest = serializers.BooleanField(required=False, allow_null=True)
