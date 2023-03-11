@@ -1,4 +1,4 @@
-from CaCatHead.contest.models import ContestRegistration, ContestType
+from CaCatHead.contest.models import ContestRegistration, ContestType, Contest
 from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 
@@ -142,3 +142,7 @@ def refresh_registration_standing(registration: ContestRegistration):
     elif contest.type == ContestType.ioi:
         refresh_ioi_standing(registration)
     registration.save()
+
+
+def export_standings(contest: Contest, registrations: list[ContestRegistration]):
+    return '排名,姓名,分数,罚时'
