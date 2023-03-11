@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
@@ -16,6 +17,7 @@ from CaCatHead.contest.serializers import CreateContestPayloadSerializer, Contes
 from CaCatHead.contest.services.contest import make_contest, edit_contest_payload
 from CaCatHead.contest.services.rating import clear_contest_rating, refresh_contest_rating, get_contest_rating_logs
 from CaCatHead.contest.services.registration import single_user_register, make_single_user_team, generate_registrations
+from CaCatHead.contest.services.standings import export_standings
 from CaCatHead.contest.services.submit import user_submit_problem, rejudge_submission, prepare_contest_problems
 from CaCatHead.contest.utils import contest_phase, ContestPhase, contest_role, ContestRole, contest_standings_phase, \
     ContestStandingsPhase
@@ -436,6 +438,21 @@ def user_view_standings(request: Request, contest_id: int):
                     # 比赛结束，可以查看榜单
                     return response
     raise BadRequest(detail='您无权访问比赛榜单')
+
+
+@api_view()
+def admin_export_standings(request: Request, contest_id: int):
+    contest = check_read_contest(request.user, contest_id)
+    registrations = ContestRegistration.objects.filter(contest=contest, is_participate=True)
+    match contest_role(contest, request.user):
+        case ContestRole.Admin:
+            # 管理员可以导出榜单
+            csv = export_standings(contest, registrations)
+            response = HttpResponse(csv, content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename={contest.title}榜单.csv'
+            return response
+        case _:
+            raise BadRequest(detail='您无权访问比赛榜单')
 
 
 class RatingView(APIView):

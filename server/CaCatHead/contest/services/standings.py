@@ -1,4 +1,4 @@
-from CaCatHead.contest.models import ContestRegistration, ContestType
+from CaCatHead.contest.models import ContestRegistration, ContestType, Contest
 from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 
@@ -142,3 +142,26 @@ def refresh_registration_standing(registration: ContestRegistration):
     elif contest.type == ContestType.ioi:
         refresh_ioi_standing(registration)
     registration.save()
+
+
+def export_standings(contest: Contest, registrations: list[ContestRegistration]):
+    problems = contest.problem_repository.problems.all()
+    problem_count = len(problems)
+
+    def get_row(r: [int, ContestRegistration]):
+        index = r[0]
+        registration = r[1]
+        detail = []
+        for problem in problems:
+            pid = str(problem.display_id)
+            standings = registration.standings
+            if 'scores' in standings and pid in standings['scores']:
+                s = standings['scores'][pid]
+                detail.append(str(s))
+            else:
+                detail.append('')
+        return f'{index + 1},{registration.team.name},{registration.score},{registration.dirty},{",".join(detail)}'
+
+    header = '排名,姓名,分数,罚时,' + ','.join(map(lambda x: chr(65 + x), range(problem_count)))
+    body = map(get_row, enumerate(registrations))
+    return header + '\n' + '\n'.join(body)

@@ -82,6 +82,13 @@ const uploadTeams = async () => {
         @change="uploadTeams"
         >导入队伍列表</c-file-input
       >
+      <c-button
+        tag="a"
+        color="info"
+        :download="`${contest.title} 榜单.csv`"
+        :href="`/api/contest/${route.params.id}/standings/export`"
+        >导出榜单</c-button
+      >
     </div>
     <div></div>
   </div>
