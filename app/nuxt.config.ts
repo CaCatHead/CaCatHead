@@ -244,7 +244,7 @@ function getAppConfig() {
     const c = JSON.parse(t);
     return {
       title: (c.title as string) ?? defaults.title,
-      description: defaults.description,
+      description: (c.description as string) ?? defaults.description,
       images: {
         logo: (c.images.logo as string) ?? defaults.images.logo,
         announcement:
