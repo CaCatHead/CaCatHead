@@ -443,7 +443,7 @@ def user_view_standings(request: Request, contest_id: int):
 @api_view()
 def admin_export_standings(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
-    registrations = ContestRegistration.objects.filter(contest=contest)
+    registrations = ContestRegistration.objects.filter(contest=contest, is_participate=True)
     match contest_role(contest, request.user):
         case ContestRole.Admin:
             # 管理员可以导出榜单

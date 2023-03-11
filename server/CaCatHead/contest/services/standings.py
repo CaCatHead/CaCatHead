@@ -153,10 +153,11 @@ def export_standings(contest: Contest, registrations: list[ContestRegistration])
         registration = r[1]
         detail = []
         for problem in problems:
+            print(standings)
             pid = problem.display_id
-            standing = registration.standings
-            if 'scores' in standing and pid in standing['scores']:
-                s = standing['scores'][pid]
+            standings = registration.standings
+            if 'scores' in standings and pid in standings['scores']:
+                s = standings['scores'][pid]
                 detail.append(str(s))
             else:
                 detail.append('')
