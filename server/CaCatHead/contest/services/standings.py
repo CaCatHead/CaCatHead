@@ -145,4 +145,23 @@ def refresh_registration_standing(registration: ContestRegistration):
 
 
 def export_standings(contest: Contest, registrations: list[ContestRegistration]):
-    return '排名,姓名,分数,罚时'
+    problems = contest.problem_repository.problems.all()
+    problem_count = len(problems)
+
+    def get_row(r: [int, ContestRegistration]):
+        index = r[0]
+        registration = r[1]
+        detail = []
+        for problem in problems:
+            pid = problem.display_id
+            standing = registration.standings
+            if 'scores' in standing and pid in standing['scores']:
+                s = standing['scores'][pid]
+                detail.append(str(s))
+            else:
+                detail.append('')
+        return f'{index + 1},{registration.team.name},{registration.score},{registration.dirty},{",".join(detail)}'
+
+    header = '排名,姓名,分数,罚时,' + ','.join(map(lambda x: chr(65 + x), range(problem_count)))
+    body = map(get_row, enumerate(registrations))
+    return header + '\n' + '\n'.join(body)
