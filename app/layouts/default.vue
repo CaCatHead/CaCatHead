@@ -213,7 +213,7 @@ const commit = useAppConfig().COMMIT_SHA;
           <NuxtLink to="/">主页</NuxtLink>
         </div>
         <div :class="['default-nav-item', activeTab === 'post' && 'is-active']">
-          <NuxtLink to="/post/">博客</NuxtLink>
+          <NuxtLink to="/post/">公告</NuxtLink>
         </div>
         <div
           :class="['default-nav-item', activeTab === 'contest' && 'is-active']"
