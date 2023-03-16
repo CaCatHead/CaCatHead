@@ -56,11 +56,11 @@ def register_student_user(username: str, email: str, password: str, nickname: st
                 message = f'用户名 {username} 已经被注册'
 
         # 清空中间状态生成的用户
-        if user_info is not None:
+        if user_info is not None and user_info.id is not None:
             user_info.delete()
-        if student_info is not None:
+        if student_info is not None and student_info.id is not None:
             student_info.delete()
-        if user is not None:
+        if user is not None and user.id is not None:
             user.delete()
 
         raise BadRequest(detail=message)
