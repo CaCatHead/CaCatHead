@@ -52,6 +52,8 @@ def register_student_user(username: str, email: str, password: str, nickname: st
         if type(error.args) == tuple and len(error.args) > 0:
             if error.args[0] == 'UNIQUE constraint failed: auth_user.username':
                 message = f'用户名 {username} 已经被注册'
+            elif error.args[0] == 'UNIQUE constraint failed: user_info.nickname':
+                message = f'用户名 {username} 已经被注册'
 
         # 清空中间状态生成的用户
         if user_info is not None:
