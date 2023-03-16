@@ -71,4 +71,7 @@ def generate_registrations(contest: Contest, payload):
                 except Exception as ex:
                     logger.error(ex)
 
-            raise BadRequest(f'{nickname} 注册失败')
+            if isinstance(ex, BadRequest):
+                raise ex
+            else:
+                raise BadRequest(f'{nickname} 注册失败')
