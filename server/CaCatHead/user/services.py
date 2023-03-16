@@ -19,6 +19,9 @@ def register_student_user(username: str, email: str, password: str, nickname: st
     Create and save a student User
     """
     email = User.objects.normalize_email(email)
+    user = None
+    user_info = None
+    student_info = None
     try:
         user = User(username=username,
                     email=email,
@@ -44,10 +47,20 @@ def register_student_user(username: str, email: str, password: str, nickname: st
         return user
     except IntegrityError as error:
         logger.error(error)
+
         message = '未知的数据库错误'
         if type(error.args) == tuple and len(error.args) > 0:
             if error.args[0] == 'UNIQUE constraint failed: auth_user.username':
                 message = f'用户名 {username} 已经被注册'
+
+        # 清空中间状态生成的用户
+        if user_info is not None:
+            user_info.delete()
+        if student_info is not None:
+            student_info.delete()
+        if user is not None:
+            user.delete()
+
         raise BadRequest(detail=message)
 
 
