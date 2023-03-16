@@ -48,7 +48,7 @@ class ProblemDirectory:
     def __init__(self, root: str | Path):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
-        config_path = root / 'config.json'
+        config_path = self.root / 'config.json'
         if not config_path.exists():
             json.dump({'problem': {}, 'testcases': [], 'checker': {}}, open(config_path, 'w'))
         self.config = json.load(open(config_path, encoding='UTF-8'))
