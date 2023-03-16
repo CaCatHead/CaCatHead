@@ -116,6 +116,9 @@ class Team(models.Model):
 
         verbose_name_plural = _("队伍列表")
 
+    def __str__(self):
+        return f'队伍 {self.name}'
+
 
 class ContestRegistrationManager(models.Manager):
     def filter_registration(self, contest: Contest):
@@ -173,6 +176,9 @@ class ContestRegistration(models.Model):
         verbose_name = _("比赛注册信息")
 
         verbose_name_plural = _("比赛注册信息列表")
+
+    def __str__(self):
+        return f'比赛 #{self.contest_id}. 的注册 {self.name}'
 
 
 class RatingLog(models.Model):

@@ -16,11 +16,15 @@ class ContestRegistrationAdmin(admin.ModelAdmin):
 
     list_display_links = ('id', 'name',)
 
+    search_fields = ('name', 'team', 'contest',)
+
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'owner', 'rating',)
 
     list_display_links = ('id', 'name',)
+
+    search_fields = ('name', 'owner',)
 
 
 admin.site.register(Contest, ContestAdmin)
