@@ -37,6 +37,7 @@ importers:
       ace-builds: ^1.15.0
       ansi_up: ^5.1.0
       axios: ^1.2.4
+      clipboard-polyfill: ^4.0.0
       csv-parse: ^5.3.6
       date-fns: ^2.29.3
       fflate: ^0.7.4
@@ -59,6 +60,7 @@ importers:
       '@vueuse/nuxt': 9.11.1_nuxt@3.1.1
       ace-builds: 1.15.0
       axios: 1.2.4
+      clipboard-polyfill: 4.0.0
       csv-parse: 5.3.6
       date-fns: 2.29.3
       fflate: 0.7.4
@@ -3452,6 +3454,10 @@ packages:
   /cli-width/4.0.0:
     resolution: {integrity: sha512-ZksGS2xpa/bYkNzN3BAw1wEjsLV/ZKOf/CCrJ/QOBsxx6fOARIkwTutxp1XIOIohi6HKmOFjMoK/XaqDVUpEEw==}
     engines: {node: '>= 12'}
+
+  /clipboard-polyfill/4.0.0:
+    resolution: {integrity: sha512-U4KPNJqAYuyOtixCZZUyWTcj+wlI66j07g5ggMRE2DR1VFu/3ZWXkjLAslmme8i065gBSCUblHET7DKQ2Xg3RA==}
+    dev: false
 
   /clipboardy/3.0.0:
     resolution: {integrity: sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==}

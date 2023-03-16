@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import * as clipboard from 'clipboard-polyfill';
+
 import { highlight } from '@/composables/highlight';
+
+const notify = useNotification();
 
 const props = withDefaults(
   defineProps<{ code?: string; language?: string; copy?: boolean }>(),
@@ -75,7 +79,11 @@ const width = computed(() => {
 });
 
 const copyToClipboard = async () => {
-  await navigator.clipboard.writeText(code.value);
+  try {
+    await clipboard.writeText(code.value);
+  } catch {
+    notify.danger(`代码复制失败`);
+  }
 };
 </script>
 
