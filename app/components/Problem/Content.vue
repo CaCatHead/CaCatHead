@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import * as clipboard from 'clipboard-polyfill';
+
 import type { ProblemContent } from '@/composables/types';
+
+const notify = useNotification();
 
 const props = defineProps<{
   content: ProblemContent;
@@ -10,7 +14,11 @@ const props = defineProps<{
 const { content } = toRefs(props);
 
 async function copyToClipboard(text: string) {
-  await navigator.clipboard.writeText(text);
+  try {
+    await clipboard.writeText(text);
+  } catch {
+    notify.danger(`样例复制失败`);
+  }
 }
 </script>
 
