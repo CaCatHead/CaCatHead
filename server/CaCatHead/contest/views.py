@@ -33,7 +33,7 @@ from CaCatHead.utils import make_response, check_username_format
 
 @api_view()
 @cache_page(5)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def list_contests(request: Request):
     contests = Contest.objects.filter_user_public(user=request.user, permission=ContestPermissions.ReadContest)
     return make_response(contests=ContestSerializer(contests, many=True).data)
@@ -85,7 +85,7 @@ def check_contest(user: User, contest_id: int, permission: str) -> Contest:
 
 @api_view()
 @cache_page(5)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def get_contest_public(request: Request, contest_id: int):
     """
     获取公开状态的比赛
@@ -101,7 +101,7 @@ def get_contest_public(request: Request, contest_id: int):
 
 @api_view()
 @cache_page(5)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def get_contest(request: Request, contest_id: int):
     """
     获取比赛详细内容
@@ -293,7 +293,7 @@ def prepare_problem(request: Request, contest_id: int, problem_id: int):
 @api_view()
 @permission_classes([IsAuthenticated])
 @cache_page(1)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def user_list_own_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     teams = [make_single_user_team(request.user).id]
@@ -311,7 +311,7 @@ def user_list_own_submissions(request: Request, contest_id: int):
 
 @api_view()
 @cache_page(5)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def user_view_all_submissions(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     submissions = ContestSubmission.objects.filter(repository=contest.problem_repository)
@@ -411,7 +411,7 @@ def delete_contest_submission(request: Request, contest_id: int, submission_id: 
 
 @api_view()
 @cache_page(5)
-@vary_on_headers("Authorization", )
+@vary_on_headers('Authorization', 'Cookie')
 def user_view_standings(request: Request, contest_id: int):
     contest = check_read_contest(request.user, contest_id)
     registrations = ContestRegistration.objects.filter(contest=contest)
