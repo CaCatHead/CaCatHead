@@ -51,12 +51,18 @@ def generate_registrations(contest: Contest, payload):
         meta = p['meta']
 
         try:
-            user = register_student_user(username, f'{username}@cacathead.cn', password, nickname=nickname)
+            user = register_student_user(username=username, email=f'{username}@cacathead.cn',
+                                         password=password, nickname=nickname)
             registered_user.append(user)
             reg = single_user_register(user, contest, nickname, meta)
             registered_regs.append(reg)
         except Exception as ex:
             logger.error(ex)
+
+            current_user = User.objects.filter(username=username).first()
+            if current_user is not None:
+                make_single_user_team(current_user).delete()
+                current_user.delete()
 
             # 清空之前的注册
             for reg in registered_regs:
