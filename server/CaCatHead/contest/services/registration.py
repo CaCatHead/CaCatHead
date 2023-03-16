@@ -41,6 +41,9 @@ def generate_registrations(contest: Contest, payload):
     if not isinstance(registrations, list):
         raise BadRequest('输入表格格式非法')
 
+    registered_user = []
+    registered_regs = []
+
     for p in registrations:
         username = p['username']
         password = p['password']
@@ -48,8 +51,33 @@ def generate_registrations(contest: Contest, payload):
         meta = p['meta']
 
         try:
-            user = register_student_user(username, f'{username}@cacathead.cn', password, nickname=nickname)
-            single_user_register(user, contest, nickname, meta)
+            user = register_student_user(username=username, email=f'{username}@cacathead.cn',
+                                         password=password, nickname=nickname)
+            registered_user.append(user)
+            reg = single_user_register(user, contest, nickname, meta)
+            registered_regs.append(reg)
         except Exception as ex:
             logger.error(ex)
-            raise BadRequest(f'{nickname} 注册失败')
+
+            current_user = User.objects.filter(username=username).first()
+            if current_user is not None:
+                make_single_user_team(current_user).delete()
+                current_user.delete()
+
+            # 清空之前的注册
+            for reg in registered_regs:
+                try:
+                    reg.delete()
+                except Exception as ex:
+                    logger.error(ex)
+            for user in registered_user:
+                try:
+                    make_single_user_team(user).delete()
+                    user.delete()
+                except Exception as ex:
+                    logger.error(ex)
+
+            if isinstance(ex, BadRequest):
+                raise ex
+            else:
+                raise BadRequest(f'{nickname} 注册失败')
