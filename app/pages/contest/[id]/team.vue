@@ -29,6 +29,9 @@ const uploadTeams = async () => {
     trim: true,
   }) as any[];
 
+  const usernameSet = new Set();
+  const teamnameSet = new Set();
+
   const list: Array<{
     team: string;
     username: string;
@@ -44,6 +47,21 @@ const uploadTeams = async () => {
         delete item[key];
         delete item['用户名'];
         delete item['密码'];
+
+        // 重复的名称错误提示
+        if (teamnameSet.has(team)) {
+          notify.danger(`监测到重复的队名 ${team}`);
+          return;
+        } else {
+          teamnameSet.add(team);
+        }
+        if (usernameSet.has(username)) {
+          notify.danger(`监测到重复的用户名 ${username}`);
+          return;
+        } else {
+          usernameSet.add(username);
+        }
+
         list.push({ team, username, password, meta: { ...item } });
         return true;
       } else {
