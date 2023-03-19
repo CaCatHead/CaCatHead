@@ -4,24 +4,24 @@ from CaCatHead.contest.models import ContestRegistration, ContestType, Contest
 from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 
+WRONG_VERDICT_LIST = [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                      Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.IdlenessLimitExceeded,
+                      Verdict.RuntimeError, Verdict.PartiallyCorrect]
+
 
 def is_submission_accepted(submission: ContestSubmission):
     return submission.verdict == Verdict.Accepted
 
 
 def is_submission_wrong(submission: ContestSubmission):
-    return submission.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError,
-                                  Verdict.PartiallyCorrect, Verdict.IdlenessLimitExceeded]
+    return submission.verdict in WRONG_VERDICT_LIST
 
 
 def is_submission_concerned(submission: ContestSubmission):
     """
     只有 AC 或者错误提交，才会记录到排行榜的提交中
     """
-    return submission.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                                  Verdict.IdlenessLimitExceeded, Verdict.PartiallyCorrect,
-                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+    return is_submission_accepted(submission) or is_submission_wrong(submission)
 
 
 def extract_submission(submission: ContestSubmission):
