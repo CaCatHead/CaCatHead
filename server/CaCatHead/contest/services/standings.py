@@ -163,7 +163,7 @@ def export_standings(contest: Contest, registrations: list[ContestRegistration])
                 detail.append(str(s))
             else:
                 detail.append('')
-        extra_info = json.dumps(registration.extra_info)
+        extra_info = json.dumps(registration.extra_info, ensure_ascii=False)
         return f'{index + 1},{registration.team.name},{registration.score},{registration.dirty},{",".join(detail)},{extra_info}'
 
     header = '排名,姓名,分数,罚时,' + ','.join(map(lambda x: chr(65 + x), range(problem_count))) + ',其他信息'
