@@ -1,6 +1,12 @@
+import json
+
 from CaCatHead.contest.models import ContestRegistration, ContestType, Contest
 from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
+
+WRONG_VERDICT_LIST = [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
+                      Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.IdlenessLimitExceeded,
+                      Verdict.RuntimeError, Verdict.PartiallyCorrect]
 
 
 def is_submission_accepted(submission: ContestSubmission):
@@ -8,17 +14,14 @@ def is_submission_accepted(submission: ContestSubmission):
 
 
 def is_submission_wrong(submission: ContestSubmission):
-    return submission.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+    return submission.verdict in WRONG_VERDICT_LIST
 
 
 def is_submission_concerned(submission: ContestSubmission):
     """
     只有 AC 或者错误提交，才会记录到排行榜的提交中
     """
-    return submission.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                                  Verdict.IdlenessLimitExceeded,
-                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+    return is_submission_accepted(submission) or is_submission_wrong(submission)
 
 
 def extract_submission(submission: ContestSubmission):
@@ -127,7 +130,7 @@ def refresh_ioi_standing(registration: ContestRegistration):
 
     for _, value in scores.items():
         score += value
-    for _, value in scores.items():
+    for _, value in penalty.items():
         dirty += value
     registration.score = score
     registration.dirty = dirty
@@ -160,8 +163,9 @@ def export_standings(contest: Contest, registrations: list[ContestRegistration])
                 detail.append(str(s))
             else:
                 detail.append('')
-        return f'{index + 1},{registration.team.name},{registration.score},{registration.dirty},{",".join(detail)}'
+        extra_info = json.dumps(registration.extra_info, ensure_ascii=False)
+        return f'{index + 1},{registration.team.name},{registration.score},{registration.dirty},{",".join(detail)},{extra_info}'
 
-    header = '排名,姓名,分数,罚时,' + ','.join(map(lambda x: chr(65 + x), range(problem_count)))
+    header = '排名,姓名,分数,罚时,' + ','.join(map(lambda x: chr(65 + x), range(problem_count))) + ',其他信息'
     body = map(get_row, enumerate(registrations))
     return header + '\n' + '\n'.join(body)

@@ -183,8 +183,8 @@ const formatProgress = (value: number) => {
           </div>
         </div>
         <div px4 pb4 text-center text-lg font-600>
-          <div v-if="isContestEnd(contest)">比赛已结束</div>
-          <div v-else-if="isContestStart(contest)">
+          <div v-if="isContestEnd(timestamp, contest)">比赛已结束</div>
+          <div v-else-if="isContestStart(timestamp, contest)">
             <div>正在进行</div>
             <div>{{ formatProgress(progress) }}</div>
           </div>

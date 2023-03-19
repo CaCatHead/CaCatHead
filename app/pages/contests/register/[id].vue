@@ -10,10 +10,12 @@ const { data: contest } = await useFetchAPI<{
   registration: Registration | null;
 }>(`/api/contest/${route.params.id}/public`);
 
+const timestamp = useServerTimestamp();
+
 if (!contest.value) {
   notify.danger('比赛未找到或你无权访问此比赛');
   await navigateTo(`/contests`, { replace: true });
-} else if (isContestEnd(contest.value.contest)) {
+} else if (isContestEnd(timestamp.value, contest.value.contest)) {
   notify.danger(`比赛 ${contest.value?.contest.title} 已经结束`);
   await navigateTo(`/contest/${route.params.id}`, { replace: true });
 }

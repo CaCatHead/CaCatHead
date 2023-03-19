@@ -278,7 +278,7 @@ class SubmissionTask:
                         (cwd / checker_code_file).write_text(custom_checker.code, encoding='UTF-8')
                         commands = ["gcc", checker_code_file, "-o", self.checker.absolute(),
                                     "-fdiagnostics-color=always", "-Wall", "-Wextra", "-Wno-unused-result",
-                                    "-static", "-lm", "-std=c20", "-O2", "-DONLINE_JUDGE"]
+                                    "-static", "-lm", "-std=c11", "-O2", "-DONLINE_JUDGE"]
                     else:
                         raise NoLanguageException
 

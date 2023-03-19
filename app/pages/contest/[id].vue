@@ -17,6 +17,8 @@ const { data: contest, refresh: refreshContest } = await useFetchAPI<{
 
 const user = useUser();
 
+const timestamp = useServerTimestamp();
+
 if (
   contest !== undefined &&
   contest.value !== undefined &&
@@ -41,13 +43,13 @@ if (
         to="submissions"
         v-if="
           contest.is_admin ||
-          (isContestEnd(contest.contest) &&
+          (isContestEnd(timestamp, contest.contest) &&
             contest.contest?.settings?.view_submissions_after_contest)
         "
         >所有提交</c-nav-item
       >
       <c-nav-item to="standings">排行榜</c-nav-item>
-      <c-nav-item to="rating" v-if="isContestEnd(contest.contest)"
+      <c-nav-item to="rating" v-if="isContestEnd(timestamp, contest.contest)"
         >Rating</c-nav-item
       >
       <c-nav-item to="settings" v-if="contest.is_admin">比赛设置</c-nav-item>
