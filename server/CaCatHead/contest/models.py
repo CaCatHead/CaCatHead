@@ -162,7 +162,7 @@ class ContestRegistration(models.Model):
     class Meta:
         db_table = 'contest_registration'
 
-        ordering = ('-score', 'dirty', '-is_participate')
+        ordering = ('-is_participate', '-score', 'dirty')
 
         unique_together = (
             ('contest', 'name'),
