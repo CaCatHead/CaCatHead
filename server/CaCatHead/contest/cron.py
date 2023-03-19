@@ -25,6 +25,8 @@ class RefreshContestStandings(CronJobBase):
         start_time = timezone.now()
         end_time = start_time - timedelta(minutes=10)
         contests = Contest.objects.filter(start_time__lt=start_time, end_time__gt=end_time)[:3]
+        refreshed = 0
+
         for contest in contests:
             logger.info(f'Start refresh the standings of contest {contest.title}')
             cnt = 0
@@ -32,7 +34,10 @@ class RefreshContestStandings(CronJobBase):
             for registration in regs:
                 try:
                     refresh_registration_standing(registration=registration)
-                    cnt = cnt + 1
+                    cnt += 1
                 except Exception as ex:
                     logger.error(ex)
             logger.info(f'Refresh {cnt} standings of contest {contest.title}')
+            refreshed += 1
+
+        logger.info(f'Refreshed standings of {refreshed} contests')
