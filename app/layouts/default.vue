@@ -49,21 +49,25 @@ const timestamp = process.server
       query: {
         timestamp: (clientTimestamp.getTime() / 1000).toFixed(0),
       },
-    }).then(resp => {
-      const nowTimeStamp = new Date().getTime();
-      const serverClientRequestDiffTime = resp.diff;
-      const serverTimestamp = resp.timestamp;
-      const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
-      const diffTime =
-        (serverClientRequestDiffTime + serverClientResponseDiffTime) / 2;
+    })
+      .then(resp => {
+        const nowTimeStamp = new Date().getTime();
+        const serverClientRequestDiffTime = resp.diff;
+        const serverTimestamp = resp.timestamp;
+        const serverClientResponseDiffTime = nowTimeStamp - serverTimestamp;
+        const diffTime =
+          (serverClientRequestDiffTime + serverClientResponseDiffTime) / 2;
 
-      lastSync.value = nowTimeStamp;
-      cacheSync.value = resp.timestamp - clientTimestamp.getTime() - diffTime;
+        lastSync.value = nowTimeStamp;
+        cacheSync.value = resp.timestamp - clientTimestamp.getTime() - diffTime;
 
-      return useTimestamp({
-        offset: resp.timestamp - clientTimestamp.getTime() - diffTime,
+        return useTimestamp({
+          offset: resp.timestamp - clientTimestamp.getTime() - diffTime,
+        });
+      })
+      .catch(() => {
+        return useTimestamp();
       });
-    });
 
 provide(ServerTimestamp, timestamp);
 

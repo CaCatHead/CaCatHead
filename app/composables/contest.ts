@@ -11,8 +11,8 @@ export const useContestLastProblemSubmit = (id: string | string[]) =>
     {} as Record<number, string>
   );
 
-export const isContestStart = (contest: Contest) => {
-  const now = new Date();
+export const isContestStart = (_now: Date | number, contest: Contest) => {
+  const now = new Date(_now);
   const start_time = new Date(contest.start_time);
   if (now.getTime() >= start_time.getTime()) {
     return true;
@@ -21,8 +21,8 @@ export const isContestStart = (contest: Contest) => {
   }
 };
 
-export const isContestEnd = (contest: Contest) => {
-  const now = new Date();
+export const isContestEnd = (_now: Date | number, contest: Contest) => {
+  const now = new Date(_now);
   const end_time = new Date(contest.end_time);
   if (now.getTime() >= end_time.getTime()) {
     return true;
