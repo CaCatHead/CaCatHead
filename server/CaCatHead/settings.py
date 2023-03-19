@@ -122,6 +122,7 @@ REST_FRAMEWORK = {
 
 # django cron tasks
 CRON_CLASSES = [
+    'CaCatHead.contest.cron.RefreshContestStandings',
     'CaCatHead.judge.cron.PingJudgeNode',
     'CaCatHead.judge.cron.RejudgeErrorSubmission',
 ]
