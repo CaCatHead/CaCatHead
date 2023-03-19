@@ -127,7 +127,7 @@ def refresh_ioi_standing(registration: ContestRegistration):
 
     for _, value in scores.items():
         score += value
-    for _, value in scores.items():
+    for _, value in penalty.items():
         dirty += value
     registration.score = score
     registration.dirty = dirty
