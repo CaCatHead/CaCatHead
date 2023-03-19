@@ -9,7 +9,8 @@ def is_submission_accepted(submission: ContestSubmission):
 
 def is_submission_wrong(submission: ContestSubmission):
     return submission.verdict in [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
+                                  Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError,
+                                  Verdict.PartiallyCorrect, Verdict.IdlenessLimitExceeded]
 
 
 def is_submission_concerned(submission: ContestSubmission):
@@ -17,7 +18,7 @@ def is_submission_concerned(submission: ContestSubmission):
     只有 AC 或者错误提交，才会记录到排行榜的提交中
     """
     return submission.verdict in [Verdict.Accepted, Verdict.WrongAnswer, Verdict.TimeLimitExceeded,
-                                  Verdict.IdlenessLimitExceeded,
+                                  Verdict.IdlenessLimitExceeded, Verdict.PartiallyCorrect,
                                   Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.RuntimeError]
 
 
