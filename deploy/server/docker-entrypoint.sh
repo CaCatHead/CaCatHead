@@ -22,6 +22,9 @@ if [ "$1" = "server" ] ; then
   # start cron jobs
   cron
 
+  # remove old celery pidfiles
+  rm -f /root/celery/run/*.pid
+
   # start standing worker
   /usr/src/.venv/bin/celery -A CaCatHead.core multi start worker \
     -l INFO -Q "$CONTEST_WORKER_QUEUE" \
