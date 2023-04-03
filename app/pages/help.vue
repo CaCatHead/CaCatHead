@@ -42,7 +42,7 @@ const compiler = [
       '-Wno-unused-result',
       '-static',
       '-lm',
-      '-std=c++20',
+      '-std=c++2a',
       '-O2',
       '-DONLINE_JUDGE',
     ],
