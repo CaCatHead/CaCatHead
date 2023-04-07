@@ -8,8 +8,6 @@ ADD ./package.json ./.npmrc ./pnpm-lock.yaml ./pnpm-workspace.yaml /root/CaCatHe
 
 ADD ./app/package.json /root/CaCatHead/app/
 
-ADD ./app/patches /root/CaCatHead/app/patches/
-
 ADD ./server/package.json /root/CaCatHead/server/
 
 WORKDIR /root/CaCatHead
@@ -41,7 +39,7 @@ FROM node:18 AS runtime
 ENV TZ=Asia/Shanghai TimeZone=Asia/Shanghai
 
 RUN echo "${TimeZone}" > /etc/timezone \
-   && dpkg-reconfigure -f noninteractive tzdata
+    && dpkg-reconfigure -f noninteractive tzdata
 
 COPY --from=builder /root/CaCatHead/app/.output /root/CaCatHead/app/.output
 
