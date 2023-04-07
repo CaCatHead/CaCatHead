@@ -11,15 +11,10 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
     "cross-env": "^7.0.3",
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.1"
   },
-  "packageManager": "pnpm@7.13.6",
+  "packageManager": "pnpm@8.1.1",
   "engines": {
-    "node": ">=v16.0.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@nuxt/image-edge@1.0.0-27907872.f4dd19d": "app/patches/@nuxt__image-edge@1.0.0-27907872.f4dd19d.patch"
-    }
+    "node": ">=v18.0.0"
   }
 }

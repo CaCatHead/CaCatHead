@@ -24,6 +24,9 @@ const SHIKI_CDN = process.env['SHIKI_CDN'] ?? '';
 // commit sha
 const COMMIT_SHA = process.env['COMMIT_SHA'] ?? '';
 
+// Custom app config from cacathead.json
+const CUSTOM_APP_CONFIG = getAppConfig();
+
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   app: {
@@ -36,7 +39,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'description',
-          content: '猫猫头 CaCatHead 是一个开源的在线评测系统。',
+          content: CUSTOM_APP_CONFIG.description,
         },
       ],
     },
@@ -58,7 +61,7 @@ export default defineNuxtConfig({
   appConfig: {
     SHIKI_CDN,
     COMMIT_SHA,
-    ...getAppConfig(),
+    ...CUSTOM_APP_CONFIG,
   },
   runtimeConfig: {
     API_BASE,
