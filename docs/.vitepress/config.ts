@@ -61,11 +61,19 @@ export default defineConfig({
               text: '单独部署评测机',
               link: '/deploy/judge',
             },
+            {
+              text: '其它配置',
+              link: '/deploy/config',
+            },
           ],
         },
         {
           text: '使用',
           items: [
+            {
+              text: '系统运维',
+              link: '/usage/manage',
+            },
             {
               text: '使用文档',
               link: '/usage/',
@@ -73,10 +81,6 @@ export default defineConfig({
             {
               text: '比赛系统',
               link: '/usage/contest',
-            },
-            {
-              text: '系统配置',
-              link: '/usage/config',
             },
           ],
         },

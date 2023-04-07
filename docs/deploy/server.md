@@ -139,7 +139,20 @@ server:
 完成以上所有配置后，你可以启动服务了。
 
 ```bash
+# 构建并启动容器集群
 $ ./manage.sh up
+
+# 启动容器集群
+$ ./manage.sh start
+
+# 重启容器集群
+$ ./manage.sh restart
+
+# 停止容器集群
+$ ./manage.sh stop
+
+# 删除容器集群
+$ ./manage.sh rm
 ```
 
 ## 查看容器日志
