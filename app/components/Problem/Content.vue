@@ -38,10 +38,10 @@ async function copyToClipboard(text: string) {
   >
     <c-markdown :content="content.description"></c-markdown>
 
-    <h4>输入格式</h4>
+    <h4 v-if="content.input">输入格式</h4>
     <c-markdown :content="content.input"></c-markdown>
 
-    <h4>输出格式</h4>
+    <h4 v-if="content.output">输出格式</h4>
     <c-markdown :content="content.output"></c-markdown>
 
     <h4 v-if="content.sample && content.sample.length > 0">样例</h4>
