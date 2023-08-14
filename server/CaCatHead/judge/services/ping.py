@@ -54,7 +54,8 @@ def handle_ping(timestamp: str):
         },
         'platform': platform_info,
         'compiler': compiler_info,
-        'commit_sha': settings.COMMIT_SHA
+        'commit_sha': settings.COMMIT_SHA,
+        'catjudge': subprocess.check_output(['catj', '-v'], encoding='UTF-8')
     }
 
     node.active = True

@@ -71,6 +71,10 @@ const parseJava = (text: string) => {
               毫秒</span
             >
           </div>
+          <div v-if="row.information.catjudge" flex justify-between>
+            <span font-bold>CatJudge</span>
+            <span ml1>{{ row.information.catjudge.slice(0, 'catjudge/'.length) }}</span>
+          </div>
           <div v-if="row.information.commit_sha" flex justify-between>
             <span font-bold>版本</span>
             <span ml1>{{ row.information.commit_sha.slice(0, 7) }}</span>
