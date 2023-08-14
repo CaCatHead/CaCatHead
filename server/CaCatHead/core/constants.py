@@ -41,6 +41,8 @@ class Verdict(str, Enum):
             return Verdict.CompileError
         elif text == 'TimeLimitExceeded':
             return Verdict.TimeLimitExceeded
+        elif text == 'IdlenessLimitExceeded':
+            return Verdict.IdlenessLimitExceeded
         elif text == 'MemoryLimitExceeded':
             return Verdict.MemoryLimitExceeded
         elif text == 'OutputLimitExceeded':
