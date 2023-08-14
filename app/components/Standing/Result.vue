@@ -26,7 +26,7 @@ function toNumDuration(seconds: number) {
 <template>
   <div
     v-if="result"
-    sm:p4
+    sm:p2
     select-none
     cursor-pointer
     :class="[
