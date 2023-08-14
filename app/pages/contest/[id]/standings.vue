@@ -211,11 +211,11 @@ const formatProgress = (value: number) => {
         <c-table-header name="rank" width="80">#</c-table-header>
         <c-table-header name="name" align="left" text-left>队名</c-table-header>
         <c-table-header name="score" width="60">得分</c-table-header>
-        <c-table-header name="penalty" width="120">罚时</c-table-header>
+        <c-table-header name="penalty" width="80">罚时</c-table-header>
         <c-table-header
           v-for="problem in contest.problems"
           :name="displyaIdToIndex(problem.display_id)"
-          width="60"
+          width="50"
           rowClass="!p0"
           >{{ displyaIdToIndex(problem.display_id) }}</c-table-header
         >
