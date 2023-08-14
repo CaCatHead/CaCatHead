@@ -48,7 +48,7 @@ function toNumDuration(seconds: number) {
         >
         <span v-else-if="type === 'ioi'">{{ result.score }}</span>
       </div>
-      <div v-if="!result.practice" class="text-sm text-gray-400">
+      <div v-if="!result.practice" class="text-[10px] text-gray-400">
         <span>{{ toNumDuration(result.time) }}</span>
       </div>
     </div>
