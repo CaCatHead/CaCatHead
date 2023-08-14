@@ -24,6 +24,7 @@ export interface JudgeNode {
       architecture: [string, string];
     };
     commit_sha: string;
+    catjudge: string;
   };
 }
 

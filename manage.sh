@@ -24,6 +24,13 @@ function prompt_config() {
   echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
 }
 
+function git_pull() {
+  git pull || exit $?
+  cd CatJudge
+  git pull origin main || exit $?
+  cd ..
+}
+
 ALL_SERVICE=("nginx" "app" "server" "judge" "backup" "postgresql" "minio" "redis" "rabbitmq")
 
 export COMMIT_SHA="$(git rev-parse HEAD 2> /dev/null)"
@@ -37,10 +44,7 @@ case "$1" in
     fi
     ;;
   "sync")
-    git pull
-    if [ $? -ne 0 ] ; then
-      exit $?
-    fi
+    git_pull
     docker compose up --build -d
     ;;
   "judge")
@@ -49,10 +53,7 @@ case "$1" in
         docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
         ;;
       "sync")
-        git pull
-        if [ $? -ne 0 ] ; then
-          exit $?
-        fi
+        git_pull
         docker compose -f docker-compose.judge.yml --profile catjudge up --build -d
         ;;
       "stop")

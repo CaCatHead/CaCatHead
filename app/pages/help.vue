@@ -267,8 +267,7 @@ public class Main {
                 :verdict="Verdict.TimeLimitExceeded"
               ></display-verdict
               >：<span
-                >提交的代码由于超过运行时间限制导致运行失败，请检查你的算法的时间复杂度是否正确，如果显示的运行时间小于题目标出的时间限制，那么可能是由于你的代码在内核态运行了过长时间（可能是由于输入输出超时，或者使用
-                <code>sleep</code> 等）；</span
+                >提交的代码由于超过 CPU 运行时间限制导致运行失败，请检查你的算法的时间复杂度等是否正确；</span
               >
             </li>
             <li>
@@ -276,11 +275,8 @@ public class Main {
                 :verdict="Verdict.IdlenessLimitExceeded"
               ></display-verdict
               >：<span
-                >未使用，该情况暂时被包含在
-                <display-verdict
-                  :verdict="Verdict.TimeLimitExceeded"
-                ></display-verdict>
-                内；</span
+                >提交的代码在内核态运行了过长时间，超过评测最大时间限制导致运行失败，可能原因是输入输出超时，频繁清空输出缓冲区（<code>std::flush</code>，<code>std::endl</code>），或者使用
+                <code>sleep</code> 等函数）；</span
               >
             </li>
             <li>

@@ -206,7 +206,7 @@ const formatProgress = (value: number) => {
         <div mt4 h8></div>
       </template>
     </client-only>
-    <c-table :data="registrations" mt8 :row-class="checkMyself">
+    <c-table :data="registrations" mt8 :row-class="checkMyself" class="text-xs">
       <template #headers>
         <c-table-header name="rank" width="80">#</c-table-header>
         <c-table-header name="name" align="left" text-left>队名</c-table-header>

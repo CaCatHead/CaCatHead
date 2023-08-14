@@ -2,7 +2,7 @@
 
 FROM node:18 AS builder
 
-RUN npm i --registry https://registry.npmmirror.com/ -g pnpm
+RUN npm i --registry https://registry.npmmirror.com/ -g pnpm@8.1.1
 
 ADD ./package.json ./.npmrc ./pnpm-lock.yaml ./pnpm-workspace.yaml /root/CaCatHead/
 

@@ -4,8 +4,9 @@ from CaCatHead.contest.models import ContestRegistration, ContestType, Contest
 from CaCatHead.core.constants import Verdict
 from CaCatHead.submission.models import ContestSubmission, ContestSubmissionType
 
-WRONG_VERDICT_LIST = [Verdict.WrongAnswer, Verdict.TimeLimitExceeded, Verdict.IdlenessLimitExceeded,
-                      Verdict.MemoryLimitExceeded, Verdict.OutputLimitExceeded, Verdict.IdlenessLimitExceeded,
+WRONG_VERDICT_LIST = [Verdict.WrongAnswer,
+                      Verdict.TimeLimitExceeded, Verdict.MemoryLimitExceeded,
+                      Verdict.OutputLimitExceeded, Verdict.IdlenessLimitExceeded,
                       Verdict.RuntimeError, Verdict.PartiallyCorrect]
 
 
