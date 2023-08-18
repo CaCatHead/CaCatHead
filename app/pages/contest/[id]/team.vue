@@ -20,7 +20,7 @@ const uploadTeams = async () => {
   if (file.value.length < 1) return;
   const csv = file.value[0];
   const content = new TextDecoder('utf-8', { ignoreBOM: false }).decode(
-    await readFileToU8(csv)
+    (await readFileToU8(csv)).data
   );
   const result = parse(content, {
     encoding: 'utf-8',

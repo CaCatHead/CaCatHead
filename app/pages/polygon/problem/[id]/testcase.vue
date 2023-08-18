@@ -146,6 +146,7 @@ const save = async () => {
   notify.info('开始读取测试用例');
 
   let sampleMode = true;
+  let hasError = false;
   for (const testcase of testcases.value) {
     if (testcase.input && testcase.answer) {
       const inputFile = testcase.input as File;
@@ -153,12 +154,28 @@ const save = async () => {
 
       tasks.push(
         (async () => {
-          uploadFileList[inputFile.name] = await readFileToU8(inputFile);
+          const data = await readFileToU8(inputFile);
+          const encoding = validateFileEncodeing(data);
+          if (encoding !== 'UTF-8') {
+            hasError = true;
+            notify.danger(`${inputFile.name} 编码有误 (${encoding})`);
+            return;
+          }
+
+          uploadFileList[inputFile.name] = data.data;
         })()
       );
       tasks.push(
         (async () => {
-          uploadFileList[answerFile.name] = await readFileToU8(answerFile);
+          const data = await readFileToU8(answerFile);
+          const encoding = validateFileEncodeing(data);
+          if (encoding !== 'UTF-8') {
+            hasError = true;
+            notify.danger(`${answerFile.name} 编码有误 (${encoding})`);
+            return;
+          }
+
+          uploadFileList[answerFile.name] = data.data;
         })()
       );
 
@@ -189,6 +206,7 @@ const save = async () => {
   }
 
   await Promise.all(tasks);
+  if (hasError) return;
 
   const config = {
     problem: {
@@ -213,19 +231,23 @@ const save = async () => {
     const axios = await getAxios();
     const formData = new FormData();
     formData.append('file', new Blob([arch]));
-    await axios.post(`/api/polygon/${problem.value.display_id}/upload`, formData, {
-      headers: {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': `form-data; filename="problem-${problem.value.display_id}.zip"`,
-      },
-      onUploadProgress(ev) {
-        if (ev.progress !== undefined) {
-          loading.update(ev.progress * 100);
-        } else {
-          loading.update((ev.loaded / arch.length) * 100.0);
-        }
-      },
-    });
+    await axios.post(
+      `/api/polygon/${problem.value.display_id}/upload`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `form-data; filename="problem-${problem.value.display_id}.zip"`,
+        },
+        onUploadProgress(ev) {
+          if (ev.progress !== undefined) {
+            loading.update(ev.progress * 100);
+          } else {
+            loading.update((ev.loaded / arch.length) * 100.0);
+          }
+        },
+      }
+    );
     notify.success(`题目 ${problem.value.title} 测试数据保存成功`);
 
     problem.value.problem_info.problem_content.sample = sample;
