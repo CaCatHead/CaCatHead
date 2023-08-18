@@ -147,6 +147,9 @@ class ProblemDirectory:
             for root, dirs, files in os.walk(self.root):
                 folder = root[root_length:]
                 for file in files:
+                    # Skip version file
+                    if file == 'version':
+                        continue
                     zf.write(os.path.join(root, file), os.path.join(folder, file))
         return mem_zip.getvalue()
 
