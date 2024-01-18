@@ -35,6 +35,23 @@ ALL_SERVICE=("nginx" "app" "server" "judge" "backup" "postgresql" "minio" "redis
 
 export COMMIT_SHA="$(git rev-parse HEAD 2> /dev/null)"
 
+function test_exists {
+  if [ ! -e "$1" ]; then
+    echo "$1" "does not exists"
+    exit 1
+  fi
+}
+
+test_exists ./deploy/password/db_pass.txt
+test_exists ./deploy/password/minio_pass.txt
+test_exists ./deploy/password/redis_pass.txt
+test_exists ./deploy/password/rmq_pass.txt
+
+if [ ! -e ./deploy/rabbitmq.conf ]; then
+  echo "default_user = root" >> ./deploy/rabbitmq.conf
+  echo "default_pass = $(cat ./deploy/password/rmq_pass.txt)" >> ./deploy/rabbitmq.conf
+fi
+
 case "$1" in
   "up")
     if [ -z "$2" ] ; then
